@@ -33,7 +33,7 @@
         "custom_liquid_TxTjYf": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{%- capture green_label -%}{% render 'discount-label', product: product %}{%- endcapture -%}\n{{ green_label }}\n{%- assign has_green_label = green_label | strip -%}\n{%- unless has_green_label != '' -%}\n  <!-- aquí va tu label rojo por día (tags) -->\n{%- endunless -%}"
+            "custom_liquid": "{%- capture green_label -%}{% render 'discount-label', product: product %}{%- endcapture -%}\n{{ green_label }}\n{%- assign has_green_label = green_label | strip -%}\n\n{%- unless has_green_label != '' -%}\n  <!-- Aquí tu label rojo (por día y tags) -->\n  <!-- El mismo que ya usas en cards -->\n{%- endunless -%}"
           }
         },
         "custom_liquid_f48QiT": {
