@@ -63,7 +63,7 @@ Behavior:
 
       {%- if _matched_handle != '' -%}
         {%- if _mode == 'percent' -%}
-          {{ _percent }}
+          {{- _percent -}}
         {%- else -%}
           {%- assign _discount_amount = _base_price | times: _percent | divided_by: 100.0 -%}
           {%- assign _final_price = _base_price | minus: _discount_amount -%}

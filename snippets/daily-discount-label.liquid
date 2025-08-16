@@ -45,7 +45,7 @@ Behavior:
         {%- assign _t = _tag | strip -%}
         {%- if _product_tags_up contains _t and _percent > 0 -%}
           {%- if _mode == 'percent' -%}
-            {{ _percent }}
+            {{- _percent -}}
           {%- else -%}
             {%- assign _original = _product.price -%}
             {%- assign _disc = _original | times: _percent | divided_by: 100.0 -%}
