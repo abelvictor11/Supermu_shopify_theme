@@ -234,6 +234,9 @@
   {%- elsif gp == rp and gp > 0 -%}
     {% render 'daily-discount-label', product: product %}
   {%- endif -%}
+  {%- if request.design_mode -%}
+    <div style="font-size:11px;color:#777;margin-top:4px;">(collection debug) gp={{ gp }} rp={{ rp }}</div>
+  {%- endif -%}
 </div>
                 
                     </div>

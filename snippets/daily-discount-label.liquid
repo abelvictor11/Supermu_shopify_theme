@@ -34,7 +34,7 @@ Behavior:
   {%- endcase -%}
 
   {%- if _discount_rules != '' -%}
-    {%- assign _product_tags_up = _product.tags | join: '||||' | upcase | split: '||||' -%}
+    {%- assign _product_tags_joined_up = _product.tags | join: '||||' | upcase -%}
     {%- assign _groups = _discount_rules | split: '|' -%}
     {%- assign _applied = false -%}
     {%- for _group in _groups -%}
@@ -42,8 +42,8 @@ Behavior:
       {%- assign _rule_tags = _parts[0] | split: ',' -%}
       {%- assign _percent = _parts[1] | default: 0 | times: 1 -%}
       {%- for _tag in _rule_tags -%}
-        {%- assign _t = _tag | strip -%}
-        {%- if _product_tags_up contains _t and _percent > 0 -%}
+        {%- assign _t = _tag | strip | upcase -%}
+        {%- if _product_tags_joined_up contains _t and _percent > 0 -%}
           {%- if _mode == 'percent' -%}
             {{- _percent -}}
           {%- else -%}
