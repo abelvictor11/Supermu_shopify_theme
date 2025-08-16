@@ -156,6 +156,21 @@
   left: auto;
 }
 
+/* Homepage product cards using .rimage wrapper: keep image centered inside square */
+.template-index a[data-js-product-image] .rimage {
+  position: relative;
+}
+.template-index a[data-js-product-image] .rimage .rimage__img {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  object-position: center;
+}
+
 .product-image-container img.loaded {
   opacity: 1;
 }
