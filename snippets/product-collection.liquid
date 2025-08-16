@@ -1,0 +1,627 @@
+{% include 'global-variables' %}
+{%- if settings.product_format_pjpg -%}
+    {%- assign image_format = 'pjpg' -%}
+{%- else -%}
+    {%- assign image_format = null -%}
+{%- endif -%}
+{%- assign product_margin_bottom = product_margin_bottom | default: 30 -%}
+{% include 'product-res-variables' with url_without_collection: true %}
+{%- assign image_size = image_size | default: '600x' -%}
+{%- assign show_label_in_stock = show_label_in_stock | default: settings.product_collection_show_label_in_stock -%}
+{%- assign show_label_pre_order = show_label_pre_order | default: settings.product_collection_show_label_pre_order -%}
+{%- assign show_label_out_stock = show_label_out_stock | default: settings.product_collection_show_label_out_stock -%}
+{%- assign show_label_sale = show_label_sale | default: settings.product_collection_show_label_sale -%}
+{%- assign show_label_new = show_label_new | default: settings.product_collection_show_label_new -%}
+{%- assign show_label_hot = show_label_hot | default: settings.product_collection_show_label_hot -%}
+{%- assign show_countdown = show_countdown | default: settings.product_collection_show_countdown -%}
+{%- assign show_images_navigation = show_images_navigation | default: settings.product_collection_show_images_navigation -%}
+{%- assign show_title = show_title | default: settings.product_collection_show_title -%}
+{%- assign show_sku = show_sku | default: settings.product_collection_show_sku -%}
+{%- assign show_barcode = show_barcode | default: settings.product_collection_show_barcode -%}
+{%- assign show_availability = show_availability | default: settings.product_collection_show_availability -%}
+{%- assign show_type = show_type | default: settings.product_collection_show_type -%}
+{%- assign show_vendor = show_vendor | default: settings.product_collection_show_vendor -%}
+{%- assign show_description = show_description | default: settings.product_collection_show_description -%}
+{%- assign show_price = show_price | default: settings.product_collection_show_price -%}
+{%- assign show_options = show_options | default: settings.product_collection_show_options -%}
+{%- assign show_custom_options = show_custom_options | default: settings.product_show_custom_options -%}
+{%- assign show_quantity = show_quantity | default: settings.product_collection_show_quantity -%}
+{%- assign show_button_add_to_cart = show_button_add_to_cart | default: settings.product_collection_show_button_add_to_cart -%}
+{%- assign show_button_add_to_wishlist = show_button_add_to_wishlist | default: settings.product_collection_show_button_add_to_wishlist -%}
+{%- assign show_button_add_to_compare = show_button_add_to_compare | default: settings.product_collection_show_button_add_to_compare -%}
+{%- assign show_button_quick_view = show_button_quick_view | default: settings.product_collection_show_button_quick_view -%}
+{%- assign show_reviews = show_reviews | default: settings.product_collection_show_reviews -%}
+{%- assign hide_reviews_counter = hide_reviews_counter | default: settings.product_collection_hide_reviews_counter -%}
+{%- assign hide_reviews_mobile_counter = hide_reviews_mobile_counter | default: settings.product_collection_hide_reviews_mobile_counter -%}
+{%- assign show_list_quantity = show_list_quantity | default: settings.product_collection_list_show_quantity -%}
+{%- if settings.compare_type == 'disable' -%}
+    {%- assign show_button_add_to_compare = false -%}
+{%- endif -%}
+{%- if settings.wishlist_type == 'disable' -%}
+    {%- assign show_button_add_to_wishlist = false -%}
+{%- endif -%}
+{%- if settings.reviews_type == 'disable' -%}
+    {%- assign show_reviews = false -%}
+{%- endif -%}
+{%- if settings.product_collection_set_first_image_by_variant and current_variant.featured_image -%}
+    {%- assign current_image = current_variant.featured_image -%}
+    {%- for img in product.images -%}
+        {%- if current_variant.featured_image == img -%}
+            {%- assign next_img_index = forloop.index0 | plus: 1 -%}
+            {%- if product.images[next_img_index] != blank -%}
+                {%- assign hover_image = product.images[next_img_index] -%}
+            {%- endif -%}
+            {%- break -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- else -%}
+    {%- assign current_image = image -%}
+{%- endif -%}
+{%- assign img_hover_url = hover_image | img_url: '1x1', format: image_format | replace: '_1x1.', '_{width}x.' -%}
+{%- assign product_form_id = 'quick-add-' | append: section.id | append: product.id -%}
+
+
+<product-item class="product-collection{% if settings.product_collection_centered_info %} product-collection--centered{% endif %} d-block"{% include 'product-get-attributes' %} data-qv-check-change>
+    <div class="product-collection__wrapper">
+        <div class="d-flex flex-column">
+            <div class="product-collection__image product-image product-image--hover-{{ settings.product_hover_animation_type }} position-relative w-100 js-product-images-navigation js-product-images-hovered-end{% if settings.product_replace_images_hover %} js-product-images-hover{% endif %}"{% if settings.product_replace_images_hover and hover_image != blank %} data-js-product-image-hover="{{ img_hover_url }}" data-js-product-image-hover-id="{{ hover_image.id }}"{% endif %}>
+                <!-- Skeleton loader -->
+                <div class="product-collection-skeleton">
+                    <div class="product-skeleton-image"></div>
+                    <div class="product-skeleton-content">
+                        <div class="product-skeleton-title"></div>
+                        <div class="product-skeleton-price"></div>
+                    </div>
+                </div>
+                
+                {% render 'product-get-images' with 
+                    url: url 
+                    image: current_image 
+                    image_size: image_size 
+                    title: title 
+                    onload: "this.classList.add('loaded'); this.closest('.product-collection__image').classList.add('loaded');"
+                %}
+                {%- if show_label_in_stock or show_label_pre_order or show_label_out_stock or show_label_sale or show_label_new or show_label_hot -%}
+                    {%- assign label_present = true -%}
+                {%- else -%}
+                    {%- assign label_present = false -%}
+                {%- endif -%}
+                {%- if label_present or show_button_quick_view -%}
+                    <div class="product-image__overlay-top position-absolute d-flex flex-wrap top-0 left-0 w-100 px-10 pt-10">
+                        <a href="{{ url }}" class="absolute-stretch cursor-default"></a>
+                        {%- if label_present -%}
+                            <div class="product-image__overlay-top-left product-collection__labels position-relative d-flex flex-column align-items-start mb-10">
+                                {%- if show_label_hot -%}
+                                    {% include 'product-get-label-hot' %}
+                                {%- endif -%}
+                                {%- if show_label_new -%}
+                                    {% include 'product-get-label-new' %}
+                                {%- endif -%}
+                                {%- if show_label_sale -%}
+                                    {% include 'product-get-label-sale' %}
+                                {%- endif -%}
+                                {%- if show_label_in_stock -%}
+                                    {% include 'product-get-label-in-stock' %}
+                                {%- endif -%}
+                                {%- if show_label_pre_order -%}
+                                    {% include 'product-get-label-pre-order' %}
+                                {%- endif -%}
+                                {%- if show_label_out_stock -%}
+                                    {% include 'product-get-label-out-stock' %}
+                                {%- endif -%}
+                            </div>
+                        {%- endif -%}
+                        {%- if show_button_quick_view -%}
+                            <div class="product-image__overlay-top-right product-collection__button-quick-view position-lg-relative d-none d-lg-flex mb-lg-10 ml-lg-auto">
+                                {% render 'product-get-button-quick-view' with product_enable_tooltips: product_enable_tooltips %}
+                            </div>
+                        {%- endif -%}
+                    </div>
+                {%- endif -%}
+                {%- if show_countdown or show_images_navigation -%}
+                    <div class="product-image__overlay-bottom position-absolute d-flex justify-content-center justify-content-lg-start align-items-end bottom-0 left-0 w-100 px-10 pb-10">
+                        <a href="{{ url }}" class="absolute-stretch cursor-default"></a>
+                        {%- if show_countdown -%}
+                            <div class="product-image__overlay-bottom-left product-collection__countdown position-relative mt-10">
+                                {% render 'product-get-countdown' with countdown_date: countdown_date centered: centered %}
+                            </div>
+                        {%- endif -%}
+                        {%- if show_images_navigation -%}
+                            <div class="product-image__overlay-bottom-right product-collection__images-navigation position-relative d-none d-lg-block mt-10 ml-auto">
+                                {% render 'product-get-images-navigation' with product: product %}
+                            </div>
+                        {%- endif -%}
+                    </div>
+                {%- endif -%}
+            </div>
+            <div class="product-collection__content d-flex flex-column align-items-start mt-15">
+                {%- case settings.product_collection_more_info_type -%}
+                    {% when 'type' %}
+                        {%- if product.type != blank -%}
+                            <div class="product-collection__more-info mb-{% if product_collection_content_offsets == 1 %}3{% else %}6{% endif %}">
+                                <a href="{{ product.type | link_to_type | split: 'href="' | last | split: '"' | first }}">{{ product.type }}</a>
+                            </div>
+                        {%- endif -%}
+                    {% when 'collections' %}
+                        {%- if product.collections.size > 0 -%}
+                            <div class="product-collection__more-info mb-{% if product_collection_content_offsets == 1 %}3{% else %}6{% endif %}">
+                                {% render 'product-get-collections' with product: product %}
+                            </div>
+                        {%- endif -%}
+                    {% when 'vendor' %}
+                        {%- if product.vendor.size > 0 -%}
+                            <div class="product-collection__more-info mb-{% if product_collection_content_offsets == 1 %}3{% else %}6{% endif %}">
+                                {%- for vendor in product.vendor -%}
+                                    <a href="{{ vendor | link_to_vendor | split: 'href="' | last | split: '"' | first }}" style="color: #555;font-weight: 300;font-style: italic;">{{ vendor }}{% if forloop.last != true %},{% endif %}</a>{% if forloop.last != true %} {% endif %}
+                                {%- endfor -%}
+                            </div>
+                        {%- endif -%}
+                {%- endcase -%}
+                {%- if show_title -%}
+                    <div class="product-collection__title mb-{% if product_collection_content_offsets == 1 %}3{% else %}9{% endif %}">
+                        <h4 class="m-0">
+                            <a href="{{ url }}">{{ title }}</a>
+                        </h4>
+                    </div>
+                {%- endif -%}
+                {%- if show_sku or show_barcode or show_availability or show_type or show_vendor -%}
+                    <div class="product-collection__details d-none mb-8">
+                        {%- if show_sku -%}
+                            <div class="product-collection__sku{% if sku == blank %} d-none-important{% endif %} mb-5">
+                                <p class="m-0" data-js-product-sku>{{ 'products.product.sku' | t }}: <span>{{ sku }}</span></p>
+                            </div>
+                        {%- endif -%}
+                        {%- if show_barcode -%}
+                            <div class="product-collection__barcode{% if barcode == blank %} d-none-important{% endif %} mb-5">
+                                <p class="m-0" data-js-product-barcode>{{ 'products.product.barcode' | t }}: <span>{{ barcode }}</span></p>
+                            </div>
+                        {%- endif -%}
+                        {%- if show_availability -%}
+                            <div class="product-collection__availability mb-5">
+                                {%- if quantity == 1 -%}
+                                    {%- capture item -%}{{ 'layout.cart.items_count.one' | t }}{%- endcapture -%}
+                                {%- else -%}
+                                    {%- capture item -%}{{ 'layout.cart.items_count.other' | t }}{%- endcapture -%}
+                                {%- endif -%}
+                                <p class="m-0" data-js-product-availability data-availability="{% if available %}true{% else %}false{% endif %}">{{ 'products.product.availability' | t }}: <span>{% if available %}{{ 'products.product.availability_value_in_stock' | t: count: quantity, item: item }}{% else %}{{ 'products.product.availability_value_out_stock' | t }}{% endif %}</span></p>
+                            </div>
+                        {%- endif -%}
+                        {%- if show_type -%}
+                            <div class="product-collection__type{% if type == blank %} d-none-important{% endif %} mb-5">
+                                <p class="m-0" data-js-product-type>{{ 'products.product.type' | t }}: <span>{{ type }}</span></p>
+                            </div>
+                        {%- endif -%}
+                        {%- if show_vendor -%}
+                            <div class="product-collection__vendor{% if vendor == blank %} d-none-important{% endif %} mb-5">
+                                <p class="m-0" data-js-product-vendor>{{ 'products.product.vendor' | t }}: <span>{{ vendor }}</span></p>
+                            </div>
+                        {%- endif -%}
+                    </div>
+                {%- endif -%}
+                {%- if show_description and description != blank -%}
+                    <div class="product-collection__description d-none mb-15">
+                        <p class="m-0">{{ description | strip_html | truncatewords: product_collection_description_truncatewords }}</p>
+                    </div>
+                {%- endif -%}
+                {%- if show_price -%}
+                    <div class="product-collection__price mb-{% if product_collection_content_offsets == 1 %}10{% else %}20{% endif %}">
+                        {% include 'product-get-price' %}
+                  
+               
+
+
+<div class="label-grid">
+  {%- comment -%} Debug mode (opcional) - descomenta para ver información útil {%- endcomment -%}
+  {%- assign debug_mode = false -%}
+  
+  {%- assign current_day = 'now' | date: '%A' -%}
+  {%- if debug_mode -%}
+    <!-- Debug: Día actual -> {{ current_day }} -->
+    <!-- Debug: Tags del producto -> {{ product.tags | join: ', ' }} -->
+    <!-- Debug: Colecciones del producto -> {% for c in product.collections %}{{ c.title }}, {% endfor %} -->
+  {%- endif -%}
+
+  {%- comment -%} 1. Descuentos por colección (prioridad alta) {%- endcomment -%}
+  {%- assign collection_discounts = 'DOVE:25,SEDAL:30,TOSH:30,PALMOLIVE:30,SEPARATA / GRANOLAS / VITAMARKET:30,DORIA:20,FRIKO:20,PESCO:20,Panadería Supermu:20,Sello rojo:20,Sary:20,BADIA:20,VINOS:30' | split: ',' -%}
+  {%- assign collection_discount_applied = false -%}
+
+  {%- for collection_discount in collection_discounts -%}
+    {%- assign parts = collection_discount | split: ':' -%}
+    {%- assign collection_name = parts[0] | strip -%}
+    {%- assign collection_percentage = parts[1] | times: 1 -%}
+    
+    {%- for collection in product.collections -%}
+      {%- if collection.title == collection_name -%}
+        {%- assign original_price = product.price -%}
+        {%- assign discount_amount = original_price | times: collection_percentage | divided_by: 100.0 -%}
+        {%- assign final_price = original_price | minus: discount_amount | money -%}
+        
+        <div class="collection-discount-tag" style="
+          border-left: 3px solid #4CAF50;
+          padding: 10px;
+          margin: 10px 0;
+          border-radius: 0 5px 5px 0;
+          background: #F5FFF5;
+        ">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="text-decoration: line-through; color: #666;">{{ original_price | money }}</span>
+            <span style="font-weight: bold; color: #4CAF50;">{{ final_price }}</span>
+          </div>
+          <div style="
+            background: #4CAF50;
+            color: white;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-top: 5px;
+          ">
+            ¡OFERTA EN {{ collection_name | truncate: 30 }} -{{ collection_percentage }}%
+          </div>
+        </div>
+        {%- assign collection_discount_applied = true -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+    
+    {%- if collection_discount_applied -%}{%- break -%}{%- endif -%}
+  {%- endfor -%}
+                  
+
+                  
+  {%- comment -%} 2. Descuentos diarios por tags (solo si no hay descuento por colección) {%- endcomment -%}
+  {%- unless collection_discount_applied -%}
+    {%- case current_day -%}
+      {%- when 'Monday' -%}
+        {%- assign day_translation = 'LUNES' -%}
+        {%- assign discount_rules = 'MASCOTAS:20' -%}
+        
+      {%- when 'Tuesday' -%}
+        {%- assign day_translation = 'MARTES' -%}
+        {%- assign discount_rules = 'CARNES,CARNE,CERDO:10|POLLO:20' -%}
+        
+      {%- when 'Wednesday' -%}
+        {%- assign day_translation = 'MIÉRCOLES' -%}
+        {%- assign discount_rules = 'FRUVER:25' -%}
+        
+      {%- when 'Thursday' -%}
+        {%- assign day_translation = 'JUEVES' -%}
+        {%- assign discount_rules = 'PESCADO,MARISCOS,PESCADOS Y MARISCOS,CARNES BLANCAS PESCADO:20' -%}
+        
+      {%- when 'Friday' -%}
+        {%- assign day_translation = 'VIERNES' -%}
+        {%- assign discount_rules = 'CARNES,CARNE,CERDO:10|FRUVER:25' -%}
+        
+      {%- when 'Saturday' -%}
+        {%- assign day_translation = 'SÁBADO' -%}
+        {%- assign discount_rules = 'VINO,VINOS:30' -%}
+        
+      {%- else -%}
+        {%- assign discount_rules = '' -%}
+    {%- endcase -%}
+
+    {%- if discount_rules != '' -%}
+      {%- assign product_tags_upcase = product.tags | join: '||||' | upcase | split: '||||' -%}
+      {%- assign discount_rules_split = discount_rules | split: '|' -%}
+      
+      {%- for rule_group in discount_rules_split -%}
+        {%- assign rule_parts = rule_group | split: ':' -%}
+        {%- assign rule_tags = rule_parts[0] | split: ',' -%}
+        {%- assign rule_discount = rule_parts[1] | default: 0 | times: 1 -%}
+        
+        {%- for tag in rule_tags -%}
+          {%- assign formatted_tag = tag | strip -%}
+          {%- if product_tags_upcase contains formatted_tag and rule_discount > 0 -%}
+            {%- assign original_price = product.price -%}
+            {%- assign discount_amount = original_price | times: rule_discount | divided_by: 100.0 -%}
+            {%- assign final_price = original_price | minus: discount_amount | money -%}
+
+            <div class="daily-discount-tag" style="
+              border-left: 3px solid #FF0000;
+              padding: 10px;
+              margin: 10px 0;
+              border-radius: 0 5px 5px 0;
+              background: #FFF9F9;
+            ">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="text-decoration: line-through; color: #666;">{{ original_price | money }}</span>
+                <span style="font-weight: bold; color: #FF0000;">{{ final_price }}</span>
+              </div>
+              <div style="
+                background: #FF0000;
+                color: white;
+                display: inline-block;
+                padding: 2px 8px;
+                border-radius: 3px;
+                font-size: 12px;
+                margin-top: 5px;
+              ">
+                ¡OFERTA {{ formatted_tag }} -{{ rule_discount }}% ({{ day_translation }})
+              </div>
+            </div>
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endunless -%}
+</div>
+                
+                    </div>
+
+
+
+              
+                {%- endif -%}
+
+              
+                <div class="product-collection__control d-flex flex-column w-100">
+                    {%- if show_options and show_custom_options -%}
+                        <div class="product-collection__options">
+                            {% include 'product-get-options' with select_dropdown_position: 'top' %}
+                        </div>
+                    {%- else -%}
+                        {%- assign variants_size = product.variants | size -%}
+                        {%- if variants_size > 1 -%}
+                            {%- assign enable_select_options_button = true -%}
+                        {%- endif -%}
+                    {%- endif -%}
+                    {%- liquid
+                        assign current_selling_plan_allocation = current_variant.selected_selling_plan_allocation
+                        if current_selling_plan_allocation == nil and current_variant.requires_selling_plan
+                        assign current_selling_plan_allocation = current_variant.selling_plan_allocations | first
+                        endif
+                    -%}
+                    <input type="hidden" name="selling_plan" value="{{ current_selling_plan_allocation.selling_plan.id | default: '' }}">
+                    {%- if show_button_add_to_cart or show_options -%}
+                        <div class="product-collection__variants mb-10{% if show_options == false or show_custom_options %} d-none{% elsif product.variants.size == 1 and product.variants.first.title contains 'Default' %} d-none{% endif %}">
+                            {% render 'product-get-variants' with product: product current_variant: current_variant show_options: show_options show_custom_options: show_custom_options, product_form_id: product_form_id %}
+                        </div>
+                    {%- endif -%}
+
+
+
+                  
+<div class="custom-pum m-0 mb-10">
+{%- comment %} 
+  1. Obtener y convertir el factor ("432,0" → 432.0) 
+{% endcomment -%}
+{%- assign factor_text = product.metafields.custom.factor_unidad_de_medida.value | default: "1,0" -%}
+{%- assign factor = factor_text | replace: ",", "." | plus: 0 -%}
+
+{%- comment %} 
+  2. Convertir el precio a decimal (ej: $50.000 COP → 50000.0) 
+{% endcomment -%}
+{%- assign precio = product.price | divided_by: 100.0 -%}
+
+{%- comment %} 
+  3. Calcular PUM (precio / factor) y redondear a 2 decimales 
+{% endcomment -%}
+{%- assign pum = precio | divided_by: factor | round: 2 -%}
+
+{%- comment %} 
+  4. Formatear el resultado para mostrar 2 decimales (ej: 39.58) 
+  - Si el resultado es 39.5, forzar "39.50"
+{% endcomment -%}
+{%- assign pum_parts = pum | split: "." -%}
+{%- if pum_parts.size == 1 -%}
+  {%- assign pum_formatted = pum | append: ".00" -%}
+{%- else -%}
+  {%- assign decimal_digits = pum_parts[1] | size -%}
+  {%- if decimal_digits == 1 -%}
+    {%- assign pum_formatted = pum | append: "0" -%}
+  {%- else -%}
+    {%- assign pum_formatted = pum -%}
+  {%- endif -%}
+{%- endif -%}
+
+<div class="icon-pum"><?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 384 384">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #6d7a84;
+      }
+
+      .st1 {
+        fill: #f45858;
+      }
+
+      .st2 {
+        fill: #fff;
+      }
+
+      .st3 {
+        fill: #f2da30;
+      }
+    </style>
+  </defs>
+  <path d="M221.86,92.96v33.68h81.96c14.69,0,33.73,17,36.68,31.43l29.5,175.64c.67,1.36-2.69,5.51-3.31,5.51h-19.84v26.57c0,1.71-4.29,4.83-6.33,4.15H43.29c-2.04.68-6.33-2.44-6.33-4.15v-26.57h-19.84c-.62,0-3.98-4.15-3.31-5.51l29.5-175.64c2.87-14.36,22.1-31.43,36.68-31.43h81.96v-33.68h-90.19c-32.71-2.24-56.14-25.98-58.05-58.72-.28-4.77-1.59-18.62,3.74-20.29h348.9c2.4.99,3.42,2.69,3.72,5.26,4.43,38.13-18.84,71.22-58.04,73.74h-90.19ZM359.59,24.09H24.24v13.1c0,20.02,21.72,42.68,41.65,44.44,84.07,1.35,168.64,1.55,252.69-.11,19.65-1.91,41-24.61,41-44.33v-13.1ZM211.38,92.96h-38.92v33.68h38.92v-33.68ZM358.09,328.75l-27.44-166.8c-3.55-13.73-15.54-23.72-29.79-24.85H83.72c-13.89.7-25.78,9.99-30.07,23.07l-27.91,168.58h332.35ZM336.38,339.23H47.45v20.21h288.94v-20.21Z"/>
+  <path class="st1" d="M358.09,328.75H25.74l27.91-168.58c4.29-13.08,16.17-22.37,30.07-23.08h217.14c14.25,1.14,26.25,11.12,29.79,24.86l27.44,166.8ZM188.02,156.06c-47.31,2.2-81.08,47.04-71.19,93.21,14.44,67.41,104.25,82.78,140.53,24.03,32.57-52.75-7.83-120.1-69.33-117.24Z"/>
+  <path class="st1" d="M359.59,24.09v13.1c0,19.72-21.35,42.42-41,44.33-84.06,1.66-168.62,1.45-252.69.11-19.93-1.76-41.65-24.42-41.65-44.44v-13.1h335.35ZM124.32,37.78c-.66-.82-2.73-1.64-3.86-1.75-17.31,1.52-37.78-1.92-54.69.02-7.16.82-7.16,9.69,0,10.51,16.9,1.94,37.38-1.49,54.67,0,4.43.26,6.41-5.64,3.88-8.78ZM141.55,36.23c-5.54,1.24-5.52,8.93,0,10.16,2.51.56,15.87.56,18.39,0,5.29-1.17,5.31-8.98,0-10.16-2.52-.56-15.88-.56-18.39,0Z"/>
+  <rect class="st0" x="47.45" y="339.23" width="288.94" height="20.21"/>
+  <rect class="st3" x="172.45" y="92.96" width="38.92" height="33.68"/>
+  <path d="M188.02,156.06c61.5-2.86,101.9,64.48,69.33,117.24-36.28,58.75-126.08,43.38-140.53-24.03-9.89-46.17,23.88-91.01,71.19-93.21ZM186.68,167.06c-31.73,1.56-59.28,28.91-60.64,60.64,4.15.27,12.91-1.68,13.44,4.18.77,8.53-7.69,5.98-13.44,6.3,1.3,31.66,28.97,59.34,60.64,60.64.44-4.08-1.85-12.15,3.54-13.33,8.77-1.93,6.89,7.7,6.94,13.33,31.66-1.3,59.34-28.97,60.64-60.64-4.08-.44-12.15,1.85-13.33-3.54-1.93-8.77,7.7-6.89,13.33-6.94-1.46-31.81-28.92-59.09-60.64-60.64-.43,4.39,2,12.68-4.18,13.46-8.34,1.05-6.07-8-6.29-13.46Z"/>
+  <path d="M124.32,37.78c2.53,3.14.55,9.05-3.88,8.78-17.29-1.49-37.78,1.94-54.67,0-7.16-.82-7.16-9.69,0-10.51,16.91-1.94,37.38,1.51,54.69-.02,1.13.11,3.2.92,3.86,1.75Z"/>
+  <path d="M141.55,36.23c2.51-.56,15.87-.56,18.39,0,5.31,1.18,5.29,8.98,0,10.16-2.52.56-15.88.56-18.39,0-5.52-1.23-5.54-8.92,0-10.16Z"/>
+  <path class="st2" d="M186.68,167.06c.22,5.46-2.05,14.51,6.29,13.46,6.18-.78,3.75-9.07,4.18-13.46,31.72,1.55,59.18,28.83,60.64,60.64-5.63.05-15.26-1.83-13.33,6.94,1.18,5.38,9.25,3.09,13.33,3.54-1.3,31.67-28.98,59.34-60.64,60.64-.05-5.63,1.83-15.26-6.94-13.33-5.38,1.18-3.09,9.25-3.54,13.33-31.67-1.3-59.34-28.98-60.64-60.64,5.75-.32,14.21,2.23,13.44-6.3-.53-5.86-9.29-3.9-13.44-4.18,1.36-31.73,28.91-59.08,60.64-60.64ZM226.89,197.96c-1.43-1.43-4.92-2.3-6.49-.54l-21.02,20.95c-7.84-2.4-16.12-1.31-20.82,6.08-9.37,14.74,9.06,31.85,23.1,20.85,6.55-5.13,6.93-12.29,4.82-19.83l20.95-21.02c1.76-1.57.89-5.06-.54-6.49Z"/>
+  <path d="M226.89,197.96c1.43,1.43,2.3,4.92.54,6.49l-20.95,21.02c2.11,7.54,1.73,14.7-4.82,19.83-14.04,10.99-32.47-6.12-23.1-20.85,4.69-7.39,12.98-8.48,20.82-6.08l21.02-20.95c1.57-1.76,5.06-.89,6.49.54ZM190.21,227.84c-4.65,1.02-4.81,8.61-.59,10,9.64,3.18,10.45-12.17.59-10Z"/>
+  <path class="st2" d="M190.21,227.84c9.86-2.17,9.06,13.18-.59,10-4.22-1.39-4.06-8.98.59-10Z"/>
+</svg></div> ${{ pum_formatted }} /{{ product.metafields.custom.unidad_de_medida_pum }}
+</div>
+
+
+
+
+
+    
+                  
+{% if product.available %}
+                  <div class="acciones">
+                    {%- if show_quantity -%}
+                        <div class="product-collection__quantity d-flex justify-content-center mb-10">
+                          {% comment %}      {% render 'product-get-quantity' with quantity_type: 5, product_form_id: product_form_id %} {% endcomment %}
+                          {% render 'quantity-limiter', product: product, quantity_type: 1 %}
+                        </div>
+                    {%- endif -%}
+                    {%- if show_button_add_to_cart or show_button_add_to_wishlist or show_button_add_to_compare or show_button_quick_view -%}
+                        <div class="product-collection__buttons d-flex flex-column flex-lg-row align-items-lg-center flex-wrap{% if show_button_add_to_cart %} {% endif %}">
+                            {%- if show_button_add_to_cart -%}
+                                <div class="product-collection__button-add-to-cart mb-10">
+                                    {% include 'product-get-button-cart' %}
+                                </div>
+                    {%- endif -%}
+
+                        </div>
+{% endif %}
+                          
+                            {%- if show_button_add_to_wishlist or show_button_add_to_compare or show_button_quick_view -%}
+                                <div class="product-collection__buttons-section d-flex{% if show_button_add_to_wishlist != true and show_button_add_to_compare != true %} d-lg-none{% endif %}{% if show_button_add_to_cart %} px-lg-10{% endif %}">
+                                    {%- if show_button_add_to_wishlist -%}
+                                        <div class="product-collection__button-add-to-wishlist mb-10">
+                                            {%- if settings.wishlist_type == 'default' -%}
+                                                {% include 'product-get-button-wishlist' %}
+                                            {%- elsif settings.wishlist_type == 'growave' and settings.app_growave_enable == true -%}
+                                                {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+                                                {%- unless the_snippet_fave_icon contains 'Liquid error' -%}
+                                                    {{ the_snippet_fave_icon }}
+                                                {%- endunless -%}
+                                            {%- endif -%}
+                                        </div>
+                                    {%- endif -%}
+                                    {%- if show_button_add_to_compare -%}
+                                        <div class="product-collection__button-add-to-compare mb-10">
+                                            {% include 'product-get-button-compare' %}
+                                        </div>
+                                    {%- endif -%}
+                                    {%- if show_button_quick_view -%}
+                                        <div class="product-collection__button-quick-view-mobile d-lg-none mb-10">
+                                            {% render 'product-get-button-quick-view' with type: 'btn-text' product_enable_tooltips: product_enable_tooltips %}
+                                        </div>
+                                    {%- endif -%}
+                                </div>
+                            {%- endif -%}
+                        </div>
+                    {%- endif -%}
+                </div>
+                {%- if show_reviews -%}
+                    <div class="product-collection__reviews">
+                        {%- if settings.reviews_type == 'default' -%}
+                            {% render 'product-get-review' with product: product hide_counter: hide_reviews_counter hide_mobile_counter: hide_reviews_mobile_counter %}
+                        {%- elsif settings.reviews_type == 'growave' and settings.app_growave_enable == true -%}
+                            {% capture the_snippet_review_avg %}{% render 'ssw-widget-avg-rate-listing', product: product %}{% endcapture %}
+                            {%- unless the_snippet_review_avg contains 'Liquid error' or product.metafields.ssw['review'].avg == 0 -%}
+                                {{ the_snippet_review_avg }}
+                            {%- endunless -%}
+                        
+                        {%- elsif settings.reviews_type == 'loox' and product.metafields.loox.num_reviews -%}
+                            <div class="mt-7">
+                                <div class="loox-rating" data-id="{{ product.id }}" data-rating="{{ product.metafields.loox.avg_rating }}" data-raters="{{ product.metafields.loox.num_reviews }}"></div>
+                            </div>
+                        
+                        {%- endif -%}
+                    </div>
+                {%- endif -%}
+            </div>
+            {%- if section.settings.view_grid_list_design == '2' -%}
+                <div class="product-collection__list-v2-content d-none flex-column align-items-end pl-10 ml-auto border-left">
+                    {%- if show_price -%}
+                        <div class="product-collection__list-v2-price">
+                            {% include 'product-get-price' %}
+                        </div>
+                    {%- endif -%}
+                    {%- if show_reviews -%}
+                        <div class="product-collection__list-v2-reviews">
+                            {%- if settings.reviews_type == 'default' -%}
+                                {% render 'product-get-review' with product: product hide_counter: false hide_mobile_counter: hide_reviews_mobile_counter %}
+                            {%- elsif settings.reviews_type == 'growave' and settings.app_growave_enable == true -%}
+                                {% capture the_snippet_review_avg %}{% render 'ssw-widget-avg-rate-listing', product: product %}{% endcapture %}
+                                {%- unless the_snippet_review_avg contains 'Liquid error' or product.metafields.ssw['review'].avg == 0 -%}
+                                    {{ the_snippet_review_avg }}
+                                {%- endunless -%}
+                            
+                            {%- elsif settings.reviews_type == 'loox' and product.metafields.loox.num_reviews -%}
+                                <div class="mt-7">
+                                    <div class="loox-rating" data-id="{{ product.id }}" data-rating="{{ product.metafields.loox.avg_rating }}" data-raters="{{ product.metafields.loox.num_reviews }}"></div>
+                                </div>
+                            
+                            {%- endif -%}
+                        </div>
+                    {%- endif -%}
+                    {%- if show_list_quantity -%}
+                        <div class="product-collection__list-v2-quantity mt-20">
+                            {% render 'product-get-quantity' with quantity_type: 2, product_form_id: product_form_id %}
+                        </div>
+                    {%- endif -%}
+                    {%- if show_button_add_to_cart -%}
+                        <div class="product-collection__list-v2-button-add-to-cart mt-25">
+                            {% include 'product-get-button-cart' with button_colorize: 2 %}
+                        </div>
+                    {%- endif -%}
+                    {%- if show_button_add_to_wishlist or show_button_add_to_compare -%}
+                        <div class="product-collection__list-v2-buttons d-flex flex-column align-items-end pt-3 mt-15">
+                            {%- if show_button_add_to_wishlist -%}
+                                <div class="product-collection__list-v2-button-add-to-wishlist">
+                                    {%- if settings.wishlist_type == 'default' -%}
+                                        {% include 'product-get-button-wishlist-text' %}
+                                    {%- elsif settings.wishlist_type == 'growave' and settings.app_growave_enable == true -%}
+                                        {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+                                        {%- unless the_snippet_fave_icon contains 'Liquid error' -%}
+                                            {{ the_snippet_fave_icon }}
+                                        {%- endunless -%}
+                                    {%- endif -%}
+                                </div>
+                            {%- endif -%}
+                            {%- if show_button_add_to_compare -%}
+                                <div class="product-collection__list-v2-button-add-to-compare">
+                                    {% include 'product-get-button-compare-text' %}
+                                </div>
+                            {%- endif -%}
+                        </div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+        </div>
+    </div>
+    {%- if section.settings.view_grid_list_design == '2' -%}
+        <div class="product-collection__list-v2-border d-none mb-30 border-bottom"></div>
+    {%- endif -%}
+    {%- if template.name == 'collection' -%}
+        <script type="application/ld+json">
+        {
+            "@context": "http://schema.org/",
+            "@type": "Product",
+            "name": {{ product.title | json }},
+            "url": {{ shop.url | append: product.url | json }},
+            {%- if product.featured_media -%}
+                {%- assign media_size = product.featured_media.preview_image.width | append: 'x' -%}
+                "image": [
+                    {{ product.featured_media | img_url: media_size | prepend: "https:" | json }}
+                ],
+            {%- endif -%}
+            "description": {{ product.description | strip_html | json }},
+            {%- if current_variant.sku != blank -%}
+                "sku": {{ current_variant.sku | json }},
+            {%- endif -%}
+            "brand": {
+                "@type": "Thing",
+                "name": {{ product.vendor | json }}
+            },
+            "offers": [
+                {
+                    "@type" : "Offer",
+                    {%- if current_variant.sku != blank -%}
+                        "sku": {{ current_variant.sku | json }},
+                    {%- endif -%}
+                    "availability" : "http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}",
+                    "price" : {{ current_variant.price | divided_by: 100.00 | json }},
+                    "priceCurrency" : {{ cart.currency.iso_code | json }},
+                    "url" : {{ shop.url | append: current_variant.url | json }}
+                }
+            ]
+        }
+        </script>
+    {%- endif -%}
+</product-item>
+{% include 'product-res-variables-clear' %}

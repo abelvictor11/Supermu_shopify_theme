@@ -1,0 +1,310 @@
+{% comment %}
+  Category Carousel Section
+  This section displays a carousel of categories with a title and circular image.
+{% endcomment %}
+
+<section class="category-carousel-section" data-section-id="{{ section.id }}">
+  <div class="swiper category-swiper" id="category-swiper-{{ section.id }}">
+    <!-- Skeleton loader -->
+    <div class="category-skeleton">
+      {% for i in (1..12) %}
+        <div class="skeleton-category-item">
+          <div class="skeleton-category-image skeleton-loader"></div>
+          <div class="skeleton-category-name skeleton-loader"></div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide category-item">
+          <a href="{% if block.settings.category_url != blank %}{{ block.settings.category_url }}{% else %}{{ block.settings.category_collection.url }}{% endif %}" class="category-link">
+            <div class="category-image">
+              <img 
+                src="{{ block.settings.category_image | img_url: '300x300', crop: 'center' }}" 
+                alt="{{ block.settings.category_name }}" 
+                class="circular-image"
+                onload="this.closest('.category-item').classList.add('loaded')"
+              >
+            </div>
+            <p class="category-name">{{ block.settings.category_name }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="swiper-button-next" id="category-swiper-next-{{ section.id }}"></div>
+    <div class="swiper-button-prev" id="category-swiper-prev-{{ section.id }}"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Category Carousel",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Título de la Sección",
+      "default": "Categorías Destacadas"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Categoría",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "category_image",
+          "label": "Imagen de la Categoría"
+        },
+        {
+          "type": "text",
+          "id": "category_name",
+          "label": "Nombre de la Categoría",
+          "default": "Nombre de la Categoría"
+        },
+        {
+          "type": "url",
+          "id": "category_url",
+          "label": "URL Personalizada"
+        },
+        {
+          "type": "collection",
+          "id": "category_collection",
+          "label": "Colección"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Carousel",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.category-carousel-section {
+    position: relative;
+    text-align: center;
+    padding: 15px;
+    max-width: 1770px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Skeleton Styles */
+.category-skeleton {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+    padding: 20px 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    background: #fff;
+    transition: opacity 0.3s ease;
+}
+
+.skeleton-category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.skeleton-category-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.skeleton-category-name {
+    width: 80px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -468px 0 }
+    100% { background-position: 468px 0 }
+}
+
+.skeleton-loader {
+    background: #f0f0f0;
+    background-image: linear-gradient(
+        to right,
+        #f0f0f0 0%,
+        #e0e0e0 20%,
+        #f0f0f0 40%,
+        #f0f0f0 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    animation: shimmer 1.5s infinite linear;
+}
+
+/* Hide skeleton when content is loaded */
+.category-item.loaded + .category-skeleton {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Existing styles */
+.category-swiper {
+    padding: 20px 40px;
+}
+
+.category-item {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.category-item.loaded {
+    opacity: 1;
+}
+
+.category-link {
+    text-decoration: none;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.category-link:hover {
+    transform: translateY(-5px);
+}
+
+.category-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.circular-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Navigation buttons */
+.category-carousel-section .swiper-button-next,
+.category-carousel-section .swiper-button-prev {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.category-carousel-section .swiper-button-next:after,
+.category-carousel-section .swiper-button-prev:after {
+    font-size: 18px;
+    color: #333;
+}
+
+.category-carousel-section .swiper-button-next {
+    right: -5px;
+}
+
+.category-carousel-section .swiper-button-prev {
+    left: -5px;
+}
+
+.category-name {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #333;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #333;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 24px;
+}
+
+/* Responsive Skeleton Grid */
+@media (max-width: 1024px) {
+    .category-skeleton {
+        grid-template-columns: repeat(8, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .category-skeleton {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-skeleton {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .skeleton-category-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .skeleton-category-name {
+        width: 60px;
+        height: 14px;
+    }
+}
+</style>
+

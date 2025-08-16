@@ -1,0 +1,198 @@
+<section class="custom-triple-banner">
+    <div class="triple-banner-grid">
+       {%- for block in section.blocks -%}
+       {% case block.type %}
+       {%- when 'feature_small' -%}
+       <a href="{{ block.settings.link | default: '#' }}" class="feature-item feature-small position-{{ block.settings.position }}"
+          style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+          <div class="grid-content">
+            <p>{{ block.settings.subtitle }}</p>
+             <h2>{{ block.settings.title }}</h2>
+             {%- if block.settings.cta_text != blank -%}
+               <div class="cta-button">
+                 {{ block.settings.cta_text }}
+               </div>
+             {%- endif -%}
+          </div>
+       </a>
+
+       {%- when 'feature_large' -%}
+       <a href="{{ block.settings.link | default: '#' }}" class="feature-item feature-large position-{{ block.settings.position }}"
+          style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+          <div class="grid-content">
+            <p>{{ block.settings.subtitle }}</p>
+             <h2>{{ block.settings.title }}</h2>
+             {%- if block.settings.cta_text != blank -%}
+               <div class="cta-button">
+                 {{ block.settings.cta_text }}
+               </div>
+             {%- endif -%}
+          </div>
+       </a>
+       {%- endcase -%}
+       {%- endfor -%}
+    </div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature Banners Flexible",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "feature_small",
+      "name": "Feature 25%",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Posición",
+          "options": [
+            {
+              "value": "left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "center",
+              "label": "Centro"
+            },
+            {
+              "value": "right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "left"
+        },
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Ver más" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    },
+    {
+      "type": "feature_large",
+      "name": "Feature 50%",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Posición",
+          "options": [
+            {
+              "value": "left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "center",
+              "label": "Centro"
+            },
+            {
+              "value": "right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "right"
+        },
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título", "default": "Destacado" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón CTA", "default": "Ver más" },
+        { "type": "url", "id": "link", "label": "Enlace del CTA" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature Banners Flexible",
+      "category": "Custom",
+      "blocks": [
+        { "type": "feature_small" },
+        { "type": "feature_small" },
+        { "type": "feature_large" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.custom-triple-banner {
+  padding: 15px;
+  max-width: 1770px;
+  margin: 0 auto;
+}
+.triple-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+.feature-item {
+  position: relative;
+  width: 100%;
+  padding-top: 40%;
+  background-size: cover !important;
+  background-position: center;
+  border-radius: 10px;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.feature-item .grid-content {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  border-radius: 10px;
+}
+.feature-large {
+  aspect-ratio: 2 / 1;
+  grid-column: span 2;
+}
+.feature-small {
+  aspect-ratio: 1 / 1;
+  grid-column: span 1;
+}
+.cta-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* Posicionamiento flexible */
+.feature-item.position-left {
+  order: 1;
+}
+.feature-item.position-center {
+  order: 2;
+}
+.feature-item.position-right {
+  order: 3;
+}
+
+@media screen and (max-width: 679px) {
+  .triple-banner-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .feature-large {
+    grid-column: 1 / -1;
+  }
+  .feature-small {
+    grid-column: span 1;
+  }
+}
+</style>

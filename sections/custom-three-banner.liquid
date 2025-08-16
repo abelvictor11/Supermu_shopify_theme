@@ -1,0 +1,160 @@
+<section class="custom-three-banner">
+   <div class="three-banner-grid">
+      {%- for block in section.blocks -%}
+      {% case block.type %}
+      {%- when 'banner_one' -%}
+      <a href="{{ block.settings.link | default: '#' }}" class="banner-item banner-small"
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         <div class="grid-content">
+           <p>{{ block.settings.subtitle }}</p>
+            <h2>{{ block.settings.title }}</h2>
+            {%- if block.settings.cta_text != blank -%}
+              <div class="cta-button">
+                {{ block.settings.cta_text }}
+              </div>
+            {%- endif -%}
+         </div>
+      </a>
+
+      {%- when 'banner_two' -%}
+      <a href="{{ block.settings.link | default: '#' }}" class="banner-item banner-small"
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         <div class="grid-content">
+           <p>{{ block.settings.subtitle }}</p>
+            <h2>{{ block.settings.title }}</h2>
+            {%- if block.settings.cta_text != blank -%}
+              <div class="cta-button">
+                {{ block.settings.cta_text }}
+              </div>
+            {%- endif -%}
+         </div>
+      </a>
+
+      {%- when 'banner_three' -%}
+      <a href="{{ block.settings.link | default: '#' }}" class="banner-item banner-medium"
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         <div class="grid-content">
+           <p>{{ block.settings.subtitle }}</p>
+            <h2>{{ block.settings.title }}</h2>
+            {%- if block.settings.cta_text != blank -%}
+              <div class="cta-button">
+                {{ block.settings.cta_text }}
+              </div>
+            {%- endif -%}
+         </div>
+      </a>
+      {%- endcase -%}
+      {%- endfor -%}
+   </div>
+</section>
+
+{% schema %}
+{
+  "name": "Three Banners 33-33-33",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "banner_one",
+      "name": "Banner 1 (33%)",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Ver más" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    },
+    {
+      "type": "banner_two",
+      "name": "Banner 2 (33%)",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Ver más" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    },
+    {
+      "type": "banner_three",
+      "name": "Banner 3 (33%)",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón CTA", "default": "Ver más" },
+        { "type": "url", "id": "link", "label": "Enlace del CTA" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Three Banners 33-33-33",
+      "category": "Custom",
+      "blocks": [
+        { "type": "banner_one" },
+        { "type": "banner_two" },
+        { "type": "banner_three" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.custom-three-banner {
+  padding: 15px;
+  max-width: 1770px;
+  margin: 0 auto;
+}
+
+.three-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Usamos fracciones para igualar el ancho de las columnas */
+  gap: 10px;
+  align-items: stretch;
+}
+
+.banner-item {
+  position: relative;
+  width: 100%;
+  padding-top: 58%; /* Relación de aspecto 16:9 (ajusta según la relación de aspecto de tus imágenes) */
+  background-size: cover !important;
+  background-position: center;
+  border-radius: 10px;
+  overflow: hidden; /* Asegura que la imagen no se desborde del contenedor */
+  background-repeat: no-repeat !important;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.banner-item .grid-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.cta-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+}
+</style>

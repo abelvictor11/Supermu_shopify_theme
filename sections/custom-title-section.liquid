@@ -1,0 +1,60 @@
+{% comment %}
+  Custom Title Section
+  This section includes a dynamic title (h2) and subtitle (h3).
+{% endcomment %}
+
+<section class="custom-title-section">
+  <div class="custom-title-container">
+    <h2>{{ section.settings.title }}</h2>
+    <h3>{{ section.settings.subtitle }}</h3>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Title Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Título Principal"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Este es un subtítulo"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Title Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.custom-title-section {
+    padding: 20px 20px 20px;
+    text-align: left;
+      max-width: 1320px;
+    margin: 0 auto;
+}
+
+.custom-title-container h2 {
+    font-size: 2em;
+    margin-bottom: 0;
+    color: #000;
+    line-height: 1;
+}
+
+.custom-title-container h3 {
+    font-size: .9rem;
+    color: #74767c;
+  font-weight: 500 !important;
+      margin: 0;
+}
+</style>

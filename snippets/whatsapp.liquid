@@ -1,0 +1,58 @@
+<div class="floating-whatsapp-button">
+  <a href="https://api.whatsapp.com/send?phone=573102186000&amp;text=Hola Ahora Somos SuperMU, Cuéntanos de qué manera podemos ayudarte!" 
+     target="_blank" 
+     rel="noopener noreferrer" 
+     aria-label="Contáctanos por WhatsApp">
+    <div class="pulse-effect">
+      <svg viewBox="0 0 69.45 69.45" xmlns="http://www.w3.org/2000/svg" width="60" height="60">
+        <g data-name="Layer 2">
+          <g data-name="Layer 1">
+            <circle cx="34.72" cy="34.72" r="34.72" fill="#68d549"></circle>
+            <path d="M53.8 33.76a18.74 18.74 0 0 0-37.45-.34v.81A18.49 18.49 0 0 0 19 43.84l-3.37 10L26 50.52a18.77 18.77 0 0 0 27.81-16.29c0-.16 0-.31-.01-.47ZM35.07 49.87a15.71 15.71 0 0 1-8.67-2.59l-6 1.93 2-5.81a15.53 15.53 0 0 1-3-9.17c0-.51 0-1 .08-1.52a15.76 15.76 0 0 1 31.38.3c0 .41.06.81.06 1.22a15.71 15.71 0 0 1-15.85 15.64Z" fill="#ffffff" fill-rule="evenodd"></path>
+            <path d="M43.66 38c-.47-.23-2.72-1.34-3.14-1.49s-.73-.22-1 .23-1.23 1.48-1.52 1.77-.54.35-1 .12a12.36 12.36 0 0 1-3.7-2.27 13.37 13.37 0 0 1-2.55-3.15c-.26-.45 0-.7.2-.93s.46-.53.69-.79a2.65 2.65 0 0 0 .17-.22 4 4 0 0 0 .29-.55.83.83 0 0 0 0-.8c-.12-.22-1-2.47-1.43-3.38s-.76-.76-1-.76h-.88a1.68 1.68 0 0 0-1.23.57 5.12 5.12 0 0 0-1.6 3.81 5.45 5.45 0 0 0 .24 1.55 10.11 10.11 0 0 0 1.64 3.16c.22.3 3.17 5.05 7.84 6.89s4.68 1.21 5.52 1.13a4.56 4.56 0 0 0 3.09-2.17 3.82 3.82 0 0 0 .28-2.17c-.15-.22-.45-.33-.91-.55Z" fill="#ffffff" fill-rule="evenodd"></path>
+          </g>
+        </g>      
+      </svg>
+    </div>
+  </a>
+</div>
+<style>
+  /* Estilos del botón flotante */
+.floating-whatsapp-button {
+    position: fixed;
+    bottom: 35px;
+    right: 15px;
+    z-index: 1000;
+    font-size: 0; /* Oculta texto no necesario para diseño */
+}
+.floating-whatsapp-button a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    text-decoration: none;
+}
+
+/* Efecto de pulso */
+.pulse-effect {
+    position: relative;
+    display: inline-flex;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    animation: pulse-animation 2s infinite;
+    background-color: #68d549;
+}
+  @keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0 rgba(104, 213, 73, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(104, 213, 73, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(104, 213, 73, 0);
+    }
+}
+</style>

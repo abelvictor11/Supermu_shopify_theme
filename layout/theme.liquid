@@ -1,0 +1,286 @@
+<!doctype html>
+{%- if shop.locale == 'ar' or shop.locale == 'he' -%}
+<!--[if IE 9]> <html class="ie9 no-js supports-no-cookies" lang="{{ shop.locale }}" dir="rtl"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js supports-no-cookies" lang="{{ shop.locale }}" dir="rtl"> <!--<![endif]-->
+{%- else -%}
+<!--[if IE 9]> <html class="ie9 no-js supports-no-cookies" lang="{{ shop.locale }}"{% if settings.layout_enable_rtl %} dir="rtl"{% endif %}> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js supports-no-cookies" lang="{{ shop.locale }}"{% if settings.layout_enable_rtl %} dir="rtl"{% endif %}> <!--<![endif]-->
+{%- endif -%}
+
+<head>
+  {% capture get_content_for_header %}{{ content_for_header }}{% endcapture %}
+  {% include 'head' %}
+
+ <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56NBWSM9');</script>
+<!-- End Google Tag Manager -->
+  {{ 'skeleton.css' | asset_url | stylesheet_tag }}
+  {{ 'skeleton-loader.js' | asset_url | script_tag }}
+  {{ 'store-directory.css' | asset_url | stylesheet_tag }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+
+  <!-- Carousel Manager -->
+  {{ 'carousel-manager.js' | asset_url | script_tag }}
+</head>
+
+<body{% render 'layout-get-body-attributes' %}>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56NBWSM9"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+  
+{% include 'layout-get-includes-start' %}
+{%- if settings.product_show_custom_options and settings.product_enable_variants_section -%}
+  {% section 'product-variants' %}
+{%- endif -%}
+{% sections 'header-group' %}
+
+<main id="MainContent">
+  <div class="menu-overlay"></div>  
+  {%- if request.page_type == 'page' or request.page_type == 'product' or request.page_type == 'cart' or request.page_type == 'list-collections' or request.page_type == 'article' or request.page_type == 'blog' -%}
+    {% include 'breadcrumbs' %}
+  {%- elsif request.page_type == 'collection' -%}
+    <div id="CollectionBreadcrumbs">
+      {% include 'breadcrumbs' %}
+    </div>
+  {%- endif -%}
+  {{ content_for_layout }}
+</main>
+{% sections 'footer-group' %}
+{% include 'popups' %}
+{% include 'footbar' %}
+
+{%- if settings.presentation_enable or template == 'product' and settings.product_info_page_show_usage_info_sidebar -%}
+  {% include 'fixed-sidebar' %}
+{%- endif -%}
+
+{% include 'templates' %}
+{% include 'layout-get-includes-end' %}
+
+<!-- START APPS -->
+
+{%- if settings.app_klarna_enable -%}
+  <!-- start Klarna app -->
+  <script>
+    window.KlarnaThemeGlobals = {};
+    {% case template.name %}
+      {% when "product" %}
+        {% if product.first_available_variant and product.first_available_variant.price %}
+          window.KlarnaThemeGlobals.data_purchase_amount = {{ product.first_available_variant.price }};
+        {% else %}
+          console.error('Klarna: Missing product price.');
+        {% endif %}
+        window.KlarnaThemeGlobals.productVariants = {{ product.variants | json }};
+        window.KlarnaThemeGlobals.documentCopy = document.cloneNode(true);
+      {% when "cart" %}
+        {% if cart.total_price %}
+          window.KlarnaThemeGlobals.data_purchase_amount = {{ cart.total_price }};
+        {% else %}
+          console.error('Klarna: Missing cart total price.');
+        {% endif %}
+        window.KlarnaThemeGlobals.documentCopy = document.cloneNode(true);
+    {% endcase %}
+  </script>
+  <!-- end Klarna app -->
+{%- endif -%}
+
+{%- if settings.app_growave_enable -%}
+  <!-- start Growave app -->
+  {% capture the_snippet_content %}{% render 'socialshopwave-helper' %}{% endcapture %}
+  {%- unless the_snippet_content contains 'Liquid error' -%}
+    {{ the_snippet_content }}
+  {%- else -%}
+    <script>console.error('Growave: Failed to load socialshopwave-helper snippet.');</script>
+  {%- endunless -%}
+  <script>
+    sswRun(function(){
+      var intervalId = setInterval(function() {
+        if(ssw('.ssw-stars.ssw-stars-large').length) {
+          ssw('.product-page__tabs .tabs__btn[data-tab="reviews"]').click();
+          ssw('html, body').animate({
+            scrollTop: ssw("#ssw-widget-recommends-html").offset().top - 200
+          }, 100);
+        }
+      },1000);
+    });
+  </script>
+  <!-- end Growave app -->
+{%- endif -%}
+
+
+{% render 'whatsapp' %}
+{% render 'ageVerificationModal' %}
+  
+{%- if settings.reviews_type == 'loox' -%}
+  {{ shop.metafields.loox["global_html_body"] }}
+  <style>
+    .loox-rating .loox-icon {
+      font-size: 1.22em;
+    }
+    .loox-rating .loox-icon:not(:last-child) {
+      margin-right: 5px;
+    }
+    .loox-rating span {
+      margin-left: 2px;
+      vertical-align: 2px;
+    }
+  </style>
+{%- endif -%}
+
+<!-- END APPS -->
+<script>window.performance.mark('theme:DOM:loaded');</script>
+{% comment %}
+{% render 'js-api' %}
+{% endcomment %}
+
+{% comment %}
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+   {% endcomment %}
+
+{% comment %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Esperar a que el carrito esté cargado (ajustar el selector según tu tema)
+  const cartTotalElement = document.querySelector('.cart-total, .subtotal, .cart__subtotal .mb-0'); // Ajusta este selector
+  
+  if (cartTotalElement) {
+    // Extraer el valor numérico del total (eliminar símbolos y separadores)
+    const totalText = cartTotalElement.textContent || cartTotalElement.innerText;
+    const totalValue = parseFloat(totalText.replace(/[^\d.,]/g, '').replace(',', '.'));
+    
+    // Verificar si el total es menor a 40,000
+    if (totalValue < 40000) {
+      // Crear el mensaje de alerta
+      const alertMessage = document.createElement('div');
+      alertMessage.style.padding = '15px';
+      alertMessage.style.margin = '15px 0';
+      alertMessage.style.backgroundColor = '#fff3cd';
+      alertMessage.style.border = '1px solid #ffeeba';
+      alertMessage.style.borderRadius = '4px';
+      alertMessage.style.color = '#856404';
+      alertMessage.innerHTML = '⚠️ El valor mínimo de compra es de $40,000. Agrega más productos para completar tu pedido.';
+      
+      // Insertar el mensaje cerca del total (ajustar según tu estructura HTML)
+      cartTotalElement.parentNode.insertBefore(alertMessage, cartTotalElement.nextSibling);
+      
+      // Opcional: también puedes usar un alert() tradicional
+      // alert('El valor mínimo de compra es de $40,000');
+    }
+  }
+});
+</script> 
+{% endcomment %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const MINIMUM_AMOUNT = 40000; // $40.000 COP
+  const ALERT_CLASS = 'min-cart-alert';
+  const CART_TOTAL_SELECTOR = '.cart__subtotal h3.mb-0';
+
+  // Función mejorada para formato colombiano
+  function getCurrentCartTotal() {
+    const priceElement = document.querySelector(CART_TOTAL_SELECTOR);
+    if (!priceElement) return null;
+    
+    const priceText = priceElement.textContent.trim();
+    // Formato colombiano: $41.512 → 41512
+    const numericValue = parseFloat(
+      priceText.replace(/[^\d,.]/g, '')
+        .replace(/\./g, '') // Elimina puntos de miles
+        .replace(',', '.') // Convierte comas decimales
+    );
+    
+    return isNaN(numericValue) ? null : numericValue;
+  }
+
+  function showAlert(currentTotal) {
+    const missingAmount = MINIMUM_AMOUNT - currentTotal;
+    
+    const alertHTML = `
+      <div class="${ALERT_CLASS}" style="
+        padding: 12px 15px;
+        margin: 15px 0;
+        background: #FFF5F5;
+        border-left: 3px solid #FF0000;
+        border-radius: 0 4px 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      ">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF0000">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <strong style="color: #FF0000;">¡Faltan $${missingAmount.toLocaleString('es-CO')} COP!</strong>
+          <div style="font-size: 0.9em; margin-top: 4px;">
+            El mínimo es $${MINIMUM_AMOUNT.toLocaleString('es-CO')} COP • Tu total: $${currentTotal.toLocaleString('es-CO')} COP
+          </div>
+        </div>
+      </div>
+    `;
+    
+    const cartSubtotal = document.querySelector('.cart__subtotal');
+    if (cartSubtotal) {
+      // Eliminar alerta anterior si existe
+      const existingAlert = document.querySelector(`.${ALERT_CLASS}`);
+      if (existingAlert) existingAlert.remove();
+      
+      // Insertar después del subtotal
+      cartSubtotal.insertAdjacentHTML('afterend', alertHTML);
+    }
+  }
+
+  // Función principal de verificación
+  function checkCartTotal() {
+    const currentTotal = getCurrentCartTotal();
+    console.log('Total calculado:', currentTotal);
+    
+    if (currentTotal !== null && currentTotal < MINIMUM_AMOUNT) {
+      console.log('Mostrando alerta...');
+      showAlert(currentTotal);
+    } else {
+      console.log('Ocultando alerta...');
+      const existingAlert = document.querySelector(`.${ALERT_CLASS}`);
+      if (existingAlert) existingAlert.remove();
+    }
+  }
+
+  // Observador para cambios dinámicos
+  const observer = new MutationObserver(checkCartTotal);
+  const priceElement = document.querySelector(CART_TOTAL_SELECTOR);
+  
+  if (priceElement) {
+    observer.observe(priceElement, {
+      characterData: true,
+      subtree: true,
+      childList: true
+    });
+    
+    // Verificación inicial
+    checkCartTotal();
+  }
+
+  // Eventos para actualizaciones AJAX
+  document.addEventListener('ajaxComplete', checkCartTotal);
+  document.addEventListener('cart:updated', function() {
+    setTimeout(checkCartTotal, 300);
+  });
+
+  // Verificación periódica como respaldo
+  const checkInterval = setInterval(checkCartTotal, 2000);
+});
+</script>
+</body>
+</html>

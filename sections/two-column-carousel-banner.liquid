@@ -1,0 +1,335 @@
+{% comment %}
+  Two Column Carousel and Banner Section with Skeleton Loaders
+{% endcomment %}
+
+<div class="two-column-carousel-banner {% unless section.settings.collection != blank and section.settings.banner_image != blank %}section-loading{% endunless %}" id="section-{{ section.id }}">
+  <div class="container-fluid">
+    <div class="row">
+      {%- if section.settings.column_order == 'carousel_first' -%}
+        <!-- Columna del Carrusel -->
+        <div class="col-md-6 col-xs-12 col-sm-12">
+          <carousel-products class="d-block" data-section-id="{{ section.id }}" data-section-type="carousel-products">
+            <div class="overflow-hidden-false">
+              <div class="carousel carousel-products position-relative">
+                <!-- Skeleton para el título -->
+                <div class="carousel__head row mb-25 skeleton-loading">
+                  <div class="skeleton-loader skeleton-title"></div>
+                </div>
+                
+                <!-- Skeleton para el carrusel -->
+                <div class="carousel__slider_wrapper position-relative skeleton-loading">
+                  <div class="carousel__slider position-relative">
+                    <div class="carousel__products overflow-hidden">
+                      <div class="carousel__slick row">
+                        {%- for i in (1..3) -%}
+                          <div class="carousel__item col-auto">
+                            <div class="skeleton-product">
+                              <div class="skeleton-loader skeleton-product-image"></div>
+                              <div class="skeleton-loader skeleton-product-text"></div>
+                              <div class="skeleton-loader skeleton-product-text short"></div>
+                            </div>
+                          </div>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Contenido real del carrusel (oculto inicialmente) -->
+                <div class="carousel__head row mb-25 loaded-content" style="display: none;">
+                  <h2 class="h4 carousel__title home-section-title col-auto mw-100 mb-10 text-left">
+                    {{ section.settings.carousel_title }}
+                  </h2>
+                </div>
+                
+                <div class="carousel__slider_wrapper position-relative loaded-content" style="display: none;">
+                  <div class="carousel__slider position-relative js-slider-tracking"
+                       data-js-carousel
+                       data-autoplay="{{ section.settings.autoplay }}"
+                       data-speed="{{ section.settings.speed | times: 1000 }}"
+                       data-count="3"
+                       data-infinite="{{ section.settings.infinite }}"
+                       data-arrows="{{ section.settings.arrows }}"
+                       data-bullets="{{ section.settings.bullets }}">
+                    {%- if section.settings.arrows -%}
+                      <div class="carousel__prev-placeholder position-absolute cursor-pointer" data-js-carousel-prev></div>
+                      <div class="carousel__prev position-absolute pointer-events-none" data-js-carousel-arrow><i>{% render 'icon-theme-006' %}</i></div>
+                    {%- endif -%}
+                    <div class="carousel__products overflow-hidden">
+                      <div class="carousel__slick row" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="3" data-async-ajax-loading="false">
+                        {%- for product in collections[section.settings.collection].products limit: 6 -%}
+                          <div class="carousel__item col-auto">
+                            {%- assign disable_lazyload = carousel_products_image_lazyload_disable -%}
+                            {% include 'product-collection' with url_without_collection: true %}
+                          </div>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                    {%- if section.settings.arrows -%}
+                      <div class="carousel__next-placeholder position-absolute cursor-pointer" data-js-carousel-next></div>
+                      <div class="carousel__next position-absolute pointer-events-none" data-js-carousel-arrow><i>{% render 'icon-theme-007' %}</i></div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </carousel-products>
+        </div>
+        
+        <!-- Columna del Banner -->
+        <div class="col-md-6 col-xs-12 col-sm-12">
+          <!-- Skeleton para el banner -->
+          <div class="skeleton-loader skeleton-banner" {% if section.settings.banner_image != blank %}style="display: none;"{% endif %}></div>
+          
+          <!-- Banner real -->
+          <a href="{{ section.settings.banner_link | default: '#' }}" class="grid-item grid-item-banner_large loaded-content"
+             style="{% if section.settings.banner_image != blank %}background: {{ section.settings.banner_bg_color }}; background-image: url('{{ section.settings.banner_image | img_url: 'master' }}');{% else %}display: none;{% endif %}">
+            <div class="grid-content">
+              <p>{{ section.settings.banner_subtitle }}</p>
+              <h2>{{ section.settings.banner_title }}</h2>
+              {%- if section.settings.banner_cta_text != blank -%}
+                <div class="cta-button">
+                  {{ section.settings.banner_cta_text }}
+                </div>
+              {%- endif -%}
+            </div>
+          </a>
+        </div>
+      {%- else -%}
+        <!-- Versión con el banner primero (misma lógica) -->
+        <!-- ... (repetir la misma estructura para el orden inverso) ... -->
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  theme.AssetsLoader.require('scripts', 'carousel_products');
+</script>
+
+{% schema %}
+{
+  "name": "Carousel & Banner",
+  "settings": [
+    {
+      "type": "select",
+      "id": "column_order",
+      "label": "Orden de Columnas",
+      "options": [
+        {
+          "value": "carousel_first",
+          "label": "Carrusel Primero"
+        },
+        {
+          "value": "banner_first",
+          "label": "Banner Primero"
+        }
+      ],
+      "default": "carousel_first"
+    },
+    {
+      "type": "text",
+      "id": "carousel_title",
+      "label": "Título del Carrusel",
+      "default": "Productos Destacados"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección de Productos"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Velocidad de Autoplay (segundos)",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "infinite",
+      "label": "Carrusel Infinito",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "arrows",
+      "label": "Mostrar Flechas",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "bullets",
+      "label": "Mostrar Puntos de Navegación",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Imagen de Fondo del Banner"
+    },
+    {
+      "type": "color",
+      "id": "banner_bg_color",
+      "label": "Color de Fondo del Banner",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "text",
+      "id": "banner_title",
+      "label": "Título del Banner",
+      "default": "Título del Banner"
+    },
+    {
+      "type": "text",
+      "id": "banner_subtitle",
+      "label": "Subtítulo del Banner",
+      "default": "Subtítulo del Banner"
+    },
+    {
+      "type": "text",
+      "id": "banner_cta_text",
+      "label": "Texto del Botón CTA",
+      "default": "Comprar Ahora"
+    },
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Enlace del Botón CTA"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carousel & Banner",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.two-column-carousel-banner {
+    padding: 40px 0;
+      max-width: 1770px;
+    margin: 0 auto;
+}
+.two-column-carousel-banner .row{
+align-items: center;
+  }
+.two-column-carousel-banner .grid-item-banner_large {
+    position: relative;
+    padding: 20px;
+    color: #fff;
+    background-size: contain !important;
+    background-position: center;
+    border-radius: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+  background-repeat: no-repeat !important;
+      aspect-ratio: 2 / 1;
+}
+
+.grid-content {
+    padding: 15px;
+    border-radius: 5px;
+}
+.carousel__head h2 {
+    font-size: 2em;
+    margin-bottom: 0;
+    color: #000;
+    line-height: 1;
+    font-weight: 900;
+  font-family: Bogle, Helvetica Neue, Helvetica, Arial;
+}
+</style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Función para inicializar la sección
+  function initSection() {
+    const section = document.getElementById('section-{{ section.id }}');
+    if (!section) return;
+    
+    // Mostrar contenido real
+    const loadedContents = section.querySelectorAll('.loaded-content');
+    loadedContents.forEach(content => {
+      content.style.display = '';
+    });
+    
+    // Ocultar skeletons
+    section.classList.remove('section-loading');
+    section.classList.add('section-loaded');
+    
+    // Inicializar el carrusel
+    const carousel = section.querySelector('[data-js-carousel]');
+    if (carousel && typeof $.fn.slick === 'function') {
+      $(carousel).slick({
+        infinite: carousel.dataset.infinite === 'true',
+        arrows: carousel.dataset.arrows === 'true',
+        dots: carousel.dataset.bullets === 'true',
+        autoplay: carousel.dataset.autoplay === 'true',
+        autoplaySpeed: parseInt(carousel.dataset.speed) || 3000,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        responsive: [
+          {
+            breakpoint: 1024,
+            settings: {
+              slidesToShow: 2
+            }
+          },
+          {
+            breakpoint: 767,
+            settings: {
+              slidesToShow: 1,
+              arrows: false,
+              dots: true
+            }
+          }
+        ]
+      });
+    }
+  }
+  
+  // Inicializar cuando las imágenes estén cargadas
+  const images = document.querySelectorAll('#section-{{ section.id }} img');
+  if (images.length > 0) {
+    let loadedImages = 0;
+    
+    images.forEach(img => {
+      if (img.complete) {
+        loadedImages++;
+      } else {
+        img.addEventListener('load', () => {
+          loadedImages++;
+          if (loadedImages === images.length) {
+            initSection();
+          }
+        });
+      }
+    });
+    
+    // Si todas las imágenes ya estaban cargadas
+    if (loadedImages === images.length) {
+      initSection();
+    }
+  } else {
+    // Si no hay imágenes, inicializar después de un tiempo
+    setTimeout(initSection, 1000);
+  }
+});
+</script>

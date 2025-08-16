@@ -1,0 +1,298 @@
+<section class="custom-grid-banners">
+   <div class="grid-container">
+      {%- for block in section.blocks -%}
+      {% case block.type %}
+      {%- when 'banner_large' -%}
+      <div class="grid-item grid-item-banner_large"
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         <div class="grid-content">
+           <p>{{ block.settings.subtitle }}</p>
+            <h2>{{ block.settings.title }}</h2>
+            <a href="{{ block.settings.link | default: '#' }}" class="cta-button">
+            {{ block.settings.cta_text }}
+            </a>
+         </div>
+      </div>
+
+      {%- when 'banner_mid_top' -%}
+      <div class="grid-item-banner_medio">
+         <div class="grid-item grid-item-banner_mid_top"
+            style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+            <div class="grid-content">
+              <p>{{ block.settings.subtitle }}</p>
+               <h2>{{ block.settings.title }}</h2>
+               <a href="{{ block.settings.link | default: '#' }}" class="cta-button">
+               {{ block.settings.cta_text }}
+               </a>
+            </div>
+         </div>
+
+         <div class="grid-item-half">
+            {%- when 'banner_mid_half_1' -%}
+            <div class="grid-item grid-item-banner_mid_half"
+               style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+               <div class="grid-content">
+                 <p>{{ block.settings.subtitle }}</p>
+                  <h2>{{ block.settings.title }}</h2>   
+                  <a href="{{ block.settings.link | default: '#' }}" class="cta-button">
+                  {{ block.settings.cta_text }}
+                  </a>
+               </div>
+            </div>
+
+            {%- when 'banner_mid_half_2' -%}
+            <div class="grid-item grid-item-banner_mid_half"
+               style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+               <div class="grid-content">
+                 <p>{{ block.settings.subtitle }}</p>
+                  <h2>{{ block.settings.title }}</h2>
+                  <a href="{{ block.settings.link | default: '#' }}" class="cta-button">
+                  {{ block.settings.cta_text }}
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      {%- when 'banner_small' -%}
+      <div class="grid-item grid-item-banner_small"
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         <div class="grid-content">
+           <p>{{ block.settings.subtitle }}</p>
+            <h2>{{ block.settings.title }}</h2>
+            <a href="{{ block.settings.link | default: '#' }}" class="cta-button">
+            {{ block.settings.cta_text }}
+            </a>
+         </div>
+      </div>
+
+      {%- endcase -%}
+      {%- endfor -%}
+   </div>
+</section>
+  {% schema %}
+{
+  "name": "Custom Grid Banners",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "banner_large",
+      "name": "Banner Grande",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título", "default": "Título Principal" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo del Banner" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón CTA", "default": "Comprar ahora" },
+        { "type": "url", "id": "link", "label": "Enlace del CTA" }
+      ]
+    },
+    {
+      "type": "banner_mid_top",
+      "name": "Banner Medio Superior",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Comprar ahora" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    },
+    {
+      "type": "banner_mid_half_1",
+      "name": "Banner Medio 1",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Comprar ahora" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    },
+    {
+      "type": "banner_mid_half_2",
+      "name": "Banner Medio 2",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Comprar ahora" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    },
+    {
+      "type": "banner_small",
+      "name": "Banner Pequeño",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen de Fondo" },
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" },
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Texto del Botón", "default": "Comprar ahora" },
+        { "type": "url", "id": "link", "label": "Enlace" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Grid Banners",
+      "category": "Custom",
+      "blocks": [
+        { "type": "banner_large" },
+        { "type": "banner_mid_top" },
+        { "type": "banner_mid_half_1" },
+        { "type": "banner_mid_half_2" },
+        { "type": "banner_small" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+<style>
+.custom-grid-banners {
+    padding: 15px;
+    max-width: 1770px;
+    margin: 0 auto;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 41.67% 33.33% 25%; /* Anchos de columnas solicitados */
+    gap: 10px;
+    align-items: stretch; /* Asegura que todas las columnas tengan la misma altura */
+}
+
+/* Columna 1: Banner Grande (Aspecto Cuadrado 1:1) */
+.custom-grid-banners .grid-item-banner_large {
+    position: relative;
+    width: 100%;
+    padding-top: 40vh; /* Relación de aspecto 1:1 (cuadrado) */
+    background-size: cover !important;
+    background-position: center;
+    border-radius: 10px;
+}
+.grid-item-banner_large {
+    position: relative;
+    padding: 20px;
+    color: #fff;
+    background-size: cover !important;
+    background-position: center !important;
+    border-radius: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    height: 100%;
+    background-repeat: no-repeat !important;
+}
+.grid-item-banner_large .grid-content {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+/*    background: rgba(0, 0, 0, 0.5); */
+    border-radius: 10px;
+}
+
+/* Columna del Medio: Banner Medio */
+.grid-item-banner_medio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%; /* Ocupa toda la altura de la columna */
+}
+
+/* Banner Superior (Mitad de la altura) */
+.grid-item-banner_mid_top {
+    flex: 1; /* Ocupa la mitad de la altura */
+    position: relative;
+    background-size: cover !important;
+    background-position: center;
+    border-radius: 10px;
+}
+
+/* Contenedor para los dos banners inferiores (Mitad de la altura) */
+.grid-item-half {
+    flex: 1; /* Ocupa la otra mitad de la altura */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas de igual ancho */
+    gap: 10px;
+}
+
+/* Banners Inferiores (Mitad de la altura, divididos en dos columnas) */
+.grid-item-banner_mid_half {
+    position: relative;
+    background-size: cover !important;
+    background-position: center;
+    border-radius: 10px;
+}
+
+/* Estilos comunes para el contenido */
+.grid-item-banner_mid_top .grid-content,
+.grid-item-banner_mid_half .grid-content {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+/*    background: rgba(0, 0, 0, 0.5); */
+    border-radius: 10px;
+}
+
+/* Columna 3: Banner Pequeño */
+.grid-item-banner_small {
+    position: relative;
+    height: 100%; /* Ocupa toda la altura de la columna */
+    background-size: cover !important;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.grid-item-banner_small .grid-content {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+ /*   background: rgba(0, 0, 0, 0.5); */
+    border-radius: 10px;
+}
+
+/* Estilos comunes para el contenido */
+.grid-content h2,
+.grid-content p {
+    margin: 0;
+    color: #fff;
+}
+
+.cta-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: #fff;
+    color: #c00;
+    border-radius: 35px;
+    text-decoration: none;
+  width: fit-content;
+}
+</style>

@@ -1,0 +1,254 @@
+{%- assign image_format = settings.product_format_pjpg | default: null -%}
+<div>
+  <div class="js-page-cart-ajax">
+    {%- if cart.item_count > 0 -%}
+      <h1 class="h3 mt-20 mb-30 text-center">{{ 'cart.general.title' | t }}</h1>
+      <div class="cart pb-60 pb-lg-70">
+        <div class="container">
+          <form action="/cart" method="post" novalidate>
+            <div class="row">
+              <div class="col-lg-8 col-xl-9">
+                <div class="cart__items">
+                  <div class="cart__head pb-10 border-bottom">
+                    <div class="row">
+                      <div class="d-none d-sm-block col-sm-5 col-lg-4 col-xl-6">
+                        <label class="m-0">{{ 'cart.label.product' | t }}</label>
+                      </div>
+                      <div class="col-sm-7 col-lg-8 col-xl-6">
+                        <div class="row">
+                          <div class="col col-sm-4 col-lg-4">
+                            <label class="m-0">{{ 'cart.label.price' | t }}</label>
+                          </div>
+                          <div class="col col-sm-4 col-lg-4 text-center text-lg-left">
+                            <label class="m-0">{{ 'cart.label.quantity' | t }}</label>
+                          </div>
+                          <div class="col col-sm-4 col-lg-4 text-right">
+                            <label class="m-0">{{ 'cart.label.total' | t }}</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {%- for item in cart.items -%}
+                    {%- assign display_quantity = item.quantity -%}
+                    {%- if display_quantity > 3 -%}{%- assign display_quantity = 3 -%}{%- endif -%}
+
+                    {%- assign has_compare_price = false -%}
+                    {% if item.variant.compare_at_price > item.variant.price %}
+                      {% assign has_compare_price = true %}
+                    {% endif %}
+
+                    {%- assign has_cart_discount = false -%}
+                    {% if item.line_level_discount_allocations.size > 0 %}
+                      {% assign has_cart_discount = true %}
+                    {% endif %}
+
+                    <div class="py-20 border-bottom" data-line="{{ forloop.index }}">
+                      <div class="row align-items-center">
+                        <div class="col-sm-5 col-lg-4 col-xl-6 d-flex align-items-center">
+                          <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="mr-20">
+                            <i>{% render 'icon-theme-165' %}</i>
+                          </a>
+                          <div class="cart__image mr-20">
+                            {% if item.image %}
+                              <a href="{{ item.url }}">
+                                <img src="{{ item.image | img_url: '150x' }}" alt="{{ item.title }}" loading="lazy">
+                              </a>
+                            {% endif %}
+                          </div>
+                          <div>
+                            <a href="{{ item.url }}">{{ item.product.title }}</a>
+                            {%- unless item.product.has_only_default_variant -%}
+                              <p class="mb-0">{{ item.variant.title }}</p>
+                            {%- endunless -%}
+                          </div>
+                        </div>
+                        <div class="col-sm-7 col-lg-8 col-xl-6">
+                          <div class="row align-items-center">
+                            <div class="col-sm-4">
+                              {% if has_compare_price %}
+                                <span class="text-muted line-through" style="color:red">
+                                  {{ item.variant.compare_at_price | money }}
+                                </span>
+                                <span class="text-danger">
+                                  {{ item.variant.price | money }}
+                                </span>
+                              {% else %}
+                                <span>{{ item.variant.price | money }}</span>
+                              {% endif %}
+
+                              {% if has_cart_discount %}
+                                {% for discount in item.line_level_discount_allocations %}
+                                  <div class="cart-discount text-success" style="font-size:0.85em;display:block">
+                                   <strong style="color:#FF0000"> -{{ discount.amount | money }}</strong> ({{ discount.discount_application.title }})
+                                  </div>
+                                {% endfor %}
+                              {% endif %}
+                            </div>
+                            <div class="col-sm-4">
+                              <input
+                                  type="number"
+                                  name="updates[]"
+                                  value="{{ display_quantity }}"
+                                  class="form-control quantity-input"
+                                  min="1"
+                                  max="3"
+                                  onkeydown="return event.keyCode === 8 || event.keyCode === 46 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)"
+                                  oninput="this.value = Math.max(1, Math.min(3, this.value)); updateCartItem(this)"
+                                  data-line="{{ forloop.index }}"
+                                  data-price="{{ item.variant.price | money_without_currency | remove: ',' }}"
+                              >
+                            </div>
+                            <div class="col-sm-4 text-right" data-line-total="{{ forloop.index }}">
+                             <strong> {{ item.final_line_price | money }}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+                <div class="d-flex justify-content-between pt-25">
+                  <a href="/collections/all" class="btn btn--text">&larr; {{ 'cart.general.continue_shopping' | t }}</a>
+                  <button type="submit" name="update" class="btn btn--text" onclick="updateCartOnSubmit(event)">{{ 'cart.general.update' | t }}</button>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-xl-3 mt-25 mt-lg-0">
+                <aside class="cart__sidebar p-20 border">
+                  <h3 class="h5 mb-20">{{ 'cart.general.sidebar_title' | t }}</h3>
+
+                  {%- assign total_savings = 0 -%}
+                  {%- for item in cart.items -%}
+                    {%- assign item_quantity = item.quantity %}
+                    {%- if item_quantity > 3 %}{% assign item_quantity = 3 %}{% endif %}
+
+                    {% if item.variant.compare_at_price > item.variant.price %}
+                      {%- assign line_savings = item.variant.compare_at_price
+                        | minus: item.variant.price
+                        | times: item_quantity
+                      -%}
+                      {%- assign total_savings = total_savings | plus: line_savings -%}
+                    {% endif %}
+
+                    {% if item.line_level_discount_allocations.size > 0 %}
+                      {% for discount in item.line_level_discount_allocations %}
+                        {%- assign total_savings = total_savings | plus: discount.amount -%}
+                      {% endfor %}
+                    {% endif %}
+                  {%- endfor -%}
+
+                  {% if total_savings > 0 %}
+                    <div class="cart__total-discounts mb-20">
+                      <h5 class="mb-3">Ahorraste</h5>
+                      <h3 class="mb-0 text-success" style="color:#FF0000">-{{ total_savings | money }}</h3>
+                    </div>
+                  {% endif %}
+
+                  <div class="cart__subtotal mb-10">
+                    <h5 class="mb-3">{{ 'cart.general.subtotal' | t }}</h5>
+                    <h3 class="mb-0" id="cart-subtotal">
+                      {{ cart.total_price | money }}
+                    </h3>
+                  </div>
+                  <p>{{ 'cart.general.shipping_at_checkout' | t }}</p>
+                  <input
+                    type="submit"
+                    name="checkout"
+                    value="{{ 'cart.general.checkout' | t }}"
+                    class="btn btn--full btn--secondary"
+                  >
+                </aside>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="cart d-flex flex-column align-items-center py-40 py-md-100 my-100">
+        <h1 class="h3">{{ 'cart.general.empty_title' | t }}</h1>
+        <p>{{ 'cart.general.empty_paragraph' | t }}</p>
+        <a href="/collections/all" class="btn mt-20">{{ 'cart.general.empty_button' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+function updateCartItem(input) {
+    const lineIndex = input.dataset.line;
+    const price = parseFloat(input.dataset.price);
+    const quantity = Math.min(3, parseInt(input.value));
+    const lineTotal = price * quantity;
+
+    const lineTotalElement = document.querySelector(`[data-line-total="${lineIndex}"]`);
+    if(lineTotalElement) {
+        lineTotalElement.textContent = formatMoney(lineTotal);
+    }
+
+    updateCartSubtotal();
+}
+
+function updateCartSubtotal() {
+    let subtotal = 0;
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        const price = parseFloat(input.dataset.price);
+        const quantity = Math.min(3, parseInt(input.value));
+        subtotal += price * quantity;
+    });
+
+    const subtotalElement = document.getElementById('cart-subtotal');
+    if(subtotalElement) {
+        subtotalElement.textContent = formatMoney(subtotal);
+    }
+
+    updateSavings();
+}
+
+function updateSavings() {
+    let totalSavings = 0;
+    document.querySelectorAll('[data-line]').forEach(row => {
+        const comparePriceEl = row.querySelector('.text-muted.line-through');
+        const discountEls = row.querySelectorAll('.cart-discount');
+
+        const input = row.querySelector('.quantity-input');
+        const quantity = Math.min(3, parseInt(input.value));
+        const price = parseFloat(input.dataset.price);
+
+        if(comparePriceEl) {
+            const comparePrice = parseFloat(comparePriceEl.textContent.replace(/[^0-9.-]+/g,""));
+            totalSavings += (comparePrice - price) * quantity;
+        }
+
+        discountEls.forEach(el => {
+            const discountAmount = parseFloat(el.textContent.replace(/[^0-9.-]+/g,""));
+            totalSavings += discountAmount;
+        });
+    });
+
+    const savingsElement = document.querySelector('.cart__total-discounts h3');
+    if(savingsElement && totalSavings > 0) {
+        savingsElement.textContent = '-' + formatMoney(totalSavings);
+    }
+}
+
+function formatMoney(amount) {
+    return '$' + Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function updateCartOnSubmit(event) {
+    event.preventDefault();
+    updateCartSubtotal();
+    setTimeout(() => {
+        event.target.form.submit();
+    }, 300);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        if(input.value > 3) input.value = 3;
+    });
+    updateCartSubtotal();
+});
+</script>

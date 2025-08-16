@@ -1,0 +1,265 @@
+/* Skeleton Animation */
+@keyframes shimmer {
+  0% { background-position: -468px 0 }
+  100% { background-position: 468px 0 }
+}
+
+.skeleton-loader {
+  background: #f6f6f6;
+  background-image: linear-gradient(
+    to right,
+    #f6f6f6 0%,
+    #f0f0f0 20%,
+    #f6f6f6 40%,
+    #f6f6f6 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 100%;
+  position: relative;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 4px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+/* Product Collection Skeleton */
+.product-collection-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  transition: opacity 0.3s ease;
+}
+
+.product-skeleton-image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  margin-bottom: 15px;
+  background: #f6f6f6;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-skeleton-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255,255,255,0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+.product-skeleton-content {
+  flex: 1;
+}
+
+.product-skeleton-title {
+  height: 20px;
+  margin-bottom: 10px;
+  background: #f6f6f6;
+  border-radius: 4px;
+  width: 80%;
+}
+
+.product-skeleton-price {
+  height: 16px;
+  background: #f6f6f6;
+  border-radius: 4px;
+  width: 60%;
+}
+
+/* Product Loaded State */
+.product-loaded .product-collection-skeleton {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.skeleton-title {
+  width: 200px;
+  height: 30px;
+  margin-bottom: 25px;
+  margin: 0 auto;
+}
+
+.skeleton-product {
+  position: relative;
+  width: 100%;
+  margin-right: 15px;
+}
+
+.skeleton-product-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 10px;
+}
+
+.skeleton-product-text {
+  width: 80%;
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.skeleton-product-text.short {
+  width: 60%;
+}
+
+/* Estado loaded */
+.section-loaded .skeleton-loader {
+  display: none;
+}
+
+/* Añadir estas nuevas clases */
+.product-image-container {
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  width: 100%;
+}
+
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.product-image-container img {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  will-change: opacity;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-image-container img.loaded {
+  opacity: 1;
+}
+
+.carousel__slider {
+  transition: opacity 0.5s ease;
+  will-change: opacity;
+}
+
+.carousel__slider.invisible {
+  opacity: 0;
+}
+
+.carousel__slider.visible {
+  opacity: 1;
+}
+
+.content-loaded .skeleton-loader,
+.image-loaded .skeleton-loader {
+  display: none !important;
+}
+
+/* Removed header/tape skeleton blocks (unused) */
+
+/* Skeleton elements */
+.skeleton-logo {
+  width: 120px;
+  height: 40px;
+  background: #f6f6f6;
+  border-radius: 4px;
+}
+
+.skeleton-menu {
+  display: flex;
+  gap: 20px;
+}
+
+.skeleton-menu-item {
+  width: 80px;
+  height: 20px;
+  background: #f6f6f6;
+  border-radius: 4px;
+}
+
+.skeleton-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.skeleton-action {
+  width: 30px;
+  height: 30px;
+  background: #f6f6f6;
+  border-radius: 4px;
+}
+
+/* Product Skeleton */
+.skeleton-product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  margin: 0; /* Eliminar márgenes que puedan causar espacios */
+}
+
+.image-loaded .skeleton-product-image {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Asegurar que no haya espacios extra */
+.carousel__item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Eliminar cualquier espacio extra */
+.product-image-container > * {
+  margin: 0;
+  padding: 0;
+}
+
+/* Asegurar que las imágenes mantengan su aspecto */
+.product-image {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  padding: 20px;
+}
+
+.skeleton-hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Removed header-specific skeleton blocks and helpers (unused) */
+
+/* Removed header tape skeleton (unused) */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .skeleton-menu {
+    display: none;
+  }
+  
+  .skeleton-logo {
+    width: 100px;
+    height: 35px;
+  }
+} 

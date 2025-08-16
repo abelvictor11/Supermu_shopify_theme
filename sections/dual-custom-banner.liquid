@@ -1,0 +1,640 @@
+{%- comment -%}
+  Dual Custom Banner Section
+  This section displays two banners side by side with configurable widths (70% and 30%)
+{%- endcomment -%}
+
+<section class="custom-grid-banners {% unless section.blocks.size > 0 %}section-loading{% endunless %}" id="section-{{ section.id }}">
+   <div class="grid-container grid-container-dual">
+      {%- for block in section.blocks -%}
+      {% case block.type %}
+      {%- when 'banner_large' -%}
+      <div class="grid-item grid-item-banner_large">
+        <!-- Skeleton para banner grande -->
+        <div class="skeleton-loader skeleton-banner-large" {% if block.settings.image_1 != blank %}style="display: none;"{% endif %}></div>
+        
+        <div class="swiper-container large-banner-swiper loaded-content" style="{% if block.settings.image_1 == blank %}display: none;{% else %}display: block;{% endif %}">
+          <div class="swiper-wrapper">
+            {%- for i in (1..10) -%}
+              {%- assign slide_enabled = 'slide_' | append: i | append: '_enabled' -%}
+              {%- assign image_key = 'image_' | append: i -%}
+              {%- assign title_key = 'title_' | append: i -%}
+              {%- assign subtitle_key = 'subtitle_' | append: i -%}
+              {%- assign cta_key = 'cta_text_' | append: i -%}
+              {%- assign link_key = 'link_' | append: i -%}
+              
+              {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
+                <div class="swiper-slide">
+                  <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
+                    style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings[image_key] | img_url: 'master' }}');">
+                    <div class="grid-content">
+                      <p>{{ block.settings[subtitle_key] }}</p>
+                      <h2>{{ block.settings[title_key] }}</h2>
+                      {%- if block.settings[cta_key] != blank -%}
+                        <div class="cta-button">
+                          {{ block.settings[cta_key] }}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </a>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+      </div>
+
+      {%- when 'banner_small' -%}
+      <div class="grid-item grid-item-banner_small">
+        <!-- Skeleton para banner pequeño -->
+        <div class="skeleton-loader skeleton-banner-small" {% if block.settings.image_1 != blank %}style="display: none;"{% endif %}></div>
+        
+        <div class="swiper-container small-banner-swiper loaded-content" style="{% if block.settings.image_1 == blank %}display: none;{% else %}display: block;{% endif %}">
+          <div class="swiper-wrapper">
+            {%- for i in (1..10) -%}
+              {%- assign slide_enabled = 'slide_' | append: i | append: '_enabled' -%}
+              {%- assign image_key = 'image_' | append: i -%}
+              {%- assign title_key = 'title_' | append: i -%}
+              {%- assign subtitle_key = 'subtitle_' | append: i -%}
+              {%- assign cta_key = 'cta_text_' | append: i -%}
+              {%- assign link_key = 'link_' | append: i -%}
+              
+              {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
+                <div class="swiper-slide">
+                  <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
+                    style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings[image_key] | img_url: 'master' }}');">
+                    <div class="grid-content">
+                      <p>{{ block.settings[subtitle_key] }}</p>
+                      <h2>{{ block.settings[title_key] }}</h2>
+                      {%- if block.settings[cta_key] != blank -%}
+                        <div class="cta-button">
+                          {{ block.settings[cta_key] }}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </a>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+      </div>
+      {%- endcase -%}
+      {%- endfor -%}
+   </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Grid Banners",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "arrows",
+      "label": "Mostrar flechas",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "bullets",
+      "label": "Mostrar puntos",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "label": "Velocidad de transición (segundos)",
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner_large",
+      "name": "Banner Grande (70%)",
+      "limit": 1,
+      "settings": [
+        { "type": "header", "content": "Slide 1" },
+        { "type": "checkbox", "id": "slide_1_enabled", "label": "Habilitar Slide 1", "default": true },
+        { "type": "image_picker", "id": "image_1", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_1", "label": "Título", "default": "Título Principal" },
+        { "type": "text", "id": "subtitle_1", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_1", "label": "Texto del Botón CTA", "default": "Comprar ahora" },
+        { "type": "url", "id": "link_1", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 2" },
+        { "type": "checkbox", "id": "slide_2_enabled", "label": "Habilitar Slide 2", "default": false },
+        { "type": "image_picker", "id": "image_2", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_2", "label": "Título" },
+        { "type": "text", "id": "subtitle_2", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_2", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_2", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 3" },
+        { "type": "checkbox", "id": "slide_3_enabled", "label": "Habilitar Slide 3", "default": false },
+        { "type": "image_picker", "id": "image_3", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_3", "label": "Título" },
+        { "type": "text", "id": "subtitle_3", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_3", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_3", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 4" },
+        { "type": "checkbox", "id": "slide_4_enabled", "label": "Habilitar Slide 4", "default": false },
+        { "type": "image_picker", "id": "image_4", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_4", "label": "Título" },
+        { "type": "text", "id": "subtitle_4", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_4", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_4", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 5" },
+        { "type": "checkbox", "id": "slide_5_enabled", "label": "Habilitar Slide 5", "default": false },
+        { "type": "image_picker", "id": "image_5", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_5", "label": "Título" },
+        { "type": "text", "id": "subtitle_5", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_5", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_5", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 6" },
+        { "type": "checkbox", "id": "slide_6_enabled", "label": "Habilitar Slide 6", "default": false },
+        { "type": "image_picker", "id": "image_6", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_6", "label": "Título" },
+        { "type": "text", "id": "subtitle_6", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_6", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_6", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 7" },
+        { "type": "checkbox", "id": "slide_7_enabled", "label": "Habilitar Slide 7", "default": false },
+        { "type": "image_picker", "id": "image_7", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_7", "label": "Título" },
+        { "type": "text", "id": "subtitle_7", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_7", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_7", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 8" },
+        { "type": "checkbox", "id": "slide_8_enabled", "label": "Habilitar Slide 8", "default": false },
+        { "type": "image_picker", "id": "image_8", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_8", "label": "Título" },
+        { "type": "text", "id": "subtitle_8", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_8", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_8", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 9" },
+        { "type": "checkbox", "id": "slide_9_enabled", "label": "Habilitar Slide 9", "default": false },
+        { "type": "image_picker", "id": "image_9", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_9", "label": "Título" },
+        { "type": "text", "id": "subtitle_9", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_9", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_9", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 10" },
+        { "type": "checkbox", "id": "slide_10_enabled", "label": "Habilitar Slide 10", "default": false },
+        { "type": "image_picker", "id": "image_10", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_10", "label": "Título" },
+        { "type": "text", "id": "subtitle_10", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_10", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_10", "label": "Enlace del CTA" },
+
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" }
+      ]
+    },
+    {
+      "type": "banner_small",
+      "name": "Banner Pequeño (30%)",
+      "limit": 1,
+      "settings": [
+        { "type": "header", "content": "Slide 1" },
+        { "type": "checkbox", "id": "slide_1_enabled", "label": "Habilitar Slide 1", "default": true },
+        { "type": "image_picker", "id": "image_1", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_1", "label": "Título", "default": "Título Principal" },
+        { "type": "text", "id": "subtitle_1", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_1", "label": "Texto del Botón CTA", "default": "Comprar ahora" },
+        { "type": "url", "id": "link_1", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 2" },
+        { "type": "checkbox", "id": "slide_2_enabled", "label": "Habilitar Slide 2", "default": false },
+        { "type": "image_picker", "id": "image_2", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_2", "label": "Título" },
+        { "type": "text", "id": "subtitle_2", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_2", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_2", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 3" },
+        { "type": "checkbox", "id": "slide_3_enabled", "label": "Habilitar Slide 3", "default": false },
+        { "type": "image_picker", "id": "image_3", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_3", "label": "Título" },
+        { "type": "text", "id": "subtitle_3", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_3", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_3", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 4" },
+        { "type": "checkbox", "id": "slide_4_enabled", "label": "Habilitar Slide 4", "default": false },
+        { "type": "image_picker", "id": "image_4", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_4", "label": "Título" },
+        { "type": "text", "id": "subtitle_4", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_4", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_4", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 5" },
+        { "type": "checkbox", "id": "slide_5_enabled", "label": "Habilitar Slide 5", "default": false },
+        { "type": "image_picker", "id": "image_5", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_5", "label": "Título" },
+        { "type": "text", "id": "subtitle_5", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_5", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_5", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 6" },
+        { "type": "checkbox", "id": "slide_6_enabled", "label": "Habilitar Slide 6", "default": false },
+        { "type": "image_picker", "id": "image_6", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_6", "label": "Título" },
+        { "type": "text", "id": "subtitle_6", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_6", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_6", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 7" },
+        { "type": "checkbox", "id": "slide_7_enabled", "label": "Habilitar Slide 7", "default": false },
+        { "type": "image_picker", "id": "image_7", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_7", "label": "Título" },
+        { "type": "text", "id": "subtitle_7", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_7", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_7", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 8" },
+        { "type": "checkbox", "id": "slide_8_enabled", "label": "Habilitar Slide 8", "default": false },
+        { "type": "image_picker", "id": "image_8", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_8", "label": "Título" },
+        { "type": "text", "id": "subtitle_8", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_8", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_8", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 9" },
+        { "type": "checkbox", "id": "slide_9_enabled", "label": "Habilitar Slide 9", "default": false },
+        { "type": "image_picker", "id": "image_9", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_9", "label": "Título" },
+        { "type": "text", "id": "subtitle_9", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_9", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_9", "label": "Enlace del CTA" },
+
+        { "type": "header", "content": "Slide 10" },
+        { "type": "checkbox", "id": "slide_10_enabled", "label": "Habilitar Slide 10", "default": false },
+        { "type": "image_picker", "id": "image_10", "label": "Imagen de Fondo" },
+        { "type": "text", "id": "title_10", "label": "Título" },
+        { "type": "text", "id": "subtitle_10", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text_10", "label": "Texto del Botón CTA" },
+        { "type": "url", "id": "link_10", "label": "Enlace del CTA" },
+
+        { "type": "color", "id": "bg_color", "label": "Color de Fondo", "default": "#f5f5f5" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Grid Banners (70-30)",
+      "category": "Custom",
+      "blocks": [
+        { "type": "banner_large" },
+        { "type": "banner_small" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.custom-grid-banners {
+    padding: 15px;
+    max-width: 1770px;
+    margin: 0 auto;
+}
+
+.grid-container-dual {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 10px;
+    align-items: start;
+    min-height: 0;
+    min-width: 0;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.grid-item {
+    position: relative;
+    width: 100%;
+}
+
+.swiper-slide {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.swiper-slide-active,
+.swiper-slide-duplicate-active {
+    opacity: 1;
+}
+
+.swiper-slide .slide-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.grid-item-banner_large {
+    aspect-ratio: 2243/801;
+}
+
+.grid-item-banner_small {
+    aspect-ratio: 961/801;
+}
+
+@media screen and (max-width: 768px) {
+    .grid-container-dual {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+.custom-grid-banners .grid-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.skeleton-loader {
+    width: 100%;
+    height: 100%;
+    background: #f0f0f0;
+    animation: shimmer 1s infinite linear;
+    background-image: linear-gradient(
+        to right,
+        #f0f0f0 0%,
+        #e0e0e0 20%,
+        #f0f0f0 40%,
+        #f0f0f0 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+@keyframes shimmer {
+    0% { background-position: -468px 0 }
+    100% { background-position: 468px 0 }
+}
+
+.swiper-container {
+    width: 100%;
+    height: 100%;
+}
+
+.slide-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    background-size: cover !important;
+    background-position: center !important;
+    position: relative;
+}
+/*
+.slide-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+*/
+.grid-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px;
+}
+
+.grid-content h2 {
+    font-size: 24px;
+    margin: 0 0 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.grid-content p {
+    font-size: 16px;
+    margin: 0 0 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #fff;
+    color: #000;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #fff;
+}
+
+.swiper-pagination-bullet {
+    background: #fff;
+    opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+    opacity: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .grid-item-banner_small {
+        aspect-ratio: 1;
+    }
+    .grid-item-banner_large{
+        aspect-ratio: 600 / 220;
+    }
+    .grid-content h2 {
+        font-size: 20px;
+    }
+
+    .grid-content p {
+        font-size: 14px;
+    }
+
+    .cta-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const section = document.getElementById('section-{{ section.id }}');
+    if (!section) return;
+
+    // Precargar todas las imágenes antes de inicializar
+    const preloadImages = () => {
+        const slides = section.querySelectorAll('.swiper-slide');
+        let loadedCount = 0;
+        
+        slides.forEach(slide => {
+            const bgImage = slide.querySelector('.slide-content');
+            if (bgImage) {
+                const url = bgImage.style.backgroundImage.replace(/url\(['"](.*?)['"]\)/, '$1');
+                const img = new Image();
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === slides.length) {
+                        initSwipers();
+                    }
+                };
+                img.src = url;
+            }
+        });
+    };
+
+    const initSwipers = () => {
+        const largeBannerSwiper = new Swiper('.large-banner-swiper', {
+            init: false,
+            loop: true,
+            loopAdditionalSlides: 2,
+            preloadImages: false,
+            watchSlidesProgress: true,
+            watchSlidesVisibility: true,
+            speed: 800,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            autoplay: {% if section.settings.autoplay %}{
+                delay: {{ section.settings.speed | times: 1000 }},
+                disableOnInteraction: false
+            }{% else %}false{% endif %},
+            pagination: {% if section.settings.bullets %}{
+                el: '.swiper-pagination',
+                clickable: true
+            }{% else %}false{% endif %},
+            navigation: {% if section.settings.arrows %}{
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            }{% else %}false{% endif %},
+            on: {
+                init: function() {
+                    this.update();
+                },
+                imagesReady: function() {
+                    this.update();
+                    this.updateSlides();
+                }
+            }
+        });
+
+        const smallBannerSwiper = new Swiper('.small-banner-swiper', {
+            init: false,
+            loop: true,
+            loopAdditionalSlides: 2,
+            preloadImages: false,
+            watchSlidesProgress: true,
+            watchSlidesVisibility: true,
+            speed: 800,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            autoplay: {% if section.settings.autoplay %}{
+                delay: {{ section.settings.speed | times: 1000 }},
+                disableOnInteraction: false
+            }{% else %}false{% endif %},
+            pagination: {% if section.settings.bullets %}{
+                el: '.swiper-pagination',
+                clickable: true
+            }{% else %}false{% endif %},
+            navigation: {% if section.settings.arrows %}{
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            }{% else %}false{% endif %},
+            on: {
+                init: function() {
+                    this.update();
+                },
+                imagesReady: function() {
+                    this.update();
+                    this.updateSlides();
+                }
+            }
+        });
+
+        // Inicializar los swipers
+        largeBannerSwiper.init();
+        smallBannerSwiper.init();
+    };
+
+    // Iniciar la precarga de imágenes
+    preloadImages();
+
+    // Ocultar skeleton cuando se carguen las imágenes
+    const banners = section.querySelectorAll('.swiper-container');
+    banners.forEach(banner => {
+        const images = banner.querySelectorAll('img');
+        let loadedImages = 0;
+        
+        images.forEach(img => {
+            if (img.complete) {
+                loadedImages++;
+            } else {
+                img.addEventListener('load', () => {
+                    loadedImages++;
+                    if (loadedImages === images.length) {
+                        const skeleton = banner.previousElementSibling;
+                        if (skeleton && skeleton.classList.contains('skeleton-loader')) {
+                            skeleton.style.display = 'none';
+                            banner.style.display = 'block';
+                        }
+                    }
+                });
+            }
+        });
+
+        if (loadedImages === images.length) {
+            const skeleton = banner.previousElementSibling;
+            if (skeleton && skeleton.classList.contains('skeleton-loader')) {
+                skeleton.style.display = 'none';
+                banner.style.display = 'block';
+            }
+        }
+    });
+});
+</script>

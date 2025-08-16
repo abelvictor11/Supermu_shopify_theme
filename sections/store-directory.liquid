@@ -1,0 +1,859 @@
+{{ 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css' | stylesheet_tag }}
+<style>
+#store-map {
+    height: 100vh;
+    width: 100%;
+    position: fixed !important;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+.store-directory {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 400px;
+    background: #fff;
+    z-index: 2;
+    padding: 2rem;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.store-directory__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.store-directory__list {
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+.store-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.store-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.store-card.active {
+    border: 2px solid #de0101;
+}
+
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 3;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.header-logo-card img {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+}
+
+.store-card__header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .store-directory {
+        width: 100%;
+        transform: translateX(-100%);
+    }
+    
+    .store-directory.active {
+        transform: translateX(0);
+    }
+    
+    .mobile-toggle {
+        display: block;
+    }
+}
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.filter-group select,
+.filter-group input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+</style>
+
+<div class="mobile-toggle" id="mobileToggle">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="store-directory" id="storeDirectory">
+    <div class="store-directory__header">
+        <h1 class="store-directory__title">{{ section.settings.title }}</h1>
+        
+        <div class="store-directory__filters">
+            <div class="filter-group">
+                <label for="zone-filter">Filtrar por zona:</label>
+                <select id="zone-filter" class="zone-filter">
+                    <option value="">Todas las zonas</option>
+                    <option value="norte">Norte</option>
+                    <option value="sur">Sur</option>
+                    <option value="este">Este</option>
+                    <option value="oeste">Oeste</option>
+                    <option value="centro">Centro</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="store-search">Buscar tienda:</label>
+                <input type="text" id="store-search" placeholder="Buscar por nombre o dirección">
+            </div>
+
+            <div class="filter-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="featured-filter">
+                    Solo tiendas destacadas
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="store-directory__content">
+        <div class="store-directory__list" id="stores-container">
+            {% for block in section.blocks %}
+                {% if block.type == 'store' %}
+                    <div class="store-card {% if block.settings.featured %}store-card--featured{% endif %}" 
+                         data-zone="{{ block.settings.zone }}" 
+                         data-lat="{{ block.settings.latitude }}" 
+                         data-lng="{{ block.settings.longitude }}"
+                         {{ block.shopify_attributes }}>
+                        <div class="store-card__header">
+                            <div class="header-logo-card">
+                                {% if block.settings.logo %}
+                                    <img src="{{ block.settings.logo | img_url: '200x200' }}" alt="{{ block.settings.name }}">
+                                {% else %}
+                                    <img src="//5w9gnlgwace1q2vd-49224581274.shopifypreview.com/cdn/shop/files/nuevo_contornoMesa_de_trabajo_3-8_256x.png?v=1706738618" alt="Logo por defecto">
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                        <div class="header-text-card">
+                                <p class="store-card__zone">
+                                    <i class="fas fa-compass"></i>
+                                    Zona {{ block.settings.zone }}
+                                </p>
+                                <h3 class="store-card__name">{{ block.settings.name }}</h3>
+                                {% if block.settings.featured %}
+                                    <span class="store-card__featured-badge">Destacada</span>
+                                {% endif %}
+                            </div>
+                        <div class="store-card__content">
+                            <div class="store-card__info">
+                                <p class="store-card__address">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{ block.settings.address }}
+                                </p>
+                                <p class="store-card__phone">
+                                    <i class="fas fa-phone"></i>
+                                    {{ block.settings.phone }}
+                                </p>
+                            </div>
+                            
+                            {% if block.settings.hours %}
+                                <div class="store-card__hours">
+                                    <h4>Horario Lunes a Sábado:</h4>
+                                    {{ block.settings.hours }}
+                                    <h4>Horario Domingo y Festivos:</h4>
+                                    {{ block.settings.hoursh }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if block.settings.maps_url %}
+                                <a href="{{ block.settings.maps_url }}" class="store-card__map-link" target="_blank">
+                                    Ver en Google Maps
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="store-map"></div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+{% schema %}
+{
+  "name": "Directorio de Tiendas",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Nuestras Tiendas"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "store",
+      "limit": 50,
+      "name": "Tienda",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo de la tienda"
+        },
+        {
+          "type": "text",
+          "id": "latitude",
+          "label": "Latitud",
+          "info": "Ejemplo: -2.1894128"
+        },
+        {
+          "type": "text",
+          "id": "longitude",
+          "label": "Longitud",
+          "info": "Ejemplo: -79.8890662"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre de la tienda",
+          "default": "Nombre de la tienda"
+        },
+        {
+          "type": "select",
+          "id": "zone",
+          "label": "Zona",
+          "options": [
+            {
+              "value": "norte",
+              "label": "Norte"
+            },
+            {
+              "value": "sur",
+              "label": "Sur"
+            },
+            {
+              "value": "este",
+              "label": "Este"
+            },
+            {
+              "value": "oeste",
+              "label": "Oeste"
+            },
+            {
+              "value": "centro",
+              "label": "Centro"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "address",
+          "label": "Dirección"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Teléfono"
+        },
+        {
+          "type": "text",
+          "id": "hours",
+          "label": "Horario"
+        },
+        {
+          "type": "text",
+          "id": "hoursh",
+          "label": "Horario Feriados"
+        },
+        {
+          "type": "url",
+          "id": "maps_url",
+          "label": "URL de Google Maps"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Tienda destacada",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Directorio de Tiendas",
+      "category": "Tiendas"
+    }
+  ]
+}
+{% endschema %} 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar el mapa
+    const map = L.map('store-map').setView([-2.1894128, -79.8890662], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    const markers = [];
+    const stores = [];
+    const mobileToggle = document.getElementById('mobileToggle');
+    const storeDirectory = document.getElementById('storeDirectory');
+
+    // Toggle para móvil
+    mobileToggle.addEventListener('click', () => {
+        storeDirectory.classList.toggle('active');
+    });
+
+    // Cerrar sidebar al hacer clic en una tienda en móvil
+    document.querySelectorAll('.store-card').forEach(card => {
+        card.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                storeDirectory.classList.remove('active');
+            }
+        });
+    });
+
+    // Recolectar información de las tiendas
+    document.querySelectorAll('.store-card').forEach(card => {
+        const lat = parseFloat(card.getAttribute('data-lat'));
+        const lng = parseFloat(card.getAttribute('data-lng'));
+        if (!isNaN(lat) && !isNaN(lng)) {
+            const name = card.querySelector('.store-card__name').textContent;
+            const marker = L.marker([lat, lng])
+                .bindPopup(name)
+                .addTo(map);
+
+            markers.push(marker);
+            stores.push({
+                element: card,
+                marker: marker
+            });
+
+            // Eventos del marcador
+            marker.on('click', () => {
+                document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+
+            // Eventos de la tarjeta
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                marker.openPopup();
+                map.setView([lat, lng], 15);
+            });
+        }
+    });
+
+    // Ajustar el mapa para mostrar todos los marcadores
+    if (markers.length > 0) {
+        const group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds());
+    }
+
+    const storesContainer = document.getElementById('stores-container');
+    const zoneFilter = document.getElementById('zone-filter');
+    const searchInput = document.getElementById('store-search');
+    const featuredFilter = document.getElementById('featured-filter');
+    
+    function filterStores() {
+        const selectedZone = zoneFilter.value;
+        const searchTerm = searchInput.value.toLowerCase();
+        const showOnlyFeatured = featuredFilter.checked;
+        
+        const storeCards = storesContainer.querySelectorAll('.store-card');
+        
+        storeCards.forEach(card => {
+            let shouldShow = true;
+            
+            if (selectedZone && card.dataset.zone !== selectedZone) {
+                shouldShow = false;
+            }
+            
+            if (searchTerm) {
+                const storeName = card.querySelector('.store-card__name').textContent.toLowerCase();
+                const storeAddress = card.querySelector('.store-card__address').textContent.toLowerCase();
+                if (!storeName.includes(searchTerm) && !storeAddress.includes(searchTerm)) {
+                    shouldShow = false;
+                }
+            }
+            
+            if (showOnlyFeatured && !card.classList.contains('store-card--featured')) {
+                shouldShow = false;
+            }
+            
+            card.style.display = shouldShow ? 'block' : 'none';
+        });
+    }
+    
+    zoneFilter.addEventListener('change', filterStores);
+    searchInput.addEventListener('input', filterStores);
+    featuredFilter.addEventListener('change', filterStores);
+}); 
+</script>
+
+
+
+
+
+
+
+
+
+{% comment %}
+{{ 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css' | stylesheet_tag }}
+<style>
+#store-map {
+    height: 100vh;
+    width: 100%;
+    position: fixed !important;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+.store-directory {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 400px;
+    background: #fff;
+    z-index: 2;
+    padding: 2rem;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.store-directory__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.store-directory__list {
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+.store-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.store-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.store-card.active {
+    border: 2px solid #de0101;
+}
+
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 3;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .store-directory {
+        width: 100%;
+        transform: translateX(-100%);
+    }
+    
+    .store-directory.active {
+        transform: translateX(0);
+    }
+    
+    .mobile-toggle {
+        display: block;
+    }
+}
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.filter-group select,
+.filter-group input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+</style>
+
+<div class="mobile-toggle" id="mobileToggle">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="store-directory" id="storeDirectory">
+    <div class="store-directory__header">
+        <h1 class="store-directory__title">{{ section.settings.title }}</h1>
+        
+        <div class="store-directory__filters">
+            <div class="filter-group">
+                <label for="zone-filter">Filtrar por zona:</label>
+                <select id="zone-filter" class="zone-filter">
+                    <option value="">Todas las zonas</option>
+                    <option value="norte">Norte</option>
+                    <option value="sur">Sur</option>
+                    <option value="este">Este</option>
+                    <option value="oeste">Oeste</option>
+                    <option value="centro">Centro</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="store-search">Buscar tienda:</label>
+                <input type="text" id="store-search" placeholder="Buscar por nombre o dirección">
+            </div>
+
+            <div class="filter-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="featured-filter">
+                    Solo tiendas destacadas
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="store-directory__content">
+        <div class="store-directory__list" id="stores-container">
+            {% for block in section.blocks %}
+                {% if block.type == 'store' %}
+                    <div class="store-card {% if block.settings.featured %}store-card--featured{% endif %}" 
+                         data-zone="{{ block.settings.zone }}" 
+                         data-lat="{{ block.settings.latitude }}" 
+                         data-lng="{{ block.settings.longitude }}"
+                         {{ block.shopify_attributes }}>
+                        <div class="store-card__header">
+                            <div class="header-logo-card">
+                                <img alt="Supermercados Supervaquita" srcset="//5w9gnlgwace1q2vd-49224581274.shopifypreview.com/cdn/shop/files/nuevo_contornoMesa_de_trabajo_3-8_256x.png?v=1706738618" data-ll-status="loaded">
+                            </div>
+                            <div class="header-text-card">
+                                <p class="store-card__zone">
+                                    <i class="fas fa-compass"></i>
+                                    Zona {{ block.settings.zone }}
+                                </p>
+                                <h3 class="store-card__name">{{ block.settings.name }}</h3>
+                                {% if block.settings.featured %}
+                                    <span class="store-card__featured-badge">Destacada</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="store-card__content">
+                            <div class="store-card__info">
+                                <p class="store-card__address">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{ block.settings.address }}
+                                </p>
+                                <p class="store-card__phone">
+                                    <i class="fas fa-phone"></i>
+                                    {{ block.settings.phone }}
+                                </p>
+                            </div>
+                            
+                            {% if block.settings.hours %}
+                                <div class="store-card__hours">
+                                    <h4>Horario Lunes a Sábado:</h4>
+                                    {{ block.settings.hours }}
+                                    <h4>Horario Domingo y Festivos:</h4>
+                                    {{ block.settings.hoursh }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if block.settings.maps_url %}
+                                <a href="{{ block.settings.maps_url }}" class="store-card__map-link" target="_blank">
+                                    Ver en Google Maps
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="store-map"></div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+{% schema %}
+{
+  "name": "Directorio de Tiendas",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Nuestras Tiendas"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "store",
+      "limit": 50,
+      "name": "Tienda",
+      "settings": [
+        {
+          "type": "text",
+          "id": "latitude",
+          "label": "Latitud",
+          "info": "Ejemplo: -2.1894128"
+        },
+        {
+          "type": "text",
+          "id": "longitude",
+          "label": "Longitud",
+          "info": "Ejemplo: -79.8890662"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre de la tienda",
+          "default": "Nombre de la tienda"
+        },
+        {
+          "type": "select",
+          "id": "zone",
+          "label": "Zona",
+          "options": [
+            {
+              "value": "norte",
+              "label": "Norte"
+            },
+            {
+              "value": "sur",
+              "label": "Sur"
+            },
+            {
+              "value": "este",
+              "label": "Este"
+            },
+            {
+              "value": "oeste",
+              "label": "Oeste"
+            },
+            {
+              "value": "centro",
+              "label": "Centro"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "address",
+          "label": "Dirección"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Teléfono"
+        },
+        {
+          "type": "text",
+          "id": "hours",
+          "label": "Horario"
+        },
+        {
+          "type": "text",
+          "id": "hoursh",
+          "label": "Horario Feriados"
+        },
+        {
+          "type": "url",
+          "id": "maps_url",
+          "label": "URL de Google Maps"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Tienda destacada",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Directorio de Tiendas",
+      "category": "Tiendas"
+    }
+  ]
+}
+{% endschema %} 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar el mapa
+    const map = L.map('store-map').setView([-2.1894128, -79.8890662], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    const markers = [];
+    const stores = [];
+    const mobileToggle = document.getElementById('mobileToggle');
+    const storeDirectory = document.getElementById('storeDirectory');
+
+    // Toggle para móvil
+    mobileToggle.addEventListener('click', () => {
+        storeDirectory.classList.toggle('active');
+    });
+
+    // Cerrar sidebar al hacer clic en una tienda en móvil
+    document.querySelectorAll('.store-card').forEach(card => {
+        card.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                storeDirectory.classList.remove('active');
+            }
+        });
+    });
+
+    // Recolectar información de las tiendas
+    document.querySelectorAll('.store-card').forEach(card => {
+        const lat = parseFloat(card.getAttribute('data-lat'));
+        const lng = parseFloat(card.getAttribute('data-lng'));
+        if (!isNaN(lat) && !isNaN(lng)) {
+            const name = card.querySelector('.store-card__name').textContent;
+            const marker = L.marker([lat, lng])
+                .bindPopup(name)
+                .addTo(map);
+
+            markers.push(marker);
+            stores.push({
+                element: card,
+                marker: marker
+            });
+
+            // Eventos del marcador
+            marker.on('click', () => {
+                document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+
+            // Eventos de la tarjeta
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                marker.openPopup();
+                map.setView([lat, lng], 15);
+            });
+        }
+    });
+
+    // Ajustar el mapa para mostrar todos los marcadores
+    if (markers.length > 0) {
+        const group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds());
+    }
+
+    const storesContainer = document.getElementById('stores-container');
+    const zoneFilter = document.getElementById('zone-filter');
+    const searchInput = document.getElementById('store-search');
+    const featuredFilter = document.getElementById('featured-filter');
+    
+    function filterStores() {
+        const selectedZone = zoneFilter.value;
+        const searchTerm = searchInput.value.toLowerCase();
+        const showOnlyFeatured = featuredFilter.checked;
+        
+        const storeCards = storesContainer.querySelectorAll('.store-card');
+        
+        storeCards.forEach(card => {
+            let shouldShow = true;
+            
+            if (selectedZone && card.dataset.zone !== selectedZone) {
+                shouldShow = false;
+            }
+            
+            if (searchTerm) {
+                const storeName = card.querySelector('.store-card__name').textContent.toLowerCase();
+                const storeAddress = card.querySelector('.store-card__address').textContent.toLowerCase();
+                if (!storeName.includes(searchTerm) && !storeAddress.includes(searchTerm)) {
+                    shouldShow = false;
+                }
+            }
+            
+            if (showOnlyFeatured && !card.classList.contains('store-card--featured')) {
+                shouldShow = false;
+            }
+            
+            card.style.display = shouldShow ? 'block' : 'none';
+        });
+    }
+    
+    zoneFilter.addEventListener('change', filterStores);
+    searchInput.addEventListener('input', filterStores);
+    featuredFilter.addEventListener('change', filterStores);
+}); 
+</script>
+{% endcomment %}

@@ -1,0 +1,313 @@
+{% comment %}
+  Category Grid Section
+  This section displays a grid of categories on desktop (5x2) and a carousel on mobile (2 items visible)
+{% endcomment %}
+
+<section class="category-grid-section" data-section-id="{{ section.id }}">
+  <div class="category-grid-container">
+    <!-- Skeleton loader -->
+    <div class="category-skeleton" id="skeleton-{{ section.id }}">
+      {% for i in (1..10) %}
+        <div class="skeleton-category-item">
+          <div class="skeleton-category-image skeleton-loader"></div>
+          <div class="skeleton-category-name skeleton-loader"></div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div class="category-grid desktop-grid">
+      {% for block in section.blocks limit: 10 %}
+        <div class="category-item">
+          <a href="{% if block.settings.category_url != blank %}{{ block.settings.category_url }}{% else %}{{ block.settings.category_collection.url }}{% endif %}" class="category-link">
+            <div class="category-image">
+              <img 
+                src="{{ block.settings.category_image | img_url: '300x300', crop: 'center' }}" 
+                alt="{{ block.settings.category_name }}" 
+                class="circular-image"
+                onload="this.closest('.category-item').classList.add('loaded'); document.getElementById('skeleton-{{ section.id }}').style.display = 'none';"
+              >
+            </div>
+            <p class="category-name">{{ block.settings.category_name }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="category-grid mobile-carousel swiper" id="category-swiper-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks limit: 10 %}
+          <div class="swiper-slide category-item">
+            <a href="{% if block.settings.category_url != blank %}{{ block.settings.category_url }}{% else %}{{ block.settings.category_collection.url }}{% endif %}" class="category-link">
+              <div class="category-image">
+                <img 
+                  src="{{ block.settings.category_image | img_url: '300x300', crop: 'center' }}" 
+                  alt="{{ block.settings.category_name }}" 
+                  class="circular-image"
+                  onload="this.closest('.category-item').classList.add('loaded'); document.getElementById('skeleton-{{ section.id }}').style.display = 'none';"
+                >
+              </div>
+              <p class="category-name">{{ block.settings.category_name }}</p>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="swiper-button-next" id="category-swiper-next-{{ section.id }}"></div>
+      <div class="swiper-button-prev" id="category-swiper-prev-{{ section.id }}"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.innerWidth < 768) {
+    new Swiper('#category-swiper-{{ section.id }}', {
+      slidesPerView: 2,
+      spaceBetween: 20,
+      navigation: {
+        nextEl: '#category-swiper-next-{{ section.id }}',
+        prevEl: '#category-swiper-prev-{{ section.id }}'
+      }
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Category Grid/Carousel",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Título de la Sección",
+      "default": "Categorías Destacadas"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Categoría",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "category_image",
+          "label": "Imagen de la Categoría"
+        },
+        {
+          "type": "text",
+          "id": "category_name",
+          "label": "Nombre de la Categoría",
+          "default": "Nombre de la Categoría"
+        },
+        {
+          "type": "url",
+          "id": "category_url",
+          "label": "URL Personalizada"
+        },
+        {
+          "type": "collection",
+          "id": "category_collection",
+          "label": "Colección"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Grid/Carousel",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.category-grid-section {
+  position: relative;
+  text-align: center;
+  padding: 15px;
+   max-width: 1320px;
+ /* max-width: 1770px; */
+  margin: 0 auto;
+}
+
+/* Desktop Grid Styles */
+@media screen and (min-width: 768px) {
+  .mobile-carousel {
+    display: none;
+  }
+  
+  .desktop-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+}
+
+/* Mobile Carousel Styles */
+@media screen and (max-width: 767px) {
+  .desktop-grid {
+    display: none;
+  }
+  
+  .mobile-carousel {
+    display: block;
+    padding: 20px 40px;
+  }
+}
+
+/* Skeleton Styles */
+.category-skeleton {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  background: #fff;
+  transition: opacity 0.3s ease;
+}
+
+@media screen and (max-width: 767px) {
+  .category-skeleton {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+}
+
+.skeleton-category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.skeleton-category-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.skeleton-category-name {
+  width: 80px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -468px 0 }
+  100% { background-position: 468px 0 }
+}
+
+.skeleton-loader {
+  background: #f0f0f0;
+  background-image: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Hide skeleton when content is loaded */
+.category-item.loaded + .category-skeleton {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Common Styles */
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.category-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.category-link:hover {
+  transform: translateY(-5px);
+}
+
+.category-image {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.category-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.category-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  display: none;
+}
+
+/* Navigation Buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #000;
+}
+
+@media screen and (max-width: 767px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    transform: scale(0.7);
+  }
+}
+</style>

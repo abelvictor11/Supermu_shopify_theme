@@ -1,0 +1,31 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Esperar a que el carrito esté cargado (ajustar el selector según tu tema)
+  const cartTotalElement = document.querySelector('.cart-total, .subtotal, .cart__subtotal'); // Ajusta este selector
+  
+  if (cartTotalElement) {
+    // Extraer el valor numérico del total (eliminar símbolos y separadores)
+    const totalText = cartTotalElement.textContent || cartTotalElement.innerText;
+    const totalValue = parseFloat(totalText.replace(/[^\d.,]/g, '').replace(',', '.'));
+    
+    // Verificar si el total es menor a 40,000
+    if (totalValue < 40000) {
+      // Crear el mensaje de alerta
+      const alertMessage = document.createElement('div');
+      alertMessage.style.padding = '15px';
+      alertMessage.style.margin = '15px 0';
+      alertMessage.style.backgroundColor = '#fff3cd';
+      alertMessage.style.border = '1px solid #ffeeba';
+      alertMessage.style.borderRadius = '4px';
+      alertMessage.style.color = '#856404';
+      alertMessage.innerHTML = '⚠️ El valor mínimo de compra es de $40,000. Agrega más productos para completar tu pedido.';
+      
+      // Insertar el mensaje cerca del total (ajustar según tu estructura HTML)
+      cartTotalElement.parentNode.insertBefore(alertMessage, cartTotalElement.nextSibling);
+      
+      // Opcional: también puedes usar un alert() tradicional
+      // alert('El valor mínimo de compra es de $40,000');
+    }
+  }
+});
+</script>

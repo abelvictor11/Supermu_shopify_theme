@@ -1,0 +1,61 @@
+{% assign current_day = 'now' | date: '%A' %}
+
+{% case current_day %}
+  {% when 'Monday' %}
+    {% assign discount_tag = 'Mascotas' %}
+    {% assign discount_percentage = 20 %}
+  {% when 'Tuesday' %}
+    {% assign discount_tag = 'Carnes' %}
+    {% assign discount_percentage = 10 %}
+  {% when 'Wednesday' %}
+    {% assign discount_tag = 'Fruver' %}
+    {% assign discount_percentage = 25 %}
+  {% when 'Thursday' %}
+    {% assign discount_tag = 'Pescados' %}
+    {% assign discount_percentage = 25 %}
+  {% when 'Friday' %}
+    {% assign discount_tag = 'Carnes,Fruver' %}
+    {% assign discount_percentage = 25 %}
+  {% when 'Saturday' %}
+    {% assign discount_tag = 'Vino' %}
+    {% assign discount_percentage = 30 %}
+  {% else %}
+    {% assign discount_tag = '' %}  <!-- No hay descuento por defecto -->
+{% endcase %}
+
+{% if discount_tag != '' %}
+  {% assign tags_list = discount_tag | split: ',' %}
+  {% for tag in tags_list %}
+    {% if product.tags contains tag %}
+      {% assign original_price = product.price %}
+      {% assign discount_multiplier = 1 | minus: discount_percentage | divided_by: 100.0 %}
+      {% assign final_price = product.price | times: discount_multiplier | money %}
+
+      <div class="daily-offer" style="
+        border-left: 3px solid #FF0000;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 0 5px 5px 0;
+        position: absolute;
+        margin-top: -150px !important;
+      ">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="text-decoration: line-through; color: #666;">{{ original_price | money }}</span>
+          <span style="font-weight: bold; color: #FF0000;">{{ final_price }}</span>
+        </div>
+        <div style="
+          background: #FF0000;
+          color: white;
+          display: inline-block;
+          padding: 2px 8px;
+          border-radius: 3px;
+          font-size: 12px;
+          margin-top: 5px;
+        ">
+          ¡OFERTA DEL DÍA ({{ current_day }}) -{{ discount_percentage }}%!
+        </div>
+      </div>
+      {% break %}  <!-- Evita duplicados si hay múltiples etiquetas -->
+    {% endif %}
+  {% endfor %}
+{% endif %}
