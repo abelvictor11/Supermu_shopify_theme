@@ -33,7 +33,7 @@
         "custom_liquid_TxTjYf": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{% render 'both-discount-labels', product: product %}"
+            "custom_liquid": "{% render 'both-discount-labels', product: product %}\n{% render 'test-daily-debug', product: product %}"
           }
         },
         "custom_liquid_f48QiT": {
