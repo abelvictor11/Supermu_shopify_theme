@@ -2,6 +2,7 @@
 Daily discount label (red) based on product tags and current weekday.
 Params:
   - product: required
+  - mode: 'html' (default) or 'percent' to output only the percent number for detection
 Behavior:
   - Uses weekday-specific mapping to tag→percent.
   - Shows first matching tag's discount.
@@ -35,17 +36,14 @@ Behavior:
 
   {%- if _discount_rules != '' -%}
     {%- comment -%} Ensure we have tags even in collection cards {%- endcomment -%}
-    {%- assign _tags = _product.tags -%}
-    {%- if _tags == blank or _tags.size == 0 -%}
-      {%- if _product.handle != blank -%}
-        {%- assign _p2 = all_products[_product.handle] -%}
-        {%- if _p2 != blank and _p2.tags != blank -%}
-          {%- assign _tags = _p2.tags -%}
-        {%- endif -%}
+    {%- assign _tags_src = _product.tags -%}
+    {%- if (_tags_src == blank or _tags_src.size == 0) and _product.handle != blank -%}
+      {%- assign _p2 = all_products[_product.handle] -%}
+      {%- if _p2 and _p2.tags != blank -%}
+        {%- assign _tags_src = _p2.tags -%}
       {%- endif -%}
     {%- endif -%}
-    {%- comment -%} Tags-only matching (as in the original script) {%- endcomment -%}
-    {%- assign _product_tags_up = _tags | join: '||||' | upcase | split: '||||' -%}
+    {%- assign _product_tags_up = _tags_src | join: '||||' | upcase | split: '||||' -%}
     {%- assign _groups = _discount_rules | split: '|' -%}
     {%- assign _applied = false -%}
     {%- assign _debug_matched = '' -%}
@@ -55,10 +53,8 @@ Behavior:
       {%- assign _rule_tags = _parts[0] | split: ',' -%}
       {%- assign _percent = _parts[1] | default: 0 | times: 1 -%}
       {%- for _tag in _rule_tags -%}
-        {%- assign _formatted_tag = _tag | strip -%}
-        {%- if _product_tags_up contains _formatted_tag and _percent > 0 -%}
-          {%- assign _debug_matched = _formatted_tag -%}
-          {%- assign _debug_percent = _percent -%}
+        {%- assign _t = _tag | strip | upcase -%}
+        {%- if _product_tags_up contains _t and _percent > 0 -%}
           {%- if _mode == 'percent' -%}
             {{- _percent -}}
           {%- else -%}
@@ -71,10 +67,12 @@ Behavior:
                 <span style="font-weight:bold;color:#FF0000;">{{ _final }}</span>
               </div>
               <div style="background:#FF0000;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
-                ¡OFERTA {{ _formatted_tag }} -{{ _percent }}% ({{ _day_translation }})
+                ¡OFERTA {{ _t }} -{{ _percent }}% ({{ _day_translation }})
               </div>
             </div>
           {%- endif -%}
+          {%- assign _debug_matched = _t -%}
+          {%- assign _debug_percent = _percent -%}
           {%- assign _applied = true -%}
           {%- break -%}
         {%- endif -%}
@@ -88,3 +86,4 @@ Behavior:
     </div>
   {%- endif -%}
 {%- endif -%}
+
