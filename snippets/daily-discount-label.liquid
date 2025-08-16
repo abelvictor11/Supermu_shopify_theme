@@ -25,7 +25,7 @@ Behavior:
       {%- assign _discount_rules = 'PESCADO,MARISCOS,PESCADOS Y MARISCOS,CARNES BLANCAS PESCADO:20' -%}
     {%- when '5' -%}
       {%- assign _day_translation = 'VIERNES' -%}
-      {%- assign _discount_rules = 'CARNES,CARNE,CARNE DE CERDO,CERDO,TOCINO,TOCINOS,TOCINO BARRIGUERO,PANCETA,TOCINO AHUMADO:10|FRUVER:25' -%}
+      {%- assign _discount_rules = 'CARNES,CARNE,CERDO:10|FRUVER:25' -%}
     {%- when '6' -%}
       {%- assign _day_translation = 'SÁBADO' -%}
       {%- assign _discount_rules = 'VINO,VINOS:30' -%}
@@ -44,12 +44,8 @@ Behavior:
         {%- endif -%}
       {%- endif -%}
     {%- endif -%}
-    {%- assign _product_tags_joined_up = _tags | join: '||||' | upcase -%}
-    {%- comment -%} Build a broader haystack: tags + title + type + vendor {%- endcomment -%}
-    {%- assign _title_up = _product.title | upcase -%}
-    {%- assign _type_up = _product.type | upcase -%}
-    {%- assign _vendor_up = _product.vendor | upcase -%}
-    {%- assign _haystack_up = _product_tags_joined_up | append: '||||' | append: _title_up | append: '||||' | append: _type_up | append: '||||' | append: _vendor_up -%}
+    {%- comment -%} Tags-only matching (as in the original script) {%- endcomment -%}
+    {%- assign _product_tags_up = _tags | join: '||||' | upcase | split: '||||' -%}
     {%- assign _groups = _discount_rules | split: '|' -%}
     {%- assign _applied = false -%}
     {%- assign _debug_matched = '' -%}
@@ -59,9 +55,9 @@ Behavior:
       {%- assign _rule_tags = _parts[0] | split: ',' -%}
       {%- assign _percent = _parts[1] | default: 0 | times: 1 -%}
       {%- for _tag in _rule_tags -%}
-        {%- assign _t = _tag | strip | upcase -%}
-        {%- if _haystack_up contains _t and _percent > 0 -%}
-          {%- assign _debug_matched = _t -%}
+        {%- assign _formatted_tag = _tag | strip -%}
+        {%- if _product_tags_up contains _formatted_tag and _percent > 0 -%}
+          {%- assign _debug_matched = _formatted_tag -%}
           {%- assign _debug_percent = _percent -%}
           {%- if _mode == 'percent' -%}
             {{- _percent -}}
@@ -75,7 +71,7 @@ Behavior:
                 <span style="font-weight:bold;color:#FF0000;">{{ _final }}</span>
               </div>
               <div style="background:#FF0000;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
-                ¡OFERTA {{ _t }} -{{ _percent }}% ({{ _day_translation }})
+                ¡OFERTA {{ _formatted_tag }} -{{ _percent }}% ({{ _day_translation }})
               </div>
             </div>
           {%- endif -%}
