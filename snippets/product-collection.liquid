@@ -227,12 +227,12 @@
   {%- assign gp = green_percent | strip | plus: 0 -%}
   {%- assign rp = red_percent | strip | plus: 0 -%}
 
-  {%- if rp > gp and rp > 0 -%}
+  {%- comment -%} Render ambos labels si aplican. Rojo primero, luego verde. {%- endcomment -%}
+  {%- if rp > 0 -%}
     {% render 'daily-discount-label', product: product %}
-  {%- elsif gp > rp and gp > 0 -%}
+  {%- endif -%}
+  {%- if gp > 0 -%}
     {% render 'discount-label', product: product %}
-  {%- elsif gp == rp and gp > 0 -%}
-    {% render 'daily-discount-label', product: product %}
   {%- endif -%}
   {%- if request.design_mode -%}
     <div style="font-size:11px;color:#777;margin-top:4px;">(collection debug) gp={{ gp }} rp={{ rp }}</div>

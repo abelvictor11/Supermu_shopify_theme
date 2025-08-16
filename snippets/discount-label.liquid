@@ -1,94 +1,94 @@
 {%- comment -%}
-Reusable discount label based on shop.metafields.custom.collection_discounts (handles)
-Params:
-  - product: required
-  - price: optional (Money in cents). If not provided, uses product.price or selected variant price when available.
-Behavior:
-  - Applies first valid rule (enabled & time window) matching any product collection handle.
-  - Renders original vs discounted price and a badge naming the matched collection title/handle.
-{%- endcomment -%}
-{%- assign _product = product | default: nil -%}
-{%- assign _mode = mode | default: 'html' -%}
-{%- if _product == nil -%}{% comment %}No product in scope{% endcomment %}{%- endif -%}
-{%- assign _variant = _product.selected_or_first_available_variant -%}
-{%- assign _base_price = price | default: _variant.price | default: _product.price -%}
-{%- assign _now_ts = 'now' | date: '%s' -%}
-{%- assign _mf = shop.metafields.custom.collection_discounts -%}
-{%- assign _raw_rules = _mf | default: '' -%}
-{%- assign _rules = nil -%}
-{%- if _mf and _mf.value -%}
-  {%- assign _rules = _mf.value -%}
-{%- elsif _raw_rules != '' -%}
-  {%- assign _rules = _raw_rules | parse_json -%}
-{%- endif -%}
-{%- assign _applied = false -%}
+    Discount labels: 
+    - Rojo (día específico, ej: carnes martes/viernes)
+    - Verde (condiciones por colección desde metafields)
+    Regla:
+    - Este snippet ahora SOLO calcula y muestra el label VERDE (colecciones por metafield).
+    - El label ROJO (día específico) se maneja en `snippets/daily-discount-label.liquid` y puede coexistir.
+    {%- endcomment -%}
 
-{%- if _base_price and _rules and _rules.size > 0 -%}
-  {%- for rule in _rules -%}
-    {%- assign _enabled = rule.enabled -%}
-    {%- assign _percent = rule.percent | times: 1 -%}
-    {%- assign _start_ts = rule.start | date: '%s' -%}
-    {%- assign _end_ts = rule.end | date: '%s' -%}
-
-    {%- assign _window_ok = true -%}
-    {%- if rule.start and _start_ts and _start_ts != '' and _now_ts < _start_ts -%}{%- assign _window_ok = false -%}{%- endif -%}
-    {%- if rule.end and _end_ts and _end_ts != '' and _now_ts > _end_ts -%}{%- assign _window_ok = false -%}{%- endif -%}
-
-    {%- if _enabled and _window_ok and _percent > 0 -%}
-      {%- assign _matched_title = '' -%}
-      {%- assign _matched_handle = '' -%}
-      {%- comment -%} Try matching against product.collections {%- endcomment -%}
-      {%- for c in _product.collections -%}
-        {%- for h in rule.collections -%}
-          {%- assign _h_norm = h | strip | handleize -%}
-          {%- if c.handle == _h_norm or c.title == h -%}
-            {%- assign _matched_title = c.title -%}
-            {%- assign _matched_handle = c.handle -%}
-            {%- break -%}
-          {%- endif -%}
-        {%- endfor -%}
-        {%- if _matched_handle != '' -%}{%- break -%}{%- endif -%}
-      {%- endfor -%}
-      {%- comment -%} Also try current collection in scope if not matched yet {%- endcomment -%}
-      {%- if _matched_handle == '' and collection and collection.handle -%}
-        {%- for h in rule.collections -%}
-          {%- assign _h_norm = h | strip | handleize -%}
-          {%- if collection.handle == _h_norm or collection.title == h -%}
-            {%- assign _matched_title = collection.title -%}
-            {%- assign _matched_handle = collection.handle -%}
-            {%- break -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
-
-      {%- if _matched_handle != '' -%}
-        {%- if _mode == 'percent' -%}
-          {{- _percent -}}
-        {%- else -%}
-          {%- assign _discount_amount = _base_price | times: _percent | divided_by: 100.0 -%}
-          {%- assign _final_price = _base_price | minus: _discount_amount -%}
-          <div class="collection-discount-tag" style="border-left:3px solid #4CAF50;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#F5FFF5;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="text-decoration:line-through;color:#666;">{{ _base_price | money }}</span>
-              <span style="font-weight:bold;color:#4CAF50;">{{ _final_price | money }}</span>
-            </div>
-            <div style="background:#4CAF50;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
-              ¡OFERTA EN {{ _matched_title | default: _matched_handle | truncate: 30 }} -{{ _percent }}%
-            </div>
-          </div>
-        {%- endif -%}
-        {%- assign _applied = true -%}
-      {%- endif -%}
+    {%- assign _product = product | default: nil -%}
+    {%- assign _mode = mode | default: 'html' -%}
+    {%- if _product == nil -%}{% comment %}No product in scope{% endcomment %}{%- endif -%}
+    {%- assign _variant = _product.selected_or_first_available_variant -%}
+    {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
+    {%- assign _now_ts = 'now' | date: '%s' -%}
+    {%- assign _day_name = 'now' | date: '%A' | downcase -%}
+    {%- assign _mf = shop.metafields.custom.collection_discounts -%}
+    {%- assign _raw_rules = _mf | default: '' -%}
+    {%- assign _rules = nil -%}
+    {%- if _mf and _mf.value -%}
+      {%- assign _rules = _mf.value -%}
+    {%- elsif _raw_rules != '' -%}
+      {%- assign _rules = _raw_rules | parse_json -%}
     {%- endif -%}
-    {%- if _applied -%}{%- break -%}{%- endif -%}
-  {%- endfor -%}
-{%- endif -%}
+    {%- assign _applied_green = false -%}
 
-{%- if _mode != 'percent' and request.design_mode and _applied == false -%}
-  <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
-    <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles del producto/colección y fechas.
-    <div style="margin-top:6px;">
-      <div>Producto en colecciones: {% for c in _product.collections %}<code>{{ c.handle }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}{% if collection %}{% if _product.collections.size > 0 %}, {% endif %}<code>{{ collection.handle }}</code>{% endif %}</div>
-    </div>
-  </div>
-{%- endif -%}
+    {%- comment -%} --- LABEL VERDE (colecciones por metafield) --- {%- endcomment -%}
+    {%- if _base_price and _rules and _rules.size > 0 -%}
+      {%- for rule in _rules -%}
+        {%- assign _enabled = rule.enabled -%}
+        {%- assign _percent = rule.percent | times: 1 -%}
+        {%- assign _start_ts = rule.start | date: '%s' -%}
+        {%- assign _end_ts = rule.end | date: '%s' -%}
+
+        {%- assign _window_ok = true -%}
+        {%- if rule.start and _start_ts and _start_ts != '' and _now_ts < _start_ts -%}{%- assign _window_ok = false -%}{%- endif -%}
+        {%- if rule.end and _end_ts and _end_ts != '' and _now_ts > _end_ts -%}{%- assign _window_ok = false -%}{%- endif -%}
+
+        {%- if _enabled and _window_ok and _percent > 0 -%}
+          {%- assign _matched_title = '' -%}
+          {%- assign _matched_handle = '' -%}
+          {%- for c in _product.collections -%}
+            {%- for h in rule.collections -%}
+              {%- assign _h_norm = h | strip | handleize -%}
+              {%- if c.handle == _h_norm or c.title == h -%}
+                {%- assign _matched_title = c.title -%}
+                {%- assign _matched_handle = c.handle -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if _matched_handle != '' -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+          {%- if _matched_handle == '' and collection and collection.handle -%}
+            {%- for h in rule.collections -%}
+              {%- assign _h_norm = h | strip | handleize -%}
+              {%- if collection.handle == _h_norm or collection.title == h -%}
+                {%- assign _matched_title = collection.title -%}
+                {%- assign _matched_handle = collection.handle -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+
+          {%- if _matched_handle != '' -%}
+            {%- if _mode == 'percent' -%}
+              {{- _percent -}}
+            {%- else -%}
+              {%- assign _discount_amount = _base_price | times: _percent | divided_by: 100.0 -%}
+              {%- assign _final_price = _base_price | minus: _discount_amount -%}
+              <div class="collection-discount-tag" style="border-left:3px solid #4CAF50;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#F5FFF5;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="text-decoration:line-through;color:#666;">{{ _base_price | money }}</span>
+                  <span style="font-weight:bold;color:#4CAF50;">{{ _final_price | money }}</span>
+                </div>
+                <div style="background:#4CAF50;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
+                  ¡OFERTA EN {{ _matched_title | default: _matched_handle | truncate: 30 }} -{{ _percent }}%
+                </div>
+              </div>
+            {%- endif -%}
+            {%- assign _applied_green = true -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if _applied_green -%}{%- break -%}{%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if _mode != 'percent' and request.design_mode and _applied_green == false -%}
+      <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
+        <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles del producto/colección y fechas.
+        <div style="margin-top:6px;">
+          <div>Producto en colecciones: {% for c in _product.collections %}<code>{{ c.handle }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}{% if collection %}{% if _product.collections.size > 0 %}, {% endif %}<code>{{ collection.handle }}</code>{% endif %}</div>
+        </div>
+      </div>
+    {%- endif -%}
