@@ -35,7 +35,6 @@ Behavior:
   {%- endcase -%}
 
   {%- if _discount_rules != '' -%}
- 
     {%- assign _tags_src = _product.tags -%}
     {%- if (_tags_src == blank or _tags_src.size == 0) and _product.handle != blank -%}
       {%- assign _p2 = all_products[_product.handle] -%}
