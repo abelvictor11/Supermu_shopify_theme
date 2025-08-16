@@ -1005,7 +1005,7 @@
 </script>
 <header-section data-section-id="{{ section.id }}" data-section-type="header"{% render 'layout-get-container-class' with container: header_container custom_class: 'd-block' %}>
     <!-- Header Content -->
-    <header id="header" class="header header--type-{{ section.settings.type }} header--style-{{ section.settings.style }}{% if template contains 'index' and section.settings.transparent_bg contains 'transparent' or header_enable_transparent %} header--transparent position-absolute top-0 w-100{% else %} position-lg-relative{% endif %}" style="opacity: 0; transition: opacity 0.5s ease;">
+    <header id="header" class="header header--type-{{ section.settings.type }} header--style-{{ section.settings.style }}{% if template contains 'index' and section.settings.transparent_bg contains 'transparent' or header_enable_transparent %} header--transparent position-absolute top-0 w-100{% else %} position-lg-relative{% endif %}">
         {%- if section.settings.sticky != 'disable' -%}
             <sticky-header class="header--sticky-type-{{ section.settings.desktop_sticky_type }} d-block" data-sticky-type="{{ section.settings.sticky }}" data-desktop-sticky-sidebar="{% if need_sticky_sidebar %}true{% else %}false{% endif %}" data-hide-when-scroll-down="{{ section.settings.hide_sticky_when_scroll_down }}">
         {%- endif -%}
