@@ -13,11 +13,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="format-detection" content="telephone=no">
-<!-- Load jQuery first -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <!-- Then load Swiper -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
-<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js" defer></script>
 <script src="{{ 'product-skeleton.js' | asset_url }}"></script>
 <link rel="stylesheet" href="{{ 'skeleton.css' | asset_url }}"/>
 {%- assign get_canonical_url = canonical_url -%}
@@ -66,6 +64,19 @@
 {% include 'css-start' %}
 {{ get_content_for_header | replace: 'name="shopify-digital-wallet"', 'property="shopify-digital-wallet"' | replace: shopify_review_js_url, shopify_review_js_url_replace | replace: "window.addEventListener('load', asyncLoad, false);", "window.addEventListener('theme.assetsLoader::loaded:scripts:theme', asyncLoad, false);" | replace: "window.attachEvent('onload', asyncLoad);", "window.attachEvent('theme.assetsLoader::loaded:scripts:theme', asyncLoad);" }}
 {% include 'js-start' %}
+<script>
+  // Map theme-bundled jQuery to global if no global jQuery is present when theme.js is ready
+  window.addEventListener('theme.assetsLoader::loaded:scripts:theme', function() {
+    try {
+      if (!window.jQuery && window.jQueryTheme) {
+        window.jQuery = window.jQueryTheme;
+        window.$ = window.jQueryTheme;
+      }
+    } catch (e) {
+      console.warn('jQuery global mapping skipped:', e);
+    }
+  });
+</script>
 {%- if settings.app_language == 'weglot' -%}
     {% capture weglot_includes %}
         {% include 'weglot_hreftags' %}
