@@ -1,0 +1,25 @@
+{%- comment -%}
+Renders both discount labels (if applicable):
+- Red: day-specific rules (daily-discount-label)
+- Green: collection metafield rules (discount-label)
+Usage:
+  {% render 'both-discount-labels', product: product %}
+{%- endcomment -%}
+{%- assign _product = product -%}
+{%- if _product -%}
+  {%- capture _gp -%}{% render 'discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
+  {%- capture _rp -%}{% render 'daily-discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
+  {%- assign gp = _gp | strip | remove: '%' | plus: 0 -%}
+  {%- assign rp = _rp | strip | remove: '%' | plus: 0 -%}
+
+  {%- if rp > 0 -%}
+    {% render 'daily-discount-label', product: _product %}
+  {%- endif -%}
+  {%- if gp > 0 -%}
+    {% render 'discount-label', product: _product %}
+  {%- endif -%}
+
+  {%- if request.design_mode -%}
+    <div style="font-size:11px;color:#777;margin-top:6px;">(both-discount-labels debug) gp={{ gp }} rp={{ rp }} | raw_g='{{ _gp | strip }}' raw_r='{{ _rp | strip }}'</div>
+  {%- endif -%}
+{%- endif -%}
