@@ -149,6 +149,11 @@
   object-fit: cover;
 }
 
+.template-index .product-image-container img {
+  /* En homepage no forzamos el left para evitar desalineación en carruseles */
+  left: auto;
+}
+
 .product-image-container img.loaded {
   opacity: 1;
 }
