@@ -1,0 +1,38 @@
+{%- assign _product = product -%}
+{%- assign _current_day = 'now' | date: '%A' -%}
+{%- assign _weekday_num = 'now' | date: '%w' -%}
+
+DEBUG TEST:
+- Current day: {{ _current_day }}
+- Weekday num: {{ _weekday_num }}
+- Product handle: {{ _product.handle }}
+- Product tags: {{ _product.tags | join: ', ' }}
+
+{%- case _current_day -%}
+  {%- when 'Saturday' -%}
+    {%- assign _discount_rules = 'VINO,VINOS:30' -%}
+{%- endcase -%}
+
+- Discount rules: {{ _discount_rules }}
+
+{%- if _discount_rules != '' -%}
+  {%- assign _tags_src = _product.tags -%}
+  {%- assign _product_tags_up = _tags_src | join: '||||' | upcase | split: '||||' -%}
+  - Tags uppercase: {{ _product_tags_up | join: ', ' }}
+  
+  {%- assign _groups = _discount_rules | split: '|' -%}
+  {%- for _group in _groups -%}
+    {%- assign _parts = _group | split: ':' -%}
+    {%- assign _rule_tags = _parts[0] | split: ',' -%}
+    {%- assign _percent = _parts[1] | default: 0 | times: 1 -%}
+    - Group: {{ _group }} → Tags: {{ _rule_tags | join: ',' }} → Percent: {{ _percent }}
+    
+    {%- for _tag in _rule_tags -%}
+      {%- assign _t = _tag | strip | upcase -%}
+      - Checking tag: '{{ _t }}' in {{ _product_tags_up | join: ', ' }}
+      {%- if _product_tags_up contains _t -%}
+        MATCH FOUND! Tag: {{ _t }} → Percent: {{ _percent }}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endif -%}
