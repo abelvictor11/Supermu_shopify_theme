@@ -229,7 +229,8 @@
 
   {%- if rules and rules.size > 0 -%}
     {%- for rule in rules -%}
-      {%- comment -%} rule schema: {"enabled":true, "percent":30, "collections":["VINOS"], "start":"2025-08-10 00:00:00 -0500", "end":"2025-08-18 23:59:59 -0500"} {%- endcomment -%}
+      {%- comment -%} rule schema: {"enabled":true, "percent":30, "collections":["vinos"], "start":"2025-08-10 00:00:00 -0500", "end":"2025-08-18 23:59:59 -0500"}
+         collections debe contener los handles de colección {%- endcomment -%}
       {%- assign enabled = rule.enabled -%}
       {%- assign percent = rule.percent | times: 1 -%}
       {%- assign start_ts = rule.start | date: '%s' -%}
@@ -244,18 +245,20 @@
       {%- endif -%}
 
       {%- if enabled and window_ok and percent > 0 -%}
-        {%- assign matched_collection_name = '' -%}
+        {%- assign matched_collection_title = '' -%}
+        {%- assign matched_collection_handle = '' -%}
         {%- for c in product.collections -%}
-          {%- for title in rule.collections -%}
-            {%- if c.title == title -%}
-              {%- assign matched_collection_name = title -%}
+          {%- for h in rule.collections -%}
+            {%- if c.handle == h -%}
+              {%- assign matched_collection_title = c.title -%}
+              {%- assign matched_collection_handle = h -%}
               {%- break -%}
             {%- endif -%}
           {%- endfor -%}
-          {%- if matched_collection_name != '' -%}{%- break -%}{%- endif -%}
+          {%- if matched_collection_handle != '' -%}{%- break -%}{%- endif -%}
         {%- endfor -%}
 
-        {%- if matched_collection_name != '' -%}
+        {%- if matched_collection_handle != '' -%}
           {%- assign original_price = product.price -%}
           {%- assign discount_amount = original_price | times: percent | divided_by: 100.0 -%}
           {%- assign final_price = original_price | minus: discount_amount | money -%}
@@ -280,7 +283,7 @@
               font-size: 12px;
               margin-top: 5px;
             ">
-              ¡OFERTA EN {{ matched_collection_name | truncate: 30 }} -{{ percent }}%
+              ¡OFERTA EN {{ matched_collection_title | default: matched_collection_handle | truncate: 30 }} -{{ percent }}%
             </div>
           </div>
           {%- assign collection_discount_applied = true -%}
