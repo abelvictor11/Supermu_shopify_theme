@@ -93,12 +93,10 @@ Behavior:
         {%- assign _applied_green = true -%}
       {%- endif -%}
     {%- endif -%}
-    {%- if _applied_green -%}{%- break -%}{%- endif -%}
-  {%- endfor -%}
-{%- endif -%}
+    {%- assign _applied_green = false -%}
 
-{%- if _mode != 'percent' and request.design_mode and _applied_red == false and _applied_green == false -%}
-  <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
-    <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles/títulos de colecciones y fechas.
-  </div>
-{%- endif -%}
+  {%- if _mode != 'percent' and request.design_mode and _applied_red == false and _applied_green == false -%}
+    <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
+      <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles/títulos de colecciones y fechas.
+    </div>
+  {%- endif -%}
