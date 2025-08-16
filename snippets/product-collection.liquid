@@ -221,51 +221,117 @@
     <!-- Debug: Colecciones del producto -> {% for c in product.collections %}{{ c.title }}, {% endfor %} -->
   {%- endif -%}
 
-  {%- comment -%} 1. Descuentos por colección (prioridad alta) {%- endcomment -%}
-  {%- assign collection_discounts = 'DOVE:25,SEDAL:30,TOSH:30,PALMOLIVE:30,SEPARATA / GRANOLAS / VITAMARKET:30,DORIA:20,FRIKO:20,PESCO:20,Panadería Supermu:20,Sello rojo:20,Sary:20,BADIA:20,VINOS:30' | split: ',' -%}
+  {%- comment -%} 1. Descuentos por colección (prioridad alta) con Metafield configurable {%- endcomment -%}
   {%- assign collection_discount_applied = false -%}
+  {%- assign now_ts = 'now' | date: '%s' -%}
+  {%- assign raw_rules = shop.metafields.custom.collection_discounts | default: '' -%}
+  {%- assign rules = raw_rules | parse_json -%}
 
-  {%- for collection_discount in collection_discounts -%}
-    {%- assign parts = collection_discount | split: ':' -%}
-    {%- assign collection_name = parts[0] | strip -%}
-    {%- assign collection_percentage = parts[1] | times: 1 -%}
-    
-    {%- for collection in product.collections -%}
-      {%- if collection.title == collection_name -%}
-        {%- assign original_price = product.price -%}
-        {%- assign discount_amount = original_price | times: collection_percentage | divided_by: 100.0 -%}
-        {%- assign final_price = original_price | minus: discount_amount | money -%}
-        
-        <div class="collection-discount-tag" style="
-          border-left: 3px solid #4CAF50;
-          padding: 10px;
-          margin: 10px 0;
-          border-radius: 0 5px 5px 0;
-          background: #F5FFF5;
-        ">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="text-decoration: line-through; color: #666;">{{ original_price | money }}</span>
-            <span style="font-weight: bold; color: #4CAF50;">{{ final_price }}</span>
-          </div>
-          <div style="
-            background: #4CAF50;
-            color: white;
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-top: 5px;
-          ">
-            ¡OFERTA EN {{ collection_name | truncate: 30 }} -{{ collection_percentage }}%
-          </div>
-        </div>
-        {%- assign collection_discount_applied = true -%}
-        {%- break -%}
+  {%- if rules and rules.size > 0 -%}
+    {%- for rule in rules -%}
+      {%- comment -%} rule schema: {"enabled":true, "percent":30, "collections":["VINOS"], "start":"2025-08-10 00:00:00 -0500", "end":"2025-08-18 23:59:59 -0500"} {%- endcomment -%}
+      {%- assign enabled = rule.enabled -%}
+      {%- assign percent = rule.percent | times: 1 -%}
+      {%- assign start_ts = rule.start | date: '%s' -%}
+      {%- assign end_ts = rule.end | date: '%s' -%}
+
+      {%- assign window_ok = true -%}
+      {%- if rule.start and start_ts and start_ts != '' -%}
+        {%- if now_ts < start_ts -%}{%- assign window_ok = false -%}{%- endif -%}
       {%- endif -%}
+      {%- if rule.end and end_ts and end_ts != '' -%}
+        {%- if now_ts > end_ts -%}{%- assign window_ok = false -%}{%- endif -%}
+      {%- endif -%}
+
+      {%- if enabled and window_ok and percent > 0 -%}
+        {%- assign matched_collection_name = '' -%}
+        {%- for c in product.collections -%}
+          {%- for title in rule.collections -%}
+            {%- if c.title == title -%}
+              {%- assign matched_collection_name = title -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if matched_collection_name != '' -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+
+        {%- if matched_collection_name != '' -%}
+          {%- assign original_price = product.price -%}
+          {%- assign discount_amount = original_price | times: percent | divided_by: 100.0 -%}
+          {%- assign final_price = original_price | minus: discount_amount | money -%}
+
+          <div class="collection-discount-tag" style="
+            border-left: 3px solid #4CAF50;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+            background: #F5FFF5;
+          ">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="text-decoration: line-through; color: #666;">{{ original_price | money }}</span>
+              <span style="font-weight: bold; color: #4CAF50;">{{ final_price }}</span>
+            </div>
+            <div style="
+              background: #4CAF50;
+              color: white;
+              display: inline-block;
+              padding: 2px 8px;
+              border-radius: 3px;
+              font-size: 12px;
+              margin-top: 5px;
+            ">
+              ¡OFERTA EN {{ matched_collection_name | truncate: 30 }} -{{ percent }}%
+            </div>
+          </div>
+          {%- assign collection_discount_applied = true -%}
+        {%- endif -%}
+      {%- endif -%}
+      {%- if collection_discount_applied -%}{%- break -%}{%- endif -%}
     {%- endfor -%}
-    
-    {%- if collection_discount_applied -%}{%- break -%}{%- endif -%}
-  {%- endfor -%}
+  {%- endif -%}
+
+  {%- comment -%} Fallback al listado duro si no hay reglas aplicables {%- endcomment -%}
+  {%- unless collection_discount_applied -%}
+    {%- assign collection_discounts = 'DOVE:25,SEDAL:30,TOSH:30,PALMOLIVE:30,SEPARATA / GRANOLAS / VITAMARKET:30,DORIA:20,FRIKO:20,PESCO:20,Panadería Supermu:20,Sello rojo:20,Sary:20,BADIA:20,VINOS:30' | split: ',' -%}
+    {%- for collection_discount in collection_discounts -%}
+      {%- assign parts = collection_discount | split: ':' -%}
+      {%- assign collection_name = parts[0] | strip -%}
+      {%- assign collection_percentage = parts[1] | times: 1 -%}
+      {%- for collection in product.collections -%}
+        {%- if collection.title == collection_name -%}
+          {%- assign original_price = product.price -%}
+          {%- assign discount_amount = original_price | times: collection_percentage | divided_by: 100.0 -%}
+          {%- assign final_price = original_price | minus: discount_amount | money -%}
+          <div class="collection-discount-tag" style="
+            border-left: 3px solid #4CAF50;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+            background: #F5FFF5;
+          ">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="text-decoration: line-through; color: #666;">{{ original_price | money }}</span>
+              <span style="font-weight: bold; color: #4CAF50;">{{ final_price }}</span>
+            </div>
+            <div style="
+              background: #4CAF50;
+              color: white;
+              display: inline-block;
+              padding: 2px 8px;
+              border-radius: 3px;
+              font-size: 12px;
+              margin-top: 5px;
+            ">
+              ¡OFERTA EN {{ collection_name | truncate: 30 }} -{{ collection_percentage }}%
+            </div>
+          </div>
+          {%- assign collection_discount_applied = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if collection_discount_applied -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endunless -%}
                   
 
                   
