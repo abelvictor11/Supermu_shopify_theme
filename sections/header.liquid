@@ -1998,11 +1998,11 @@
 </header-section>
 <script>
     document.getElementsByTagName('header')[0].classList.add('header--visible');
-    theme.AssetsLoader.{% if section.settings.type == '4' or section.settings.vertical_menu != blank and section.settings.fixed_vertical_menu %}onPageLoaded{% else %}onUserAction{% endif %}(function() {
+    theme.AssetsLoader.onPageLoaded(function() {
         theme.AssetsLoader.require('scripts', 'header');
     });
     {%- if section.settings.sticky != 'disable' -%}
-        theme.AssetsLoader.onUserAction(function() {
+        theme.AssetsLoader.onPageLoaded(function() {
             theme.AssetsLoader.require('scripts', 'sticky_header');
         });
     {%- endif -%}
