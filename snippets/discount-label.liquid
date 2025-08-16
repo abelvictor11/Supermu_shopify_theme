@@ -13,6 +13,7 @@
     {%- assign _variant = _product.selected_or_first_available_variant -%}
     {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
     {%- assign _now_ts = 'now' | date: '%s' -%}
+    {%- assign _day_name = 'now' | date: '%A' | downcase -%}
     {%- assign _mf = shop.metafields.custom.collection_discounts -%}
     {%- assign _raw_rules = _mf | default: '' -%}
     {%- assign _rules = nil -%}
