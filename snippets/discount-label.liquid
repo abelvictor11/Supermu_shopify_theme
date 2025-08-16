@@ -8,12 +8,14 @@ Behavior:
   - Applies first valid rule (enabled & time window) matching any product collection handle.
   - Renders original vs discounted price and a badge naming the matched collection title/handle.
 {%- endcomment -%}
+
 {%- assign _product = product | default: nil -%}
 {%- assign _mode = mode | default: 'html' -%}
 {%- if _product == nil -%}{% comment %}No product in scope{% endcomment %}{%- endif -%}
 {%- assign _variant = _product.selected_or_first_available_variant -%}
 {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
 {%- assign _now_ts = 'now' | date: '%s' -%}
+{%- assign _day_name = 'now' | date: '%A' | downcase -%}
 {%- assign _mf = shop.metafields.custom.collection_discounts -%}
 {%- assign _raw_rules = _mf | default: '' -%}
 {%- assign _rules = nil -%}
@@ -22,9 +24,19 @@ Behavior:
 {%- elsif _raw_rules != '' -%}
   {%- assign _rules = _raw_rules | parse_json -%}
 {%- endif -%}
-{%- assign _applied = false -%}
+{%- assign _applied_red = false -%}
+{%- assign _applied_green = false -%}
 
-{%- if _base_price and _rules and _rules.size > 0 -%}
+{%- comment -%} --- LABEL ROJO: Ejemplo carnes martes y viernes --- {%- endcomment -%}
+{%- if _product.tags contains 'carnes' and (_day_name == 'tuesday' or _day_name == 'friday') -%}
+  <div class="day-discount-tag" style="background:#FFEBEB;border-left:3px solid #FF0000;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;">
+    <div style="color:#FF0000;font-weight:bold;">¡OFERTA ESPECIAL DE DÍA!</div>
+  </div>
+  {%- assign _applied_red = true -%}
+{%- endif -%}
+
+{%- comment -%} --- LABEL VERDE: Solo se evalúa si no aplica rojo --- {%- endcomment -%}
+{%- if _applied_red == false and _base_price and _rules and _rules.size > 0 -%}
   {%- for rule in _rules -%}
     {%- assign _enabled = rule.enabled -%}
     {%- assign _percent = rule.percent | times: 1 -%}
@@ -38,7 +50,6 @@ Behavior:
     {%- if _enabled and _window_ok and _percent > 0 -%}
       {%- assign _matched_title = '' -%}
       {%- assign _matched_handle = '' -%}
-      {%- comment -%} Try matching against product.collections {%- endcomment -%}
       {%- for c in _product.collections -%}
         {%- for h in rule.collections -%}
           {%- assign _h_norm = h | strip | handleize -%}
@@ -52,7 +63,6 @@ Behavior:
         {%- endfor -%}
         {%- if _matched_handle != '' -%}{%- break -%}{%- endif -%}
       {%- endfor -%}
-      {%- comment -%} Also try current collection in scope if not matched yet {%- endcomment -%}
       {%- if _matched_handle == '' and collection and collection.handle -%}
         {%- for h in rule.collections -%}
           {%- assign _h_norm = h | strip | handleize -%}
@@ -80,14 +90,14 @@ Behavior:
             </div>
           </div>
         {%- endif -%}
-        {%- assign _applied = true -%}
+        {%- assign _applied_green = true -%}
       {%- endif -%}
     {%- endif -%}
-    {%- if _applied -%}{%- break -%}{%- endif -%}
+    {%- if _applied_green -%}{%- break -%}{%- endif -%}
   {%- endfor -%}
 {%- endif -%}
 
-{%- if _mode != 'percent' and request.design_mode and _applied == false -%}
+{%- if _mode != 'percent' and request.design_mode and _applied_red == false and _applied_green == false -%}
   <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
     <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles/títulos de colecciones y fechas.
   </div>
