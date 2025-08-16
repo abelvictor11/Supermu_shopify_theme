@@ -32,9 +32,10 @@ Behavior:
       {%- assign _matched_handle = '' -%}
       {%- for c in _product.collections -%}
         {%- for h in rule.collections -%}
-          {%- if c.handle == h -%}
+          {%- assign _h_norm = h | strip | handleize -%}
+          {%- if c.handle == _h_norm or c.title == h -%}
             {%- assign _matched_title = c.title -%}
-            {%- assign _matched_handle = h -%}
+            {%- assign _matched_handle = c.handle -%}
             {%- break -%}
           {%- endif -%}
         {%- endfor -%}
