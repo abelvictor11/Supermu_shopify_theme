@@ -9,8 +9,8 @@ Usage:
 {%- if _product -%}
   {%- capture _gp -%}{% render 'discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
   {%- capture _rp -%}{% render 'daily-discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
-  {%- assign gp = _gp | strip | plus: 0 -%}
-  {%- assign rp = _rp | strip | plus: 0 -%}
+  {%- assign gp = _gp | strip | remove: '%' | plus: 0 -%}
+  {%- assign rp = _rp | strip | remove: '%' | plus: 0 -%}
 
   {%- if rp > gp and rp > 0 -%}
     {% render 'daily-discount-label', product: _product %}
@@ -21,6 +21,6 @@ Usage:
   {%- endif -%}
 
   {%- if request.design_mode -%}
-    <div style="font-size:11px;color:#777;margin-top:6px;">(best-discount debug) gp={{ gp }} rp={{ rp }}</div>
+    <div style="font-size:11px;color:#777;margin-top:6px;">(best-discount debug) gp={{ gp }} rp={{ rp }} | raw_g='{{ _gp | strip }}' raw_r='{{ _rp | strip }}'</div>
   {%- endif -%}
 {%- endif -%}
