@@ -1,0 +1,89 @@
+{% comment %}
+Helper: Collection Discounts Metafield Guide
+- Visible only in Theme Editor (request.design_mode)
+- Shows instructions, sample JSON, and basic validation of shop.metafields.custom.collection_discounts
+{% endcomment %}
+
+{% if request.design_mode %}
+<div style="border:2px dashed #1278A5;padding:16px;border-radius:8px;background:#F2FBFF;color:#123;">
+  <h3 style="margin:0 0 10px 0;">Descuentos por colección (metafield)</h3>
+  <p style="margin:0 0 10px 0;">Configura reglas en <strong>Settings → Custom data → Store (Shop)</strong> con la clave <code>custom.collection_discounts</code> (tipo JSON).</p>
+
+  <details open>
+    <summary><strong>Formato JSON (usa <em>handles</em> de colecciones)</strong></summary>
+    <pre style="white-space:pre-wrap; background:#fff; padding:10px; border:1px solid #ddd; border-radius:6px; margin-top:8px;">
+[
+  {
+    "enabled": true,
+    "percent": 30,
+    "collections": ["vinos", "vino"],
+    "start": "2025-08-10 00:00:00 -0500",
+    "end":   "2025-08-18 23:59:59 -0500"
+  },
+  {
+    "enabled": true,
+    "percent": 20,
+    "collections": ["doria"]
+  }
+]
+    </pre>
+    <ul style="margin:8px 0 0 18px;">
+      <li><strong>enabled</strong>: activa/desactiva la regla.</li>
+      <li><strong>percent</strong>: porcentaje de descuento mostrado en el label.</li>
+      <li><strong>collections</strong>: lista de <em>handles</em> de colecciones (no títulos).</li>
+      <li><strong>start/end</strong>: opcional; ventana de vigencia (formato: YYYY-MM-DD HH:MM:SS -0500).</li>
+      <li>Se aplica la <strong>primera</strong> regla válida que coincida.</li>
+    </ul>
+  </details>
+
+  {% assign raw_rules = shop.metafields.custom.collection_discounts | default: '' %}
+  {% assign rules = raw_rules | parse_json %}
+  {% assign now_ts = 'now' | date: '%s' %}
+  <hr style="margin:12px 0; border:none; border-top:1px solid #cfe6f3;"/>
+  <p style="margin:0 0 6px 0;"><strong>Estado del metafield:</strong></p>
+  {% if raw_rules == '' %}
+    <p style="margin:0 0 6px 0; color:#a33;">No hay valor definido en <code>custom.collection_discounts</code>.</p>
+  {% elsif rules == nil %}
+    <p style="margin:0 0 6px 0; color:#a33;">JSON inválido. Revisa la sintaxis.</p>
+    <pre style="white-space:pre-wrap; background:#fff; padding:10px; border:1px solid #f0c; border-radius:6px;">{{ raw_rules }}</pre>
+  {% else %}
+    <p style="margin:0 0 6px 0; color:#2a7;">JSON válido. Reglas: {{ rules.size }}</p>
+    <div style="display:grid; gap:8px;">
+      {% for rule in rules %}
+        {% assign enabled = rule.enabled %}
+        {% assign percent = rule.percent %}
+        {% assign start_ts = rule.start | date: '%s' %}
+        {% assign end_ts = rule.end | date: '%s' %}
+        {% assign window_ok = true %}
+        {% if rule.start and start_ts and start_ts != '' %}
+          {% if now_ts < start_ts %}{% assign window_ok = false %}{% endif %}
+        {% endif %}
+        {% if rule.end and end_ts and end_ts != '' %}
+          {% if now_ts > end_ts %}{% assign window_ok = false %}{% endif %}
+        {% endif %}
+        <div style="background:#fff; border:1px solid #cfe6f3; border-radius:6px; padding:10px;">
+          <div><strong>Regla {{ forloop.index }}</strong> — <span style="color:{% if enabled %}#2a7{% else %}#a33{% endif %};">{% if enabled %}enabled{% else %}disabled{% endif %}</span> — <strong>{{ percent }}%</strong></div>
+          <div>Handles: <code>{{ rule.collections | join: ', ' }}</code></div>
+          <div>Ventana: <code>{{ rule.start | default: 'sin inicio' }}</code> → <code>{{ rule.end | default: 'sin fin' }}</code> — Vigente ahora: <strong>{{ window_ok }}</strong></div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <p style="margin:10px 0 0 0; font-size:12px; color:#456;">Solo visible en el editor del tema. No se muestra a clientes.</p>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Helper: Descuentos por colección",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Helper: Descuentos por colección",
+      "category": "Ayuda / Utilidades"
+    }
+  ]
+}
+{% endschema %}
