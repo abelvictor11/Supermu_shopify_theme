@@ -12,10 +12,16 @@ Usage:
   {%- assign gp = _gp | strip | remove: '%' | plus: 0 -%}
   {%- assign rp = _rp | strip | remove: '%' | plus: 0 -%}
 
-  {%- if rp > 0 -%}
+  {%- comment -%} Priority logic: higher percentage wins, red wins on tie {%- endcomment -%}
+  {%- if rp > 0 and gp > 0 -%}
+    {%- if rp >= gp -%}
+      {% render 'daily-discount-label', product: _product %}
+    {%- else -%}
+      {% render 'discount-label', product: _product %}
+    {%- endif -%}
+  {%- elsif rp > 0 -%}
     {% render 'daily-discount-label', product: _product %}
-  {%- endif -%}
-  {%- if gp > 0 -%}
+  {%- elsif gp > 0 -%}
     {% render 'discount-label', product: _product %}
   {%- endif -%}
 
