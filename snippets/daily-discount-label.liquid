@@ -34,9 +34,19 @@ Behavior:
   {%- endcase -%}
 
   {%- if _discount_rules != '' -%}
-    {%- assign _product_tags_joined_up = _product.tags | join: '||||' | upcase -%}
+    {%- comment -%} Ensure we have tags even in collection cards {%- endcomment -%}
+    {%- assign _tags = _product.tags -%}
+    {%- if (_tags == blank or _tags.size == 0) and _product.handle -%}
+      {%- assign _p2 = all_products[_product.handle] -%}
+      {%- if _p2 and _p2.tags -%}
+        {%- assign _tags = _p2.tags -%}
+      {%- endif -%}
+    {%- endif -%}
+    {%- assign _product_tags_joined_up = _tags | join: '||||' | upcase -%}
     {%- assign _groups = _discount_rules | split: '|' -%}
     {%- assign _applied = false -%}
+    {%- assign _debug_matched = '' -%}
+    {%- assign _debug_percent = 0 -%}
     {%- for _group in _groups -%}
       {%- assign _parts = _group | split: ':' -%}
       {%- assign _rule_tags = _parts[0] | split: ',' -%}
@@ -44,6 +54,8 @@ Behavior:
       {%- for _tag in _rule_tags -%}
         {%- assign _t = _tag | strip | upcase -%}
         {%- if _product_tags_joined_up contains _t and _percent > 0 -%}
+          {%- assign _debug_matched = _t -%}
+          {%- assign _debug_percent = _percent -%}
           {%- if _mode == 'percent' -%}
             {{- _percent -}}
           {%- else -%}
@@ -66,5 +78,10 @@ Behavior:
       {%- endfor -%}
       {%- if _applied -%}{%- break -%}{%- endif -%}
     {%- endfor -%}
+  {%- endif -%}
+  {%- if request.design_mode -%}
+    <div style="font-size:11px;color:#777;margin-top:6px;">
+      (daily debug) WD={{ _weekday }} rules='{{ _discount_rules }}' matched='{{ _debug_matched }}' rp={{ _debug_percent }} tags=[{% for t in _product.tags %}<code>{{ t }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}]
+    </div>
   {%- endif -%}
 {%- endif -%}
