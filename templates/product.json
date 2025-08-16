@@ -33,7 +33,7 @@
         "custom_liquid_TxTjYf": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{% render 'best-discount-label', product: product %}"
+            "custom_liquid": "Liquid syntax error (snippets/discount-label line 46): Expected end_of_string but found pipe in \"c.title and c.title != '' and c.title | upcase == _h_title_norm\" {# 0=Sunday,1=Monday,...6=Saturday #}"
           }
         },
         "custom_liquid_f48QiT": {
