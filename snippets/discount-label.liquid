@@ -42,7 +42,13 @@
           {%- for c in _product.collections -%}
             {%- for h in rule.collections -%}
               {%- assign _h_norm = h | strip | handleize -%}
+              {%- assign _h_title_norm = h | strip | upcase -%}
               {%- if c.handle == _h_norm or c.title == h -%}
+                {%- comment -%} Also match case-insensitive title to be robust {%- endcomment -%}
+                {%- assign _matched_title = c.title -%}
+                {%- assign _matched_handle = c.handle -%}
+                {%- break -%}
+              {%- elsif c.title and c.title != '' and c.title | upcase == _h_title_norm -%}
                 {%- assign _matched_title = c.title -%}
                 {%- assign _matched_handle = c.handle -%}
                 {%- break -%}
@@ -53,7 +59,8 @@
           {%- if _matched_handle == '' and collection and collection.handle -%}
             {%- for h in rule.collections -%}
               {%- assign _h_norm = h | strip | handleize -%}
-              {%- if collection.handle == _h_norm or collection.title == h -%}
+              {%- assign _h_title_norm = h | strip | upcase -%}
+              {%- if collection.handle == _h_norm or collection.title == h or (collection.title and collection.title | upcase == _h_title_norm) -%}
                 {%- assign _matched_title = collection.title -%}
                 {%- assign _matched_handle = collection.handle -%}
                 {%- break -%}
