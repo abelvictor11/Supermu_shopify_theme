@@ -83,6 +83,11 @@
                   ¡OFERTA EN {{ _matched_title | default: _matched_handle | truncate: 30 }} -{{ _percent }}%
                 </div>
               </div>
+              {%- if request.design_mode -%}
+                <div style="font-size:11px;color:#777;margin-top:6px;">
+                  (green debug) matched='{{ _matched_title | default: _matched_handle }}' percent={{ _percent }} window='{{ rule.start }} → {{ rule.end }}' now='{{ 'now' | date: '%Y-%m-%d %H:%M:%S %z' }}'
+                </div>
+              {%- endif -%}
             {%- endif -%}
             {%- assign _applied_green = true -%}
           {%- endif -%}
