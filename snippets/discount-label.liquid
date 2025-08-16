@@ -8,6 +8,7 @@ Behavior:
   - Renders original vs discounted price and a badge naming the matched collection title/handle.
 {%- endcomment -%}
 {%- assign _product = product | default: nil -%}
+{%- assign _mode = mode | default: 'html' -%}
 {%- if _product == nil -%}{% comment %}No product in scope{% endcomment %}{%- endif -%}
 {%- assign _variant = _product.selected_or_first_available_variant -%}
 {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
@@ -61,17 +62,21 @@ Behavior:
       {%- endif -%}
 
       {%- if _matched_handle != '' -%}
-        {%- assign _discount_amount = _base_price | times: _percent | divided_by: 100.0 -%}
-        {%- assign _final_price = _base_price | minus: _discount_amount -%}
-        <div class="collection-discount-tag" style="border-left:3px solid #4CAF50;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#F5FFF5;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="text-decoration:line-through;color:#666;">{{ _base_price | money }}</span>
-            <span style="font-weight:bold;color:#4CAF50;">{{ _final_price | money }}</span>
+        {%- if _mode == 'percent' -%}
+          {{ _percent }}
+        {%- else -%}
+          {%- assign _discount_amount = _base_price | times: _percent | divided_by: 100.0 -%}
+          {%- assign _final_price = _base_price | minus: _discount_amount -%}
+          <div class="collection-discount-tag" style="border-left:3px solid #4CAF50;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#F5FFF5;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="text-decoration:line-through;color:#666;">{{ _base_price | money }}</span>
+              <span style="font-weight:bold;color:#4CAF50;">{{ _final_price | money }}</span>
+            </div>
+            <div style="background:#4CAF50;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
+              ¡OFERTA EN {{ _matched_title | default: _matched_handle | truncate: 30 }} -{{ _percent }}%
+            </div>
           </div>
-          <div style="background:#4CAF50;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
-            ¡OFERTA EN {{ _matched_title | default: _matched_handle | truncate: 30 }} -{{ _percent }}%
-          </div>
-        </div>
+        {%- endif -%}
         {%- assign _applied = true -%}
       {%- endif -%}
     {%- endif -%}
@@ -79,7 +84,7 @@ Behavior:
   {%- endfor -%}
 {%- endif -%}
 
-{%- if request.design_mode and _applied == false -%}
+{%- if _mode != 'percent' and request.design_mode and _applied == false -%}
   <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
     <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles del producto/colección y fechas.
     <div style="margin-top:6px;">

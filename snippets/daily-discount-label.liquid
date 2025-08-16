@@ -7,6 +7,7 @@ Behavior:
   - Shows first matching tag's discount.
 {%- endcomment -%}
 {%- assign _product = product -%}
+{%- assign _mode = mode | default: 'html' -%}
 {%- if _product -%}
   {%- assign _current_day = 'now' | date: '%A' -%}
   {%- case _current_day -%}
@@ -43,18 +44,22 @@ Behavior:
       {%- for _tag in _rule_tags -%}
         {%- assign _t = _tag | strip -%}
         {%- if _product_tags_up contains _t and _percent > 0 -%}
-          {%- assign _original = _product.price -%}
-          {%- assign _disc = _original | times: _percent | divided_by: 100.0 -%}
-          {%- assign _final = _original | minus: _disc | money -%}
-          <div class="daily-discount-tag" style="border-left:3px solid #FF0000;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#FFF9F9;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="text-decoration:line-through;color:#666;">{{ _original | money }}</span>
-              <span style="font-weight:bold;color:#FF0000;">{{ _final }}</span>
+          {%- if _mode == 'percent' -%}
+            {{ _percent }}
+          {%- else -%}
+            {%- assign _original = _product.price -%}
+            {%- assign _disc = _original | times: _percent | divided_by: 100.0 -%}
+            {%- assign _final = _original | minus: _disc | money -%}
+            <div class="daily-discount-tag" style="border-left:3px solid #FF0000;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#FFF9F9;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="text-decoration:line-through;color:#666;">{{ _original | money }}</span>
+                <span style="font-weight:bold;color:#FF0000;">{{ _final }}</span>
+              </div>
+              <div style="background:#FF0000;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
+                ¡OFERTA {{ _t }} -{{ _percent }}% ({{ _day_translation }})
+              </div>
             </div>
-            <div style="background:#FF0000;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
-              ¡OFERTA {{ _t }} -{{ _percent }}% ({{ _day_translation }})
-            </div>
-          </div>
+          {%- endif -%}
           {%- assign _applied = true -%}
           {%- break -%}
         {%- endif -%}
