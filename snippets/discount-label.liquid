@@ -14,8 +14,14 @@ Behavior:
 {%- assign _variant = _product.selected_or_first_available_variant -%}
 {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
 {%- assign _now_ts = 'now' | date: '%s' -%}
-{%- assign _raw_rules = shop.metafields.custom.collection_discounts | default: '' -%}
-{%- assign _rules = _raw_rules | parse_json -%}
+{%- assign _mf = shop.metafields.custom.collection_discounts -%}
+{%- assign _raw_rules = _mf | default: '' -%}
+{%- assign _rules = nil -%}
+{%- if _mf and _mf.value -%}
+  {%- assign _rules = _mf.value -%}
+{%- elsif _raw_rules != '' -%}
+  {%- assign _rules = _raw_rules | parse_json -%}
+{%- endif -%}
 {%- assign _applied = false -%}
 
 {%- if _base_price and _rules and _rules.size > 0 -%}
@@ -32,6 +38,7 @@ Behavior:
     {%- if _enabled and _window_ok and _percent > 0 -%}
       {%- assign _matched_title = '' -%}
       {%- assign _matched_handle = '' -%}
+      {%- comment -%} Try matching against product.collections {%- endcomment -%}
       {%- for c in _product.collections -%}
         {%- for h in rule.collections -%}
           {%- assign _h_norm = h | strip | handleize -%}
@@ -45,6 +52,17 @@ Behavior:
         {%- endfor -%}
         {%- if _matched_handle != '' -%}{%- break -%}{%- endif -%}
       {%- endfor -%}
+      {%- comment -%} Also try current collection in scope if not matched yet {%- endcomment -%}
+      {%- if _matched_handle == '' and collection and collection.handle -%}
+        {%- for h in rule.collections -%}
+          {%- assign _h_norm = h | strip | handleize -%}
+          {%- if collection.handle == _h_norm or collection.title == h -%}
+            {%- assign _matched_title = collection.title -%}
+            {%- assign _matched_handle = collection.handle -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
 
       {%- if _matched_handle != '' -%}
         {%- if _mode == 'percent' -%}
@@ -74,4 +92,3 @@ Behavior:
     <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles/títulos de colecciones y fechas.
   </div>
 {%- endif -%}
-
