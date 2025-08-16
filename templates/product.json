@@ -33,7 +33,7 @@
         "custom_liquid_TxTjYf": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{% capture gp %}{% render 'discount-label', product: product, mode: 'percent' %}{% endcapture %}\n{% capture rp %}{% render 'daily-discount-label', product: product, mode: 'percent' %}{% endcapture %}\nVerde: {{ gp | strip }}\nRojo: {{ rp | strip }}"
+            "custom_liquid": "{% render 'both-discount-labels', product: product %}\n{% render 'best-discount-label', product: product %}"
           }
         },
         "custom_liquid_f48QiT": {
