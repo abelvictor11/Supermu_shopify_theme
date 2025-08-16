@@ -657,6 +657,20 @@
             // Desactivado: no crear skeletons vía JS ni observar imágenes
             this.loaded = false;
             this.maxLoadTimeout = null;
+            this._connected = false;
+        }
+
+        connectedCallback() {
+            if (this._connected) return;
+            this._connected = true;
+            try {
+                this.load();
+            } catch (e) {
+                // Fallback: asegurar visibilidad del header aunque falle load
+                const headerEl = this.querySelector('#header');
+                if (headerEl) headerEl.style.opacity = '1';
+                console.error('HeaderSection load error:', e);
+            }
         }
 
         load() {
