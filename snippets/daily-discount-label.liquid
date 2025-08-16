@@ -1,0 +1,65 @@
+{%- comment -%}
+Daily discount label (red) based on product tags and current weekday.
+Params:
+  - product: required
+Behavior:
+  - Uses weekday-specific mapping to tag→percent.
+  - Shows first matching tag's discount.
+{%- endcomment -%}
+{%- assign _product = product -%}
+{%- if _product -%}
+  {%- assign _current_day = 'now' | date: '%A' -%}
+  {%- case _current_day -%}
+    {%- when 'Monday' -%}
+      {%- assign _day_translation = 'LUNES' -%}
+      {%- assign _discount_rules = 'MASCOTAS:20' -%}
+    {%- when 'Tuesday' -%}
+      {%- assign _day_translation = 'MARTES' -%}
+      {%- assign _discount_rules = 'CARNES,CARNE,CERDO:10|POLLO:20' -%}
+    {%- when 'Wednesday' -%}
+      {%- assign _day_translation = 'MIÉRCOLES' -%}
+      {%- assign _discount_rules = 'FRUVER:25' -%}
+    {%- when 'Thursday' -%}
+      {%- assign _day_translation = 'JUEVES' -%}
+      {%- assign _discount_rules = 'PESCADO,MARISCOS,PESCADOS Y MARISCOS,CARNES BLANCAS PESCADO:20' -%}
+    {%- when 'Friday' -%}
+      {%- assign _day_translation = 'VIERNES' -%}
+      {%- assign _discount_rules = 'CARNES,CARNE,CERDO:10|FRUVER:25' -%}
+    {%- when 'Saturday' -%}
+      {%- assign _day_translation = 'SÁBADO' -%}
+      {%- assign _discount_rules = 'VINO,VINOS:30' -%}
+    {%- else -%}
+      {%- assign _discount_rules = '' -%}
+  {%- endcase -%}
+
+  {%- if _discount_rules != '' -%}
+    {%- assign _product_tags_up = _product.tags | join: '||||' | upcase | split: '||||' -%}
+    {%- assign _groups = _discount_rules | split: '|' -%}
+    {%- assign _applied = false -%}
+    {%- for _group in _groups -%}
+      {%- assign _parts = _group | split: ':' -%}
+      {%- assign _rule_tags = _parts[0] | split: ',' -%}
+      {%- assign _percent = _parts[1] | default: 0 | times: 1 -%}
+      {%- for _tag in _rule_tags -%}
+        {%- assign _t = _tag | strip -%}
+        {%- if _product_tags_up contains _t and _percent > 0 -%}
+          {%- assign _original = _product.price -%}
+          {%- assign _disc = _original | times: _percent | divided_by: 100.0 -%}
+          {%- assign _final = _original | minus: _disc | money -%}
+          <div class="daily-discount-tag" style="border-left:3px solid #FF0000;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#FFF9F9;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="text-decoration:line-through;color:#666;">{{ _original | money }}</span>
+              <span style="font-weight:bold;color:#FF0000;">{{ _final }}</span>
+            </div>
+            <div style="background:#FF0000;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
+              ¡OFERTA {{ _t }} -{{ _percent }}% ({{ _day_translation }})
+            </div>
+          </div>
+          {%- assign _applied = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if _applied -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}
