@@ -882,6 +882,27 @@
             }
         }
 
+        // Safe currency handlers (no-op if not present)
+        currencyInit() {
+            try {
+                if (window.theme && theme.Currency && typeof theme.Currency.init === 'function') {
+                    theme.Currency.init();
+                }
+            } catch (e) {
+                console.warn('currencyInit skipped:', e);
+            }
+        }
+
+        currencyDestroy() {
+            try {
+                if (window.theme && theme.Currency && typeof theme.Currency.destroy === 'function') {
+                    theme.Currency.destroy();
+                }
+            } catch (e) {
+                // ignore
+            }
+        }
+
         widthLimitInit($container, namespace) {
             var $elems = $container.find('[data-js-header-width-limit]');
 

@@ -150,7 +150,8 @@
 }
 
 .template-index .slick-slider .product-image-container img,
-.template-index .slick-list .product-image-container img {
+.template-index .slick-list .product-image-container img,
+.template-index .slick-slide .product-image-container img {
   /* En carruseles de la homepage no forzamos left para evitar desalineación */
   left: auto;
 }
