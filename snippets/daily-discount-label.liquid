@@ -10,24 +10,24 @@ Behavior:
 {%- assign _product = product -%}
 {%- assign _mode = mode | default: 'html' -%}
 {%- if _product -%}
-  {%- assign _current_day = 'now' | date: '%A' -%}
-  {%- case _current_day -%}
-    {%- when 'Monday' -%}
+  {%- assign _weekday = 'now' | date: '%w' -%} {# 0=Sunday,1=Monday,...6=Saturday #}
+  {%- case _weekday -%}
+    {%- when '1' -%}
       {%- assign _day_translation = 'LUNES' -%}
       {%- assign _discount_rules = 'MASCOTAS:20' -%}
-    {%- when 'Tuesday' -%}
+    {%- when '2' -%}
       {%- assign _day_translation = 'MARTES' -%}
       {%- assign _discount_rules = 'CARNES,CARNE,CERDO:10|POLLO:20' -%}
-    {%- when 'Wednesday' -%}
+    {%- when '3' -%}
       {%- assign _day_translation = 'MIÉRCOLES' -%}
       {%- assign _discount_rules = 'FRUVER:25' -%}
-    {%- when 'Thursday' -%}
+    {%- when '4' -%}
       {%- assign _day_translation = 'JUEVES' -%}
       {%- assign _discount_rules = 'PESCADO,MARISCOS,PESCADOS Y MARISCOS,CARNES BLANCAS PESCADO:20' -%}
-    {%- when 'Friday' -%}
+    {%- when '5' -%}
       {%- assign _day_translation = 'VIERNES' -%}
       {%- assign _discount_rules = 'CARNES,CARNE,CERDO:10|FRUVER:25' -%}
-    {%- when 'Saturday' -%}
+    {%- when '6' -%}
       {%- assign _day_translation = 'SÁBADO' -%}
       {%- assign _discount_rules = 'VINO,VINOS:30' -%}
     {%- else -%}
@@ -35,6 +35,7 @@ Behavior:
   {%- endcase -%}
 
   {%- if _discount_rules != '' -%}
+    {%- comment -%} Ensure we have tags even in collection cards {%- endcomment -%}
     {%- assign _tags_src = _product.tags -%}
     {%- if (_tags_src == blank or _tags_src.size == 0) and _product.handle != blank -%}
       {%- assign _p2 = all_products[_product.handle] -%}
@@ -81,7 +82,7 @@ Behavior:
   {%- endif -%}
   {%- if _mode != 'percent' and request.design_mode -%}
     <div style="font-size:11px;color:#777;margin-top:6px;">
-      (daily debug) day='{{ _current_day }}' rules='{{ _discount_rules }}' matched='{{ _debug_matched }}' rp={{ _debug_percent }} tags=[{% for t in _product.tags %}<code>{{ t }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}]
+      (daily debug) WD={{ _weekday }} rules='{{ _discount_rules }}' matched='{{ _debug_matched }}' rp={{ _debug_percent }} tags=[{% for t in _product.tags %}<code>{{ t }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}]
     </div>
   {%- endif -%}
 {%- endif -%}
