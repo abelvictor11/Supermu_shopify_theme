@@ -33,7 +33,7 @@
         "custom_liquid_TxTjYf": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{%- capture green_label -%}{% render 'discount-label', product: product %}{%- endcapture -%}\n{{ green_label }}\n{%- assign has_green_label = green_label | strip -%}\n\n{%- unless has_green_label != '' -%}\n  {% render 'daily-discount-label', product: product %}\n{%- endunless -%}"
+            "custom_liquid": "{%- capture green_percent -%}{% render 'discount-label', product: product, mode: 'percent' %}{%- endcapture -%}\n{%- capture red_percent -%}{% render 'daily-discount-label', product: product, mode: 'percent' %}{%- endcapture -%}\n{%- assign gp = green_percent | strip | plus: 0 -%}\n{%- assign rp = red_percent | strip | plus: 0 -%}\n\n{%- if rp > gp and rp > 0 -%}\n  {% render 'daily-discount-label', product: product %}\n{%- elsif gp > rp and gp > 0 -%}\n  {% render 'discount-label', product: product %}\n{%- elsif gp == rp and gp > 0 -%}\n  {% render 'daily-discount-label', product: product %}\n{%- endif -%}"
           }
         },
         "custom_liquid_f48QiT": {
