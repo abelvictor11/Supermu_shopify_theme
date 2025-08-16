@@ -49,9 +49,6 @@ Behavior:
     {%- assign _title_up = _product.title | upcase -%}
     {%- assign _type_up = _product.type | upcase -%}
     {%- assign _vendor_up = _product.vendor | upcase -%}
-    {%- comment -%} Align base price computation with green snippet for consistent display {%- endcomment -%}
-    {%- assign _variant = _product.selected_or_first_available_variant -%}
-    {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
     {%- assign _haystack_up = _product_tags_joined_up | append: '||||' | append: _title_up | append: '||||' | append: _type_up | append: '||||' | append: _vendor_up -%}
     {%- assign _groups = _discount_rules | split: '|' -%}
     {%- assign _applied = false -%}
