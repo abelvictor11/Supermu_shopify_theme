@@ -959,9 +959,9 @@
         }
     }
 
-    theme.AssetsLoader.onPageLoaded(function() {
+    if (!customElements.get('header-section')) {
         customElements.define('header-section', HeaderSection);
-    });
+    }
 
     if (!customElements.get('localization-form')) {
         customElements.define(
