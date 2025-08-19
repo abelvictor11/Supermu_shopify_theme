@@ -206,34 +206,11 @@
                 {%- if show_price -%}
                     <div class="product-collection__price mb-{% if product_collection_content_offsets == 1 %}10{% else %}20{% endif %}">
                         {% include 'product-get-price' %}
-                  
-               
-
-
-<div class="label-grid">
-  {%- comment -%} Debug mode (opcional) - descomenta para ver información útil {%- endcomment -%}
-  {%- assign debug_mode = false -%}
-  
-  {%- assign current_day = 'now' | date: '%A' -%}
-  {%- if debug_mode -%}
-    <!-- Debug: Día actual -> {{ current_day }} -->
-    <!-- Debug: Tags del producto -> {{ product.tags | join: ', ' }} -->
-    <!-- Debug: Colecciones del producto -> {% for c in product.collections %}{{ c.title }}, {% endfor %} -->
-  {%- endif -%}
-
-  {%- comment -%} 1. Descuento por colección (label verde) usando snippet reutilizable {%- endcomment -%}
-  {%- capture green_label -%}{% render 'discount-label', product: product %}{%- endcapture -%}
-  {{ green_label }}
-  {%- assign has_green_label = green_label | strip -%}
-                  
-
-                  
-  {%- comment -%} 2. Descuentos diarios por tags (solo si NO hay label verde) {%- endcomment -%}
-  {%- unless has_green_label != '' -%}
-    {% render 'daily-discount-label', product: product %}
-  {%- endunless -%}
-</div>
-                
+                        
+                        <div class="label-grid">
+                          {% render 'both-discount-labels', product: product %}
+                        </div>
+                        
                     </div>
 
 
