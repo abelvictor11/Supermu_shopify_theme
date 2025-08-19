@@ -43,7 +43,9 @@
             {%- for h in rule.collections -%}
               {%- assign _h_norm = h | strip | handleize -%}
               {%- assign _c_title_norm = c.title | strip | handleize -%}
-              {%- if c.handle == _h_norm or _c_title_norm == _h_norm or c.title | downcase == h | downcase -%}
+              {%- assign _h_down = h | strip | downcase -%}
+              {%- assign _c_title_down = c.title | downcase -%}
+              {%- if c.handle == _h_norm or _c_title_norm == _h_norm or _c_title_down == _h_down -%}
                 {%- assign _matched_title = c.title -%}
                 {%- assign _matched_handle = c.handle -%}
                 {%- break -%}
@@ -55,7 +57,9 @@
             {%- for h in rule.collections -%}
               {%- assign _h_norm = h | strip | handleize -%}
               {%- assign _coll_title_norm = collection.title | strip | handleize -%}
-              {%- if collection.handle == _h_norm or _coll_title_norm == _h_norm or collection.title | downcase == h | downcase -%}
+              {%- assign _h_down = h | strip | downcase -%}
+              {%- assign _coll_title_down = collection.title | downcase -%}
+              {%- if collection.handle == _h_norm or _coll_title_norm == _h_norm or _coll_title_down == _h_down -%}
                 {%- assign _matched_title = collection.title -%}
                 {%- assign _matched_handle = collection.handle -%}
                 {%- break -%}
