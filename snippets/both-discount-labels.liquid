@@ -7,7 +7,7 @@ Usage:
 {%- endcomment -%}
 {%- assign _product = product -%}
 {%- if _product -%}
-  {%- capture _gp -%}{% render 'discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
+  {%- capture _gp -%}{% render 'discount-label', product: _product, mode: 'percent', collection: collection %}{%- endcapture -%}
   {%- capture _rp -%}{% render 'daily-discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
   {%- assign gp = _gp | strip | remove: '%' | plus: 0 -%}
   {%- assign rp = _rp | strip | remove: '%' | plus: 0 -%}
@@ -19,7 +19,7 @@ Usage:
       {% render 'daily-discount-label', product: _product %}
     {%- elsif gp > rp and gp > 0 -%}
       {%- assign _winner = 'green' -%}
-      {% render 'discount-label', product: _product %}
+      {% render 'discount-label', product: _product, collection: collection %}
     {%- elsif rp == gp and rp > 0 -%}
       {%- assign _winner = 'red' -%}
       {% render 'daily-discount-label', product: _product %}
