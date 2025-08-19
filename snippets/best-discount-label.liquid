@@ -1,0 +1,26 @@
+{%- comment -%}
+Outputs the single winning discount label for a product.
+- Computes green (collection-based) and red (daily) percentages internally.
+- Renders only the higher discount; on tie, prefers red.
+Usage:
+  {% render 'best-discount-label', product: product %}
+{%- endcomment -%}
+{%- assign _product = product -%}
+{%- if _product -%}
+  {%- capture _gp -%}{% render 'discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
+  {%- capture _rp -%}{% render 'daily-discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
+  {%- assign gp = _gp | strip | plus: 0 -%}
+  {%- assign rp = _rp | strip | plus: 0 -%}
+
+  {%- if rp > gp and rp > 0 -%}
+    {% render 'daily-discount-label', product: _product %}
+  {%- elsif gp > rp and gp > 0 -%}
+    {% render 'discount-label', product: _product %}
+  {%- elsif gp == rp and gp > 0 -%}
+    {% render 'daily-discount-label', product: _product %}
+  {%- endif -%}
+
+  {%- if request.design_mode -%}
+    <div style="font-size:11px;color:#777;margin-top:6px;">(best-discount debug) gp={{ gp }} rp={{ rp }}</div>
+  {%- endif -%}
+{%- endif -%}
