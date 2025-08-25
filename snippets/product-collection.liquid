@@ -206,40 +206,13 @@
                 {%- if show_price -%}
                     <div class="product-collection__price mb-{% if product_collection_content_offsets == 1 %}10{% else %}20{% endif %}">
                         {% include 'product-get-price' %}
-                  
-               
-
-
-<div class="label-grid">
-  {%- comment -%} Debug mode (opcional) - descomenta para ver información útil {%- endcomment -%}
-  {%- assign debug_mode = false -%}
-  
-  {%- assign current_day = 'now' | date: '%A' -%}
-  {%- if debug_mode -%}
-    <!-- Debug: Día actual -> {{ current_day }} -->
-    <!-- Debug: Tags del producto -> {{ product.tags | join: ', ' }} -->
-    <!-- Debug: Colecciones del producto -> {% for c in product.collections %}{{ c.title }}, {% endfor %} -->
-  {%- endif -%}
-
-  {%- comment -%} 1+2. Calcular ambos descuentos y mostrar solo el mayor (empate: gana rojo) {%- endcomment -%}
-  {%- capture green_percent -%}{% render 'discount-label', product: product, mode: 'percent' %}{%- endcapture -%}
-  {%- capture red_percent -%}{% render 'daily-discount-label', product: product, mode: 'percent' %}{%- endcapture -%}
-  {%- assign gp = green_percent | strip | plus: 0 -%}
-  {%- assign rp = red_percent | strip | plus: 0 -%}
-
-  {%- comment -%} Render ambos labels si aplican. Rojo primero, luego verde. {%- endcomment -%}
-  {%- if rp > 0 -%}
-    {% render 'daily-discount-label', product: product %}
-  {%- endif -%}
-  {%- if gp > 0 -%}
-    {% render 'discount-label', product: product %}
-  {%- endif -%}
-  {%- if request.design_mode -%}
-    <div style="font-size:11px;color:#777;margin-top:4px;">(collection debug) gp={{ gp }} rp={{ rp }}</div>
-  {%- endif -%}
-</div>
+                        
+                        <div class="label-grid">
+                          {% render 'both-discount-labels', product: product %}
+                        </div>
                 
                     </div>
+
 
 
 
