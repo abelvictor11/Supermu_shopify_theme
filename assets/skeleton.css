@@ -148,7 +148,11 @@
   height: 100%;
   object-fit: cover;
 }
-
+.template-page .slick-slider .product-image-container img,
+.template-page .slick-list .product-image-container img,
+.template-page .slick-slide .product-image-container img {
+  left: auto;
+}
 .template-index .slick-slider .product-image-container img,
 .template-index .slick-list .product-image-container img,
 .template-index .slick-slide .product-image-container img {

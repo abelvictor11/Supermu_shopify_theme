@@ -14,8 +14,14 @@ Behavior:
 {%- assign _variant = _product.selected_or_first_available_variant -%}
 {%- assign _base_price = price | default: _variant.price | default: _product.price -%}
 {%- assign _now_ts = 'now' | date: '%s' -%}
-{%- assign _raw_rules = shop.metafields.custom.collection_discounts | default: '' -%}
-{%- assign _rules = _raw_rules | parse_json -%}
+{%- assign _mf = shop.metafields.custom.collection_discounts -%}
+{%- assign _raw_rules = _mf | default: '' -%}
+{%- assign _rules = nil -%}
+{%- if _mf and _mf.value -%}
+  {%- assign _rules = _mf.value -%}
+{%- elsif _raw_rules != '' -%}
+  {%- assign _rules = _raw_rules | parse_json -%}
+{%- endif -%}
 {%- assign _applied = false -%}
 
 {%- if _base_price and _rules and _rules.size > 0 -%}
@@ -32,12 +38,17 @@ Behavior:
     {%- if _enabled and _window_ok and _percent > 0 -%}
       {%- assign _matched_title = '' -%}
       {%- assign _matched_handle = '' -%}
+      {%- comment -%} Try matching against product.collections {%- endcomment -%}
       {%- for c in _product.collections -%}
         {%- for h in rule.collections -%}
           {%- assign _h_norm = h | strip | handleize -%}
           {%- assign _h_title_up = h | strip | upcase -%}
           {%- assign _c_title_up = c.title | default: '' | upcase -%}
-          {%- if c.handle == _h_norm or c.title == h or (_c_title_up != '' and _c_title_up == _h_title_up) -%}
+          {%- if c.handle == _h_norm or c.title == h -%}
+            {%- assign _matched_title = c.title -%}
+            {%- assign _matched_handle = c.handle -%}
+            {%- break -%}
+          {%- elsif _c_title_up != '' and _c_title_up == _h_title_up -%}
             {%- assign _matched_title = c.title -%}
             {%- assign _matched_handle = c.handle -%}
             {%- break -%}
@@ -45,6 +56,17 @@ Behavior:
         {%- endfor -%}
         {%- if _matched_handle != '' -%}{%- break -%}{%- endif -%}
       {%- endfor -%}
+      {%- comment -%} Also try current collection in scope if not matched yet {%- endcomment -%}
+      {%- if _matched_handle == '' and collection and collection.handle -%}
+        {%- for h in rule.collections -%}
+          {%- assign _h_norm = h | strip | handleize -%}
+          {%- if collection.handle == _h_norm or collection.title == h -%}
+            {%- assign _matched_title = collection.title -%}
+            {%- assign _matched_handle = collection.handle -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
 
       {%- if _matched_handle != '' -%}
         {%- if _mode == 'percent' -%}
@@ -71,7 +93,9 @@ Behavior:
 
 {%- if _mode != 'percent' and request.design_mode and _applied == false -%}
   <div style="border:1px dashed #aaa;padding:8px;border-radius:6px;background:#fafafa;color:#555;font-size:12px;">
-    <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles/títulos de colecciones y fechas.
+    <strong>Discount label:</strong> sin coincidencias. Verifica <code>custom.collection_discounts</code>, handles del producto/colección y fechas.
+    <div style="margin-top:6px;">
+      <div>Producto en colecciones: {% for c in _product.collections %}<code>{{ c.handle }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}{% if collection %}{% if _product.collections.size > 0 %}, {% endif %}<code>{{ collection.handle }}</code>{% endif %}</div>
+    </div>
   </div>
 {%- endif -%}
-
