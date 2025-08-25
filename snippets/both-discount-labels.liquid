@@ -12,14 +12,20 @@ Usage:
   {%- assign gp = _gp | strip | remove: '%' | plus: 0 -%}
   {%- assign rp = _rp | strip | remove: '%' | plus: 0 -%}
 
-  {%- if rp > 0 -%}
+  {%- if rp > gp and rp > 0 -%}
+    {% render 'daily-discount-label', product: _product %}
+  {%- elsif gp > rp and gp > 0 -%}
+    {% render 'discount-label', product: _product %}
+  {%- elsif rp == gp and rp > 0 -%}
     {% render 'daily-discount-label', product: _product %}
   {%- endif -%}
-  {%- if gp > 0 -%}
-    {% render 'discount-label', product: _product %}
-  {%- endif -%}
+
+  {%- assign _winner = '' -%}
+  {%- if rp > gp and rp > 0 -%}{%- assign _winner = 'red' -%}
+  {%- elsif gp > rp and gp > 0 -%}{%- assign _winner = 'green' -%}
+  {%- elsif rp == gp and rp > 0 -%}{%- assign _winner = 'red (tie)' -%}{%- endif -%}
 
   {%- if request.design_mode -%}
-    <div style="font-size:11px;color:#777;margin-top:6px;">(both-discount-labels debug) gp={{ gp }} rp={{ rp }} | raw_g='{{ _gp | strip }}' raw_r='{{ _rp | strip }}'</div>
+    <div style="font-size:11px;color:#777;margin-top:6px;">(both-discount-labels debug) gp={{ gp }} rp={{ rp }} winner={{ _winner }} | raw_g='{{ _gp | strip }}' raw_r='{{ _rp | strip }}'</div>
   {%- endif -%}
 {%- endif -%}
