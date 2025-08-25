@@ -5,12 +5,27 @@
     {%- assign max_quantity = 3 -%}  
 {%- endif %}
 
+{%- assign cart_limits_enabled = true -%}
+{%- assign cart_item_max = 3 -%}
+{%- assign cart_limits_meta = shop.metafields.custom.cart_item_max_quantity -%}
+{%- if cart_limits_meta != blank -%}
+  {%- assign cart_limits = cart_limits_meta.value -%}
+  {%- if cart_limits == blank -%}{%- assign cart_limits = cart_limits_meta | parse_json -%}{%- endif -%}
+  {%- if cart_limits and cart_limits.enabled == true and cart_limits.max_per_line -%}
+    {%- assign cart_item_max = cart_limits.max_per_line | plus: 0 -%}
+    {%- assign cart_limits_enabled = true -%}
+  {%- elsif cart_limits and cart_limits.enabled == false -%}
+    {%- assign cart_limits_enabled = false -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
+
 {%- assign quantity_type = quantity_type | default: 1 -%}
 {%- case quantity_type -%}
     {%- when 1 %}
         <label{% unless quantity_show_title %} class="d-none"{% endunless %}>{{ 'products.product.quantity' | t }}</label>
         <div class="input-quantity input-quantity--type-01 d-flex js-product-quantity"{% if quantity_connect %} data-js-quantity-connect="{{ quantity_connect }}"{% endif %}>
-            <input type="number" class="mb-0 mr-10" name="quantity" value="1" min="1" max="5" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
+            <input type="number" class="mb-0 mr-10" name="quantity" value="1" min="1" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
             <div class="d-flex flex-center mr-10 border cursor-pointer" data-control="-"><i>{% render 'icon-theme-189' %}</i></div>
             <div class="d-flex flex-center border cursor-pointer" data-control="+"><i>{% render 'icon-theme-188' %}</i></div>
         </div>
@@ -18,26 +33,26 @@
         <label{% unless quantity_show_title %} class="d-none"{% endunless %}>{{ 'products.product.quantity' | t }}</label>
         <div class="input-quantity input-quantity--type-02 d-flex js-product-quantity"{% if quantity_connect %} data-js-quantity-connect="{{ quantity_connect }}"{% endif %}>
             <div class="d-flex flex-center cursor-pointer" data-control="-"><i>{% render 'icon-theme-189' %}</i></div>
-            <input type="number" class="mb-0 text-center" name="quantity" value="1" min="1" max="5" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
+            <input type="number" class="mb-0 text-center" name="quantity" value="1" min="1" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
             <div class="d-flex flex-center cursor-pointer" data-control="+"><i>{% render 'icon-theme-188' %}</i></div>
         </div>
     {%- when 3 %}
         <label{% unless quantity_show_title %} class="d-none"{% endunless %}>{{ 'products.product.quantity' | t }}</label>
         <div class="input-quantity input-quantity--type-03 d-flex mr-10 js-product-quantity"{% if quantity_connect %} data-js-quantity-connect="{{ quantity_connect }}"{% endif %}>
-            <input type="number" class="mb-0" name="quantity" value="1" min="1" max="5" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
+            <input type="number" class="mb-0" name="quantity" value="1" min="1" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
         </div>
     {%- when 4 %}
         <label{% unless quantity_show_title %} class="d-none"{% endunless %}>{{ 'products.product.quantity' | t }}</label>
         <div class="input-quantity input-quantity--type-04 d-flex align-items-center position-relative mr-10 js-product-quantity"{% if quantity_connect %} data-js-quantity-connect="{{ quantity_connect }}"{% endif %}>
             <div class="d-flex flex-center position-absolute left-0 ml-10 cursor-pointer" data-control="-"><i>{% render 'icon-theme-189' %}</i></div>
-            <input type="number" class="mb-0 px-35 text-center" name="quantity" value="1" min="1" max="3" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
+            <input type="number" class="mb-0 px-35 text-center" name="quantity" value="1" min="1" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
             <div class="d-flex flex-center position-absolute right-0 mr-10 cursor-pointer" data-control="+"><i>{% render 'icon-theme-188' %}</i></div>
         </div>
     {%- when 5 %}
         <label{% unless quantity_show_title %} class="d-none"{% endunless %}>{{ 'products.product.quantity' | t }}</label>
         <div class="input-quantity input-quantity--type-05 d-flex js-product-quantity"{% if quantity_connect %} data-js-quantity-connect="{{ quantity_connect }}"{% endif %}>
             <div class="d-flex flex-center border cursor-pointer" data-control="-"><i>{% render 'icon-theme-189' %}</i></div>
-            <input type="number" class="mx-10 mb-0 text-center" name="quantity" value="1" min="1" max="3" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
+            <input type="number" class="mx-10 mb-0 text-center" name="quantity" value="1" min="1" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}" {% if product_form_id %} form="{{ product_form_id }}"{% endif %}>
             <div class="d-flex flex-center border cursor-pointer" data-control="+"><i>{% render 'icon-theme-188' %}</i></div>
         </div>
 {%- endcase -%}

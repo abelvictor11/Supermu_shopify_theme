@@ -3408,10 +3408,15 @@
                       const $form = $this.parents('form');
                       let formData = _.serializeForm($form);
                       
-                      // Asegurarse de que la cantidad del input se respete
+                      // Asegurar que la cantidad respete min/max del input (límite dinámico)
                       if ($quantityInput.length) {
-                          const qty = parseInt($quantityInput.val());
-                          if (!isNaN(qty) && qty > 0) {
+                          const min = parseInt($quantityInput.attr('min'));
+                          const max = parseInt($quantityInput.attr('max'));
+                          let qty = parseInt($quantityInput.val());
+
+                          if (!isNaN(qty)) {
+                              if (!isNaN(max)) qty = Math.min(max, qty);
+                              if (!isNaN(min)) qty = Math.max(min, qty); else qty = Math.max(1, qty);
                               formData.quantity = qty;
                           }
                       }
@@ -3508,17 +3513,23 @@
               const $this = $(e.target),
                   line = $this.parents('[data-js-product]').attr('data-product-cart-line'),
                   dataLastUpdateValue = $this.attr('data-last-update-value');
-  
+
               let quantity = Math.trunc($this.val());
-  
+
               if(!Number.isInteger(quantity)) {
                   quantity = 1;
               }
-  
+
+              // Clamp a min/max del input (límite dinámico)
+              const min = parseInt($this.attr('min'));
+              const max = parseInt($this.attr('max'));
+              if (!isNaN(max)) quantity = Math.min(max, quantity);
+              if (!isNaN(min)) quantity = Math.max(min, quantity); else quantity = Math.max(0, quantity);
+
               if(dataLastUpdateValue && +dataLastUpdateValue === quantity) {
                   return;
               }
-  
+
               $this.attr('data-last-update-value', quantity);
   
               _.changeItemByLine(line, quantity)

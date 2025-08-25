@@ -1,1 +1,531 @@
-{"sections":{"main":{"type":"main-product","blocks":{"custom_liquid_fHy7Qe":{"type":"custom_liquid","settings":{"custom_liquid":"{% if product.vendor != blank %}\n  <div class=\"product-vendor\">\n    {{ product.vendor }}\n  <\/div>\n{% endif %}"}},"5675053d-3467-4746-963e-4514477aad42":{"type":"title","settings":{}},"d250ceb2-23c9-4926-be00-8fcb455e62e9":{"type":"reviews","settings":{}},"d5e4b255-784c-4754-9cbe-eddd84c93af2":{"type":"price","settings":{}},"custom_liquid_TxTjYf":{"type":"custom_liquid","settings":{"custom_liquid":"{%- comment -%} Debug mode (opcional) - descomenta para ver información útil {%- endcomment -%}\n  {%- assign debug_mode = false -%}\n  \n  {%- assign current_day = 'now' | date: '%A' -%}\n  {%- if debug_mode -%}\n    <!-- Debug: Día actual -> {{ current_day }} -->\n    <!-- Debug: Tags del producto -> {{ product.tags | join: ', ' }} -->\n    <!-- Debug: Colecciones del producto -> {% for c in product.collections %}{{ c.title }}, {% endfor %} -->\n  {%- endif -%}\n\n  {%- comment -%} 1. Descuentos por colección (prioridad alta) {%- endcomment -%}\n{%- assign collection_discounts = 'DOVE:25,SEDAL:30,TOSH:30,PALMOLIVE:30,SEPARATA \/ GRANOLAS \/ VITAMARKET:30,DORIA:20,FRIKO:20,PESCO:20,Panadería Supermu:20,Sello rojo:20,Sary:20,BADIA:20,VINOS:30' | split: ',' -%}\n  {%- assign collection_discount_applied = false -%}\n\n  {%- for collection_discount in collection_discounts -%}\n    {%- assign parts = collection_discount | split: ':' -%}\n    {%- assign collection_name = parts[0] | strip -%}\n    {%- assign collection_percentage = parts[1] | times: 1 -%}\n    \n    {%- for collection in product.collections -%}\n      {%- if collection.title == collection_name -%}\n        {%- assign original_price = product.price -%}\n        {%- assign discount_amount = original_price | times: collection_percentage | divided_by: 100.0 -%}\n        {%- assign final_price = original_price | minus: discount_amount | money -%}\n        \n        <div class=\"collection-discount-tag\" style=\"\n          border-left: 3px solid #4CAF50;\n          padding: 10px;\n          margin: 10px 0;\n          border-radius: 0 5px 5px 0;\n          background: #F5FFF5;\n        \">\n          <div style=\"display: flex; align-items: center; gap: 8px;\">\n            <span style=\"text-decoration: line-through; color: #666;\">{{ original_price | money }}<\/span>\n            <span style=\"font-weight: bold; color: #4CAF50;\">{{ final_price }}<\/span>\n          <\/div>\n          <div style=\"\n            background: #4CAF50;\n            color: white;\n            display: inline-block;\n            padding: 2px 8px;\n            border-radius: 3px;\n            font-size: 12px;\n            margin-top: 5px;\n          \">\n            ¡OFERTA EN {{ collection_name | truncate: 30 }} -{{ collection_percentage }}%\n          <\/div>\n        <\/div>\n        {%- assign collection_discount_applied = true -%}\n        {%- break -%}\n      {%- endif -%}\n    {%- endfor -%}\n    \n    {%- if collection_discount_applied -%}{%- break -%}{%- endif -%}\n  {%- endfor -%}\n                  \n          \n  {%- comment -%} 2. Descuentos diarios por tags (solo si no hay descuento por colección) {%- endcomment -%}\n  {%- unless collection_discount_applied -%}\n    {%- case current_day -%}\n      {%- when 'Monday' -%}\n        {%- assign day_translation = 'LUNES' -%}\n        {%- assign discount_rules = 'MASCOTAS:20' -%}\n        \n      {%- when 'Tuesday' -%}\n        {%- assign day_translation = 'MARTES' -%}\n        {%- assign discount_rules = 'CARNES,CARNE,CERDO:10|POLLO:20' -%}\n        \n      {%- when 'Wednesday' -%}\n        {%- assign day_translation = 'MIÉRCOLES' -%}\n        {%- assign discount_rules = 'FRUVER:25' -%}\n        \n      {%- when 'Thursday' -%}\n        {%- assign day_translation = 'JUEVES' -%}\n        {%- assign discount_rules = 'PESCADO,MARISCOS,PESCADOS Y MARISCOS,CARNES BLANCAS PESCADO:20' -%}\n        \n      {%- when 'Friday' -%}\n        {%- assign day_translation = 'VIERNES' -%}\n        {%- assign discount_rules = 'CARNES,CARNE,CERDO:10|FRUVER:25' -%}\n        \n      {%- when 'Saturday' -%}\n        {%- assign day_translation = 'SÁBADO' -%}\n        {%- assign discount_rules = 'VINO,VINOS:30' -%}\n        \n      {%- else -%}\n        {%- assign discount_rules = '' -%}\n    {%- endcase -%}\n\n    {%- if discount_rules != '' -%}\n      {%- assign product_tags_upcase = product.tags | join: '||||' | upcase | split: '||||' -%}\n      {%- assign discount_rules_split = discount_rules | split: '|' -%}\n      \n      {%- for rule_group in discount_rules_split -%}\n        {%- assign rule_parts = rule_group | split: ':' -%}\n        {%- assign rule_tags = rule_parts[0] | split: ',' -%}\n        {%- assign rule_discount = rule_parts[1] | default: 0 | times: 1 -%}\n        \n        {%- for tag in rule_tags -%}\n          {%- assign formatted_tag = tag | strip -%}\n          {%- if product_tags_upcase contains formatted_tag and rule_discount > 0 -%}\n            {%- assign original_price = product.price -%}\n            {%- assign discount_amount = original_price | times: rule_discount | divided_by: 100.0 -%}\n            {%- assign final_price = original_price | minus: discount_amount | money -%}\n\n            <div class=\"daily-discount-tag\" style=\"\n              border-left: 3px solid #FF0000;\n              padding: 10px;\n              margin: 10px 0;\n              border-radius: 0 5px 5px 0;\n              background: #FFF9F9;\n            \">\n              <div style=\"display: flex; align-items: center; gap: 8px;\">\n                <span style=\"text-decoration: line-through; color: #666;\">{{ original_price | money }}<\/span>\n                <span style=\"font-weight: bold; color: #FF0000;\">{{ final_price }}<\/span>\n              <\/div>\n              <div style=\"\n                background: #FF0000;\n                color: white;\n                display: inline-block;\n                padding: 2px 8px;\n                border-radius: 3px;\n                font-size: 12px;\n                margin-top: 5px;\n              \">\n                ¡OFERTA {{ formatted_tag }} -{{ rule_discount }}% ({{ day_translation }})\n              <\/div>\n            <\/div>\n            {%- break -%}\n          {%- endif -%}\n        {%- endfor -%}\n      {%- endfor -%}\n    {%- endif -%}\n  {%- endunless -%}"}},"custom_liquid_f48QiT":{"type":"custom_liquid","settings":{"custom_liquid":"<div class=\"custom-pum m-0 mb-10\">\n{%- comment %} \n  1. Obtener y convertir el factor (\"432,0\" → 432.0) \n{% endcomment -%}\n{%- assign factor_text = product.metafields.custom.factor_unidad_de_medida.value | default: \"1,0\" -%}\n{%- assign factor = factor_text | replace: \",\", \".\" | plus: 0 -%}\n\n{%- comment %} \n  2. Convertir el precio a decimal (ej: $50.000 COP → 50000.0) \n{% endcomment -%}\n{%- assign precio = product.price | divided_by: 100.0 -%}\n\n{%- comment %} \n  3. Calcular PUM (precio \/ factor) y redondear a 2 decimales \n{% endcomment -%}\n{%- assign pum = precio | divided_by: factor | round: 2 -%}\n\n{%- comment %} \n  4. Formatear el resultado para mostrar 2 decimales (ej: 39.58) \n  - Si el resultado es 39.5, forzar \"39.50\"\n{% endcomment -%}\n{%- assign pum_parts = pum | split: \".\" -%}\n{%- if pum_parts.size == 1 -%}\n  {%- assign pum_formatted = pum | append: \".00\" -%}\n{%- else -%}\n  {%- assign decimal_digits = pum_parts[1] | size -%}\n  {%- if decimal_digits == 1 -%}\n    {%- assign pum_formatted = pum | append: \"0\" -%}\n  {%- else -%}\n    {%- assign pum_formatted = pum -%}\n  {%- endif -%}\n{%- endif -%}\n\n<div class=\"icon-pum\"><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg id=\"Layer_1\" xmlns=\"http:\/\/www.w3.org\/2000\/svg\" version=\"1.1\" viewBox=\"0 0 384 384\">\n  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->\n  <defs>\n    <style>\n      .st0 {\n        fill: #6d7a84;\n      }\n\n      .st1 {\n        fill: #f45858;\n      }\n\n      .st2 {\n        fill: #fff;\n      }\n\n      .st3 {\n        fill: #f2da30;\n      }\n    <\/style>\n  <\/defs>\n  <path d=\"M221.86,92.96v33.68h81.96c14.69,0,33.73,17,36.68,31.43l29.5,175.64c.67,1.36-2.69,5.51-3.31,5.51h-19.84v26.57c0,1.71-4.29,4.83-6.33,4.15H43.29c-2.04.68-6.33-2.44-6.33-4.15v-26.57h-19.84c-.62,0-3.98-4.15-3.31-5.51l29.5-175.64c2.87-14.36,22.1-31.43,36.68-31.43h81.96v-33.68h-90.19c-32.71-2.24-56.14-25.98-58.05-58.72-.28-4.77-1.59-18.62,3.74-20.29h348.9c2.4.99,3.42,2.69,3.72,5.26,4.43,38.13-18.84,71.22-58.04,73.74h-90.19ZM359.59,24.09H24.24v13.1c0,20.02,21.72,42.68,41.65,44.44,84.07,1.35,168.64,1.55,252.69-.11,19.65-1.91,41-24.61,41-44.33v-13.1ZM211.38,92.96h-38.92v33.68h38.92v-33.68ZM358.09,328.75l-27.44-166.8c-3.55-13.73-15.54-23.72-29.79-24.85H83.72c-13.89.7-25.78,9.99-30.07,23.07l-27.91,168.58h332.35ZM336.38,339.23H47.45v20.21h288.94v-20.21Z\"\/>\n  <path class=\"st1\" d=\"M358.09,328.75H25.74l27.91-168.58c4.29-13.08,16.17-22.37,30.07-23.08h217.14c14.25,1.14,26.25,11.12,29.79,24.86l27.44,166.8ZM188.02,156.06c-47.31,2.2-81.08,47.04-71.19,93.21,14.44,67.41,104.25,82.78,140.53,24.03,32.57-52.75-7.83-120.1-69.33-117.24Z\"\/>\n  <path class=\"st1\" d=\"M359.59,24.09v13.1c0,19.72-21.35,42.42-41,44.33-84.06,1.66-168.62,1.45-252.69.11-19.93-1.76-41.65-24.42-41.65-44.44v-13.1h335.35ZM124.32,37.78c-.66-.82-2.73-1.64-3.86-1.75-17.31,1.52-37.78-1.92-54.69.02-7.16.82-7.16,9.69,0,10.51,16.9,1.94,37.38-1.49,54.67,0,4.43.26,6.41-5.64,3.88-8.78ZM141.55,36.23c-5.54,1.24-5.52,8.93,0,10.16,2.51.56,15.87.56,18.39,0,5.29-1.17,5.31-8.98,0-10.16-2.52-.56-15.88-.56-18.39,0Z\"\/>\n  <rect class=\"st0\" x=\"47.45\" y=\"339.23\" width=\"288.94\" height=\"20.21\"\/>\n  <rect class=\"st3\" x=\"172.45\" y=\"92.96\" width=\"38.92\" height=\"33.68\"\/>\n  <path d=\"M188.02,156.06c61.5-2.86,101.9,64.48,69.33,117.24-36.28,58.75-126.08,43.38-140.53-24.03-9.89-46.17,23.88-91.01,71.19-93.21ZM186.68,167.06c-31.73,1.56-59.28,28.91-60.64,60.64,4.15.27,12.91-1.68,13.44,4.18.77,8.53-7.69,5.98-13.44,6.3,1.3,31.66,28.97,59.34,60.64,60.64.44-4.08-1.85-12.15,3.54-13.33,8.77-1.93,6.89,7.7,6.94,13.33,31.66-1.3,59.34-28.97,60.64-60.64-4.08-.44-12.15,1.85-13.33-3.54-1.93-8.77,7.7-6.89,13.33-6.94-1.46-31.81-28.92-59.09-60.64-60.64-.43,4.39,2,12.68-4.18,13.46-8.34,1.05-6.07-8-6.29-13.46Z\"\/>\n  <path d=\"M124.32,37.78c2.53,3.14.55,9.05-3.88,8.78-17.29-1.49-37.78,1.94-54.67,0-7.16-.82-7.16-9.69,0-10.51,16.91-1.94,37.38,1.51,54.69-.02,1.13.11,3.2.92,3.86,1.75Z\"\/>\n  <path d=\"M141.55,36.23c2.51-.56,15.87-.56,18.39,0,5.31,1.18,5.29,8.98,0,10.16-2.52.56-15.88.56-18.39,0-5.52-1.23-5.54-8.92,0-10.16Z\"\/>\n  <path class=\"st2\" d=\"M186.68,167.06c.22,5.46-2.05,14.51,6.29,13.46,6.18-.78,3.75-9.07,4.18-13.46,31.72,1.55,59.18,28.83,60.64,60.64-5.63.05-15.26-1.83-13.33,6.94,1.18,5.38,9.25,3.09,13.33,3.54-1.3,31.67-28.98,59.34-60.64,60.64-.05-5.63,1.83-15.26-6.94-13.33-5.38,1.18-3.09,9.25-3.54,13.33-31.67-1.3-59.34-28.98-60.64-60.64,5.75-.32,14.21,2.23,13.44-6.3-.53-5.86-9.29-3.9-13.44-4.18,1.36-31.73,28.91-59.08,60.64-60.64ZM226.89,197.96c-1.43-1.43-4.92-2.3-6.49-.54l-21.02,20.95c-7.84-2.4-16.12-1.31-20.82,6.08-9.37,14.74,9.06,31.85,23.1,20.85,6.55-5.13,6.93-12.29,4.82-19.83l20.95-21.02c1.76-1.57.89-5.06-.54-6.49Z\"\/>\n  <path d=\"M226.89,197.96c1.43,1.43,2.3,4.92.54,6.49l-20.95,21.02c2.11,7.54,1.73,14.7-4.82,19.83-14.04,10.99-32.47-6.12-23.1-20.85,4.69-7.39,12.98-8.48,20.82-6.08l21.02-20.95c1.57-1.76,5.06-.89,6.49.54ZM190.21,227.84c-4.65,1.02-4.81,8.61-.59,10,9.64,3.18,10.45-12.17.59-10Z\"\/>\n  <path class=\"st2\" d=\"M190.21,227.84c9.86-2.17,9.06,13.18-.59,10-4.22-1.39-4.06-8.98.59-10Z\"\/>\n<\/svg><\/div> ${{ pum_formatted }} \/{{ product.metafields.custom.unidad_de_medida_pum }}\n<\/div>"}},"b033f3a3-2862-435c-8579-29bede720233":{"type":"buttons_quantity","settings":{}},"a5bd3c3b-9ef1-4cde-a923-54a7efc01c14":{"type":"details","settings":{}},"icon_with_text_rBe4p8":{"type":"icon_with_text","settings":{"style":"inline","icon_svg_1":"theme-127","text_1":"<p>Envíos por SOLO $ 8.000 Área Metropolitana. <a href=\"\/pages\/condiciones-de-entrega\" title=\"Zona de cobertura...\">Consulta  zona de cobertura<\/a><\/p>","icon_svg_2":"","text_2":"","icon_svg_3":"","text_3":"","icon_svg_4":"","text_4":"","icon_svg_5":"","text_5":"","icon_svg_6":"","text_6":""}},"e63a4691-7127-45d6-a8d8-191fe152dad6":{"type":"payments","settings":{}},"5a6109f3-d35a-4f38-8da0-143bf0234539":{"type":"countdown","disabled":true,"settings":{}},"b85ba278-399a-4ad1-859d-7823852521f0":{"type":"stock_countdown","disabled":true,"settings":{}},"3c0386b9-ffa8-4bf2-8e13-0b90634f90ad":{"type":"visitors","disabled":true,"settings":{}},"f7689ce9-d953-4a78-b2ca-74088d888a7f":{"type":"border","disabled":true,"settings":{}},"2293f673-2bca-4a7b-a16c-accf31a2783b":{"type":"border","disabled":true,"settings":{}},"6d2130b9-35eb-4ec7-9832-b3555f913259":{"type":"options","settings":{}},"548e2413-180e-4825-aba6-4f46e5ef4317":{"type":"popups","disabled":true,"settings":{}},"261885ab-1671-4ab7-aafc-3bae58123846":{"type":"notes","disabled":true,"settings":{}},"07c447a5-98d7-4315-9048-ac172d3673dc":{"type":"free_shipping","settings":{}},"d318ee16-4ffe-4001-8845-ecbed8fa0d1b":{"type":"pickup_availability","settings":{}},"fe7b0507-5483-4956-ab0f-ea3a90f57b1f":{"type":"social_share_buttons","disabled":true,"settings":{}},"dcb960c0-aac1-469d-a4fd-e416a4a6ed4f":{"type":"icon_with_text","settings":{"style":"tile","icon_svg_1":"theme-127","text_1":"<p><strong>Garantía sin complicaciones: <\/strong>Simplemente añade tus productos al carrito y disfruta de tu compra.\"<\/p>","icon_svg_2":"theme-142","text_2":"<p><strong>Envío rápido y seguro:<\/strong> ¡Todos nuestros envíos son rápidos y confiables para que disfrutes de tus productos lo antes posible.<\/p>","icon_svg_3":"theme-144","text_3":"<p>Estamos tan seguros de la calidad de nuestros productos, si no estás completamente satisfecho, te devolvemos tu dinero.<\/p>","icon_svg_4":"","text_4":"","icon_svg_5":"","text_5":"","icon_svg_6":"","text_6":""}},"72d08ef7-bfb9-4c2a-b18a-951575e7ce50":{"type":"complementary_products","settings":{}},"b0febcf2-a38c-4ae7-a929-10af2ad0e5f4":{"type":"tab_custom","settings":{"title":"Adicional","content":"<p><strong>Encuentra en Supervaquita productos que marcan la diferencia...<\/strong><\/p>","page_content":""}},"959240db-9a88-436b-8c09-b6c9e0ebb7a8":{"type":"tab_custom","disabled":true,"settings":{"title":"Custom tab","content":"","page_content":""}}},"block_order":["custom_liquid_fHy7Qe","5675053d-3467-4746-963e-4514477aad42","d250ceb2-23c9-4926-be00-8fcb455e62e9","d5e4b255-784c-4754-9cbe-eddd84c93af2","custom_liquid_TxTjYf","custom_liquid_f48QiT","b033f3a3-2862-435c-8579-29bede720233","a5bd3c3b-9ef1-4cde-a923-54a7efc01c14","icon_with_text_rBe4p8","e63a4691-7127-45d6-a8d8-191fe152dad6","5a6109f3-d35a-4f38-8da0-143bf0234539","b85ba278-399a-4ad1-859d-7823852521f0","3c0386b9-ffa8-4bf2-8e13-0b90634f90ad","f7689ce9-d953-4a78-b2ca-74088d888a7f","2293f673-2bca-4a7b-a16c-accf31a2783b","6d2130b9-35eb-4ec7-9832-b3555f913259","548e2413-180e-4825-aba6-4f46e5ef4317","261885ab-1671-4ab7-aafc-3bae58123846","07c447a5-98d7-4315-9048-ac172d3673dc","d318ee16-4ffe-4001-8845-ecbed8fa0d1b","fe7b0507-5483-4956-ab0f-ea3a90f57b1f","dcb960c0-aac1-469d-a4fd-e416a4a6ed4f","72d08ef7-bfb9-4c2a-b18a-951575e7ce50","b0febcf2-a38c-4ae7-a929-10af2ad0e5f4","959240db-9a88-436b-8c09-b6c9e0ebb7a8"],"settings":{"gallery_size":"6","sidebar":"off","enable_sticky_sidebar":false,"show_tabs":true,"show_tab_description":true,"show_tab_reviews":true,"scrolling_to_opened_tab":true,"tabs_type":"tabs"}},"16343061697540a24a":{"type":"home-builder","blocks":{"b5795efe-e069-445c-96ed-648806b68a63":{"type":"promobox","settings":{"url":"shopify:\/\/pages\/about-our-store","image_size":1450,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"","text_line_2":"SHOPIFY THEME FOR YOUR SUCCESS","text_line_3":"","style":"8","button_1":"","button_1_url":"","color_button_type_1":"default","button_2":"","button_2_url":"","color_button_type_2":"default","list_1":"include-product-page-os2-banner","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"text","content_position":"center","content_align":"left","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"6","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}},"85f7a1cf-8f84-49a2-9fa6-ec269bde1e34":{"type":"promobox","settings":{"url":"shopify:\/\/pages\/about-our-store","image_size":1450,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"","text_line_2":"Text line #2","text_line_3":"Text line #3","style":"1","button_1":"Button #1 text","button_1_url":"","color_button_type_1":"default","button_2":"Button #2 text","button_2_url":"","color_button_type_2":"default","list_1":"","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"clean","content_position":"center","content_align":"center","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"6","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}}},"block_order":["b5795efe-e069-445c-96ed-648806b68a63","85f7a1cf-8f84-49a2-9fa6-ec269bde1e34"],"disabled":true,"settings":{"title":"","container":"boxed","size_of_columns":"1","size_of_columns_mobile":"1","margins_for_columns":"preset_4","align_of_columns":"center","disable_column_paddings":false,"precedence":"2,1","customization_class":""}},"1634306765ae1d554e":{"type":"spacer","settings":{"margin_top":30,"margin_bottom":0,"margin_top_mobile":30,"margin_bottom_mobile":0,"container":"boxed","show_separator":false,"title":""}},"1634306845f7435aab":{"type":"home-builder","blocks":{"5f0a26aa-5ee6-4322-82af-7ca683129070":{"type":"promobox","settings":{"url":"","image_size":1450,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"","text_line_2":"Save hundreds of dollars each month with Shella. You don't need to purchase additional apps.","text_line_3":"","style":"3","button_1":"","button_1_url":"","color_button_type_1":"default","button_2":"","button_2_url":"","color_button_type_2":"default","list_1":"","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"type-2-12","content_position":"center","content_align":"left","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"4","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}},"bac2c754-6193-49ae-b5c2-aab7e70761eb":{"type":"promobox","settings":{"url":"","image_size":1450,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"","text_line_2":"Dropshipping ready — import hundreds of productsto Shella in minutes","text_line_3":"","style":"3","button_1":"","button_1_url":"","color_button_type_1":"default","button_2":"","button_2_url":"","color_button_type_2":"default","list_1":"","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"type-2-12","content_position":"center","content_align":"left","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"4","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}},"3baf4b9c-a833-4558-ad91-71d74397651a":{"type":"promobox","settings":{"url":"","image_size":1450,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"","text_line_2":"Numerous header typeswith hundreds of options","text_line_3":"","style":"3","button_1":"","button_1_url":"","color_button_type_1":"default","button_2":"","button_2_url":"","color_button_type_2":"default","list_1":"","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"type-2-12","content_position":"center","content_align":"left","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"4","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}}},"block_order":["5f0a26aa-5ee6-4322-82af-7ca683129070","bac2c754-6193-49ae-b5c2-aab7e70761eb","3baf4b9c-a833-4558-ad91-71d74397651a"],"disabled":true,"settings":{"title":"<p>WHY CHOOSE SHELLA THEME<\/p>","container":"boxed","size_of_columns":"1","size_of_columns_mobile":"1","margins_for_columns":"preset_3","align_of_columns":"top_center","disable_column_paddings":false,"precedence":"","customization_class":""}},"custom_title_section_gzgWhA":{"type":"custom-title-section","disabled":true,"settings":{"title":"Productos relacionados","subtitle":"Este es un subtítulo"}},"related-products":{"type":"carousel-related-products","settings":{"show_section":true,"type":"related","size_of_columns":"4","max_count":12,"autoplay":true,"speed":7,"infinite":true,"arrows":true,"bullets":true}}},"order":["main","16343061697540a24a","1634306765ae1d554e","1634306845f7435aab","custom_title_section_gzgWhA","related-products"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "custom_liquid_fHy7Qe": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% if product.vendor != blank %}\n  <div class=\"product-vendor\">\n    {{ product.vendor }}\n  </div>\n{% endif %}"
+          }
+        },
+        "5675053d-3467-4746-963e-4514477aad42": {
+          "type": "title",
+          "settings": {}
+        },
+        "d250ceb2-23c9-4926-be00-8fcb455e62e9": {
+          "type": "reviews",
+          "settings": {}
+        },
+        "d5e4b255-784c-4754-9cbe-eddd84c93af2": {
+          "type": "price",
+          "settings": {}
+        },
+        "custom_liquid_TxTjYf": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'both-discount-labels', product: product %}\n{% render 'best-discount-label', product: product %}"
+          }
+        },
+        "custom_liquid_f48QiT": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<div class=\"custom-pum m-0 mb-10\">\n{%- comment %} \n  1. Obtener y convertir el factor (\"432,0\" → 432.0) \n{% endcomment -%}\n{%- assign factor_text = product.metafields.custom.factor_unidad_de_medida.value | default: \"1,0\" -%}\n{%- assign factor = factor_text | replace: \",\", \".\" | plus: 0 -%}\n\n{%- comment %} \n  2. Convertir el precio a decimal (ej: $50.000 COP → 50000.0) \n{% endcomment -%}\n{%- assign precio = product.price | divided_by: 100.0 -%}\n\n{%- comment %} \n  3. Calcular PUM (precio / factor) y redondear a 2 decimales \n{% endcomment -%}\n{%- assign pum = precio | divided_by: factor | round: 2 -%}\n\n{%- comment %} \n  4. Formatear el resultado para mostrar 2 decimales (ej: 39.58) \n  - Si el resultado es 39.5, forzar \"39.50\"\n{% endcomment -%}\n{%- assign pum_parts = pum | split: \".\" -%}\n{%- if pum_parts.size == 1 -%}\n  {%- assign pum_formatted = pum | append: \".00\" -%}\n{%- else -%}\n  {%- assign decimal_digits = pum_parts[1] | size -%}\n  {%- if decimal_digits == 1 -%}\n    {%- assign pum_formatted = pum | append: \"0\" -%}\n  {%- else -%}\n    {%- assign pum_formatted = pum -%}\n  {%- endif -%}\n{%- endif -%}\n\n<div class=\"icon-pum\"><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 384 384\">\n  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->\n  <defs>\n    <style>\n      .st0 {\n        fill: #6d7a84;\n      }\n\n      .st1 {\n        fill: #f45858;\n      }\n\n      .st2 {\n        fill: #fff;\n      }\n\n      .st3 {\n        fill: #f2da30;\n      }\n    </style>\n  </defs>\n  <path d=\"M221.86,92.96v33.68h81.96c14.69,0,33.73,17,36.68,31.43l29.5,175.64c.67,1.36-2.69,5.51-3.31,5.51h-19.84v26.57c0,1.71-4.29,4.83-6.33,4.15H43.29c-2.04.68-6.33-2.44-6.33-4.15v-26.57h-19.84c-.62,0-3.98-4.15-3.31-5.51l29.5-175.64c2.87-14.36,22.1-31.43,36.68-31.43h81.96v-33.68h-90.19c-32.71-2.24-56.14-25.98-58.05-58.72-.28-4.77-1.59-18.62,3.74-20.29h348.9c2.4.99,3.42,2.69,3.72,5.26,4.43,38.13-18.84,71.22-58.04,73.74h-90.19ZM359.59,24.09H24.24v13.1c0,20.02,21.72,42.68,41.65,44.44,84.07,1.35,168.64,1.55,252.69-.11,19.65-1.91,41-24.61,41-44.33v-13.1ZM211.38,92.96h-38.92v33.68h38.92v-33.68ZM358.09,328.75l-27.44-166.8c-3.55-13.73-15.54-23.72-29.79-24.85H83.72c-13.89.7-25.78,9.99-30.07,23.07l-27.91,168.58h332.35ZM336.38,339.23H47.45v20.21h288.94v-20.21Z\"/>\n  <path class=\"st1\" d=\"M358.09,328.75H25.74l27.91-168.58c4.29-13.08,16.17-22.37,30.07-23.08h217.14c14.25,1.14,26.25,11.12,29.79,24.86l27.44,166.8ZM188.02,156.06c-47.31,2.2-81.08,47.04-71.19,93.21,14.44,67.41,104.25,82.78,140.53,24.03,32.57-52.75-7.83-120.1-69.33-117.24Z\"/>\n  <path class=\"st1\" d=\"M359.59,24.09v13.1c0,19.72-21.35,42.42-41,44.33-84.06,1.66-168.62,1.45-252.69.11-19.93-1.76-41.65-24.42-41.65-44.44v-13.1h335.35ZM124.32,37.78c-.66-.82-2.73-1.64-3.86-1.75-17.31,1.52-37.78-1.92-54.69.02-7.16.82-7.16,9.69,0,10.51,16.9,1.94,37.38-1.49,54.67,0,4.43.26,6.41-5.64,3.88-8.78ZM141.55,36.23c-5.54,1.24-5.52,8.93,0,10.16,2.51.56,15.87.56,18.39,0,5.29-1.17,5.31-8.98,0-10.16-2.52-.56-15.88-.56-18.39,0Z\"/>\n  <rect class=\"st0\" x=\"47.45\" y=\"339.23\" width=\"288.94\" height=\"20.21\"/>\n  <rect class=\"st3\" x=\"172.45\" y=\"92.96\" width=\"38.92\" height=\"33.68\"/>\n  <path d=\"M188.02,156.06c61.5-2.86,101.9,64.48,69.33,117.24-36.28,58.75-126.08,43.38-140.53-24.03-9.89-46.17,23.88-91.01,71.19-93.21ZM186.68,167.06c-31.73,1.56-59.28,28.91-60.64,60.64,4.15.27,12.91-1.68,13.44,4.18.77,8.53-7.69,5.98-13.44,6.3,1.3,31.66,28.97,59.34,60.64,60.64.44-4.08-1.85-12.15,3.54-13.33,8.77-1.93,6.89,7.7,6.94,13.33,31.66-1.3,59.34-28.97,60.64-60.64-4.08-.44-12.15,1.85-13.33-3.54-1.93-8.77,7.7-6.89,13.33-6.94-1.46-31.81-28.92-59.09-60.64-60.64-.43,4.39,2,12.68-4.18,13.46-8.34,1.05-6.07-8-6.29-13.46Z\"/>\n  <path d=\"M124.32,37.78c2.53,3.14.55,9.05-3.88,8.78-17.29-1.49-37.78,1.94-54.67,0-7.16-.82-7.16-9.69,0-10.51,16.91-1.94,37.38,1.51,54.69-.02,1.13.11,3.2.92,3.86,1.75Z\"/>\n  <path d=\"M141.55,36.23c2.51-.56,15.87-.56,18.39,0,5.31,1.18,5.29,8.98,0,10.16-2.52.56-15.88.56-18.39,0-5.52-1.23-5.54-8.92,0-10.16Z\"/>\n  <path class=\"st2\" d=\"M186.68,167.06c.22,5.46-2.05,14.51,6.29,13.46,6.18-.78,3.75-9.07,4.18-13.46,31.72,1.55,59.18,28.83,60.64,60.64-5.63.05-15.26-1.83-13.33,6.94,1.18,5.38,9.25,3.09,13.33,3.54-1.3,31.67-28.98,59.34-60.64,60.64-.05-5.63,1.83-15.26-6.94-13.33-5.38,1.18-3.09,9.25-3.54,13.33-31.67-1.3-59.34-28.98-60.64-60.64,5.75-.32,14.21,2.23,13.44-6.3-.53-5.86-9.29-3.9-13.44-4.18,1.36-31.73,28.91-59.08,60.64-60.64ZM226.89,197.96c-1.43-1.43-4.92-2.3-6.49-.54l-21.02,20.95c-7.84-2.4-16.12-1.31-20.82,6.08-9.37,14.74,9.06,31.85,23.1,20.85,6.55-5.13,6.93-12.29,4.82-19.83l20.95-21.02c1.76-1.57.89-5.06-.54-6.49Z\"/>\n  <path d=\"M226.89,197.96c1.43,1.43,2.3,4.92.54,6.49l-20.95,21.02c2.11,7.54,1.73,14.7-4.82,19.83-14.04,10.99-32.47-6.12-23.1-20.85,4.69-7.39,12.98-8.48,20.82-6.08l21.02-20.95c1.57-1.76,5.06-.89,6.49.54ZM190.21,227.84c-4.65,1.02-4.81,8.61-.59,10,9.64,3.18,10.45-12.17.59-10Z\"/>\n  <path class=\"st2\" d=\"M190.21,227.84c9.86-2.17,9.06,13.18-.59,10-4.22-1.39-4.06-8.98.59-10Z\"/>\n</svg></div> ${{ pum_formatted }} /{{ product.metafields.custom.unidad_de_medida_pum }}\n</div>"
+          }
+        },
+        "b033f3a3-2862-435c-8579-29bede720233": {
+          "type": "buttons_quantity",
+          "settings": {}
+        },
+        "a5bd3c3b-9ef1-4cde-a923-54a7efc01c14": {
+          "type": "details",
+          "settings": {}
+        },
+        "icon_with_text_rBe4p8": {
+          "type": "icon_with_text",
+          "settings": {
+            "style": "inline",
+            "icon_svg_1": "theme-127",
+            "text_1": "<p>Envíos por SOLO $ 8.000 Área Metropolitana. <a href=\"/pages/condiciones-de-entrega\" title=\"Zona de cobertura...\">Consulta  zona de cobertura</a></p>",
+            "icon_svg_2": "",
+            "text_2": "",
+            "icon_svg_3": "",
+            "text_3": "",
+            "icon_svg_4": "",
+            "text_4": "",
+            "icon_svg_5": "",
+            "text_5": "",
+            "icon_svg_6": "",
+            "text_6": ""
+          }
+        },
+        "e63a4691-7127-45d6-a8d8-191fe152dad6": {
+          "type": "payments",
+          "settings": {}
+        },
+        "5a6109f3-d35a-4f38-8da0-143bf0234539": {
+          "type": "countdown",
+          "disabled": true,
+          "settings": {}
+        },
+        "b85ba278-399a-4ad1-859d-7823852521f0": {
+          "type": "stock_countdown",
+          "disabled": true,
+          "settings": {}
+        },
+        "3c0386b9-ffa8-4bf2-8e13-0b90634f90ad": {
+          "type": "visitors",
+          "disabled": true,
+          "settings": {}
+        },
+        "f7689ce9-d953-4a78-b2ca-74088d888a7f": {
+          "type": "border",
+          "disabled": true,
+          "settings": {}
+        },
+        "2293f673-2bca-4a7b-a16c-accf31a2783b": {
+          "type": "border",
+          "disabled": true,
+          "settings": {}
+        },
+        "6d2130b9-35eb-4ec7-9832-b3555f913259": {
+          "type": "options",
+          "settings": {}
+        },
+        "548e2413-180e-4825-aba6-4f46e5ef4317": {
+          "type": "popups",
+          "disabled": true,
+          "settings": {}
+        },
+        "261885ab-1671-4ab7-aafc-3bae58123846": {
+          "type": "notes",
+          "disabled": true,
+          "settings": {}
+        },
+        "07c447a5-98d7-4315-9048-ac172d3673dc": {
+          "type": "free_shipping",
+          "settings": {}
+        },
+        "d318ee16-4ffe-4001-8845-ecbed8fa0d1b": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "fe7b0507-5483-4956-ab0f-ea3a90f57b1f": {
+          "type": "social_share_buttons",
+          "disabled": true,
+          "settings": {}
+        },
+        "dcb960c0-aac1-469d-a4fd-e416a4a6ed4f": {
+          "type": "icon_with_text",
+          "settings": {
+            "style": "tile",
+            "icon_svg_1": "theme-127",
+            "text_1": "<p><strong>Garantía sin complicaciones: </strong>Simplemente añade tus productos al carrito y disfruta de tu compra.\"</p>",
+            "icon_svg_2": "theme-142",
+            "text_2": "<p><strong>Envío rápido y seguro:</strong> ¡Todos nuestros envíos son rápidos y confiables para que disfrutes de tus productos lo antes posible.</p>",
+            "icon_svg_3": "theme-144",
+            "text_3": "<p>Estamos tan seguros de la calidad de nuestros productos, si no estás completamente satisfecho, te devolvemos tu dinero.</p>",
+            "icon_svg_4": "",
+            "text_4": "",
+            "icon_svg_5": "",
+            "text_5": "",
+            "icon_svg_6": "",
+            "text_6": ""
+          }
+        },
+        "72d08ef7-bfb9-4c2a-b18a-951575e7ce50": {
+          "type": "complementary_products",
+          "settings": {}
+        },
+        "b0febcf2-a38c-4ae7-a929-10af2ad0e5f4": {
+          "type": "tab_custom",
+          "settings": {
+            "title": "Adicional",
+            "content": "<p><strong>Encuentra en Supervaquita productos que marcan la diferencia...</strong></p>",
+            "page_content": ""
+          }
+        },
+        "959240db-9a88-436b-8c09-b6c9e0ebb7a8": {
+          "type": "tab_custom",
+          "disabled": true,
+          "settings": {
+            "title": "Custom tab",
+            "content": "",
+            "page_content": ""
+          }
+        }
+      },
+      "block_order": [
+        "custom_liquid_fHy7Qe",
+        "5675053d-3467-4746-963e-4514477aad42",
+        "d250ceb2-23c9-4926-be00-8fcb455e62e9",
+        "d5e4b255-784c-4754-9cbe-eddd84c93af2",
+        "custom_liquid_TxTjYf",
+        "custom_liquid_f48QiT",
+        "b033f3a3-2862-435c-8579-29bede720233",
+        "a5bd3c3b-9ef1-4cde-a923-54a7efc01c14",
+        "icon_with_text_rBe4p8",
+        "e63a4691-7127-45d6-a8d8-191fe152dad6",
+        "5a6109f3-d35a-4f38-8da0-143bf0234539",
+        "b85ba278-399a-4ad1-859d-7823852521f0",
+        "3c0386b9-ffa8-4bf2-8e13-0b90634f90ad",
+        "f7689ce9-d953-4a78-b2ca-74088d888a7f",
+        "2293f673-2bca-4a7b-a16c-accf31a2783b",
+        "6d2130b9-35eb-4ec7-9832-b3555f913259",
+        "548e2413-180e-4825-aba6-4f46e5ef4317",
+        "261885ab-1671-4ab7-aafc-3bae58123846",
+        "07c447a5-98d7-4315-9048-ac172d3673dc",
+        "d318ee16-4ffe-4001-8845-ecbed8fa0d1b",
+        "fe7b0507-5483-4956-ab0f-ea3a90f57b1f",
+        "dcb960c0-aac1-469d-a4fd-e416a4a6ed4f",
+        "72d08ef7-bfb9-4c2a-b18a-951575e7ce50",
+        "b0febcf2-a38c-4ae7-a929-10af2ad0e5f4",
+        "959240db-9a88-436b-8c09-b6c9e0ebb7a8"
+      ],
+      "settings": {
+        "gallery_size": "6",
+        "sidebar": "off",
+        "enable_sticky_sidebar": false,
+        "show_tabs": true,
+        "show_tab_description": true,
+        "show_tab_reviews": true,
+        "scrolling_to_opened_tab": true,
+        "tabs_type": "tabs"
+      }
+    },
+    "16343061697540a24a": {
+      "type": "home-builder",
+      "blocks": {
+        "b5795efe-e069-445c-96ed-648806b68a63": {
+          "type": "promobox",
+          "settings": {
+            "url": "shopify://pages/about-our-store",
+            "image_size": 1450,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "",
+            "text_line_2": "SHOPIFY THEME FOR YOUR SUCCESS",
+            "text_line_3": "",
+            "style": "8",
+            "button_1": "",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "include-product-page-os2-banner",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "text",
+            "content_position": "center",
+            "content_align": "left",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "6",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        },
+        "85f7a1cf-8f84-49a2-9fa6-ec269bde1e34": {
+          "type": "promobox",
+          "settings": {
+            "url": "shopify://pages/about-our-store",
+            "image_size": 1450,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "",
+            "text_line_2": "Text line #2",
+            "text_line_3": "Text line #3",
+            "style": "1",
+            "button_1": "Button #1 text",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "Button #2 text",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "clean",
+            "content_position": "center",
+            "content_align": "center",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "6",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "b5795efe-e069-445c-96ed-648806b68a63",
+        "85f7a1cf-8f84-49a2-9fa6-ec269bde1e34"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "",
+        "container": "boxed",
+        "size_of_columns": "1",
+        "size_of_columns_mobile": "1",
+        "margins_for_columns": "preset_4",
+        "align_of_columns": "center",
+        "disable_column_paddings": false,
+        "precedence": "2,1",
+        "customization_class": ""
+      }
+    },
+    "1634306765ae1d554e": {
+      "type": "spacer",
+      "settings": {
+        "margin_top": 30,
+        "margin_bottom": 0,
+        "margin_top_mobile": 30,
+        "margin_bottom_mobile": 0,
+        "container": "boxed",
+        "show_separator": false,
+        "title": ""
+      }
+    },
+    "1634306845f7435aab": {
+      "type": "home-builder",
+      "blocks": {
+        "5f0a26aa-5ee6-4322-82af-7ca683129070": {
+          "type": "promobox",
+          "settings": {
+            "url": "",
+            "image_size": 1450,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "",
+            "text_line_2": "Save hundreds of dollars each month with Shella. You don't need to purchase additional apps.",
+            "text_line_3": "",
+            "style": "3",
+            "button_1": "",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "type-2-12",
+            "content_position": "center",
+            "content_align": "left",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "4",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        },
+        "bac2c754-6193-49ae-b5c2-aab7e70761eb": {
+          "type": "promobox",
+          "settings": {
+            "url": "",
+            "image_size": 1450,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "",
+            "text_line_2": "Dropshipping ready — import hundreds of productsto Shella in minutes",
+            "text_line_3": "",
+            "style": "3",
+            "button_1": "",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "type-2-12",
+            "content_position": "center",
+            "content_align": "left",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "4",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        },
+        "3baf4b9c-a833-4558-ad91-71d74397651a": {
+          "type": "promobox",
+          "settings": {
+            "url": "",
+            "image_size": 1450,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "",
+            "text_line_2": "Numerous header typeswith hundreds of options",
+            "text_line_3": "",
+            "style": "3",
+            "button_1": "",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "type-2-12",
+            "content_position": "center",
+            "content_align": "left",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "4",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "5f0a26aa-5ee6-4322-82af-7ca683129070",
+        "bac2c754-6193-49ae-b5c2-aab7e70761eb",
+        "3baf4b9c-a833-4558-ad91-71d74397651a"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "<p>WHY CHOOSE SHELLA THEME</p>",
+        "container": "boxed",
+        "size_of_columns": "1",
+        "size_of_columns_mobile": "1",
+        "margins_for_columns": "preset_3",
+        "align_of_columns": "top_center",
+        "disable_column_paddings": false,
+        "precedence": "",
+        "customization_class": ""
+      }
+    },
+    "custom_title_section_gzgWhA": {
+      "type": "custom-title-section",
+      "disabled": true,
+      "settings": {
+        "title": "Productos relacionados",
+        "subtitle": "Este es un subtítulo"
+      }
+    },
+    "related-products": {
+      "type": "carousel-related-products",
+      "settings": {
+        "show_section": true,
+        "type": "related",
+        "size_of_columns": "4",
+        "max_count": 12,
+        "autoplay": true,
+        "speed": 7,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "16343061697540a24a",
+    "1634306765ae1d554e",
+    "1634306845f7435aab",
+    "custom_title_section_gzgWhA",
+    "related-products"
+  ]
+}

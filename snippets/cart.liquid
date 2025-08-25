@@ -30,9 +30,24 @@
                     </div>
                   </div>
 
+                  {%- assign cart_limits_enabled = true -%}
+                  {%- assign cart_item_max = 3 -%}
+                  {%- assign cart_limits_meta = shop.metafields.custom.cart_item_max_quantity -%}
+                  {%- if cart_limits_meta != blank -%}
+                    {%- assign cart_limits = cart_limits_meta.value -%}
+                    {%- if cart_limits == blank -%}{%- assign cart_limits = cart_limits_meta | parse_json -%}{%- endif -%}
+                    {%- if cart_limits and cart_limits.enabled == true and cart_limits.max_per_line -%}
+                      {%- assign cart_item_max = cart_limits.max_per_line | plus: 0 -%}
+                      {%- assign cart_limits_enabled = true -%}
+                    {%- elsif cart_limits and cart_limits.enabled == false -%}
+                      {%- assign cart_limits_enabled = false -%}
+                    {%- endif -%}
+                  {%- endif -%}
+                  {%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
+
                   {%- for item in cart.items -%}
                     {%- assign display_quantity = item.quantity -%}
-                    {%- if display_quantity > 3 -%}{%- assign display_quantity = 3 -%}{%- endif -%}
+                    {%- if cart_limits_enabled and display_quantity > cart_item_max -%}{%- assign display_quantity = cart_item_max -%}{%- endif -%}
 
                     {%- assign has_compare_price = false -%}
                     {% if item.variant.compare_at_price > item.variant.price %}
@@ -93,9 +108,9 @@
                                   value="{{ display_quantity }}"
                                   class="form-control quantity-input"
                                   min="1"
-                                  max="3"
+                                  {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %}
                                   onkeydown="return event.keyCode === 8 || event.keyCode === 46 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)"
-                                  oninput="this.value = Math.max(1, Math.min(3, this.value)); updateCartItem(this)"
+                                  oninput="{% if cart_limits_enabled %}this.value = Math.max(1, Math.min({{ cart_item_max }}, this.value));{% else %}this.value = Math.max(1, this.value);{% endif %} updateCartItem(this)"
                                   data-line="{{ forloop.index }}"
                                   data-price="{{ item.variant.price | money_without_currency | remove: ',' }}"
                               >
@@ -122,7 +137,7 @@
                   {%- assign total_savings = 0 -%}
                   {%- for item in cart.items -%}
                     {%- assign item_quantity = item.quantity %}
-                    {%- if item_quantity > 3 %}{% assign item_quantity = 3 %}{% endif %}
+                    {%- if cart_limits_enabled and item_quantity > cart_item_max %}{% assign item_quantity = cart_item_max %}{% endif %}
 
                     {% if item.variant.compare_at_price > item.variant.price %}
                       {%- assign line_savings = item.variant.compare_at_price
@@ -176,10 +191,13 @@
 </div>
 
 <script>
+var CART_LIMITS_ENABLED = {{ cart_limits_enabled | json }};
+var CART_ITEM_MAX = {{ cart_item_max | json }};
 function updateCartItem(input) {
     const lineIndex = input.dataset.line;
     const price = parseFloat(input.dataset.price);
-    const quantity = Math.min(3, parseInt(input.value));
+    const raw = parseInt(input.value);
+    const quantity = CART_LIMITS_ENABLED ? Math.min(CART_ITEM_MAX, raw) : raw;
     const lineTotal = price * quantity;
 
     const lineTotalElement = document.querySelector(`[data-line-total="${lineIndex}"]`);
@@ -194,7 +212,8 @@ function updateCartSubtotal() {
     let subtotal = 0;
     document.querySelectorAll('.quantity-input').forEach(input => {
         const price = parseFloat(input.dataset.price);
-        const quantity = Math.min(3, parseInt(input.value));
+        const raw = parseInt(input.value);
+        const quantity = CART_LIMITS_ENABLED ? Math.min(CART_ITEM_MAX, raw) : raw;
         subtotal += price * quantity;
     });
 
@@ -213,7 +232,8 @@ function updateSavings() {
         const discountEls = row.querySelectorAll('.cart-discount');
 
         const input = row.querySelector('.quantity-input');
-        const quantity = Math.min(3, parseInt(input.value));
+        const raw = parseInt(input.value);
+        const quantity = CART_LIMITS_ENABLED ? Math.min(CART_ITEM_MAX, raw) : raw;
         const price = parseFloat(input.dataset.price);
 
         if(comparePriceEl) {
@@ -247,7 +267,7 @@ function updateCartOnSubmit(event) {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.quantity-input').forEach(input => {
-        if(input.value > 3) input.value = 3;
+        if (CART_LIMITS_ENABLED && input.value > CART_ITEM_MAX) input.value = CART_ITEM_MAX;
     });
     updateCartSubtotal();
 });

@@ -221,17 +221,22 @@
     <!-- Debug: Colecciones del producto -> {% for c in product.collections %}{{ c.title }}, {% endfor %} -->
   {%- endif -%}
 
-  {%- comment -%} 1. Descuento por colección (label verde) usando snippet reutilizable {%- endcomment -%}
-  {%- capture green_label -%}{% render 'discount-label', product: product %}{%- endcapture -%}
-  {{ green_label }}
-  {%- assign has_green_label = green_label | strip -%}
-                  
+  {%- comment -%} 1+2. Calcular ambos descuentos y mostrar solo el mayor (empate: gana rojo) {%- endcomment -%}
+  {%- capture green_percent -%}{% render 'discount-label', product: product, mode: 'percent' %}{%- endcapture -%}
+  {%- capture red_percent -%}{% render 'daily-discount-label', product: product, mode: 'percent' %}{%- endcapture -%}
+  {%- assign gp = green_percent | strip | plus: 0 -%}
+  {%- assign rp = red_percent | strip | plus: 0 -%}
 
-                  
-  {%- comment -%} 2. Descuentos diarios por tags (solo si NO hay label verde) {%- endcomment -%}
-  {%- unless has_green_label != '' -%}
+  {%- comment -%} Render ambos labels si aplican. Rojo primero, luego verde. {%- endcomment -%}
+  {%- if rp > 0 -%}
     {% render 'daily-discount-label', product: product %}
-  {%- endunless -%}
+  {%- endif -%}
+  {%- if gp > 0 -%}
+    {% render 'discount-label', product: product %}
+  {%- endif -%}
+  {%- if request.design_mode -%}
+    <div style="font-size:11px;color:#777;margin-top:4px;">(collection debug) gp={{ gp }} rp={{ rp }}</div>
+  {%- endif -%}
 </div>
                 
                     </div>
