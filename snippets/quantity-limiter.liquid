@@ -5,6 +5,20 @@
     {%- assign max_quantity = 3 -%}  
 {%- endif %}
 
+{%- assign cart_limits_enabled = true -%}
+{%- assign cart_item_max = 3 -%}
+{%- assign cart_limits_raw = shop.metafields.custom.cart_item_max_quantity | default: blank -%}
+{%- if cart_limits_raw != blank -%}
+  {%- assign cart_limits = cart_limits_raw | parse_json -%}
+  {%- if cart_limits and cart_limits.enabled == true and cart_limits.max_per_line -%}
+    {%- assign cart_item_max = cart_limits.max_per_line | plus: 0 -%}
+    {%- assign cart_limits_enabled = true -%}
+  {%- elsif cart_limits and cart_limits.enabled == false -%}
+    {%- assign cart_limits_enabled = false -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
+
 {%- assign quantity_type = quantity_type | default: 1 -%}
 {%- case quantity_type -%}
     {%- when 1 %}
@@ -16,8 +30,8 @@
                 name="quantity" 
                 value="1" 
                 min="1" 
-                max="3" 
-                oninput="this.value = Math.min(5, Math.max(1, this.value))"
+                {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} 
+                oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}"
                 {% if product_form_id %} form="{{ product_form_id }}"{% endif %}
                 class="mb-0"
             >
@@ -32,8 +46,8 @@
                 name="quantity" 
                 value="1" 
                 min="1" 
-                max="3" 
-                oninput="this.value = Math.min(3, Math.max(1, this.value))"
+                {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} 
+                oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}"
                 {% if product_form_id %} form="{{ product_form_id }}"{% endif %}
                 class="mb-0 text-center"
             >
@@ -47,8 +61,8 @@
                 name="quantity" 
                 value="1" 
                 min="1" 
-                max="3" 
-                oninput="this.value = Math.min(3, Math.max(1, this.value))"
+                {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} 
+                oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}"
                 {% if product_form_id %} form="{{ product_form_id }}"{% endif %}
                 class="mb-0"
             >
@@ -62,8 +76,8 @@
                 name="quantity" 
                 value="1" 
                 min="1" 
-                max="3" 
-                oninput="this.value = Math.min(3, Math.max(1, this.value))"
+                {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} 
+                oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}"
                 {% if product_form_id %} form="{{ product_form_id }}"{% endif %}
                 class="mb-0 px-35 text-center"
             >
@@ -78,8 +92,8 @@
                 name="quantity" 
                 value="1" 
                 min="1" 
-                max="3" 
-                oninput="this.value = Math.min(5, Math.max(1, this.value))"
+                {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} 
+                oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(1, this.value)){% else %}this.value = Math.max(1, this.value){% endif %}"
                 {% if product_form_id %} form="{{ product_form_id }}"{% endif %}
                 class="mx-10 mb-0 text-center"
             >
