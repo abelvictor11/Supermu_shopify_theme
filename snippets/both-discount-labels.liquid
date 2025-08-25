@@ -9,17 +9,31 @@ Usage:
 {%- if _product -%}
   {%- capture _gp -%}{% render 'discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
   {%- capture _rp -%}{% render 'daily-discount-label', product: _product, mode: 'percent' %}{%- endcapture -%}
-  {%- assign gp = _gp | strip | remove: '%' | plus: 0 -%}
-  {%- assign rp = _rp | strip | remove: '%' | plus: 0 -%}
+  {%- assign _gp_raw = _gp | strip | remove: '%' -%}
+  {%- assign _rp_raw = _rp | strip | remove: '%' -%}
+  {%- assign gp = _gp_raw | plus: 0 -%}
+  {%- assign rp = _rp_raw | plus: 0 -%}
+  {%- if gp == 0 and _gp_raw contains '#}' -%}
+    {%- assign gp = _gp_raw | split: '#}' | last | strip | plus: 0 -%}
+  {%- endif -%}
+  {%- if rp == 0 and _rp_raw contains '#}' -%}
+    {%- assign rp = _rp_raw | split: '#}' | last | strip | plus: 0 -%}
+  {%- endif -%}
 
-  {%- if rp > 0 -%}
+  {%- if rp > gp and rp > 0 -%}
+    {% render 'daily-discount-label', product: _product %}
+  {%- elsif gp > rp and gp > 0 -%}
+    {% render 'discount-label', product: _product %}
+  {%- elsif rp == gp and rp > 0 -%}
     {% render 'daily-discount-label', product: _product %}
   {%- endif -%}
-  {%- if gp > 0 -%}
-    {% render 'discount-label', product: _product %}
-  {%- endif -%}
+
+  {%- assign _winner = '' -%}
+  {%- if rp > gp and rp > 0 -%}{%- assign _winner = 'red' -%}
+  {%- elsif gp > rp and gp > 0 -%}{%- assign _winner = 'green' -%}
+  {%- elsif rp == gp and rp > 0 -%}{%- assign _winner = 'red (tie)' -%}{%- endif -%}
 
   {%- if request.design_mode -%}
-    <div style="font-size:11px;color:#777;margin-top:6px;">(both-discount-labels debug) gp={{ gp }} rp={{ rp }} | raw_g='{{ _gp | strip }}' raw_r='{{ _rp | strip }}'</div>
+    <div style="font-size:11px;color:#777;margin-top:6px;">(both-discount-labels debug) gp={{ gp }} rp={{ rp }} winner={{ _winner }} | raw_g='{{ _gp | strip }}' raw_r='{{ _rp | strip }}'</div>
   {%- endif -%}
 {%- endif -%}
