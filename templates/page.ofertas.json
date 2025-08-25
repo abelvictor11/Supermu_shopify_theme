@@ -1,1 +1,831 @@
-{"sections":{"main":{"type":"main-page","settings":{"show_title":false,"show_content":false}},"custom_title_section_BitPGR":{"type":"custom-title-section","disabled":true,"settings":{"title":"Ofertas del 28 de marzo al 6 de abril del 2025","subtitle":""}},"gallery_8iABnp":{"type":"gallery","blocks":{"item_ag9Q6t":{"type":"item","settings":{"page_name":"","grid":4,"image":"shopify:\/\/shop_images\/banner-aceite.webp","image_size":500,"text_line_01":"","text_line_02":""}},"item_Lxcbjf":{"type":"item","settings":{"page_name":"","grid":4,"image":"shopify:\/\/shop_images\/banner-pasta.webp","image_size":500,"text_line_01":"","text_line_02":""}},"item_UprBUK":{"type":"item","settings":{"page_name":"","grid":4,"image":"shopify:\/\/shop_images\/banner-vinos.webp","image_size":500,"text_line_01":"","text_line_02":""}},"item_6Aa8eN":{"type":"item","settings":{"page_name":"","grid":4,"image":"shopify:\/\/shop_images\/banner-marca-rica.webp","image_size":500,"text_line_01":"","text_line_02":""}},"item_GCffPe":{"type":"item","settings":{"page_name":"","grid":4,"image":"shopify:\/\/shop_images\/banner-dogurmet.webp","image_size":500,"text_line_01":"","text_line_02":""}}},"block_order":["item_ag9Q6t","item_Lxcbjf","item_UprBUK","item_6Aa8eN","item_GCffPe"],"disabled":true,"settings":{"container":"fullwidth","masonry_enable":false}},"1628284369dc32299f":{"type":"spacer","disabled":true,"settings":{"margin_top":30,"margin_bottom":30,"margin_top_mobile":0,"margin_bottom_mobile":0,"container":"boxed","show_separator":false,"title":""}},"dual_custom_banner_FBhBTi":{"type":"dual-custom-banner","blocks":{"banner_large_iX4Kah":{"type":"banner_large","settings":{"slide_1_enabled":true,"image_1":"shopify:\/\/shop_images\/bannersSeparata_Mesa_de_trabajo_1_copia_2_edc3ee41-8459-49d9-a19f-327dffbdee95.jpg","title_1":"","subtitle_1":"","cta_text_1":"","link_1":"shopify:\/\/collections\/separata-mayo-2025-precio","slide_2_enabled":false,"title_2":"","subtitle_2":"","cta_text_2":"","link_2":"","slide_3_enabled":false,"title_3":"","subtitle_3":"","cta_text_3":"","link_3":"","slide_4_enabled":false,"title_4":"","subtitle_4":"","cta_text_4":"","link_4":"","slide_5_enabled":false,"title_5":"","subtitle_5":"","cta_text_5":"","link_5":"","slide_6_enabled":false,"title_6":"","subtitle_6":"","cta_text_6":"","link_6":"","slide_7_enabled":false,"title_7":"","subtitle_7":"","cta_text_7":"","link_7":"","slide_8_enabled":false,"title_8":"","subtitle_8":"","cta_text_8":"","link_8":"","slide_9_enabled":false,"title_9":"","subtitle_9":"","cta_text_9":"","link_9":"","slide_10_enabled":false,"title_10":"","subtitle_10":"","cta_text_10":"","link_10":"","bg_color":"#f5f5f5"}},"banner_small_LKm4YB":{"type":"banner_small","settings":{"slide_1_enabled":true,"image_1":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_7.jpg","title_1":"","subtitle_1":"","cta_text_1":"","link_1":"shopify:\/\/products\/leche-entera-vaquita-900ml-uht","slide_2_enabled":true,"image_2":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_10.jpg","title_2":"","subtitle_2":"","cta_text_2":"","link_2":"","slide_3_enabled":true,"image_3":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_8.jpg","title_3":"","subtitle_3":"","cta_text_3":"","link_3":"https:\/\/supermu.com\/products\/leche-deslactosada-la-vaquita-900ml-uht-six-pack?_pos=1&_sid=05a04a008&_ss=r","slide_4_enabled":true,"image_4":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_5.jpg","title_4":"","subtitle_4":"","cta_text_4":"","link_4":"https:\/\/supermu.com\/products\/papel-hig-elite-12u-suave-y-resistente?_pos=1&_sid=64c3b3a40&_ss=r","slide_5_enabled":true,"image_5":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_9.jpg","title_5":"","subtitle_5":"","cta_text_5":"","link_5":"https:\/\/supermu.com\/products\/atun-fortin-140g-lomitos-aceite?_pos=1&_sid=16874cd2e&_ss=r","slide_6_enabled":true,"image_6":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_6.jpg","title_6":"","subtitle_6":"","cta_text_6":"","link_6":"https:\/\/supermu.com\/products\/cerveza-corona-6u-330ml-botella-1?_pos=3&_sid=798f549e3&_ss=r","slide_7_enabled":true,"image_7":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_11_9f9a4992-60fd-4bae-9bd9-d468e2b58c46.jpg","title_7":"","subtitle_7":"","cta_text_7":"","link_7":"https:\/\/supermu.com\/products\/aceite-de-soya-2700ml-la-vaquita?_pos=1&_sid=51187d7a0&_ss=r","slide_8_enabled":true,"image_8":"shopify:\/\/shop_images\/banner30Separata_Mesa_de_trabajo_1_copia_12.jpg","title_8":"","subtitle_8":"","cta_text_8":"","link_8":"https:\/\/supermu.com\/products\/lavaloza_la_vaquita_liquido_750ml_limon?_pos=5&_sid=d1b54273a&_ss=r","slide_9_enabled":false,"title_9":"","subtitle_9":"","cta_text_9":"","link_9":"","slide_10_enabled":false,"title_10":"","subtitle_10":"","cta_text_10":"","link_10":"","bg_color":"#f5f5f5"}}},"block_order":["banner_large_iX4Kah","banner_small_LKm4YB"],"disabled":true,"settings":{"arrows":true,"bullets":true,"autoplay":true,"speed":5}},"home_builder_46WQCT":{"type":"home-builder","blocks":{"promobox_F4dmFe":{"type":"promobox","settings":{"url":"","image":"shopify:\/\/shop_images\/BannersOOfertas_Mesa_de_trabajo_1.png","image_size":3850,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"Text line #1","text_line_2":"Text line #2","text_line_3":"Text line #3","style":"1","button_1":"Button #1 text","button_1_url":"","color_button_type_1":"default","button_2":"Button #2 text","button_2_url":"","color_button_type_2":"default","list_1":"","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"clean","content_position":"center","content_align":"center","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"auto","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}}},"block_order":["promobox_F4dmFe"],"disabled":true,"settings":{"title":"","container":"fullwidth","size_of_columns":"1","size_of_columns_mobile":"1","margins_for_columns":"none","align_of_columns":"top_center","disable_column_paddings":false,"precedence":"","customization_class":""}},"home_builder_JJKBJj":{"type":"home-builder","blocks":{"promobox_LztTUh":{"type":"promobox","disabled":true,"settings":{"url":"","image":"shopify:\/\/shop_images\/BannersOOfertas_Mesa_de_trabajo_1_copia.png","image_size":3850,"image_mobile_size":550,"image_position_x":50,"color_image_mask":"","image_mask_opacity":0.5,"text_line_1":"Text line #1","text_line_2":"Text line #2","text_line_3":"Text line #3","style":"1","button_1":"Button #1 text","button_1_url":"","color_button_type_1":"default","button_2":"Button #2 text","button_2_url":"","color_button_type_2":"default","list_1":"","custom_html":"","video_external_url":"","video_mp4_url":"","video_autoplay":true,"video_controls":false,"type":"clean","content_position":"center","content_align":"center","add_container":false,"content_width":100,"text_width":0,"height":"auto","min_height":0,"size_of_column":"auto","visible":"desktop_mobile","parallax":"disable","animation_to":"none","animation_from":"none","animation_opacity":"none","animation_text":"none","color_text_1":"","color_text_2":"","color_text_3":"","color_text_bg":"","color_curtain_bg":"","customization_class":""}}},"block_order":["promobox_LztTUh"],"settings":{"title":"","container":"fullwidth","size_of_columns":"1","size_of_columns_mobile":"1","margins_for_columns":"none","align_of_columns":"top_center","disable_column_paddings":false,"precedence":"","customization_class":""}},"carousel_products_TBTCbV":{"type":"carousel-products","blocks":{"collection_PNKriY":{"type":"collection","settings":{"title":"Productos destacados","collection":"aceites"}}},"block_order":["collection_PNKriY"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":false,"speed":5,"infinite":false,"arrows":false,"bullets":false}},"carousel_products_hptqKJ":{"type":"carousel-products","blocks":{"collection_DdzLjE":{"type":"collection","settings":{"title":"Pescado","collection":"pesco"}}},"block_order":["collection_DdzLjE"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"spacer_cwDrNT":{"type":"spacer","settings":{"margin_top":30,"margin_bottom":30,"margin_top_mobile":0,"margin_bottom_mobile":0,"container":"boxed","show_separator":false,"title":""}},"carousel_products_UiqyY8":{"type":"carousel-products","blocks":{"collection_mKi6Ya":{"type":"collection","settings":{"title":"Panaderia","collection":"panaderia-la-vaquita"}}},"block_order":["collection_mKi6Ya"],"disabled":true,"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_FkYjFm":{"type":"carousel-products","blocks":{"collection_mNgCr9":{"type":"collection","settings":{"title":"Ofertas del 15 al 18 de agosto","collection":"ofertas-del-15-18-agosto-2025"}}},"block_order":["collection_mNgCr9"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_R4JDqp":{"type":"carousel-products","blocks":{"collection_GVxEty":{"type":"collection","settings":{"title":"Productos para ti","collection":"30-separata28jun2025"}}},"block_order":["collection_GVxEty"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_kRdxrK":{"type":"carousel-products","blocks":{"collection_XRjJx7":{"type":"collection","settings":{"title":"Ofertas en carnes frias","collection":"carnes-frias-colanta"}}},"block_order":["collection_XRjJx7"],"disabled":true,"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_79RHcP":{"type":"carousel-products","blocks":{"collection_MpGntN":{"type":"collection","settings":{"title":"Ofertas en la marca fruco","collection":"fruco"}}},"block_order":["collection_MpGntN"],"disabled":true,"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_Fa9Y6b":{"type":"carousel-products","blocks":{"collection_YJHNcn":{"type":"collection","settings":{"title":"Ofertas en la marca campi","collection":"campi"}}},"block_order":["collection_YJHNcn"],"disabled":true,"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"spacer_4fBX6K":{"type":"spacer","disabled":true,"settings":{"margin_top":30,"margin_bottom":30,"margin_top_mobile":0,"margin_bottom_mobile":0,"container":"boxed","show_separator":false,"title":""}},"carousel_products_xYtBU4":{"type":"carousel-products","blocks":{"collection_E39c3q":{"type":"collection","settings":{"title":"Ofertas en aceites premier","collection":"premier-y-colmans"}}},"block_order":["collection_E39c3q"],"disabled":true,"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_Rf4qVp":{"type":"carousel-products","blocks":{"collection_RezdRe":{"type":"collection","settings":{"title":"Vinos","collection":"vinos"}}},"block_order":["collection_RezdRe"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_QGeFK8":{"type":"carousel-products","blocks":{"collection_TzGkty":{"type":"collection","settings":{"title":"Aseo hogar","collection":"fabuloso"}}},"block_order":["collection_TzGkty"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_GGLPXc":{"type":"carousel-products","blocks":{"collection_wBWL7P":{"type":"collection","settings":{"title":"Aseo personal","collection":"separata-cuidado-corporal-desodorantes-colgate-palmolive"}}},"block_order":["collection_wBWL7P"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_7a4MbR":{"type":"carousel-products","blocks":{"collection_J7mf6h":{"type":"collection","settings":{"title":"Cuidado oral","collection":"separata-higiene-oral-cepillos-colgate"}}},"block_order":["collection_J7mf6h"],"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"carousel_products_LJJmc8":{"type":"carousel-products","blocks":{"collection_bBdkPk":{"type":"collection","settings":{"title":"Ofertas en Jabones palmolive","collection":"cuidado-corporal-jabon-palmolive"}}},"block_order":["collection_bBdkPk"],"disabled":true,"settings":{"show_title":true,"container":"fullwidth","size_of_columns":"4","max_count":6,"autoplay":true,"speed":5,"infinite":true,"arrows":true,"bullets":true}},"spacer_XUe9ft":{"type":"spacer","settings":{"margin_top":30,"margin_bottom":30,"margin_top_mobile":0,"margin_bottom_mobile":0,"container":"boxed","show_separator":false,"title":""}},"custom_liquid_WXP3EX":{"type":"custom-liquid","settings":{"use_container":false,"custom_liquid":"<div class=\"terminos\"><a href=\"\">*Aplica términos y condiciones<\/a><\/div>"}}},"order":["main","custom_title_section_BitPGR","gallery_8iABnp","1628284369dc32299f","dual_custom_banner_FBhBTi","home_builder_46WQCT","home_builder_JJKBJj","carousel_products_FkYjFm","carousel_products_TBTCbV","carousel_products_hptqKJ","spacer_cwDrNT","carousel_products_UiqyY8","carousel_products_R4JDqp","carousel_products_kRdxrK","carousel_products_79RHcP","carousel_products_Fa9Y6b","spacer_4fBX6K","carousel_products_xYtBU4","carousel_products_Rf4qVp","carousel_products_QGeFK8","carousel_products_GGLPXc","carousel_products_7a4MbR","carousel_products_LJJmc8","spacer_XUe9ft","custom_liquid_WXP3EX"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_title": false,
+        "show_content": false
+      }
+    },
+    "custom_title_section_BitPGR": {
+      "type": "custom-title-section",
+      "disabled": true,
+      "settings": {
+        "title": "Ofertas del 28 de marzo al 6 de abril del 2025",
+        "subtitle": ""
+      }
+    },
+    "gallery_8iABnp": {
+      "type": "gallery",
+      "blocks": {
+        "item_ag9Q6t": {
+          "type": "item",
+          "settings": {
+            "page_name": "",
+            "grid": 4,
+            "image": "shopify://shop_images/banner-aceite.webp",
+            "image_size": 500,
+            "text_line_01": "",
+            "text_line_02": ""
+          }
+        },
+        "item_Lxcbjf": {
+          "type": "item",
+          "settings": {
+            "page_name": "",
+            "grid": 4,
+            "image": "shopify://shop_images/banner-pasta.webp",
+            "image_size": 500,
+            "text_line_01": "",
+            "text_line_02": ""
+          }
+        },
+        "item_UprBUK": {
+          "type": "item",
+          "settings": {
+            "page_name": "",
+            "grid": 4,
+            "image": "shopify://shop_images/banner-vinos.webp",
+            "image_size": 500,
+            "text_line_01": "",
+            "text_line_02": ""
+          }
+        },
+        "item_6Aa8eN": {
+          "type": "item",
+          "settings": {
+            "page_name": "",
+            "grid": 4,
+            "image": "shopify://shop_images/banner-marca-rica.webp",
+            "image_size": 500,
+            "text_line_01": "",
+            "text_line_02": ""
+          }
+        },
+        "item_GCffPe": {
+          "type": "item",
+          "settings": {
+            "page_name": "",
+            "grid": 4,
+            "image": "shopify://shop_images/banner-dogurmet.webp",
+            "image_size": 500,
+            "text_line_01": "",
+            "text_line_02": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_ag9Q6t",
+        "item_Lxcbjf",
+        "item_UprBUK",
+        "item_6Aa8eN",
+        "item_GCffPe"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "fullwidth",
+        "masonry_enable": false
+      }
+    },
+    "1628284369dc32299f": {
+      "type": "spacer",
+      "disabled": true,
+      "settings": {
+        "margin_top": 30,
+        "margin_bottom": 30,
+        "margin_top_mobile": 0,
+        "margin_bottom_mobile": 0,
+        "container": "boxed",
+        "show_separator": false,
+        "title": ""
+      }
+    },
+    "dual_custom_banner_FBhBTi": {
+      "type": "dual-custom-banner",
+      "blocks": {
+        "banner_large_iX4Kah": {
+          "type": "banner_large",
+          "settings": {
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/bannersSeparata_Mesa_de_trabajo_1_copia_2_edc3ee41-8459-49d9-a19f-327dffbdee95.jpg",
+            "title_1": "",
+            "subtitle_1": "",
+            "cta_text_1": "",
+            "link_1": "shopify://collections/separata-mayo-2025-precio",
+            "slide_2_enabled": false,
+            "title_2": "",
+            "subtitle_2": "",
+            "cta_text_2": "",
+            "link_2": "",
+            "slide_3_enabled": false,
+            "title_3": "",
+            "subtitle_3": "",
+            "cta_text_3": "",
+            "link_3": "",
+            "slide_4_enabled": false,
+            "title_4": "",
+            "subtitle_4": "",
+            "cta_text_4": "",
+            "link_4": "",
+            "slide_5_enabled": false,
+            "title_5": "",
+            "subtitle_5": "",
+            "cta_text_5": "",
+            "link_5": "",
+            "slide_6_enabled": false,
+            "title_6": "",
+            "subtitle_6": "",
+            "cta_text_6": "",
+            "link_6": "",
+            "slide_7_enabled": false,
+            "title_7": "",
+            "subtitle_7": "",
+            "cta_text_7": "",
+            "link_7": "",
+            "slide_8_enabled": false,
+            "title_8": "",
+            "subtitle_8": "",
+            "cta_text_8": "",
+            "link_8": "",
+            "slide_9_enabled": false,
+            "title_9": "",
+            "subtitle_9": "",
+            "cta_text_9": "",
+            "link_9": "",
+            "slide_10_enabled": false,
+            "title_10": "",
+            "subtitle_10": "",
+            "cta_text_10": "",
+            "link_10": "",
+            "bg_color": "#f5f5f5"
+          }
+        },
+        "banner_small_LKm4YB": {
+          "type": "banner_small",
+          "settings": {
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_7.jpg",
+            "title_1": "",
+            "subtitle_1": "",
+            "cta_text_1": "",
+            "link_1": "shopify://products/leche-entera-vaquita-900ml-uht",
+            "slide_2_enabled": true,
+            "image_2": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_10.jpg",
+            "title_2": "",
+            "subtitle_2": "",
+            "cta_text_2": "",
+            "link_2": "",
+            "slide_3_enabled": true,
+            "image_3": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_8.jpg",
+            "title_3": "",
+            "subtitle_3": "",
+            "cta_text_3": "",
+            "link_3": "https://supermu.com/products/leche-deslactosada-la-vaquita-900ml-uht-six-pack?_pos=1&_sid=05a04a008&_ss=r",
+            "slide_4_enabled": true,
+            "image_4": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_5.jpg",
+            "title_4": "",
+            "subtitle_4": "",
+            "cta_text_4": "",
+            "link_4": "https://supermu.com/products/papel-hig-elite-12u-suave-y-resistente?_pos=1&_sid=64c3b3a40&_ss=r",
+            "slide_5_enabled": true,
+            "image_5": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_9.jpg",
+            "title_5": "",
+            "subtitle_5": "",
+            "cta_text_5": "",
+            "link_5": "https://supermu.com/products/atun-fortin-140g-lomitos-aceite?_pos=1&_sid=16874cd2e&_ss=r",
+            "slide_6_enabled": true,
+            "image_6": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_6.jpg",
+            "title_6": "",
+            "subtitle_6": "",
+            "cta_text_6": "",
+            "link_6": "https://supermu.com/products/cerveza-corona-6u-330ml-botella-1?_pos=3&_sid=798f549e3&_ss=r",
+            "slide_7_enabled": true,
+            "image_7": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_11_9f9a4992-60fd-4bae-9bd9-d468e2b58c46.jpg",
+            "title_7": "",
+            "subtitle_7": "",
+            "cta_text_7": "",
+            "link_7": "https://supermu.com/products/aceite-de-soya-2700ml-la-vaquita?_pos=1&_sid=51187d7a0&_ss=r",
+            "slide_8_enabled": true,
+            "image_8": "shopify://shop_images/banner30Separata_Mesa_de_trabajo_1_copia_12.jpg",
+            "title_8": "",
+            "subtitle_8": "",
+            "cta_text_8": "",
+            "link_8": "https://supermu.com/products/lavaloza_la_vaquita_liquido_750ml_limon?_pos=5&_sid=d1b54273a&_ss=r",
+            "slide_9_enabled": false,
+            "title_9": "",
+            "subtitle_9": "",
+            "cta_text_9": "",
+            "link_9": "",
+            "slide_10_enabled": false,
+            "title_10": "",
+            "subtitle_10": "",
+            "cta_text_10": "",
+            "link_10": "",
+            "bg_color": "#f5f5f5"
+          }
+        }
+      },
+      "block_order": [
+        "banner_large_iX4Kah",
+        "banner_small_LKm4YB"
+      ],
+      "disabled": true,
+      "settings": {
+        "arrows": true,
+        "bullets": true,
+        "autoplay": true,
+        "speed": 5
+      }
+    },
+    "home_builder_46WQCT": {
+      "type": "home-builder",
+      "blocks": {
+        "promobox_F4dmFe": {
+          "type": "promobox",
+          "settings": {
+            "url": "",
+            "image": "shopify://shop_images/BannersOOfertas_Mesa_de_trabajo_1.png",
+            "image_size": 3850,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "Text line #1",
+            "text_line_2": "Text line #2",
+            "text_line_3": "Text line #3",
+            "style": "1",
+            "button_1": "Button #1 text",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "Button #2 text",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "clean",
+            "content_position": "center",
+            "content_align": "center",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "auto",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "promobox_F4dmFe"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "",
+        "container": "fullwidth",
+        "size_of_columns": "1",
+        "size_of_columns_mobile": "1",
+        "margins_for_columns": "none",
+        "align_of_columns": "top_center",
+        "disable_column_paddings": false,
+        "precedence": "",
+        "customization_class": ""
+      }
+    },
+    "home_builder_JJKBJj": {
+      "type": "home-builder",
+      "blocks": {
+        "promobox_LztTUh": {
+          "type": "promobox",
+          "disabled": true,
+          "settings": {
+            "url": "",
+            "image": "shopify://shop_images/BannersOOfertas_Mesa_de_trabajo_1_copia.png",
+            "image_size": 3850,
+            "image_mobile_size": 550,
+            "image_position_x": 50,
+            "color_image_mask": "",
+            "image_mask_opacity": 0.5,
+            "text_line_1": "Text line #1",
+            "text_line_2": "Text line #2",
+            "text_line_3": "Text line #3",
+            "style": "1",
+            "button_1": "Button #1 text",
+            "button_1_url": "",
+            "color_button_type_1": "default",
+            "button_2": "Button #2 text",
+            "button_2_url": "",
+            "color_button_type_2": "default",
+            "list_1": "",
+            "custom_html": "",
+            "video_external_url": "",
+            "video_mp4_url": "",
+            "video_autoplay": true,
+            "video_controls": false,
+            "type": "clean",
+            "content_position": "center",
+            "content_align": "center",
+            "add_container": false,
+            "content_width": 100,
+            "text_width": 0,
+            "height": "auto",
+            "min_height": 0,
+            "size_of_column": "auto",
+            "visible": "desktop_mobile",
+            "parallax": "disable",
+            "animation_to": "none",
+            "animation_from": "none",
+            "animation_opacity": "none",
+            "animation_text": "none",
+            "color_text_1": "",
+            "color_text_2": "",
+            "color_text_3": "",
+            "color_text_bg": "",
+            "color_curtain_bg": "",
+            "customization_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "promobox_LztTUh"
+      ],
+      "settings": {
+        "title": "",
+        "container": "fullwidth",
+        "size_of_columns": "1",
+        "size_of_columns_mobile": "1",
+        "margins_for_columns": "none",
+        "align_of_columns": "top_center",
+        "disable_column_paddings": false,
+        "precedence": "",
+        "customization_class": ""
+      }
+    },
+    "carousel_products_FkYjFm": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_mNgCr9": {
+          "type": "collection",
+          "disabled": true,
+          "settings": {
+            "title": "Ofertas del 15 al 18 de agosto",
+            "collection": "ofertas-del-15-18-agosto-2025"
+          }
+        }
+      },
+      "block_order": [
+        "collection_mNgCr9"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_TBTCbV": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_PNKriY": {
+          "type": "collection",
+          "settings": {
+            "title": "Productos destacados",
+            "collection": "aceites"
+          }
+        }
+      },
+      "block_order": [
+        "collection_PNKriY"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": false,
+        "speed": 5,
+        "infinite": false,
+        "arrows": false,
+        "bullets": false
+      }
+    },
+    "carousel_products_hptqKJ": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_DdzLjE": {
+          "type": "collection",
+          "settings": {
+            "title": "Pescado",
+            "collection": "pesco"
+          }
+        }
+      },
+      "block_order": [
+        "collection_DdzLjE"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "spacer_cwDrNT": {
+      "type": "spacer",
+      "settings": {
+        "margin_top": 30,
+        "margin_bottom": 30,
+        "margin_top_mobile": 0,
+        "margin_bottom_mobile": 0,
+        "container": "boxed",
+        "show_separator": false,
+        "title": ""
+      }
+    },
+    "carousel_products_UiqyY8": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_mKi6Ya": {
+          "type": "collection",
+          "settings": {
+            "title": "Panaderia",
+            "collection": "panaderia-la-vaquita"
+          }
+        }
+      },
+      "block_order": [
+        "collection_mKi6Ya"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_R4JDqp": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_GVxEty": {
+          "type": "collection",
+          "settings": {
+            "title": "Productos para ti",
+            "collection": "30-separata28jun2025"
+          }
+        }
+      },
+      "block_order": [
+        "collection_GVxEty"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_kRdxrK": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_XRjJx7": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en carnes frias",
+            "collection": "carnes-frias-colanta"
+          }
+        }
+      },
+      "block_order": [
+        "collection_XRjJx7"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_79RHcP": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_MpGntN": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en la marca fruco",
+            "collection": "fruco"
+          }
+        }
+      },
+      "block_order": [
+        "collection_MpGntN"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_Fa9Y6b": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_YJHNcn": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en la marca campi",
+            "collection": "campi"
+          }
+        }
+      },
+      "block_order": [
+        "collection_YJHNcn"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "spacer_4fBX6K": {
+      "type": "spacer",
+      "disabled": true,
+      "settings": {
+        "margin_top": 30,
+        "margin_bottom": 30,
+        "margin_top_mobile": 0,
+        "margin_bottom_mobile": 0,
+        "container": "boxed",
+        "show_separator": false,
+        "title": ""
+      }
+    },
+    "carousel_products_xYtBU4": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_E39c3q": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en aceites premier",
+            "collection": "premier-y-colmans"
+          }
+        }
+      },
+      "block_order": [
+        "collection_E39c3q"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_Rf4qVp": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_RezdRe": {
+          "type": "collection",
+          "settings": {
+            "title": "Vinos",
+            "collection": "vinos"
+          }
+        }
+      },
+      "block_order": [
+        "collection_RezdRe"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_QGeFK8": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_TzGkty": {
+          "type": "collection",
+          "settings": {
+            "title": "Aseo hogar",
+            "collection": "fabuloso"
+          }
+        }
+      },
+      "block_order": [
+        "collection_TzGkty"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_GGLPXc": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_wBWL7P": {
+          "type": "collection",
+          "settings": {
+            "title": "Aseo personal",
+            "collection": "separata-cuidado-corporal-desodorantes-colgate-palmolive"
+          }
+        }
+      },
+      "block_order": [
+        "collection_wBWL7P"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_7a4MbR": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_J7mf6h": {
+          "type": "collection",
+          "settings": {
+            "title": "Cuidado oral",
+            "collection": "separata-higiene-oral-cepillos-colgate"
+          }
+        }
+      },
+      "block_order": [
+        "collection_J7mf6h"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_LJJmc8": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_bBdkPk": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en Jabones palmolive",
+            "collection": "cuidado-corporal-jabon-palmolive"
+          }
+        }
+      },
+      "block_order": [
+        "collection_bBdkPk"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "spacer_XUe9ft": {
+      "type": "spacer",
+      "settings": {
+        "margin_top": 30,
+        "margin_bottom": 30,
+        "margin_top_mobile": 0,
+        "margin_bottom_mobile": 0,
+        "container": "boxed",
+        "show_separator": false,
+        "title": ""
+      }
+    },
+    "custom_liquid_WXP3EX": {
+      "type": "custom-liquid",
+      "settings": {
+        "use_container": false,
+        "custom_liquid": "<div class=\"terminos\"><a href=\"\">*Aplica términos y condiciones</a></div>"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_title_section_BitPGR",
+    "gallery_8iABnp",
+    "1628284369dc32299f",
+    "dual_custom_banner_FBhBTi",
+    "home_builder_46WQCT",
+    "home_builder_JJKBJj",
+    "carousel_products_FkYjFm",
+    "carousel_products_TBTCbV",
+    "carousel_products_hptqKJ",
+    "spacer_cwDrNT",
+    "carousel_products_UiqyY8",
+    "carousel_products_R4JDqp",
+    "carousel_products_kRdxrK",
+    "carousel_products_79RHcP",
+    "carousel_products_Fa9Y6b",
+    "spacer_4fBX6K",
+    "carousel_products_xYtBU4",
+    "carousel_products_Rf4qVp",
+    "carousel_products_QGeFK8",
+    "carousel_products_GGLPXc",
+    "carousel_products_7a4MbR",
+    "carousel_products_LJJmc8",
+    "spacer_XUe9ft",
+    "custom_liquid_WXP3EX"
+  ]
+}
