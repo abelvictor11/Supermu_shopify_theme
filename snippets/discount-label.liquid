@@ -44,7 +44,11 @@ Behavior:
           {%- assign _h_norm = h | strip | handleize -%}
           {%- assign _h_title_up = h | strip | upcase -%}
           {%- assign _c_title_up = c.title | default: '' | upcase -%}
-          {%- if c.handle == _h_norm or c.title == h or (_c_title_up != '' and _c_title_up == _h_title_up) -%}
+          {%- if c.handle == _h_norm or c.title == h -%}
+            {%- assign _matched_title = c.title -%}
+            {%- assign _matched_handle = c.handle -%}
+            {%- break -%}
+          {%- elsif _c_title_up != '' and _c_title_up == _h_title_up -%}
             {%- assign _matched_title = c.title -%}
             {%- assign _matched_handle = c.handle -%}
             {%- break -%}

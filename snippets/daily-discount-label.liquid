@@ -36,10 +36,12 @@ Behavior:
 
   {%- if _discount_rules != '' -%}
     {%- assign _tags_src = _product.tags -%}
-    {%- if (_tags_src == blank or _tags_src.size == 0) and _product.handle != blank -%}
-      {%- assign _p2 = all_products[_product.handle] -%}
-      {%- if _p2 and _p2.tags != blank -%}
-        {%- assign _tags_src = _p2.tags -%}
+    {%- if _product.handle != blank -%}
+      {%- if _tags_src == blank or _tags_src.size == 0 -%}
+        {%- assign _p2 = all_products[_product.handle] -%}
+        {%- if _p2 and _p2.tags != blank -%}
+          {%- assign _tags_src = _p2.tags -%}
+        {%- endif -%}
       {%- endif -%}
     {%- endif -%}
     {%- assign _product_tags_up = _tags_src | join: '||||' | upcase | split: '||||' -%}
