@@ -797,7 +797,7 @@
       "type": "custom-liquid",
       "settings": {
         "use_container": false,
-        "custom_liquid": "<div class=\"terminos\"><a href=\"\">*Aplica términos y condiciones</a></div>"
+        "custom_liquid": "<div class=\"terminos\"><a href=\"\">*Aplica términos y condiciones</a></div>\n<style>\n.template-page a[data-js-product-image] .rimage .rimage__img {\n    position: absolute !important;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    width: 100% !important;\n    height: 100% !important;\n    object-fit: contain;\n    object-position: center;\n}\n</style>"
       }
     }
   },
