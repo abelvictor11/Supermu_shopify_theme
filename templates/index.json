@@ -15,12 +15,12 @@
         "banner_large_p99g4W": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": false,
-            "image_1": "shopify://shop_images/banners_15-18agosto-04.jpg",
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/banners_28agosto-07sept-02.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
-            "link_1": "shopify://collections/ofertas-del-15-18-agosto-2025",
+            "link_1": "shopify://collections/separata-del-27-al-7-de-sept-2025",
             "slide_2_enabled": false,
             "image_2": "shopify://shop_images/banners_15-18agosto-03.jpg",
             "title_2": "",
