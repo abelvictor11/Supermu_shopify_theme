@@ -10,7 +10,8 @@ Behavior:
 {%- assign _product = product -%}
 {%- assign _mode = mode | default: 'html' -%}
 {%- if _product -%}
-  {%- assign _weekday = 'now' | date: '%w' -%} {# 0=Sunday,1=Monday,...6=Saturday #}
+  {%- assign _weekday = 'now' | date: '%w' -%} 
+  {%- comment -%} 0=Sunday,1=Monday,...6=Saturday {%- endcomment -%}
   {%- case _weekday -%}
     {%- when '1' -%}
       {%- assign _day_translation = 'LUNES' -%}
