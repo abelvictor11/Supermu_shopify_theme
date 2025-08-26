@@ -564,6 +564,54 @@
         "subtitle": ""
       }
     },
+    "three_custom_grid_banners_LnjnzU": {
+      "type": "three-custom-grid-banners",
+      "blocks": {
+        "feature_small_rMaKFN": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia-100.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/rica"
+          }
+        },
+        "feature_small_bdqXzd": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_2-100.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/carnes-frias-colanta"
+          }
+        },
+        "feature_large_FiVmQr": {
+          "type": "feature_large",
+          "settings": {
+            "position": "right",
+            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_6-100.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/friko"
+          }
+        }
+      },
+      "block_order": [
+        "feature_small_rMaKFN",
+        "feature_small_bdqXzd",
+        "feature_large_FiVmQr"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
     "carousel_products_f4gjBm": {
       "type": "carousel-products",
       "blocks": {
@@ -711,54 +759,6 @@
         "banner_cta_text": "",
         "banner_link": "shopify://collections/colgate-palmolive-2"
       }
-    },
-    "three_custom_grid_banners_LnjnzU": {
-      "type": "three-custom-grid-banners",
-      "blocks": {
-        "feature_small_rMaKFN": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia-100.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/rica"
-          }
-        },
-        "feature_small_bdqXzd": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_2-100.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/carnes-frias-colanta"
-          }
-        },
-        "feature_large_FiVmQr": {
-          "type": "feature_large",
-          "settings": {
-            "position": "right",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_6-100.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/friko"
-          }
-        }
-      },
-      "block_order": [
-        "feature_small_rMaKFN",
-        "feature_small_bdqXzd",
-        "feature_large_FiVmQr"
-      ],
-      "disabled": true,
-      "settings": {}
     },
     "carousel_products_mPUixM": {
       "type": "carousel-products",
@@ -1079,13 +1079,13 @@
     "carousel_products_dxQTg3",
     "carousel_products_bC4JMg",
     "custom_title_section_d4nUA4",
+    "three_custom_grid_banners_LnjnzU",
     "carousel_products_f4gjBm",
     "two_column_carousel_banner_Y9pKby",
     "three_custom_grid_banners_NxcJ8X",
     "custom_title_section_hBhqYg",
     "1586283282255",
     "two_column_carousel_banner_CjE4DF",
-    "three_custom_grid_banners_LnjnzU",
     "carousel_products_mPUixM",
     "two_column_carousel_banner_fDUJch",
     "two_column_carousel_banner_UKqnHg",
