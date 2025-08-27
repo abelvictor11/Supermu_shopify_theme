@@ -81,12 +81,12 @@
         "banner_small_4KTmxx": {
           "type": "banner_small",
           "settings": {
-            "slide_1_enabled": false,
-            "image_1": "shopify://shop_images/banners_15-18agosto_Mesa_de_trabajo_1_copia_5.jpg",
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/salida_postMesa_de_trabajo_1_copia_11-100_6f40137e-e335-450b-89fa-97d2f86cce6b.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
-            "link_1": "shopify://collections/sedal",
+            "link_1": "shopify://collections/supermu",
             "slide_2_enabled": false,
             "image_2": "shopify://shop_images/banners_15-18agosto_Mesa_de_trabajo_1_copia_4_9ad027d8-ca1f-4309-a0ce-b21d42c4a2ce.jpg",
             "title_2": "",
