@@ -611,6 +611,25 @@
       "disabled": true,
       "settings": {}
     },
+    "two_column_carousel_banner_Y9pKby": {
+      "type": "two-column-carousel-banner",
+      "settings": {
+        "column_order": "carousel_first",
+        "carousel_title": "",
+        "collection": "separata-del-27-al-7-de-sept-2025",
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true,
+        "banner_image": "shopify://shop_images/banners_28agosto-07sept-11.jpg",
+        "banner_bg_color": "#f5f5f5",
+        "banner_title": "",
+        "banner_subtitle": "",
+        "banner_cta_text": "",
+        "banner_link": ""
+      }
+    },
     "carousel_products_f4gjBm": {
       "type": "carousel-products",
       "blocks": {
@@ -635,25 +654,6 @@
         "infinite": true,
         "arrows": true,
         "bullets": false
-      }
-    },
-    "two_column_carousel_banner_Y9pKby": {
-      "type": "two-column-carousel-banner",
-      "settings": {
-        "column_order": "carousel_first",
-        "carousel_title": "",
-        "collection": "separata-del-27-al-7-de-sept-2025",
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": true,
-        "banner_image": "shopify://shop_images/banners_28agosto-07sept-11.jpg",
-        "banner_bg_color": "#f5f5f5",
-        "banner_title": "",
-        "banner_subtitle": "",
-        "banner_cta_text": "",
-        "banner_link": ""
       }
     },
     "three_custom_grid_banners_NxcJ8X": {
@@ -1078,8 +1078,8 @@
     "carousel_products_bC4JMg",
     "custom_title_section_d4nUA4",
     "three_custom_grid_banners_LnjnzU",
-    "carousel_products_f4gjBm",
     "two_column_carousel_banner_Y9pKby",
+    "carousel_products_f4gjBm",
     "three_custom_grid_banners_NxcJ8X",
     "custom_title_section_hBhqYg",
     "1586283282255",
