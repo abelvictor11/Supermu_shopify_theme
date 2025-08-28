@@ -527,6 +527,53 @@
         "bullets": false
       }
     },
+    "three_custom_grid_banners_LnjnzU": {
+      "type": "three-custom-grid-banners",
+      "blocks": {
+        "feature_small_rMaKFN": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/banners_28agosto-07sept-13.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/aromatel"
+          }
+        },
+        "feature_small_bdqXzd": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_2-100.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/carnes-frias-colanta"
+          }
+        },
+        "feature_large_FiVmQr": {
+          "type": "feature_large",
+          "settings": {
+            "position": "right",
+            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_6-100.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/friko"
+          }
+        }
+      },
+      "block_order": [
+        "feature_small_rMaKFN",
+        "feature_small_bdqXzd",
+        "feature_large_FiVmQr"
+      ],
+      "settings": {}
+    },
     "carousel_products_bC4JMg": {
       "type": "carousel-products",
       "blocks": {
@@ -562,54 +609,6 @@
         "title": "Ofertas del 16 al 20 de julio",
         "subtitle": ""
       }
-    },
-    "three_custom_grid_banners_LnjnzU": {
-      "type": "three-custom-grid-banners",
-      "blocks": {
-        "feature_small_rMaKFN": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia-100.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/rica"
-          }
-        },
-        "feature_small_bdqXzd": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_2-100.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/carnes-frias-colanta"
-          }
-        },
-        "feature_large_FiVmQr": {
-          "type": "feature_large",
-          "settings": {
-            "position": "right",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_6-100.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/friko"
-          }
-        }
-      },
-      "block_order": [
-        "feature_small_rMaKFN",
-        "feature_small_bdqXzd",
-        "feature_large_FiVmQr"
-      ],
-      "disabled": true,
-      "settings": {}
     },
     "two_column_carousel_banner_Y9pKby": {
       "type": "two-column-carousel-banner",
@@ -1075,9 +1074,9 @@
     "carousel_products_fRGaNN",
     "custom_title_section_6TYHnr",
     "carousel_products_dxQTg3",
+    "three_custom_grid_banners_LnjnzU",
     "carousel_products_bC4JMg",
     "custom_title_section_d4nUA4",
-    "three_custom_grid_banners_LnjnzU",
     "two_column_carousel_banner_Y9pKby",
     "carousel_products_f4gjBm",
     "three_custom_grid_banners_NxcJ8X",
