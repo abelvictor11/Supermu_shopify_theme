@@ -558,12 +558,12 @@
           "type": "feature_large",
           "settings": {
             "position": "right",
-            "image": "shopify://shop_images/OFERTAS2Mesa_de_trabajo_14_copia_6-100.jpg",
+            "image": "shopify://shop_images/banners_28agosto-07sept-12.jpg",
             "bg_color": "#f5f5f5",
             "title": "",
             "subtitle": "",
             "cta_text": "",
-            "link": "shopify://collections/friko"
+            "link": "shopify://collections/maggi"
           }
         }
       },
