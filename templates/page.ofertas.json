@@ -238,7 +238,6 @@
         "banner_large_iX4Kah",
         "banner_small_LKm4YB"
       ],
-      "disabled": true,
       "settings": {
         "arrows": true,
         "bullets": true,
@@ -452,6 +451,7 @@
       "block_order": [
         "collection_DdzLjE"
       ],
+      "disabled": true,
       "settings": {
         "show_title": true,
         "container": "fullwidth",
