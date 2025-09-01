@@ -388,7 +388,6 @@
       "blocks": {
         "collection_mNgCr9": {
           "type": "collection",
-          "disabled": true,
           "settings": {
             "title": "",
             "collection": "separata-del-27-al-7-de-sept-2025"
@@ -398,7 +397,6 @@
       "block_order": [
         "collection_mNgCr9"
       ],
-      "disabled": true,
       "settings": {
         "show_title": true,
         "container": "fullwidth",
