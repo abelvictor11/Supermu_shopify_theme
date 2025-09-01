@@ -410,6 +410,33 @@
         "speed": 5
       }
     },
+    "carousel_products_hptqKJ": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_DdzLjE": {
+          "type": "collection",
+          "settings": {
+            "title": "­",
+            "collection": "aseo-mascotas"
+          }
+        }
+      },
+      "block_order": [
+        "collection_DdzLjE"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
     "carousel_products_TBTCbV": {
       "type": "carousel-products",
       "blocks": {
@@ -434,33 +461,6 @@
         "infinite": false,
         "arrows": false,
         "bullets": false
-      }
-    },
-    "carousel_products_hptqKJ": {
-      "type": "carousel-products",
-      "blocks": {
-        "collection_DdzLjE": {
-          "type": "collection",
-          "settings": {
-            "title": "Pescado",
-            "collection": "pesco"
-          }
-        }
-      },
-      "block_order": [
-        "collection_DdzLjE"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_title": true,
-        "container": "fullwidth",
-        "size_of_columns": "4",
-        "max_count": 6,
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": true
       }
     },
     "spacer_cwDrNT": {
@@ -809,8 +809,8 @@
     "home_builder_JJKBJj",
     "carousel_products_FkYjFm",
     "dual_custom_banner_FBhBTi",
-    "carousel_products_TBTCbV",
     "carousel_products_hptqKJ",
+    "carousel_products_TBTCbV",
     "spacer_cwDrNT",
     "carousel_products_UiqyY8",
     "carousel_products_R4JDqp",
