@@ -302,7 +302,6 @@
       "block_order": [
         "promobox_F4dmFe"
       ],
-      "disabled": true,
       "settings": {
         "title": "",
         "container": "fullwidth",
@@ -391,8 +390,8 @@
           "type": "collection",
           "disabled": true,
           "settings": {
-            "title": "Ofertas del 15 al 18 de agosto",
-            "collection": "ofertas-del-15-18-agosto-2025"
+            "title": "",
+            "collection": "separata-del-27-al-7-de-sept-2025"
           }
         }
       },
