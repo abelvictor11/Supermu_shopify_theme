@@ -439,6 +439,13 @@
     "carousel_products_TBTCbV": {
       "type": "carousel-products",
       "blocks": {
+        "collection_FA6bdK": {
+          "type": "collection",
+          "settings": {
+            "title": "",
+            "collection": ""
+          }
+        },
         "collection_PNKriY": {
           "type": "collection",
           "settings": {
@@ -448,6 +455,7 @@
         }
       },
       "block_order": [
+        "collection_FA6bdK",
         "collection_PNKriY"
       ],
       "settings": {
@@ -455,11 +463,11 @@
         "container": "fullwidth",
         "size_of_columns": "4",
         "max_count": 6,
-        "autoplay": false,
+        "autoplay": true,
         "speed": 5,
-        "infinite": false,
-        "arrows": false,
-        "bullets": false
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
       }
     },
     "spacer_cwDrNT": {
