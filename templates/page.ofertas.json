@@ -450,7 +450,7 @@
         "collection_PNKriY"
       ],
       "settings": {
-        "show_title": false,
+        "show_title": true,
         "container": "fullwidth",
         "size_of_columns": "4",
         "max_count": 6,
