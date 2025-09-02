@@ -280,11 +280,11 @@
           "type": "banner_large",
           "settings": {
             "slide_1_enabled": true,
-            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-07.png",
+            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-08.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
-            "link_1": "shopify://collections/aseo-mascotas",
+            "link_1": "shopify://collections/pollo-1",
             "slide_2_enabled": false,
             "title_2": "",
             "subtitle_2": "",
