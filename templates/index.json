@@ -15,7 +15,7 @@
         "banner_large_p99g4W": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": true,
+            "slide_1_enabled": false,
             "image_1": "shopify://shop_images/BANNER_ECOMMERCE-07.png",
             "title_1": "",
             "subtitle_1": "",
@@ -51,7 +51,7 @@
             "subtitle_6": "",
             "cta_text_6": "",
             "link_6": "shopify://collections/separata-del-27-al-7-de-sept-2025",
-            "slide_7_enabled": true,
+            "slide_7_enabled": false,
             "image_7": "shopify://shop_images/BANNER_ECOMMERCE-06.png",
             "title_7": "",
             "subtitle_7": "",
