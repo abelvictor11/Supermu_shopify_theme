@@ -280,7 +280,7 @@
           "type": "banner_large",
           "settings": {
             "slide_1_enabled": true,
-            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-08.jpg",
+            "image_1": "shopify://shop_images/pollo-08_f325dc98-2c7c-46d2-b7e2-57a513b2240c.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
@@ -337,7 +337,7 @@
           "type": "banner_small",
           "settings": {
             "slide_1_enabled": true,
-            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-09.jpg",
+            "image_1": "shopify://shop_images/pollo-09.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
