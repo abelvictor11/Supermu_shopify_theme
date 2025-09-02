@@ -403,6 +403,7 @@
         "banner_large_iX4Kah",
         "banner_small_LKm4YB"
       ],
+      "disabled": true,
       "settings": {
         "arrows": true,
         "bullets": true,
