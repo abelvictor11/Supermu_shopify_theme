@@ -335,7 +335,6 @@
         },
         "banner_small_LKm4YB": {
           "type": "banner_small",
-          "disabled": true,
           "settings": {
             "slide_1_enabled": true,
             "image_1": "shopify://shop_images/BANNER_ECOMMERCE-09.jpg",
