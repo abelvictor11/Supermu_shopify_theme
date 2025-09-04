@@ -616,7 +616,7 @@
         "carousel_title": "",
         "collection": "separata-del-27-al-7-de-sept-2025",
         "autoplay": true,
-        "speed": 5,
+        "speed": 1,
         "infinite": true,
         "arrows": true,
         "bullets": true,
