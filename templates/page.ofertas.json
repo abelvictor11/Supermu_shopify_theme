@@ -436,6 +436,33 @@
         "bullets": true
       }
     },
+    "carousel_products_UiqyY8": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_mKi6Ya": {
+          "type": "collection",
+          "settings": {
+            "title": "Panaderia",
+            "collection": "fruco"
+          }
+        }
+      },
+      "block_order": [
+        "collection_mKi6Ya"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
     "carousel_products_TBTCbV": {
       "type": "carousel-products",
       "blocks": {
@@ -472,33 +499,6 @@
         "container": "boxed",
         "show_separator": false,
         "title": ""
-      }
-    },
-    "carousel_products_UiqyY8": {
-      "type": "carousel-products",
-      "blocks": {
-        "collection_mKi6Ya": {
-          "type": "collection",
-          "settings": {
-            "title": "Panaderia",
-            "collection": "panaderia-la-vaquita"
-          }
-        }
-      },
-      "block_order": [
-        "collection_mKi6Ya"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_title": true,
-        "container": "fullwidth",
-        "size_of_columns": "4",
-        "max_count": 6,
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": true
       }
     },
     "carousel_products_R4JDqp": {
@@ -809,9 +809,9 @@
     "carousel_products_FkYjFm",
     "dual_custom_banner_FBhBTi",
     "carousel_products_hptqKJ",
+    "carousel_products_UiqyY8",
     "carousel_products_TBTCbV",
     "spacer_cwDrNT",
-    "carousel_products_UiqyY8",
     "carousel_products_R4JDqp",
     "carousel_products_kRdxrK",
     "carousel_products_79RHcP",
