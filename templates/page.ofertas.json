@@ -265,7 +265,7 @@
         "show_title": true,
         "container": "fullwidth",
         "size_of_columns": "4",
-        "max_count": 6,
+        "max_count": 50,
         "autoplay": true,
         "speed": 5,
         "infinite": true,
