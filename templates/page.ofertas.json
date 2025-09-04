@@ -430,7 +430,7 @@
         "size_of_columns": "4",
         "max_count": 50,
         "autoplay": true,
-        "speed": 5,
+        "speed": 2,
         "infinite": true,
         "arrows": true,
         "bullets": true
@@ -456,7 +456,7 @@
         "size_of_columns": "4",
         "max_count": 50,
         "autoplay": true,
-        "speed": 5,
+        "speed": 2,
         "infinite": true,
         "arrows": true,
         "bullets": true
@@ -482,7 +482,7 @@
         "size_of_columns": "4",
         "max_count": 6,
         "autoplay": true,
-        "speed": 5,
+        "speed": 2,
         "infinite": true,
         "arrows": true,
         "bullets": true
@@ -520,7 +520,7 @@
         "size_of_columns": "4",
         "max_count": 50,
         "autoplay": true,
-        "speed": 10,
+        "speed": 2,
         "infinite": true,
         "arrows": true,
         "bullets": true
@@ -667,7 +667,7 @@
         "size_of_columns": "4",
         "max_count": 50,
         "autoplay": true,
-        "speed": 5,
+        "speed": 2,
         "infinite": true,
         "arrows": true,
         "bullets": true
@@ -693,7 +693,7 @@
         "size_of_columns": "4",
         "max_count": 50,
         "autoplay": true,
-        "speed": 5,
+        "speed": 2,
         "infinite": true,
         "arrows": true,
         "bullets": true
