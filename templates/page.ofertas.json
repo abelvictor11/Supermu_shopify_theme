@@ -336,6 +336,7 @@
         },
         "banner_small_LKm4YB": {
           "type": "banner_small",
+          "disabled": true,
           "settings": {
             "slide_1_enabled": true,
             "image_1": "shopify://shop_images/BANNER_ECOMMERCE-12.jpg",
@@ -417,7 +418,7 @@
           "type": "collection",
           "settings": {
             "title": "­",
-            "collection": "oferta-jueves-p-y-m"
+            "collection": "carnes-frescas-res-cerdo-pollo-pescado-y-mariscos"
           }
         }
       },
