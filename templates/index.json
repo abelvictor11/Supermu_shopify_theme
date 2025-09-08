@@ -81,8 +81,8 @@
         "banner_small_4KTmxx": {
           "type": "banner_small",
           "settings": {
-            "slide_1_enabled": true,
-            "image_1": "shopify://shop_images/banners_28agosto-07sept_Mesa_de_trabajo_1_copia_3.jpg",
+            "slide_1_enabled": false,
+            "image_1": "shopify://shop_images/banner-mascotas-supermu.webp",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
