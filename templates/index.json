@@ -607,6 +607,7 @@
     },
     "custom_title_section_d4nUA4": {
       "type": "custom-title-section",
+      "disabled": true,
       "name": "Custom Title Section",
       "settings": {
         "title": "Ofertas del 16 al 20 de julio",
@@ -615,6 +616,7 @@
     },
     "two_column_carousel_banner_Y9pKby": {
       "type": "two-column-carousel-banner",
+      "disabled": true,
       "settings": {
         "column_order": "carousel_first",
         "carousel_title": "",
