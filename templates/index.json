@@ -81,7 +81,7 @@
         "banner_small_4KTmxx": {
           "type": "banner_small",
           "settings": {
-            "slide_1_enabled": false,
+            "slide_1_enabled": true,
             "image_1": "shopify://shop_images/banner-mascotas-supermu.webp",
             "title_1": "",
             "subtitle_1": "",
