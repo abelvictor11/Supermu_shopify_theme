@@ -165,6 +165,7 @@
       "block_order": [
         "promobox_F4dmFe"
       ],
+      "disabled": true,
       "settings": {
         "title": "",
         "container": "fullwidth",
@@ -279,13 +280,13 @@
         "banner_large_iX4Kah": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": true,
+            "slide_1_enabled": false,
             "image_1": "shopify://shop_images/BANNER_ECOMMERCE-02.png",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
             "link_1": "shopify://collections/frutas-y-verduras",
-            "slide_2_enabled": true,
+            "slide_2_enabled": false,
             "image_2": "shopify://shop_images/BANNER_ECOMMERCE-01_a2bbbf73-cda4-45f8-9942-a32bea1b33e4.png",
             "title_2": "",
             "subtitle_2": "",
