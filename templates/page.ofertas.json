@@ -337,7 +337,6 @@
         },
         "banner_small_LKm4YB": {
           "type": "banner_small",
-          "disabled": true,
           "settings": {
             "slide_1_enabled": true,
             "image_1": "shopify://shop_images/BANNER_ECOMMERCE-12.jpg",
@@ -405,11 +404,12 @@
         "banner_large_iX4Kah",
         "banner_small_LKm4YB"
       ],
+      "disabled": true,
       "settings": {
-        "arrows": true,
+        "arrows": false,
         "bullets": true,
         "autoplay": true,
-        "speed": 5
+        "speed": 2
       }
     },
     "carousel_products_hptqKJ": {
