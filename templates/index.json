@@ -15,8 +15,8 @@
         "banner_large_p99g4W": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": false,
-            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-01_a2bbbf73-cda4-45f8-9942-a32bea1b33e4.png",
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/carne.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
