@@ -352,6 +352,33 @@
         "bullets": true
       }
     },
+    "carousel_products_xYtBU4": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_E39c3q": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en aceites premier",
+            "collection": "premier-y-colmans"
+          }
+        }
+      },
+      "block_order": [
+        "collection_E39c3q"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 50,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
     "dual_custom_banner_FBhBTi": {
       "type": "dual-custom-banner",
       "blocks": {
@@ -619,33 +646,6 @@
         "title": ""
       }
     },
-    "carousel_products_xYtBU4": {
-      "type": "carousel-products",
-      "blocks": {
-        "collection_E39c3q": {
-          "type": "collection",
-          "settings": {
-            "title": "Ofertas en aceites premier",
-            "collection": "premier-y-colmans"
-          }
-        }
-      },
-      "block_order": [
-        "collection_E39c3q"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_title": true,
-        "container": "fullwidth",
-        "size_of_columns": "4",
-        "max_count": 6,
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": true
-      }
-    },
     "carousel_products_Rf4qVp": {
       "type": "carousel-products",
       "blocks": {
@@ -808,6 +808,7 @@
     "carousel_products_kRdxrK",
     "carousel_products_79RHcP",
     "carousel_products_Fa9Y6b",
+    "carousel_products_xYtBU4",
     "dual_custom_banner_FBhBTi",
     "carousel_products_hptqKJ",
     "carousel_products_UiqyY8",
@@ -815,7 +816,6 @@
     "spacer_cwDrNT",
     "carousel_products_R4JDqp",
     "spacer_4fBX6K",
-    "carousel_products_xYtBU4",
     "carousel_products_Rf4qVp",
     "carousel_products_QGeFK8",
     "carousel_products_GGLPXc",
