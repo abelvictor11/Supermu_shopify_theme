@@ -274,6 +274,32 @@
         "bullets": true
       }
     },
+    "carousel_products_kRdxrK": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_XRjJx7": {
+          "type": "collection",
+          "settings": {
+            "title": "",
+            "collection": "panaderia-supermu"
+          }
+        }
+      },
+      "block_order": [
+        "collection_XRjJx7"
+      ],
+      "settings": {
+        "show_title": true,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 6,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
     "dual_custom_banner_FBhBTi": {
       "type": "dual-custom-banner",
       "blocks": {
@@ -523,33 +549,6 @@
         "max_count": 50,
         "autoplay": true,
         "speed": 2,
-        "infinite": true,
-        "arrows": true,
-        "bullets": true
-      }
-    },
-    "carousel_products_kRdxrK": {
-      "type": "carousel-products",
-      "blocks": {
-        "collection_XRjJx7": {
-          "type": "collection",
-          "settings": {
-            "title": "Ofertas en carnes frias",
-            "collection": "carnes-frias-colanta"
-          }
-        }
-      },
-      "block_order": [
-        "collection_XRjJx7"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_title": true,
-        "container": "fullwidth",
-        "size_of_columns": "4",
-        "max_count": 6,
-        "autoplay": true,
-        "speed": 5,
         "infinite": true,
         "arrows": true,
         "bullets": true
@@ -808,13 +807,13 @@
     "home_builder_46WQCT",
     "home_builder_JJKBJj",
     "carousel_products_FkYjFm",
+    "carousel_products_kRdxrK",
     "dual_custom_banner_FBhBTi",
     "carousel_products_hptqKJ",
     "carousel_products_UiqyY8",
     "carousel_products_TBTCbV",
     "spacer_cwDrNT",
     "carousel_products_R4JDqp",
-    "carousel_products_kRdxrK",
     "carousel_products_79RHcP",
     "carousel_products_Fa9Y6b",
     "spacer_4fBX6K",
