@@ -333,14 +333,13 @@
           "type": "collection",
           "settings": {
             "title": "Ofertas en la marca campi",
-            "collection": "campi"
+            "collection": "la-constancia"
           }
         }
       },
       "block_order": [
         "collection_YJHNcn"
       ],
-      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
