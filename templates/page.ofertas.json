@@ -262,6 +262,7 @@
       "block_order": [
         "collection_mNgCr9"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
@@ -288,6 +289,7 @@
       "block_order": [
         "collection_XRjJx7"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
@@ -314,6 +316,7 @@
       "block_order": [
         "collection_MpGntN"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
@@ -340,6 +343,7 @@
       "block_order": [
         "collection_YJHNcn"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
@@ -366,6 +370,7 @@
       "block_order": [
         "collection_E39c3q"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
@@ -392,6 +397,7 @@
       "block_order": [
         "collection_bBdkPk"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "fullwidth",
