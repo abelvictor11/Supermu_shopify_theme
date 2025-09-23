@@ -15,13 +15,13 @@
         "banner_large_p99g4W": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": false,
-            "image_1": "shopify://shop_images/pescado.jpg",
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/Pollo_273b73df-5d27-4036-bc60-7d32a986372a.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
-            "link_1": "shopify://collections/oferta-jueves-p-y-m",
-            "slide_2_enabled": false,
+            "link_1": "shopify://collections/pollo-1",
+            "slide_2_enabled": true,
             "image_2": "shopify://shop_images/carne.jpg",
             "title_2": "",
             "subtitle_2": "",
