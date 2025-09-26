@@ -530,18 +530,6 @@
     "three_custom_grid_banners_LnjnzU": {
       "type": "three-custom-grid-banners",
       "blocks": {
-        "feature_small_rMaKFN": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/bannersTrasnochonEcommerce-06.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/carnes"
-          }
-        },
         "feature_large_FiVmQr": {
           "type": "feature_large",
           "settings": {
@@ -554,11 +542,23 @@
             "link": "shopify://collections/vinos"
           }
         },
+        "feature_small_rMaKFN": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/bannersTrasnochonEcommerce-06.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/carnes"
+          }
+        },
         "feature_small_bdqXzd": {
           "type": "feature_small",
           "settings": {
             "position": "left",
-            "image": "shopify://shop_images/banners_28agosto-07sept-14.jpg",
+            "image": "shopify://shop_images/bannersTrasnochonEcommerce-07.jpg",
             "bg_color": "#f5f5f5",
             "title": "",
             "subtitle": "",
@@ -568,8 +568,8 @@
         }
       },
       "block_order": [
-        "feature_small_rMaKFN",
         "feature_large_FiVmQr",
+        "feature_small_rMaKFN",
         "feature_small_bdqXzd"
       ],
       "disabled": true,
