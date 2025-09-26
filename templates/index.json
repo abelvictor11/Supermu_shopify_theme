@@ -471,7 +471,6 @@
       "blocks": {
         "collection_Jdb7Vf": {
           "type": "collection",
-          "disabled": true,
           "settings": {
             "title": "TRASNOCHON 27 SEPTIEMBRE 2025",
             "collection": "trasnochon-27-septiembre-2025"
@@ -484,12 +483,12 @@
       "disabled": true,
       "name": "Product carousel",
       "settings": {
-        "show_title": true,
+        "show_title": false,
         "container": "boxed",
         "size_of_columns": "4",
-        "max_count": 6,
+        "max_count": 34,
         "autoplay": true,
-        "speed": 5,
+        "speed": 7,
         "infinite": true,
         "arrows": true,
         "bullets": true
