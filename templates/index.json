@@ -534,24 +534,12 @@
           "type": "feature_small",
           "settings": {
             "position": "left",
-            "image": "shopify://shop_images/banners_28agosto-07sept-13.jpg",
+            "image": "shopify://shop_images/bannersTrasnochonEcommerce-06.jpg",
             "bg_color": "#f5f5f5",
             "title": "",
             "subtitle": "",
             "cta_text": "",
-            "link": "shopify://collections/aromatel"
-          }
-        },
-        "feature_small_bdqXzd": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/banners_28agosto-07sept-14.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/fabuloso-x-2lts"
+            "link": "shopify://collections/carnes"
           }
         },
         "feature_large_FiVmQr": {
@@ -565,12 +553,24 @@
             "cta_text": "",
             "link": "shopify://collections/vinos"
           }
+        },
+        "feature_small_bdqXzd": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/banners_28agosto-07sept-14.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/fabuloso-x-2lts"
+          }
         }
       },
       "block_order": [
         "feature_small_rMaKFN",
-        "feature_small_bdqXzd",
-        "feature_large_FiVmQr"
+        "feature_large_FiVmQr",
+        "feature_small_bdqXzd"
       ],
       "disabled": true,
       "settings": {}
