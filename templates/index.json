@@ -610,7 +610,6 @@
     },
     "two_column_carousel_banner_Y9pKby": {
       "type": "two-column-carousel-banner",
-      "disabled": true,
       "settings": {
         "column_order": "carousel_first",
         "carousel_title": "",
