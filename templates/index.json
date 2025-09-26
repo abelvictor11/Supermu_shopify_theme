@@ -532,7 +532,6 @@
       "blocks": {
         "feature_small_rMaKFN": {
           "type": "feature_small",
-          "disabled": true,
           "settings": {
             "position": "left",
             "image": "shopify://shop_images/banners_28agosto-07sept-13.jpg",
@@ -545,7 +544,6 @@
         },
         "feature_small_bdqXzd": {
           "type": "feature_small",
-          "disabled": true,
           "settings": {
             "position": "left",
             "image": "shopify://shop_images/banners_28agosto-07sept-14.jpg",
@@ -558,10 +556,9 @@
         },
         "feature_large_FiVmQr": {
           "type": "feature_large",
-          "disabled": true,
           "settings": {
             "position": "right",
-            "image": "shopify://shop_images/banners_28agosto-07sept-12.jpg",
+            "image": "shopify://shop_images/bannersTrasnochonEcommerce-05.jpg",
             "bg_color": "#f5f5f5",
             "title": "",
             "subtitle": "",
@@ -575,6 +572,7 @@
         "feature_small_bdqXzd",
         "feature_large_FiVmQr"
       ],
+      "disabled": true,
       "settings": {}
     },
     "carousel_products_bC4JMg": {
