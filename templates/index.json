@@ -15,7 +15,7 @@
         "banner_large_p99g4W": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": true,
+            "slide_1_enabled": false,
             "image_1": "shopify://shop_images/institucionales_okMesa_de_trabajo_22_copia_13-100_6dfeee3d-91b5-4ae6-bf97-2f59debeed43.jpg",
             "title_1": "",
             "subtitle_1": "",
@@ -27,7 +27,7 @@
             "subtitle_2": "",
             "cta_text_2": "",
             "link_2": "shopify://collections/trasnochon-27-septiembre-2025",
-            "slide_3_enabled": true,
+            "slide_3_enabled": false,
             "image_3": "shopify://shop_images/institucionales_okMesa_de_trabajo_22_copia_14-100_23c8e46b-8ae8-439f-9dc9-ff56c39b043c.jpg",
             "title_3": "",
             "subtitle_3": "",
