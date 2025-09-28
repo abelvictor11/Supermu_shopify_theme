@@ -81,12 +81,12 @@
         "banner_small_4KTmxx": {
           "type": "banner_small",
           "settings": {
-            "slide_1_enabled": false,
-            "image_1": "shopify://shop_images/bannersTrasnochonEcommerce-08_4695d7b7-d48b-4568-8528-88dd62781403.jpg",
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/Banner_25_panaderia_a0339f46-c7ed-4ef1-8c66-8edff5a9daa9.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
-            "link_1": "shopify://collections/trasnochon-27-septiembre-2025",
+            "link_1": "shopify://collections/panaderia-supermu",
             "slide_2_enabled": true,
             "image_2": "shopify://shop_images/amor_y_amistad_Mesa_de_trabajo_1_copia_8.jpg",
             "title_2": "",
