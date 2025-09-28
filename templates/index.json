@@ -81,7 +81,7 @@
         "banner_small_4KTmxx": {
           "type": "banner_small",
           "settings": {
-            "slide_1_enabled": true,
+            "slide_1_enabled": false,
             "image_1": "shopify://shop_images/Banner_25_panaderia_a0339f46-c7ed-4ef1-8c66-8edff5a9daa9.jpg",
             "title_1": "",
             "subtitle_1": "",
