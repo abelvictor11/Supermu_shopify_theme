@@ -571,6 +571,7 @@
         "feature_small_rMaKFN",
         "feature_small_bdqXzd"
       ],
+      "disabled": true,
       "settings": {}
     },
     "carousel_products_bC4JMg": {
@@ -611,6 +612,7 @@
     },
     "two_column_carousel_banner_Y9pKby": {
       "type": "two-column-carousel-banner",
+      "disabled": true,
       "settings": {
         "column_order": "carousel_first",
         "carousel_title": "",
