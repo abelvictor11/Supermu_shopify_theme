@@ -161,6 +161,7 @@
       "blocks": {
         "promobox_B7hqTz": {
           "type": "promobox",
+          "disabled": true,
           "settings": {
             "url": "shopify://collections/trasnochon-27-septiembre-2025",
             "image": "shopify://shop_images/bannersTrasnochonEcommerce-01.jpg",
