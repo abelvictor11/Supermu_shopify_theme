@@ -301,33 +301,6 @@
         "bullets": true
       }
     },
-    "carousel_products_79RHcP": {
-      "type": "carousel-products",
-      "blocks": {
-        "collection_MpGntN": {
-          "type": "collection",
-          "settings": {
-            "title": "Ofertas en la marca fruco",
-            "collection": "separata-30-sept-al-05-oct"
-          }
-        }
-      },
-      "block_order": [
-        "collection_MpGntN"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_title": false,
-        "container": "fullwidth",
-        "size_of_columns": "4",
-        "max_count": 50,
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": true
-      }
-    },
     "carousel_products_LJJmc8": {
       "type": "carousel-products",
       "blocks": {
@@ -393,6 +366,32 @@
       },
       "block_order": [
         "collection_YJHNcn"
+      ],
+      "settings": {
+        "show_title": false,
+        "container": "fullwidth",
+        "size_of_columns": "4",
+        "max_count": 50,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": true
+      }
+    },
+    "carousel_products_79RHcP": {
+      "type": "carousel-products",
+      "blocks": {
+        "collection_MpGntN": {
+          "type": "collection",
+          "settings": {
+            "title": "Ofertas en la marca fruco",
+            "collection": "separata-30-sept-al-05-oct"
+          }
+        }
+      },
+      "block_order": [
+        "collection_MpGntN"
       ],
       "settings": {
         "show_title": false,
@@ -806,10 +805,10 @@
     "home_builder_JJKBJj",
     "carousel_products_FkYjFm",
     "carousel_products_kRdxrK",
-    "carousel_products_79RHcP",
     "carousel_products_LJJmc8",
     "carousel_products_xYtBU4",
     "carousel_products_Fa9Y6b",
+    "carousel_products_79RHcP",
     "dual_custom_banner_FBhBTi",
     "carousel_products_hptqKJ",
     "carousel_products_UiqyY8",
