@@ -115,7 +115,7 @@
         "promobox_F4dmFe": {
           "type": "promobox",
           "settings": {
-            "url": "",
+            "url": "shopify://collections/separata-30-sept-al-05-oct",
             "image": "shopify://shop_images/banners-30sept-05oct-01_optimized.jpg",
             "image_size": 3850,
             "image_mobile_size": 550,
@@ -389,7 +389,7 @@
           "type": "collection",
           "settings": {
             "title": "Ofertas en Jabones palmolive",
-            "collection": "oferta-jueves-p-y-m"
+            "collection": "30-30sept-05oct"
           }
         }
       },
