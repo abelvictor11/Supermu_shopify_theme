@@ -470,12 +470,12 @@
           "type": "banner_small",
           "settings": {
             "slide_1_enabled": true,
-            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-12.jpg",
+            "image_1": "shopify://shop_images/banners_30sept_05oct-08.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
             "link_1": "shopify://collections/fruco",
-            "slide_2_enabled": true,
+            "slide_2_enabled": false,
             "image_2": "shopify://shop_images/BANNER_ECOMMERCE-13.jpg",
             "title_2": "",
             "subtitle_2": "",
@@ -535,7 +535,6 @@
         "banner_large_iX4Kah",
         "banner_small_LKm4YB"
       ],
-      "disabled": true,
       "settings": {
         "arrows": false,
         "bullets": true,
