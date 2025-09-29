@@ -11,7 +11,6 @@
   "sections": {
     "main": {
       "type": "main-404",
-      "disabled": true,
       "settings": {}
     },
     "home_builder_YwBmyC": {
@@ -19,6 +18,7 @@
       "blocks": {
         "promobox_XeK7kY": {
           "type": "promobox",
+          "disabled": true,
           "settings": {
             "url": "",
             "image": "shopify://shop_images/error404_Mesa_de_trabajo_1.jpg",
