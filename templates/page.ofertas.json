@@ -411,12 +411,12 @@
         "banner_large_iX4Kah": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": false,
-            "image_1": "shopify://shop_images/BANNER_ECOMMERCE-02.png",
+            "slide_1_enabled": true,
+            "image_1": "shopify://shop_images/banners_30sept_05oct-02.jpg",
             "title_1": "",
             "subtitle_1": "",
             "cta_text_1": "",
-            "link_1": "shopify://collections/frutas-y-verduras",
+            "link_1": "shopify://collections/separata-30-sept-al-05-oct",
             "slide_2_enabled": false,
             "image_2": "shopify://shop_images/BANNER_ECOMMERCE-01_a2bbbf73-cda4-45f8-9942-a32bea1b33e4.png",
             "title_2": "",
