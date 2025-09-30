@@ -1012,9 +1012,9 @@
         "show_title": false,
         "container": "boxed",
         "size_of_columns": "4",
-        "max_count": 12,
+        "max_count": 30,
         "autoplay": true,
-        "speed": 5,
+        "speed": 9,
         "infinite": true,
         "arrows": true,
         "bullets": false
