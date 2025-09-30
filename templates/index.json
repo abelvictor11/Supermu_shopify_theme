@@ -499,6 +499,32 @@
         "subtitle": ""
       }
     },
+    "1586283282255": {
+      "type": "carousel-products",
+      "blocks": {
+        "1586283286719": {
+          "type": "collection",
+          "settings": {
+            "title": "",
+            "collection": "20-separata-30-sept-al-05-oct"
+          }
+        }
+      },
+      "block_order": [
+        "1586283286719"
+      ],
+      "settings": {
+        "show_title": false,
+        "container": "fullwidth",
+        "size_of_columns": "6",
+        "max_count": 12,
+        "autoplay": true,
+        "speed": 5,
+        "infinite": true,
+        "arrows": true,
+        "bullets": false
+      }
+    },
     "carousel_products_dxQTg3": {
       "type": "carousel-products",
       "blocks": {
@@ -513,6 +539,7 @@
       "block_order": [
         "collection_HCpgCz"
       ],
+      "disabled": true,
       "settings": {
         "show_title": false,
         "container": "boxed",
@@ -706,33 +733,6 @@
       "settings": {
         "title": "Ofertas hasta del 40%",
         "subtitle": ""
-      }
-    },
-    "1586283282255": {
-      "type": "carousel-products",
-      "blocks": {
-        "1586283286719": {
-          "type": "collection",
-          "settings": {
-            "title": "",
-            "collection": "40-separata28jun2025"
-          }
-        }
-      },
-      "block_order": [
-        "1586283286719"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_title": false,
-        "container": "fullwidth",
-        "size_of_columns": "6",
-        "max_count": 12,
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": false
       }
     },
     "two_column_carousel_banner_CjE4DF": {
@@ -1074,6 +1074,7 @@
     "category_grid_xNeyLR",
     "carousel_products_fRGaNN",
     "custom_title_section_6TYHnr",
+    "1586283282255",
     "carousel_products_dxQTg3",
     "three_custom_grid_banners_LnjnzU",
     "carousel_products_bC4JMg",
@@ -1082,7 +1083,6 @@
     "carousel_products_f4gjBm",
     "three_custom_grid_banners_NxcJ8X",
     "custom_title_section_hBhqYg",
-    "1586283282255",
     "two_column_carousel_banner_CjE4DF",
     "carousel_products_mPUixM",
     "two_column_carousel_banner_fDUJch",
