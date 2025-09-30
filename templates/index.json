@@ -494,35 +494,10 @@
     },
     "custom_title_section_6TYHnr": {
       "type": "custom-title-section",
+      "disabled": true,
       "settings": {
         "title": "Ofertas Pescados y mariscos",
         "subtitle": ""
-      }
-    },
-    "1586283282255": {
-      "type": "carousel-products",
-      "blocks": {
-        "1586283286719": {
-          "type": "collection",
-          "settings": {
-            "title": "",
-            "collection": "20-separata-30-sept-al-05-oct"
-          }
-        }
-      },
-      "block_order": [
-        "1586283286719"
-      ],
-      "settings": {
-        "show_title": false,
-        "container": "fullwidth",
-        "size_of_columns": "6",
-        "max_count": 12,
-        "autoplay": true,
-        "speed": 5,
-        "infinite": true,
-        "arrows": true,
-        "bullets": false
       }
     },
     "carousel_products_dxQTg3": {
@@ -547,6 +522,32 @@
         "max_count": 50,
         "autoplay": true,
         "speed": 2,
+        "infinite": true,
+        "arrows": true,
+        "bullets": false
+      }
+    },
+    "1586283282255": {
+      "type": "carousel-products",
+      "blocks": {
+        "1586283286719": {
+          "type": "collection",
+          "settings": {
+            "title": "",
+            "collection": "20-separata-30-sept-al-05-oct"
+          }
+        }
+      },
+      "block_order": [
+        "1586283286719"
+      ],
+      "settings": {
+        "show_title": false,
+        "container": "fullwidth",
+        "size_of_columns": "6",
+        "max_count": 12,
+        "autoplay": true,
+        "speed": 5,
         "infinite": true,
         "arrows": true,
         "bullets": false
@@ -1074,8 +1075,8 @@
     "category_grid_xNeyLR",
     "carousel_products_fRGaNN",
     "custom_title_section_6TYHnr",
-    "1586283282255",
     "carousel_products_dxQTg3",
+    "1586283282255",
     "three_custom_grid_banners_LnjnzU",
     "carousel_products_bC4JMg",
     "custom_title_section_d4nUA4",
