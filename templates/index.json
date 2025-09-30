@@ -1014,7 +1014,7 @@
         "size_of_columns": "4",
         "max_count": 30,
         "autoplay": true,
-        "speed": 9,
+        "speed": 10,
         "infinite": true,
         "arrows": true,
         "bullets": false
