@@ -610,11 +610,10 @@
     },
     "two_column_carousel_banner_Y9pKby": {
       "type": "two-column-carousel-banner",
-      "disabled": true,
       "settings": {
         "column_order": "carousel_first",
         "carousel_title": "",
-        "collection": "trasnochon-27-septiembre-2025",
+        "collection": "separata-30-sept-al-05-oct",
         "autoplay": true,
         "speed": 1,
         "infinite": true,
