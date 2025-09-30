@@ -540,18 +540,6 @@
             "link": "shopify://collections/separata-30-sept-al-05-oct"
           }
         },
-        "feature_small_rMaKFN": {
-          "type": "feature_small",
-          "settings": {
-            "position": "left",
-            "image": "shopify://shop_images/banners_30sept_05oct-05.jpg",
-            "bg_color": "#f5f5f5",
-            "title": "",
-            "subtitle": "",
-            "cta_text": "",
-            "link": "shopify://collections/servilletas-y-toallas-de-cocina-familia"
-          }
-        },
         "feature_small_bdqXzd": {
           "type": "feature_small",
           "settings": {
@@ -563,12 +551,24 @@
             "cta_text": "",
             "link": "shopify://collections/desodorantes-speed-stick-y-lady-speed-stick-1"
           }
+        },
+        "feature_small_rMaKFN": {
+          "type": "feature_small",
+          "settings": {
+            "position": "left",
+            "image": "shopify://shop_images/banners_30sept_05oct-05.jpg",
+            "bg_color": "#f5f5f5",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "",
+            "link": "shopify://collections/servilletas-y-toallas-de-cocina-familia"
+          }
         }
       },
       "block_order": [
         "feature_large_FiVmQr",
-        "feature_small_rMaKFN",
-        "feature_small_bdqXzd"
+        "feature_small_bdqXzd",
+        "feature_small_rMaKFN"
       ],
       "settings": {}
     },
