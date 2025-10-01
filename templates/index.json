@@ -15,7 +15,7 @@
         "banner_large_p99g4W": {
           "type": "banner_large",
           "settings": {
-            "slide_1_enabled": false,
+            "slide_1_enabled": true,
             "image_1": "shopify://shop_images/banner-dracula_mesa-de-trabajo-1_optimized.jpg",
             "title_1": "",
             "subtitle_1": "",
