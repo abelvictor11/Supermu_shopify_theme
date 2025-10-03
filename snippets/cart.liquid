@@ -77,6 +77,25 @@
                               <p class="mb-0">{{ item.variant.title }}</p>
                             {%- endunless -%}
                           </div>
+                          {%- if item.properties and item.properties.size > 0 -%}
+                            <div class="mt-5">
+                              {%- for property in item.properties -%}
+                                {%- assign property_first_char = property.first | slice: 0 -%}
+                                {%- if property.last != blank and property_first_char != '_' -%}
+                                  <div class="product-option">
+                                    <dt>{{ property.first }}:</dt>
+                                    <dd>
+                                      {%- if property.last contains '/uploads/' -%}
+                                        <a href="{{ property.last }}" class="link" target="_blank">{{ property.last | split: '/' | last }}</a>
+                                      {%- else -%}
+                                        {{ property.last }}
+                                      {%- endif -%}
+                                    </dd>
+                                  </div>
+                                {%- endif -%}
+                              {%- endfor -%}
+                            </div>
+                          {%- endif -%}
                         </div>
                         <div class="col-sm-7 col-lg-8 col-xl-6">
                           <div class="row align-items-center">

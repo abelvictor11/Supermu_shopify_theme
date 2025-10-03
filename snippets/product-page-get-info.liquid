@@ -324,6 +324,7 @@
                     {% render 'product-get-quantity' with quantity_show_title: true quantity_connect: quantity_connect, product_form_id: product_form_id %}
                 </div>
             {%- endif -%}
+            {% render 'pdp-custom-fields', product: product, product_form_id: product_form_id %}
             {%- assign has_selling_plan = false -%}
             {% capture selling_plan_html %}
                 {% for variant in product.variants %}
