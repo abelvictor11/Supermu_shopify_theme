@@ -1,0 +1,35 @@
+name: Sync staging with main
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-staging
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Fast-forward staging to main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Push main -> staging (fast-forward)
+        run: |
+          git fetch origin
+          # Mirror main to staging. Use --force-with-lease to keep staging strictly synced while avoiding clobbering
+          # unexpected remote updates.
+          git push --force-with-lease origin HEAD:refs/heads/staging
