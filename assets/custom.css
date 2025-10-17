@@ -1425,3 +1425,49 @@ textarea#pdp-text-template--20211986399483__main {
         max-width: 240px;
     }
 }
+
+/* Estilos para labels de descuento compactos */
+.compact-discount-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.discount-percent-label {
+    color: #dd0a0a;
+    font-weight: 700;
+    font-size: inherit;
+}
+
+.discount-percent-label.green {
+    color: #4CAF50;
+}
+
+.discount-price-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: inherit;
+}
+
+.discount-price-final {
+    color: #dd0a0a;
+    font-weight: 700;
+    font-size: inherit;
+}
+
+.discount-price-final.green {
+    color: #4CAF50;
+}
+
+/* Ocultar precio original del producto cuando hay label de descuento */
+.product-collection__info:has(.compact-discount-label) .product-collection__price {
+    display: none !important;
+}
+
+/* Fallback para navegadores sin soporte :has() */
+.hide-original-price {
+    display: none !important;
+}
