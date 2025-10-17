@@ -231,6 +231,14 @@ window.addEventListener('DOMContentLoaded', function() {
             } else {
                 const errorData = await response.json();
                 console.error('[Instant Cart] Error adding to cart:', errorData);
+                
+                // Mostrar mensaje de error al usuario
+                if (errorData.description) {
+                    alert(errorData.description);
+                } else if (errorData.message) {
+                    alert(errorData.message);
+                }
+                
                 return false;
             }
         } catch (error) {
