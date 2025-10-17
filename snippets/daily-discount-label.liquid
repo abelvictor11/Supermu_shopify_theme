@@ -62,15 +62,11 @@ Behavior:
           {%- else -%}
             {%- assign _original = _product.price -%}
             {%- assign _disc = _original | times: _percent | divided_by: 100.0 -%}
-            {%- assign _final = _original | minus: _disc | money -%}
-            <div class="daily-discount-tag" style="border-left:3px solid #FF0000;padding:10px;margin:10px 0;border-radius:0 5px 5px 0;background:#FFF9F9;">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <span style="text-decoration:line-through;color:#666;">{{ _original | money }}</span>
-                <span style="font-weight:bold;color:#FF0000;">{{ _final }}</span>
-              </div>
-              <div style="background:#FF0000;color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;margin-top:5px;">
-                ¡OFERTA {{ _t }} -{{ _percent }}% ({{ _day_translation }})
-              </div>
+            {%- assign _final = _original | minus: _disc -%}
+            <div class="daily-discount-tag compact-discount-label">
+              <span class="discount-percent-label">Ahora -{{ _percent }}%</span>
+              <span class="discount-price-original">{{ _original | money }}</span>
+              <span class="discount-price-final">{{ _final | money }}</span>
             </div>
           {%- endif -%}
           {%- assign _debug_matched = _t -%}
