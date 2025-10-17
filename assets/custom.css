@@ -236,7 +236,7 @@ input[type="search"]{
 }
 
 .header__search-form input[type=search] {
-background-color: #e7e7e7;
+background-color: #f7f7f7;
     border: none;
     border-radius: 50px;
 }
@@ -416,7 +416,7 @@ button.btn.btn--size-large {
     background-color: #fff;
     Color: #000;
     border: 1px solid #babbbe;
-    min-height: 60px;
+    min-height: 45px;
     border-radius: 50px;
 }
 tabs-element.tabs.product-tabs.d-block.tabs--init {
@@ -1265,4 +1265,134 @@ product-item.product-collection {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+select#pdp-select-template--20211986399483__main {
+    background: #fff;
+    border: 1px solid #babbbe;
+    border-radius: 10px;
+    padding: 10px;
+    align-items: center;
+}
+textarea#pdp-text-template--20211986399483__main {
+    background: #fff;
+    border: 1px solid #babbbe;
+    border-radius: 10px;
+    padding: 10px;
+    align-items: center;
+    height: 150px;
+}
+
+/* Estilos para el botón Agregar en las cards de productos */
+.btn-agregar {
+    background: #0071ce;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.btn-agregar:hover {
+    background: #004f9a;
+}
+
+.btn-agregar .icon-plus {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.acciones .product-collection__quantity-wrapper {
+    width: 100%;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+.acciones .product-collection__quantity-wrapper.active {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background: #0071ce;
+    border-radius: 50px;
+    padding: 4px;
+}
+
+.acciones .product-collection__quantity {
+    margin-bottom: 0 !important;
+    flex: 1;
+}
+
+.acciones .product-collection__quantity-wrapper .input-quantity--type-01,
+.acciones .product-collection__quantity-wrapper .input-quantity--type-05 {
+    background: #fff;
+    border: none;
+    margin: 0;
+    height: 40px;
+    width: 100%;
+}
+
+.acciones .product-collection__quantity-wrapper .input-quantity--type-01 [data-control],
+.acciones .product-collection__quantity-wrapper .input-quantity--type-05 [data-control] {
+    background: transparent;
+    color: #0071ce;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.acciones .product-collection__quantity-wrapper .input-quantity--type-01 input,
+.acciones .product-collection__quantity-wrapper .input-quantity--type-05 input {
+    color: #000;
+    font-weight: 700;
+    text-align: center;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive para móviles */
+@media screen and (max-width: 679px) {
+    .btn-agregar {
+        padding: 8px 16px;
+        font-size: 14px;
+        min-height: 35px;
+    }
+    
+    .acciones .product-collection__quantity-wrapper.active {
+        padding: 3px;
+    }
+    
+    .acciones .product-collection__quantity-wrapper .input-quantity--type-01,
+    .acciones .product-collection__quantity-wrapper .input-quantity--type-05 {
+        height: 32px;
+    }
+    
+    .acciones .product-collection__button-add-to-cart .btn {
+        min-width: 32px;
+        max-width: 32px;
+        min-height: 32px;
+        max-height: 32px;
+    }
+    
+    .acciones .product-collection__button-add-to-cart .btn .icon {
+        width: 16px;
+        height: 16px;
+    }
 }
