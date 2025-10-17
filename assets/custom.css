@@ -1283,8 +1283,18 @@ textarea#pdp-text-template--20211986399483__main {
 }
 
 /* Estilos para el botón Agregar en las cards de productos */
+.acciones {
+    position: absolute;
+    top: 240px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 20px);
+    max-width: 280px;
+    z-index: 10;
+}
+
 .btn-agregar {
-    background: #0071ce;
+    background: #dd0a0a;
     color: #fff;
     border: none;
     border-radius: 50px;
@@ -1299,10 +1309,13 @@ textarea#pdp-text-template--20211986399483__main {
     width: 100%;
     justify-content: center;
     min-height: 40px;
+    box-shadow: 0 2px 8px rgba(221, 10, 10, 0.3);
 }
 
 .btn-agregar:hover {
-    background: #004f9a;
+    background: #b80808;
+    box-shadow: 0 4px 12px rgba(221, 10, 10, 0.4);
+    transform: translateY(-2px);
 }
 
 .btn-agregar .icon-plus {
@@ -1322,9 +1335,10 @@ textarea#pdp-text-template--20211986399483__main {
     flex-direction: row;
     align-items: center;
     gap: 10px;
-    background: #0071ce;
+    background: #dd0a0a;
     border-radius: 50px;
     padding: 4px;
+    box-shadow: 0 2px 8px rgba(221, 10, 10, 0.3);
 }
 
 .acciones .product-collection__quantity {
@@ -1344,7 +1358,7 @@ textarea#pdp-text-template--20211986399483__main {
 .acciones .product-collection__quantity-wrapper .input-quantity--type-01 [data-control],
 .acciones .product-collection__quantity-wrapper .input-quantity--type-05 [data-control] {
     background: transparent;
-    color: #0071ce;
+    color: #dd0a0a;
     font-weight: 700;
     font-size: 20px;
 }
@@ -1369,6 +1383,11 @@ textarea#pdp-text-template--20211986399483__main {
 
 /* Responsive para móviles */
 @media screen and (max-width: 679px) {
+    .acciones {
+        top: 180px;
+        max-width: 220px;
+    }
+    
     .btn-agregar {
         padding: 8px 16px;
         font-size: 14px;
@@ -1383,16 +1402,12 @@ textarea#pdp-text-template--20211986399483__main {
     .acciones .product-collection__quantity-wrapper .input-quantity--type-05 {
         height: 32px;
     }
-    
-    .acciones .product-collection__button-add-to-cart .btn {
-        min-width: 32px;
-        max-width: 32px;
-        min-height: 32px;
-        max-height: 32px;
-    }
-    
-    .acciones .product-collection__button-add-to-cart .btn .icon {
-        width: 16px;
-        height: 16px;
+}
+
+/* Responsive para tablets */
+@media screen and (min-width: 680px) and (max-width: 1024px) {
+    .acciones {
+        top: 200px;
+        max-width: 240px;
     }
 }
