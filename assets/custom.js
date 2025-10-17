@@ -184,32 +184,189 @@ window.addEventListener('DOMContentLoaded', function() {
 
 // Funcionalidad para el botón "Agregar" en las cards de productos
 document.addEventListener('DOMContentLoaded', function() {
-    // Delegación de eventos para manejar productos cargados dinámicamente
-    document.addEventListener('click', function(e) {
-        const btnAgregar = e.target.closest('[data-action="toggle-quantity"]');
+    
+    // Función para agregar/actualizar producto en el carrito
+    async function updateCart(variantId, quantity, accionesContainer) {
+        try {
+            const formData = {
+                items: [{
+                    id: variantId,
+                    quantity: quantity
+                }]
+            };
+            
+            const response = await fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Actualizar contador del carrito
+                const cartCount = document.querySelector('.header__btn-cart .header__counter');
+                if (cartCount) {
+                    fetch('/cart.js')
+                        .then(res => res.json())
+                        .then(cart => {
+                            cartCount.textContent = cart.item_count;
+                        });
+                }
+                
+                // Actualizar el data attribute de cantidad
+                const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
+                if (quantityWrapper) {
+                    quantityWrapper.setAttribute('data-cart-quantity', quantity);
+                }
+                
+                return true;
+            } else {
+                console.error('Error al agregar al carrito');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    }
+    
+    // Función para cambiar cantidad en el carrito
+    async function changeCartQuantity(variantId, newQuantity, accionesContainer) {
+        try {
+            const response = await fetch('/cart/change.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: variantId,
+                    quantity: newQuantity
+                })
+            });
+            
+            if (response.ok) {
+                // Actualizar contador del carrito
+                const cartCount = document.querySelector('.header__btn-cart .header__counter');
+                if (cartCount) {
+                    fetch('/cart.js')
+                        .then(res => res.json())
+                        .then(cart => {
+                            cartCount.textContent = cart.item_count;
+                        });
+                }
+                
+                // Actualizar el data attribute de cantidad
+                const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
+                if (quantityWrapper) {
+                    quantityWrapper.setAttribute('data-cart-quantity', newQuantity);
+                }
+                
+                return true;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    }
+    
+    // Click en botón "Agregar" - Agrega 1 al carrito y muestra controles
+    document.addEventListener('click', async function(e) {
+        const btnAgregar = e.target.closest('[data-action="add-to-cart-instant"]');
         
         if (btnAgregar) {
             e.preventDefault();
             
-            // Encontrar el contenedor de acciones
             const accionesContainer = btnAgregar.closest('.acciones');
             if (!accionesContainer) return;
             
-            // Encontrar el wrapper de cantidad
+            const variantId = accionesContainer.getAttribute('data-variant-id');
             const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
-            if (!quantityWrapper) return;
+            const quantityInput = quantityWrapper?.querySelector('input[type="number"]');
             
-            // Toggle de visibilidad
-            if (quantityWrapper.style.display === 'none' || !quantityWrapper.style.display) {
-                // Mostrar el input de cantidades
+            if (!variantId || !quantityWrapper || !quantityInput) return;
+            
+            // Agregar 1 al carrito
+            const success = await updateCart(variantId, 1, accionesContainer);
+            
+            if (success) {
+                // Actualizar el input a 1
+                quantityInput.value = 1;
+                
+                // Mostrar los controles de cantidad
                 quantityWrapper.style.display = 'flex';
                 quantityWrapper.classList.add('active');
                 btnAgregar.style.display = 'none';
+            }
+        }
+    });
+    
+    // Detectar cambios en los botones +/- del input de cantidad
+    document.addEventListener('click', async function(e) {
+        const control = e.target.closest('[data-control]');
+        
+        if (control) {
+            const accionesContainer = control.closest('.acciones');
+            if (!accionesContainer) return;
+            
+            const variantId = accionesContainer.getAttribute('data-variant-id');
+            const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
+            const quantityInput = quantityWrapper?.querySelector('input[type="number"]');
+            
+            if (!variantId || !quantityInput) return;
+            
+            // Esperar un momento para que el input se actualice
+            setTimeout(async () => {
+                const newQuantity = parseInt(quantityInput.value) || 0;
+                
+                if (newQuantity === 0) {
+                    // Si la cantidad es 0, remover del carrito y ocultar controles
+                    await changeCartQuantity(variantId, 0, accionesContainer);
+                    quantityWrapper.style.display = 'none';
+                    quantityWrapper.classList.remove('active');
+                    
+                    const btnAgregar = accionesContainer.querySelector('[data-action="add-to-cart-instant"]');
+                    if (btnAgregar) {
+                        btnAgregar.style.display = 'flex';
+                    }
+                } else {
+                    // Actualizar cantidad en el carrito
+                    await changeCartQuantity(variantId, newQuantity, accionesContainer);
+                }
+            }, 100);
+        }
+    });
+    
+    // Detectar cambios directos en el input de cantidad
+    document.addEventListener('change', async function(e) {
+        if (e.target.type === 'number' && e.target.closest('.product-collection__quantity-wrapper')) {
+            const accionesContainer = e.target.closest('.acciones');
+            if (!accionesContainer) return;
+            
+            const variantId = accionesContainer.getAttribute('data-variant-id');
+            const newQuantity = parseInt(e.target.value) || 0;
+            
+            if (!variantId) return;
+            
+            if (newQuantity === 0) {
+                // Si la cantidad es 0, remover del carrito y ocultar controles
+                await changeCartQuantity(variantId, 0, accionesContainer);
+                
+                const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
+                if (quantityWrapper) {
+                    quantityWrapper.style.display = 'none';
+                    quantityWrapper.classList.remove('active');
+                }
+                
+                const btnAgregar = accionesContainer.querySelector('[data-action="add-to-cart-instant"]');
+                if (btnAgregar) {
+                    btnAgregar.style.display = 'flex';
+                }
             } else {
-                // Ocultar el input de cantidades
-                quantityWrapper.style.display = 'none';
-                quantityWrapper.classList.remove('active');
-                btnAgregar.style.display = 'flex';
+                // Actualizar cantidad en el carrito
+                await changeCartQuantity(variantId, newQuantity, accionesContainer);
             }
         }
     });

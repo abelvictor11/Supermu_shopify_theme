@@ -1338,6 +1338,7 @@ textarea#pdp-text-template--20211986399483__main {
     border: none;
     margin: 0;
     height: 40px;
+    width: 100%;
 }
 
 .acciones .product-collection__quantity-wrapper .input-quantity--type-01 [data-control],
@@ -1353,40 +1354,6 @@ textarea#pdp-text-template--20211986399483__main {
     color: #000;
     font-weight: 700;
     text-align: center;
-}
-
-.acciones .product-collection__button-add-to-cart {
-    margin-bottom: 0 !important;
-}
-
-.acciones .product-collection__button-add-to-cart .btn {
-    background: #fff;
-    border: 2px solid #fff;
-    min-width: 40px;
-    max-width: 40px;
-    min-height: 40px;
-    max-height: 40px;
-    border-radius: 50%;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: none;
-}
-
-.acciones .product-collection__button-add-to-cart .btn:hover {
-    background: #fff;
-    border-color: #fff;
-    transform: scale(1.05);
-}
-
-.acciones .product-collection__button-add-to-cart .btn .icon {
-    width: 20px;
-    height: 20px;
-}
-
-.acciones .product-collection__button-add-to-cart .btn .icon .st0 {
-    fill: #0071ce !important;
 }
 
 @keyframes slideDown {
