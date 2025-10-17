@@ -1118,7 +1118,7 @@ span#searchbuscar {
 .product-collection__image {
     position: relative;
     overflow: hidden;
-    min-height: 200px;
+    min-height: 270px;
 }
 
 /* Asegurar que las imágenes mantengan su aspecto */
@@ -1286,10 +1286,6 @@ textarea#pdp-text-template--20211986399483__main {
 .acciones {
     position: absolute;
     top: 240px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 20px);
-    max-width: 280px;
     z-index: 10;
 }
 
