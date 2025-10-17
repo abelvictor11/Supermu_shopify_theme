@@ -323,24 +323,19 @@
     
                   
 {% if product.available %}
-                  <div class="acciones" data-product-id="{{ product.id }}">
+                  <div class="acciones" data-product-id="{{ product.id }}" data-variant-id="{{ current_variant.id }}" data-product-title="{{ product.title | escape }}">
                     {%- if show_button_add_to_cart -%}
-                        <button type="button" class="btn-agregar" data-action="toggle-quantity">
+                        <button type="button" class="btn-agregar" data-action="add-to-cart-instant">
                             <span class="icon-plus">+</span>
                             <span class="text-agregar">Agregar</span>
                         </button>
                     {%- endif -%}
                     
                     {%- if show_quantity -%}
-                        <div class="product-collection__quantity-wrapper" style="display: none;">
+                        <div class="product-collection__quantity-wrapper" style="display: none;" data-cart-quantity="0">
                           <div class="product-collection__quantity d-flex justify-content-center">
                             {% render 'quantity-limiter', product: product, quantity_type: 1 %}
                           </div>
-                          {%- if show_button_add_to_cart -%}
-                              <div class="product-collection__button-add-to-cart">
-                                  {% include 'product-get-button-cart' %}
-                              </div>
-                          {%- endif -%}
                         </div>
                     {%- endif -%}
                   </div>
