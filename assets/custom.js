@@ -431,4 +431,50 @@ window.addEventListener('DOMContentLoaded', function() {
     }, true);
 })();
 
+// Ocultar precio original cuando hay label de descuento (fallback para navegadores sin :has())
+(function() {
+    'use strict';
+    
+    function hideOriginalPrices() {
+        // Buscar todos los labels de descuento compactos
+        const discountLabels = document.querySelectorAll('.compact-discount-label');
+        
+        discountLabels.forEach(label => {
+            // Buscar el contenedor padre de información del producto
+            const productInfo = label.closest('.product-collection__info');
+            
+            if (productInfo) {
+                // Buscar el precio original del producto
+                const originalPrice = productInfo.querySelector('.product-collection__price');
+                
+                if (originalPrice) {
+                    originalPrice.classList.add('hide-original-price');
+                }
+            }
+        });
+    }
+    
+    // Ejecutar al cargar la página
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hideOriginalPrices);
+    } else {
+        hideOriginalPrices();
+    }
+    
+    // También ejecutar cuando se carguen productos dinámicamente
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                hideOriginalPrices();
+            }
+        });
+    });
+    
+    // Observar cambios en el DOM
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+})();
+
 
