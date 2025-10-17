@@ -212,14 +212,28 @@ window.addEventListener('DOMContentLoaded', function() {
                 console.log('[Instant Cart] Added successfully:', data);
                 
                 // Actualizar contador del carrito
-                const cartCount = document.querySelector('.header__btn-cart .header__counter');
-                if (cartCount) {
-                    fetch('/cart.js')
-                        .then(res => res.json())
-                        .then(cart => {
-                            cartCount.textContent = cart.item_count;
-                        });
+                const cartResponse = await fetch('/cart.js');
+                const cart = await cartResponse.json();
+                
+                // Actualizar contador mobile
+                const cartCountMobile = document.querySelector('[data-js-cart-count-mobile]');
+                if (cartCountMobile) {
+                    cartCountMobile.textContent = cart.item_count;
+                    cartCountMobile.setAttribute('data-js-cart-count-mobile', cart.item_count);
                 }
+                
+                // Actualizar contador desktop
+                const cartCountDesktop = document.querySelector('[data-js-cart-count-desktop]');
+                if (cartCountDesktop) {
+                    const countText = cartCountDesktop.textContent.replace(/\d+/, cart.item_count);
+                    cartCountDesktop.textContent = countText;
+                    cartCountDesktop.setAttribute('data-js-cart-count-desktop', cart.item_count);
+                }
+                
+                // Disparar evento de actualización del carrito para otros scripts del tema
+                document.dispatchEvent(new CustomEvent('cart:updated', { 
+                    detail: { cart: cart } 
+                }));
                 
                 // Actualizar el data attribute de cantidad
                 const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
@@ -227,6 +241,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     quantityWrapper.setAttribute('data-cart-quantity', quantity);
                 }
                 
+                console.log('[Instant Cart] Cart counter updated:', cart.item_count);
                 return true;
             } else {
                 const errorData = await response.json();
@@ -264,15 +279,30 @@ window.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok) {
                 console.log('[Instant Cart] Quantity changed successfully');
+                
                 // Actualizar contador del carrito
-                const cartCount = document.querySelector('.header__btn-cart .header__counter');
-                if (cartCount) {
-                    fetch('/cart.js')
-                        .then(res => res.json())
-                        .then(cart => {
-                            cartCount.textContent = cart.item_count;
-                        });
+                const cartResponse = await fetch('/cart.js');
+                const cart = await cartResponse.json();
+                
+                // Actualizar contador mobile
+                const cartCountMobile = document.querySelector('[data-js-cart-count-mobile]');
+                if (cartCountMobile) {
+                    cartCountMobile.textContent = cart.item_count;
+                    cartCountMobile.setAttribute('data-js-cart-count-mobile', cart.item_count);
                 }
+                
+                // Actualizar contador desktop
+                const cartCountDesktop = document.querySelector('[data-js-cart-count-desktop]');
+                if (cartCountDesktop) {
+                    const countText = cartCountDesktop.textContent.replace(/\d+/, cart.item_count);
+                    cartCountDesktop.textContent = countText;
+                    cartCountDesktop.setAttribute('data-js-cart-count-desktop', cart.item_count);
+                }
+                
+                // Disparar evento de actualización del carrito
+                document.dispatchEvent(new CustomEvent('cart:updated', { 
+                    detail: { cart: cart } 
+                }));
                 
                 // Actualizar el data attribute de cantidad
                 const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
@@ -280,6 +310,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     quantityWrapper.setAttribute('data-cart-quantity', newQuantity);
                 }
                 
+                console.log('[Instant Cart] Cart counter updated:', cart.item_count);
                 return true;
             }
         } catch (error) {
