@@ -182,4 +182,37 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Funcionalidad para el botón "Agregar" en las cards de productos
+document.addEventListener('DOMContentLoaded', function() {
+    // Delegación de eventos para manejar productos cargados dinámicamente
+    document.addEventListener('click', function(e) {
+        const btnAgregar = e.target.closest('[data-action="toggle-quantity"]');
+        
+        if (btnAgregar) {
+            e.preventDefault();
+            
+            // Encontrar el contenedor de acciones
+            const accionesContainer = btnAgregar.closest('.acciones');
+            if (!accionesContainer) return;
+            
+            // Encontrar el wrapper de cantidad
+            const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
+            if (!quantityWrapper) return;
+            
+            // Toggle de visibilidad
+            if (quantityWrapper.style.display === 'none' || !quantityWrapper.style.display) {
+                // Mostrar el input de cantidades
+                quantityWrapper.style.display = 'flex';
+                quantityWrapper.classList.add('active');
+                btnAgregar.style.display = 'none';
+            } else {
+                // Ocultar el input de cantidades
+                quantityWrapper.style.display = 'none';
+                quantityWrapper.classList.remove('active');
+                btnAgregar.style.display = 'flex';
+            }
+        }
+    });
+});
+
 
