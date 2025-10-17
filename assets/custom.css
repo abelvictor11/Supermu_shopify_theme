@@ -2,6 +2,102 @@
 img{
   opacity: 1 !important;
 }
+
+/* ========================================
+   MEJORAS DE NAVEGACIÓN PARA CARRUSELES
+   ======================================== */
+
+/* Estilos mejorados para flechas de Slick Carousel */
+.slick-prev,
+.slick-next {
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.5) !important;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+    background: rgba(0, 0, 0, 0.8) !important;
+    transform: scale(1.1);
+}
+
+.slick-prev:before,
+.slick-next:before {
+    font-size: 20px;
+    opacity: 1;
+}
+
+/* Cursor de arrastre para carruseles */
+.slick-slider {
+    cursor: grab;
+}
+
+.slick-slider:active {
+    cursor: grabbing;
+}
+
+/* Dots mejorados */
+.slick-dots li button:before {
+    font-size: 12px;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.slick-dots li.slick-active button:before {
+    opacity: 1;
+    transform: scale(1.3);
+}
+
+.slick-dots li button:hover:before {
+    opacity: 0.8;
+}
+
+/* Responsive: Flechas más visibles en móvil */
+@media screen and (max-width: 768px) {
+    .slick-prev,
+    .slick-next {
+        width: 40px;
+        height: 40px;
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    .slick-prev:before,
+    .slick-next:before {
+        font-size: 18px;
+    }
+
+    .slick-prev {
+        left: 5px;
+    }
+
+    .slick-next {
+        right: 5px;
+    }
+}
+
+/* Indicador visual de que se puede deslizar */
+.slick-slider .slick-list {
+    overflow: visible;
+    margin: 0 -10px;
+}
+
+.slick-slider .slick-slide {
+    padding: 0 10px;
+}
+
+/* Animación suave al cambiar slides */
+.slick-slider .slick-slide {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.slick-slider .slick-slide:not(.slick-active) {
+    opacity: 0.7;
+}
+
+/* ======================================== */
 /*
 @font-face {
     font-display: swap;
@@ -810,7 +906,7 @@ span#searchbuscar {
         font-size: 12px;
     }
   .product-collection__image {
-    min-height: 200px !important;
+    min-height: auto !important;
 }
 .header__tape p{
   padding: 0 !important;
@@ -1118,7 +1214,7 @@ span#searchbuscar {
 .product-collection__image {
     position: relative;
     overflow: hidden;
-    min-height: 270px;
+    min-height: 200px;
 }
 
 /* Asegurar que las imágenes mantengan su aspecto */
@@ -1283,14 +1379,8 @@ textarea#pdp-text-template--20211986399483__main {
 }
 
 /* Estilos para el botón Agregar en las cards de productos */
-.acciones {
-    position: absolute;
-    top: 240px;
-    z-index: 10;
-}
-
 .btn-agregar {
-    background: #dd0a0a;
+    background: #0071ce;
     color: #fff;
     border: none;
     border-radius: 50px;
@@ -1305,13 +1395,10 @@ textarea#pdp-text-template--20211986399483__main {
     width: 100%;
     justify-content: center;
     min-height: 40px;
-    box-shadow: 0 2px 8px rgba(221, 10, 10, 0.3);
 }
 
 .btn-agregar:hover {
-    background: #b80808;
-    box-shadow: 0 4px 12px rgba(221, 10, 10, 0.4);
-    transform: translateY(-2px);
+    background: #004f9a;
 }
 
 .btn-agregar .icon-plus {
@@ -1331,10 +1418,9 @@ textarea#pdp-text-template--20211986399483__main {
     flex-direction: row;
     align-items: center;
     gap: 10px;
-    background: #dd0a0a;
+    background: #0071ce;
     border-radius: 50px;
     padding: 4px;
-    box-shadow: 0 2px 8px rgba(221, 10, 10, 0.3);
 }
 
 .acciones .product-collection__quantity {
@@ -1354,7 +1440,7 @@ textarea#pdp-text-template--20211986399483__main {
 .acciones .product-collection__quantity-wrapper .input-quantity--type-01 [data-control],
 .acciones .product-collection__quantity-wrapper .input-quantity--type-05 [data-control] {
     background: transparent;
-    color: #dd0a0a;
+    color: #0071ce;
     font-weight: 700;
     font-size: 20px;
 }
@@ -1379,23 +1465,10 @@ textarea#pdp-text-template--20211986399483__main {
 
 /* Responsive para móviles */
 @media screen and (max-width: 679px) {
-    .acciones {
-        top: 140px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 20px);
-        max-width: 160px;
-    }
-    
     .btn-agregar {
-        padding: 6px 12px;
-        font-size: 12px;
-        min-height: 32px;
-        gap: 4px;
-    }
-    
-    .btn-agregar .icon-plus {
-        font-size: 16px;
+        padding: 8px 16px;
+        font-size: 14px;
+        min-height: 35px;
     }
     
     .acciones .product-collection__quantity-wrapper.active {
@@ -1404,70 +1477,18 @@ textarea#pdp-text-template--20211986399483__main {
     
     .acciones .product-collection__quantity-wrapper .input-quantity--type-01,
     .acciones .product-collection__quantity-wrapper .input-quantity--type-05 {
-        height: 28px;
+        height: 32px;
     }
     
-    .acciones .product-collection__quantity-wrapper .input-quantity--type-01 [data-control],
-    .acciones .product-collection__quantity-wrapper .input-quantity--type-05 [data-control] {
-        font-size: 16px;
+    .acciones .product-collection__button-add-to-cart .btn {
+        min-width: 32px;
+        max-width: 32px;
+        min-height: 32px;
+        max-height: 32px;
     }
     
-    .acciones .product-collection__quantity-wrapper .input-quantity--type-01 input,
-    .acciones .product-collection__quantity-wrapper .input-quantity--type-05 input {
-        font-size: 14px;
+    .acciones .product-collection__button-add-to-cart .btn .icon {
+        width: 16px;
+        height: 16px;
     }
-}
-
-/* Responsive para tablets */
-@media screen and (min-width: 680px) and (max-width: 1024px) {
-    .acciones {
-        top: 200px;
-        max-width: 240px;
-    }
-}
-
-/* Estilos para labels de descuento compactos */
-.compact-discount-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    flex-wrap: wrap;
-}
-
-.discount-percent-label {
-    color: #dd0a0a;
-    font-weight: 700;
-    font-size: inherit;
-}
-
-.discount-percent-label.green {
-    color: #4CAF50;
-}
-
-.discount-price-original {
-    text-decoration: line-through;
-    color: #999;
-    font-size: inherit;
-}
-
-.discount-price-final {
-    color: #dd0a0a;
-    font-weight: 700;
-    font-size: inherit;
-}
-
-.discount-price-final.green {
-    color: #4CAF50;
-}
-
-/* Ocultar precio original del producto cuando hay label de descuento */
-.product-collection__info:has(.compact-discount-label) .product-collection__price {
-    display: none !important;
-}
-
-/* Fallback para navegadores sin soporte :has() */
-.hide-original-price {
-    display: none !important;
 }

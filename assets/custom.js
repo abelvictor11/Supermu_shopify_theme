@@ -183,14 +183,10 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 // Funcionalidad para el botón "Agregar" en las cards de productos
-(function() {
-    'use strict';
-    
-    console.log('[Instant Cart] Script loaded');
+document.addEventListener('DOMContentLoaded', function() {
     
     // Función para agregar/actualizar producto en el carrito
     async function updateCart(variantId, quantity, accionesContainer) {
-        console.log('[Instant Cart] Adding to cart:', variantId, 'qty:', quantity);
         try {
             const formData = {
                 items: [{
@@ -209,31 +205,16 @@ window.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok) {
                 const data = await response.json();
-                console.log('[Instant Cart] Added successfully:', data);
                 
                 // Actualizar contador del carrito
-                const cartResponse = await fetch('/cart.js');
-                const cart = await cartResponse.json();
-                
-                // Actualizar contador mobile
-                const cartCountMobile = document.querySelector('[data-js-cart-count-mobile]');
-                if (cartCountMobile) {
-                    cartCountMobile.textContent = cart.item_count;
-                    cartCountMobile.setAttribute('data-js-cart-count-mobile', cart.item_count);
+                const cartCount = document.querySelector('.header__btn-cart .header__counter');
+                if (cartCount) {
+                    fetch('/cart.js')
+                        .then(res => res.json())
+                        .then(cart => {
+                            cartCount.textContent = cart.item_count;
+                        });
                 }
-                
-                // Actualizar contador desktop
-                const cartCountDesktop = document.querySelector('[data-js-cart-count-desktop]');
-                if (cartCountDesktop) {
-                    const countText = cartCountDesktop.textContent.replace(/\d+/, cart.item_count);
-                    cartCountDesktop.textContent = countText;
-                    cartCountDesktop.setAttribute('data-js-cart-count-desktop', cart.item_count);
-                }
-                
-                // Disparar evento de actualización del carrito para otros scripts del tema
-                document.dispatchEvent(new CustomEvent('cart:updated', { 
-                    detail: { cart: cart } 
-                }));
                 
                 // Actualizar el data attribute de cantidad
                 const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
@@ -241,30 +222,19 @@ window.addEventListener('DOMContentLoaded', function() {
                     quantityWrapper.setAttribute('data-cart-quantity', quantity);
                 }
                 
-                console.log('[Instant Cart] Cart counter updated:', cart.item_count);
                 return true;
             } else {
-                const errorData = await response.json();
-                console.error('[Instant Cart] Error adding to cart:', errorData);
-                
-                // Mostrar mensaje de error al usuario
-                if (errorData.description) {
-                    alert(errorData.description);
-                } else if (errorData.message) {
-                    alert(errorData.message);
-                }
-                
+                console.error('Error al agregar al carrito');
                 return false;
             }
         } catch (error) {
-            console.error('[Instant Cart] Exception:', error);
+            console.error('Error:', error);
             return false;
         }
     }
     
     // Función para cambiar cantidad en el carrito
     async function changeCartQuantity(variantId, newQuantity, accionesContainer) {
-        console.log('[Instant Cart] Changing quantity:', variantId, 'new qty:', newQuantity);
         try {
             const response = await fetch('/cart/change.js', {
                 method: 'POST',
@@ -278,31 +248,15 @@ window.addEventListener('DOMContentLoaded', function() {
             });
             
             if (response.ok) {
-                console.log('[Instant Cart] Quantity changed successfully');
-                
                 // Actualizar contador del carrito
-                const cartResponse = await fetch('/cart.js');
-                const cart = await cartResponse.json();
-                
-                // Actualizar contador mobile
-                const cartCountMobile = document.querySelector('[data-js-cart-count-mobile]');
-                if (cartCountMobile) {
-                    cartCountMobile.textContent = cart.item_count;
-                    cartCountMobile.setAttribute('data-js-cart-count-mobile', cart.item_count);
+                const cartCount = document.querySelector('.header__btn-cart .header__counter');
+                if (cartCount) {
+                    fetch('/cart.js')
+                        .then(res => res.json())
+                        .then(cart => {
+                            cartCount.textContent = cart.item_count;
+                        });
                 }
-                
-                // Actualizar contador desktop
-                const cartCountDesktop = document.querySelector('[data-js-cart-count-desktop]');
-                if (cartCountDesktop) {
-                    const countText = cartCountDesktop.textContent.replace(/\d+/, cart.item_count);
-                    cartCountDesktop.textContent = countText;
-                    cartCountDesktop.setAttribute('data-js-cart-count-desktop', cart.item_count);
-                }
-                
-                // Disparar evento de actualización del carrito
-                document.dispatchEvent(new CustomEvent('cart:updated', { 
-                    detail: { cart: cart } 
-                }));
                 
                 // Actualizar el data attribute de cantidad
                 const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
@@ -310,11 +264,10 @@ window.addEventListener('DOMContentLoaded', function() {
                     quantityWrapper.setAttribute('data-cart-quantity', newQuantity);
                 }
                 
-                console.log('[Instant Cart] Cart counter updated:', cart.item_count);
                 return true;
             }
         } catch (error) {
-            console.error('[Instant Cart] Exception changing quantity:', error);
+            console.error('Error:', error);
             return false;
         }
     }
@@ -324,34 +277,21 @@ window.addEventListener('DOMContentLoaded', function() {
         const btnAgregar = e.target.closest('[data-action="add-to-cart-instant"]');
         
         if (btnAgregar) {
-            console.log('[Instant Cart] Agregar button clicked');
             e.preventDefault();
-            e.stopPropagation();
             
             const accionesContainer = btnAgregar.closest('.acciones');
-            if (!accionesContainer) {
-                console.error('[Instant Cart] No acciones container found');
-                return;
-            }
+            if (!accionesContainer) return;
             
             const variantId = accionesContainer.getAttribute('data-variant-id');
             const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
             const quantityInput = quantityWrapper?.querySelector('input[type="number"]');
             
-            console.log('[Instant Cart] Variant ID:', variantId);
-            console.log('[Instant Cart] Quantity wrapper:', quantityWrapper);
-            console.log('[Instant Cart] Quantity input:', quantityInput);
-            
-            if (!variantId || !quantityWrapper || !quantityInput) {
-                console.error('[Instant Cart] Missing required elements');
-                return;
-            }
+            if (!variantId || !quantityWrapper || !quantityInput) return;
             
             // Agregar 1 al carrito
             const success = await updateCart(variantId, 1, accionesContainer);
             
             if (success) {
-                console.log('[Instant Cart] Showing quantity controls');
                 // Actualizar el input a 1
                 quantityInput.value = 1;
                 
@@ -361,14 +301,15 @@ window.addEventListener('DOMContentLoaded', function() {
                 btnAgregar.style.display = 'none';
             }
         }
-    }, true); // Use capture phase
+    });
     
     // Detectar cambios en los botones +/- del input de cantidad
     document.addEventListener('click', async function(e) {
         const control = e.target.closest('[data-control]');
         
-        if (control && control.closest('.acciones')) {
+        if (control) {
             const accionesContainer = control.closest('.acciones');
+            if (!accionesContainer) return;
             
             const variantId = accionesContainer.getAttribute('data-variant-id');
             const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
@@ -396,7 +337,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 }
             }, 100);
         }
-    }, true);
+    });
     
     // Detectar cambios directos en el input de cantidad
     document.addEventListener('change', async function(e) {
@@ -428,53 +369,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 await changeCartQuantity(variantId, newQuantity, accionesContainer);
             }
         }
-    }, true);
-})();
-
-// Ocultar precio original cuando hay label de descuento (fallback para navegadores sin :has())
-(function() {
-    'use strict';
-    
-    function hideOriginalPrices() {
-        // Buscar todos los labels de descuento compactos
-        const discountLabels = document.querySelectorAll('.compact-discount-label');
-        
-        discountLabels.forEach(label => {
-            // Buscar el contenedor padre de información del producto
-            const productInfo = label.closest('.product-collection__info');
-            
-            if (productInfo) {
-                // Buscar el precio original del producto
-                const originalPrice = productInfo.querySelector('.product-collection__price');
-                
-                if (originalPrice) {
-                    originalPrice.classList.add('hide-original-price');
-                }
-            }
-        });
-    }
-    
-    // Ejecutar al cargar la página
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', hideOriginalPrices);
-    } else {
-        hideOriginalPrices();
-    }
-    
-    // También ejecutar cuando se carguen productos dinámicamente
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length) {
-                hideOriginalPrices();
-            }
-        });
     });
-    
-    // Observar cambios en el DOM
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-})();
+});
 
 
