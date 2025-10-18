@@ -19,14 +19,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-56NBWSM9');</script>
 <!-- End Google Tag Manager -->
   
-  {{ 'skeleton-loader.js' | asset_url | script_tag }}
+  <script src="{{ 'skeleton-loader.js' | asset_url }}" defer></script>
   {{ 'store-directory.css' | asset_url | stylesheet_tag }}
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
   
 
   <!-- Carousel Manager -->
-  {{ 'carousel-manager.js' | asset_url | script_tag }}
+  <script src="{{ 'carousel-manager.js' | asset_url }}" defer></script>
 </head>
 
 <body{% render 'layout-get-body-attributes' %}>
@@ -178,7 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script> 
 {% endcomment %}
-<script>
+{%- if template == 'cart' -%}
+<script defer>
 document.addEventListener('DOMContentLoaded', function() {
   const MINIMUM_AMOUNT = 40000; // $40.000 COP
   const ALERT_CLASS = 'min-cart-alert';
@@ -277,5 +278,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const checkInterval = setInterval(checkCartTotal, 2000);
 });
 </script>
+{%- endif -%}
 </body>
 </html>

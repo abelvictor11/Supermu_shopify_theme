@@ -13,10 +13,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="format-detection" content="telephone=no">
-<!-- Then load Swiper -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
+<!-- Load Swiper only on pages that need it -->
+{%- if template.name == 'index' or section.settings.enable_carousel or template.name == 'product' -%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" media="print" onload="this.media='all'"/>
 <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js" defer></script>
-<script src="{{ 'product-skeleton.js' | asset_url }}"></script>
+{%- endif -%}
+<script src="{{ 'product-skeleton.js' | asset_url }}" defer></script>
 <link rel="stylesheet" href="{{ 'skeleton.css' | asset_url }}"/>
 {%- assign get_canonical_url = canonical_url -%}
 {%- if template.name == 'collection' -%}

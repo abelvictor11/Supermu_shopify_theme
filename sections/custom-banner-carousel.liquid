@@ -175,19 +175,36 @@
         autoplaySpeed: parseInt(carousel.dataset.speed) || 3000,
         slidesToShow: 3,
         slidesToScroll: 1,
+        // Mejoras táctiles y de deslizamiento
+        swipe: true,
+        swipeToSlide: true,
+        touchMove: true,
+        touchThreshold: 10,
+        draggable: true,
+        accessibility: true,
+        pauseOnHover: true,
+        pauseOnFocus: true,
+        // Velocidad de transición suave
+        speed: 500,
+        cssEase: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         responsive: [
           {
             breakpoint: 1024,
             settings: {
-              slidesToShow: 2
+              slidesToShow: 2,
+              swipe: true,
+              touchMove: true
             }
           },
           {
             breakpoint: 767,
             settings: {
               slidesToShow: 1,
-              arrows: false,
-              dots: true
+              arrows: true,
+              dots: true,
+              swipe: true,
+              touchMove: true,
+              swipeToSlide: true
             }
           }
         ]
