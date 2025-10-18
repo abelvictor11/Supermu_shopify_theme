@@ -7,9 +7,9 @@
     <div class="row">
       {%- if section.settings.column_order == 'carousel_first' -%}
         <!-- Columna del Carrusel -->
-        <div class="col-md-6 col-xs-12 col-sm-12">
+        <div class="col-md-6 col-xs-12 col-sm-12 carousel-column">
           <carousel-products class="d-block" data-section-id="{{ section.id }}" data-section-type="carousel-products">
-            <div class="overflow-hidden-false">
+            <div class="carousel-wrapper">
               <div class="carousel carousel-products position-relative">
                 <!-- Skeleton para el título -->
                 <div class="carousel__head row mb-25 skeleton-loading">
@@ -222,12 +222,38 @@
 <style>
 .two-column-carousel-banner {
     padding: 40px 0;
-      max-width: 1770px;
+    max-width: 1770px;
     margin: 0 auto;
+    overflow: hidden;
 }
-.two-column-carousel-banner .row{
-align-items: center;
-  }
+
+.two-column-carousel-banner .row {
+    align-items: center;
+}
+
+/* Fix para evitar que el carrusel se salga */
+.two-column-carousel-banner .carousel-column {
+    overflow: hidden;
+    position: relative;
+}
+
+.two-column-carousel-banner .carousel-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+.two-column-carousel-banner .carousel__products {
+    overflow: hidden !important;
+}
+
+.two-column-carousel-banner .carousel__slick {
+    margin: 0 -10px;
+}
+
+.two-column-carousel-banner .carousel__item {
+    padding: 0 10px;
+}
+
 .two-column-carousel-banner .grid-item-banner_large {
     position: relative;
     padding: 20px;
@@ -238,21 +264,30 @@ align-items: center;
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
-  background-repeat: no-repeat !important;
-      aspect-ratio: 2 / 1;
+    background-repeat: no-repeat !important;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
 }
 
 .grid-content {
     padding: 15px;
     border-radius: 5px;
 }
+
 .carousel__head h2 {
     font-size: 2em;
     margin-bottom: 0;
     color: #000;
     line-height: 1;
     font-weight: 900;
-  font-family: Bogle, Helvetica Neue, Helvetica, Arial;
+    font-family: Bogle, Helvetica Neue, Helvetica, Arial;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .two-column-carousel-banner .carousel-column {
+        margin-bottom: 20px;
+    }
 }
 </style>
 
