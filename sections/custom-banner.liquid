@@ -4,7 +4,7 @@
       {% case block.type %}
       {%- when 'banner_large' -%}
       <div class="grid-item grid-item-banner_large"
-         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | image_url: width: 1400 }}');">
          <div class="grid-content">
            <p>{{ block.settings.subtitle }}</p>
             <h2>{{ block.settings.title }}</h2>
@@ -17,7 +17,7 @@
       {%- when 'banner_mid_top' -%}
       <div class="grid-item-banner_medio">
          <div class="grid-item grid-item-banner_mid_top"
-            style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+            style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | image_url: width: 1000 }}');">
             <div class="grid-content">
               <p>{{ block.settings.subtitle }}</p>
                <h2>{{ block.settings.title }}</h2>
@@ -30,7 +30,7 @@
          <div class="grid-item-half">
             {%- when 'banner_mid_half_1' -%}
             <div class="grid-item grid-item-banner_mid_half"
-               style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+               style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | image_url: width: 600 }}');">
                <div class="grid-content">
                  <p>{{ block.settings.subtitle }}</p>
                   <h2>{{ block.settings.title }}</h2>   
@@ -42,7 +42,7 @@
 
             {%- when 'banner_mid_half_2' -%}
             <div class="grid-item grid-item-banner_mid_half"
-               style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+               style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | image_url: width: 600 }}');">
                <div class="grid-content">
                  <p>{{ block.settings.subtitle }}</p>
                   <h2>{{ block.settings.title }}</h2>
@@ -56,7 +56,7 @@
 
       {%- when 'banner_small' -%}
       <div class="grid-item grid-item-banner_small"
-         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | img_url: 'master' }}');">
+         style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings.image | image_url: width: 700 }}');">
          <div class="grid-content">
            <p>{{ block.settings.subtitle }}</p>
             <h2>{{ block.settings.title }}</h2>
