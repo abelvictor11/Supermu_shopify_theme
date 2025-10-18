@@ -194,7 +194,7 @@ h1, h2, h3, h4, h5, h6{
 }
 .label {
         border-radius: 4px;
-  font-weight: 700;
+  font-weight: 300;
     }
 .product-collection__image {
     position: relative;
@@ -344,6 +344,7 @@ background-color: #f7f7f7;
 .header__search-form .btn {
     background-color: #dd0a0a !important;
     border-color: #dd0a0a !important;
+    box-shadow: 0 4px 12px #dd0a0a66;
 }
 .header__search-form .btn:hover {
  background-color:#af0505 !important
@@ -686,7 +687,7 @@ aside.cart__sidebar {
   background: #fff;
     }
     .label {
-        font-size: 16px !important;
+        font-size: 12px !important;
     }
 .category-swiper:before {
     content: "";
@@ -1519,5 +1520,85 @@ textarea#pdp-text-template--20211986399483__main {
     .acciones {
         top: 200px;
         max-width: 240px;
+    }
+}
+
+/* Estilos para labels de descuento compactos */
+.compact-discount-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.discount-percent-label {
+    color: #dd0a0a;
+    font-weight: 700;
+    font-size: inherit;
+}
+
+.discount-percent-label.green {
+    color: #4CAF50;
+}
+
+.discount-price-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: inherit;
+}
+
+.discount-price-final {
+    color: #dd0a0a;
+    font-weight: 700;
+    font-size: inherit;
+}
+
+.discount-price-final.green {
+    color: #4CAF50;
+}
+
+/* Ocultar precio original del producto cuando hay label de descuento */
+.product-collection__info:has(.compact-discount-label) .product-collection__price {
+    display: none !important;
+}
+
+/* Fallback para navegadores sin soporte :has() */
+.hide-original-price {
+    display: none !important;
+}
+.product-page-info__button-add-to-cart .btn:not(.btn--size-large) {
+    box-shadow: 0 2px 8px #dd0a0a4d;
+}
+input.input-checkbox-disable-body.btn.px-lg-20:hover {
+    background: #b80808;
+    box-shadow: 0 4px 12px #dd0a0a66;
+    color: #fff;
+}
+input.input-checkbox-disable-body.btn.px-lg-20 {
+    box-shadow: 0 4px 12px #dd0a0a66;
+    color: #fff;
+}
+button.btn.btn--status{
+    box-shadow: 0 4px 12px #dd0a0a66;
+    color: #fff;
+}
+button.btn.btn--status:hover{
+    background: #b80808;
+    box-shadow: 0 4px 12px #dd0a0a66;
+    color: #fff;
+}
+.label {
+    font-size: 12px !important;
+}
+.label {
+    border-radius: 4px;
+    font-weight: 300;
+}
+media="(min-width: 1025px)" {
+    .label--out-stock {
+        background-color: #ffdfdf !important;
+        color: #6e0202 !important;
     }
 }
