@@ -11,23 +11,33 @@ img{
 .slick-prev,
 .slick-next {
     z-index: 10;
-    width: 44px;
-    height: 44px;
-    background: rgba(0, 0, 0, 0.5) !important;
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.7) !important;
     border-radius: 50%;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .slick-prev:hover,
 .slick-next:hover {
-    background: rgba(0, 0, 0, 0.8) !important;
-    transform: scale(1.1);
+    background: rgba(221, 10, 10, 0.9) !important;
+    box-shadow: 0 6px 16px rgba(221, 10, 10, 0.4);
+    transform: scale(1.15);
 }
 
 .slick-prev:before,
 .slick-next:before {
-    font-size: 20px;
+    font-size: 22px;
     opacity: 1;
+    color: #fff;
+    font-weight: bold;
+}
+
+.slick-prev.slick-disabled,
+.slick-next.slick-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 /* Cursor de arrastre para carruseles */
@@ -59,22 +69,28 @@ img{
 @media screen and (max-width: 768px) {
     .slick-prev,
     .slick-next {
-        width: 40px;
-        height: 40px;
-        background: rgba(0, 0, 0, 0.6) !important;
+        width: 44px;
+        height: 44px;
+        background: rgba(0, 0, 0, 0.75) !important;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .slick-prev:hover,
+    .slick-next:hover {
+        background: rgba(221, 10, 10, 0.9) !important;
     }
 
     .slick-prev:before,
     .slick-next:before {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .slick-prev {
-        left: 5px;
+        left: 10px;
     }
 
     .slick-next {
-        right: 5px;
+        right: 10px;
     }
 }
 
