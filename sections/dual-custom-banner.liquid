@@ -347,6 +347,11 @@
     transition: opacity 0.3s ease;
 }
 
+/* Primer slide visible inmediatamente */
+.swiper-slide:first-child {
+    opacity: 1;
+}
+
 .swiper-slide-active,
 .swiper-slide-duplicate-active {
     opacity: 1;
@@ -613,24 +618,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar imágenes responsive según el tamaño de pantalla
     const loadResponsiveImages = () => {
         const isMobile = window.innerWidth <= 768;
-        const slides = section.querySelectorAll('.swiper-slide');
         
-        slides.forEach((slide, index) => {
+        // Cargar primera imagen de cada swiper inmediatamente
+        const largeBannerSlides = section.querySelectorAll('.large-banner-swiper .swiper-slide');
+        const smallBannerSlides = section.querySelectorAll('.small-banner-swiper .swiper-slide');
+        
+        // Cargar primera imagen del banner grande
+        largeBannerSlides.forEach((slide, index) => {
             const slideContent = slide.querySelector('.slide-content');
             if (slideContent) {
                 const bgDesktop = slideContent.getAttribute('data-bg-desktop');
                 const bgMobile = slideContent.getAttribute('data-bg-mobile');
                 const bgUrl = isMobile ? bgMobile : bgDesktop;
                 
-                // Solo cargar la primera imagen inmediatamente, el resto lazy
+                // Cargar primera imagen inmediatamente, resto lazy
                 if (index === 0) {
                     slideContent.style.backgroundImage = `url('${bgUrl}')`;
                 } else {
-                    // Lazy load para slides subsecuentes
                     slideContent.setAttribute('data-bg-lazy', bgUrl);
                 }
             }
         });
+        
+        // Cargar primera imagen del banner pequeño
+        smallBannerSlides.forEach((slide, index) => {
+            const slideContent = slide.querySelector('.slide-content');
+            if (slideContent) {
+                const bgDesktop = slideContent.getAttribute('data-bg-desktop');
+                const bgMobile = slideContent.getAttribute('data-bg-mobile');
+                const bgUrl = isMobile ? bgMobile : bgDesktop;
+                
+                // Cargar primera imagen inmediatamente, resto lazy
+                if (index === 0) {
+                    slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                } else {
+                    slideContent.setAttribute('data-bg-lazy', bgUrl);
+                }
+            }
+        });
+        
+        // Ocultar skeletons después de cargar primeras imágenes
+        setTimeout(() => {
+            section.querySelectorAll('.skeleton-loader').forEach(skeleton => {
+                skeleton.style.display = 'none';
+            });
+            section.querySelectorAll('.swiper-container').forEach(container => {
+                container.style.display = 'block';
+            });
+        }, 100);
         
         initSwipers();
     };
@@ -771,7 +806,7 @@ document.addEventListener('DOMContentLoaded', function() {
         smallBannerSwiper.init();
     };
 
-    // Cargar imágenes responsive
+    // Cargar imágenes responsive inmediatamente
     loadResponsiveImages();
     
     // Recargar imágenes si cambia el tamaño de pantalla
@@ -779,40 +814,16 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            loadResponsiveImages();
+            const isMobile = window.innerWidth <= 768;
+            section.querySelectorAll('.slide-content').forEach(slideContent => {
+                const bgDesktop = slideContent.getAttribute('data-bg-desktop');
+                const bgMobile = slideContent.getAttribute('data-bg-mobile');
+                const bgUrl = isMobile ? bgMobile : bgDesktop;
+                if (slideContent.style.backgroundImage) {
+                    slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                }
+            });
         }, 250);
-    });
-
-    // Ocultar skeleton cuando se carguen las imágenes
-    const banners = section.querySelectorAll('.swiper-container');
-    banners.forEach(banner => {
-        const images = banner.querySelectorAll('img');
-        let loadedImages = 0;
-        
-        images.forEach(img => {
-            if (img.complete) {
-                loadedImages++;
-            } else {
-                img.addEventListener('load', () => {
-                    loadedImages++;
-                    if (loadedImages === images.length) {
-                        const skeleton = banner.previousElementSibling;
-                        if (skeleton && skeleton.classList.contains('skeleton-loader')) {
-                            skeleton.style.display = 'none';
-                            banner.style.display = 'block';
-                        }
-                    }
-                });
-            }
-        });
-
-        if (loadedImages === images.length) {
-            const skeleton = banner.previousElementSibling;
-            if (skeleton && skeleton.classList.contains('skeleton-loader')) {
-                skeleton.style.display = 'none';
-                banner.style.display = 'block';
-            }
-        }
     });
 });
 </script>
