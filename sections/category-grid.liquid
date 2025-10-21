@@ -60,14 +60,37 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   if (window.innerWidth < 768) {
-    new Swiper('#category-swiper-{{ section.id }}', {
+    const categorySwiper = new Swiper('#category-swiper-{{ section.id }}', {
       slidesPerView: 2,
       spaceBetween: 20,
+      preloadImages: false,
+      lazy: false,
+      watchSlidesProgress: true,
+      watchSlidesVisibility: true,
       navigation: {
         nextEl: '#category-swiper-next-{{ section.id }}',
         prevEl: '#category-swiper-prev-{{ section.id }}'
+      },
+      on: {
+        init: function() {
+          // Ocultar skeleton después de inicializar
+          setTimeout(() => {
+            const skeleton = document.getElementById('skeleton-{{ section.id }}');
+            if (skeleton) {
+              skeleton.style.display = 'none';
+            }
+          }, 100);
+        }
       }
     });
+  } else {
+    // En desktop, ocultar skeleton cuando carguen las imágenes
+    setTimeout(() => {
+      const skeleton = document.getElementById('skeleton-{{ section.id }}');
+      if (skeleton) {
+        skeleton.style.display = 'none';
+      }
+    }, 100);
   }
 });
 </script>
