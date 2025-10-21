@@ -23,9 +23,11 @@
               {%- assign link_key = 'link_' | append: i -%}
               
               {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
-                <div class="swiper-slide">
+                <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
                   <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
-                    style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings[image_key] | image_url: width: 1400 }}');">
+                    style="background: {{ block.settings.bg_color }};" 
+                    data-bg-desktop="{{ block.settings[image_key] | image_url: width: 1400 }}"
+                    data-bg-mobile="{{ block.settings[image_key] | image_url: width: 538, height: 318, crop: 'center' }}">
                     <div class="grid-content">
                       <p>{{ block.settings[subtitle_key] }}</p>
                       <h2>{{ block.settings[title_key] }}</h2>
@@ -62,9 +64,11 @@
               {%- assign link_key = 'link_' | append: i -%}
               
               {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
-                <div class="swiper-slide">
+                <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
                   <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
-                    style="background: {{ block.settings.bg_color }}; background-image: url('{{ block.settings[image_key] | image_url: width: 1400 }}');">
+                    style="background: {{ block.settings.bg_color }};" 
+                    data-bg-desktop="{{ block.settings[image_key] | image_url: width: 600 }}"
+                    data-bg-mobile="{{ block.settings[image_key] | image_url: width: 400, height: 400, crop: 'center' }}">
                     <div class="grid-content">
                       <p>{{ block.settings[subtitle_key] }}</p>
                       <h2>{{ block.settings[title_key] }}</h2>
@@ -468,23 +472,33 @@
 .swiper-button-next,
 .swiper-button-prev {
     color: #fff;
-    background: rgba(0, 0, 0, 0.5);
-    width: 44px;
-    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
 }
 
 .swiper-button-next:after,
 .swiper-button-prev:after {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
+    color: #fff;
 }
 
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
-    background: rgba(0, 0, 0, 0.8);
-    transform: scale(1.1);
+    background: rgba(221, 10, 10, 0.9);
+    box-shadow: 0 6px 16px rgba(221, 10, 10, 0.4);
+    transform: scale(1.15);
+}
+
+.swiper-button-next.swiper-button-disabled,
+.swiper-button-prev.swiper-button-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 /* Cursor de arrastre */
@@ -553,23 +567,29 @@
     /* Flechas más grandes y visibles en móvil */
     .swiper-button-next,
     .swiper-button-prev {
-        width: 40px;
-        height: 40px;
-        background: rgba(0, 0, 0, 0.6);
+        width: 44px;
+        height: 44px;
+        background: rgba(0, 0, 0, 0.75);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
     }
 
     .swiper-button-next:after,
     .swiper-button-prev:after {
-        font-size: 18px;
+        font-size: 20px;
+    }
+
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+        background: rgba(221, 10, 10, 0.9);
     }
 
     /* Ajustar posición de flechas en móvil */
     .swiper-button-next {
-        right: 5px;
+        right: 10px;
     }
 
     .swiper-button-prev {
-        left: 5px;
+        left: 10px;
     }
 
     /* Paginación más visible en móvil */
@@ -590,25 +610,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const section = document.getElementById('section-{{ section.id }}');
     if (!section) return;
 
-    // Precargar todas las imágenes antes de inicializar
-    const preloadImages = () => {
+    // Cargar imágenes responsive según el tamaño de pantalla
+    const loadResponsiveImages = () => {
+        const isMobile = window.innerWidth <= 768;
         const slides = section.querySelectorAll('.swiper-slide');
-        let loadedCount = 0;
         
-        slides.forEach(slide => {
-            const bgImage = slide.querySelector('.slide-content');
-            if (bgImage) {
-                const url = bgImage.style.backgroundImage.replace(/url\(['"](.*?)['"]\)/, '$1');
-                const img = new Image();
-                img.onload = () => {
-                    loadedCount++;
-                    if (loadedCount === slides.length) {
-                        initSwipers();
-                    }
-                };
-                img.src = url;
+        slides.forEach((slide, index) => {
+            const slideContent = slide.querySelector('.slide-content');
+            if (slideContent) {
+                const bgDesktop = slideContent.getAttribute('data-bg-desktop');
+                const bgMobile = slideContent.getAttribute('data-bg-mobile');
+                const bgUrl = isMobile ? bgMobile : bgDesktop;
+                
+                // Solo cargar la primera imagen inmediatamente, el resto lazy
+                if (index === 0) {
+                    slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                } else {
+                    // Lazy load para slides subsecuentes
+                    slideContent.setAttribute('data-bg-lazy', bgUrl);
+                }
             }
         });
+        
+        initSwipers();
     };
 
     const initSwipers = () => {
@@ -657,6 +681,18 @@ document.addEventListener('DOMContentLoaded', function() {
             on: {
                 init: function() {
                     this.update();
+                },
+                slideChange: function() {
+                    // Lazy load de la siguiente imagen
+                    const nextSlide = this.slides[this.activeIndex + 1];
+                    if (nextSlide) {
+                        const slideContent = nextSlide.querySelector('.slide-content');
+                        if (slideContent && slideContent.hasAttribute('data-bg-lazy')) {
+                            const bgUrl = slideContent.getAttribute('data-bg-lazy');
+                            slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                            slideContent.removeAttribute('data-bg-lazy');
+                        }
+                    }
                 },
                 imagesReady: function() {
                     this.update();
@@ -711,6 +747,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 init: function() {
                     this.update();
                 },
+                slideChange: function() {
+                    // Lazy load de la siguiente imagen
+                    const nextSlide = this.slides[this.activeIndex + 1];
+                    if (nextSlide) {
+                        const slideContent = nextSlide.querySelector('.slide-content');
+                        if (slideContent && slideContent.hasAttribute('data-bg-lazy')) {
+                            const bgUrl = slideContent.getAttribute('data-bg-lazy');
+                            slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                            slideContent.removeAttribute('data-bg-lazy');
+                        }
+                    }
+                },
                 imagesReady: function() {
                     this.update();
                     this.updateSlides();
@@ -723,8 +771,17 @@ document.addEventListener('DOMContentLoaded', function() {
         smallBannerSwiper.init();
     };
 
-    // Iniciar la precarga de imágenes
-    preloadImages();
+    // Cargar imágenes responsive
+    loadResponsiveImages();
+    
+    // Recargar imágenes si cambia el tamaño de pantalla
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            loadResponsiveImages();
+        }, 250);
+    });
 
     // Ocultar skeleton cuando se carguen las imágenes
     const banners = section.querySelectorAll('.swiper-container');
