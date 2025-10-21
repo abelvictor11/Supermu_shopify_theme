@@ -631,11 +631,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const bgMobile = slideContent.getAttribute('data-bg-mobile');
                 const bgUrl = isMobile ? bgMobile : bgDesktop;
                 
-                // Cargar primera imagen inmediatamente, resto lazy
+                // Cargar primera imagen inmediatamente
                 if (index === 0) {
                     slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                } else {
-                    slideContent.setAttribute('data-bg-lazy', bgUrl);
                 }
             }
         });
@@ -648,11 +646,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const bgMobile = slideContent.getAttribute('data-bg-mobile');
                 const bgUrl = isMobile ? bgMobile : bgDesktop;
                 
-                // Cargar primera imagen inmediatamente, resto lazy
+                // Cargar primera imagen inmediatamente
                 if (index === 0) {
                     slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                } else {
-                    slideContent.setAttribute('data-bg-lazy', bgUrl);
                 }
             }
         });
@@ -666,6 +662,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.style.display = 'block';
             });
         }, 100);
+        
+        // Precargar el resto de imágenes en background después de 500ms
+        setTimeout(() => {
+            largeBannerSlides.forEach((slide, index) => {
+                if (index > 0) {
+                    const slideContent = slide.querySelector('.slide-content');
+                    if (slideContent) {
+                        const bgDesktop = slideContent.getAttribute('data-bg-desktop');
+                        const bgMobile = slideContent.getAttribute('data-bg-mobile');
+                        const bgUrl = isMobile ? bgMobile : bgDesktop;
+                        slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                    }
+                }
+            });
+            
+            smallBannerSlides.forEach((slide, index) => {
+                if (index > 0) {
+                    const slideContent = slide.querySelector('.slide-content');
+                    if (slideContent) {
+                        const bgDesktop = slideContent.getAttribute('data-bg-desktop');
+                        const bgMobile = slideContent.getAttribute('data-bg-mobile');
+                        const bgUrl = isMobile ? bgMobile : bgDesktop;
+                        slideContent.style.backgroundImage = `url('${bgUrl}')`;
+                    }
+                }
+            });
+        }, 500);
         
         initSwipers();
     };
@@ -716,18 +739,6 @@ document.addEventListener('DOMContentLoaded', function() {
             on: {
                 init: function() {
                     this.update();
-                },
-                slideChange: function() {
-                    // Lazy load de la siguiente imagen
-                    const nextSlide = this.slides[this.activeIndex + 1];
-                    if (nextSlide) {
-                        const slideContent = nextSlide.querySelector('.slide-content');
-                        if (slideContent && slideContent.hasAttribute('data-bg-lazy')) {
-                            const bgUrl = slideContent.getAttribute('data-bg-lazy');
-                            slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                            slideContent.removeAttribute('data-bg-lazy');
-                        }
-                    }
                 },
                 imagesReady: function() {
                     this.update();
@@ -781,18 +792,6 @@ document.addEventListener('DOMContentLoaded', function() {
             on: {
                 init: function() {
                     this.update();
-                },
-                slideChange: function() {
-                    // Lazy load de la siguiente imagen
-                    const nextSlide = this.slides[this.activeIndex + 1];
-                    if (nextSlide) {
-                        const slideContent = nextSlide.querySelector('.slide-content');
-                        if (slideContent && slideContent.hasAttribute('data-bg-lazy')) {
-                            const bgUrl = slideContent.getAttribute('data-bg-lazy');
-                            slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                            slideContent.removeAttribute('data-bg-lazy');
-                        }
-                    }
                 },
                 imagesReady: function() {
                     this.update();
