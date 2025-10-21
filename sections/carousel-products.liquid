@@ -104,6 +104,79 @@
             </div>
         </div>
     </carousel-products>
+    <style>
+        /* Fix para modo boxed - ocultar overflow */
+        .carousel-products:not(.carousel--fullwidth) .carousel__slider_wrapper {
+            overflow: hidden;
+        }
+        
+        /* Mejorar UI del carousel */
+        .carousel__slider_wrapper {
+            position: relative;
+        }
+        
+        /* Asegurar que los slides no se desborden */
+        .carousel__slick {
+            overflow-x: hidden;
+        }
+        
+        /* Mejorar visibilidad de arrows */
+        .carousel__prev,
+        .carousel__next {
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .carousel__prev:hover,
+        .carousel__next:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Posicionar arrows correctamente */
+        .carousel__prev {
+            left: -20px;
+        }
+        
+        .carousel__next {
+            right: -20px;
+        }
+        
+        /* En modo boxed, arrows dentro del contenedor */
+        .carousel-products:not(.carousel--fullwidth) .carousel__prev {
+            left: 10px;
+        }
+        
+        .carousel-products:not(.carousel--fullwidth) .carousel__next {
+            right: 10px;
+        }
+        
+        /* Responsive */
+        @media screen and (max-width: 767px) {
+            .carousel__prev,
+            .carousel__next {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .carousel__prev {
+                left: 5px;
+            }
+            
+            .carousel__next {
+                right: 5px;
+            }
+        }
+    </style>
+    
     <script>
         theme.AssetsLoader.require('scripts', 'carousel_products');
         theme.AssetsLoader.require('scripts', 'skeleton-loader');
