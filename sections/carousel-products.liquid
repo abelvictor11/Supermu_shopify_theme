@@ -105,9 +105,11 @@
         </div>
     </carousel-products>
     <style>
-        /* Fix para modo boxed - ocultar overflow */
+        /* Fix para modo boxed - ocultar overflow horizontal solamente */
         .carousel-products:not(.carousel--fullwidth) .carousel__slider_wrapper {
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: visible;
+            padding: 20px 0;
         }
         
         /* Mejorar UI del carousel */
@@ -115,9 +117,15 @@
             position: relative;
         }
         
-        /* Asegurar que los slides no se desborden */
+        /* Asegurar que los slides no se desborden horizontalmente */
         .carousel__slick {
             overflow-x: hidden;
+            overflow-y: visible;
+        }
+        
+        /* Padding interno para evitar corte de cards */
+        .carousel__products {
+            padding: 0 15px;
         }
         
         /* Mejorar visibilidad de arrows */
@@ -128,11 +136,12 @@
             border-radius: 50%;
             width: 40px;
             height: 40px;
-            display: flex;
+            display: flex !important;
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transition: all 0.3s ease;
+            pointer-events: auto !important;
         }
         
         .carousel__prev:hover,
@@ -141,21 +150,34 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
-        /* Posicionar arrows correctamente */
+        /* Posicionar arrows correctamente - siempre visibles */
         .carousel__prev {
-            left: -20px;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         
         .carousel__next {
-            right: -20px;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         
-        /* En modo boxed, arrows dentro del contenedor */
-        .carousel-products:not(.carousel--fullwidth) .carousel__prev {
+        /* Placeholders para clicks */
+        .carousel__prev-placeholder,
+        .carousel__next-placeholder {
+            z-index: 11;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .carousel__prev-placeholder {
             left: 10px;
         }
         
-        .carousel-products:not(.carousel--fullwidth) .carousel__next {
+        .carousel__next-placeholder {
             right: 10px;
         }
         
@@ -167,12 +189,14 @@
                 height: 32px;
             }
             
-            .carousel__prev {
-                left: 5px;
+            .carousel__prev-placeholder,
+            .carousel__next-placeholder {
+                width: 32px;
+                height: 32px;
             }
             
-            .carousel__next {
-                right: 5px;
+            .carousel__products {
+                padding: 0 10px;
             }
         }
     </style>
