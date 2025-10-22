@@ -13,6 +13,28 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="format-detection" content="telephone=no">
+
+<!-- Preload crítico para header y banner principal -->
+{%- if template.name == 'index' -%}
+  <!-- Preload logo del header -->
+  {%- if settings.logo -%}
+    <link rel="preload" as="image" href="{{ settings.logo | img_url: '300x' }}" fetchpriority="high">
+  {%- endif -%}
+  
+  <!-- Preload primera imagen del banner principal -->
+  {%- for section in sections -%}
+    {%- if section.type == 'dual-custom-banner' -%}
+      {%- for block in section.blocks limit: 1 -%}
+        {%- if block.settings.large_banner_image_desktop -%}
+          <link rel="preload" as="image" href="{{ block.settings.large_banner_image_desktop | img_url: '1500x' }}" fetchpriority="high">
+        {%- endif -%}
+        {%- if block.settings.small_banner_image_desktop -%}
+          <link rel="preload" as="image" href="{{ block.settings.small_banner_image_desktop | img_url: '800x' }}" fetchpriority="high">
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
 <!-- Load Swiper only on pages that need it -->
 {%- if template.name == 'index' or section.settings.enable_carousel or template.name == 'product' -%}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" media="print" onload="this.media='all'"/>
