@@ -634,7 +634,7 @@ aside.cart__sidebar {
     max-width: 250px;
 }
 .container-fluid {
-    max-width: 1770px;
+    max-width: 100%;
 }
 .menu__level-02 .menu__item {
     padding: 10px;
@@ -1307,7 +1307,7 @@ product-item.product-collection {
     color: #6d6d6d !important;
 }
 .swiper-button-next:after, .swiper-button-prev:after {
-    font-size: 20px !important;
+    font-size: 16px !important;
 }
 .swiper-button-next, .swiper-button-prev {
     color: #000;
