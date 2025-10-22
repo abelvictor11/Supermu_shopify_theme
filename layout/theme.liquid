@@ -11,22 +11,39 @@
   {% capture get_content_for_header %}{{ content_for_header }}{% endcapture %}
   {% include 'head' %}
 
- <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-56NBWSM9');</script>
-<!-- End Google Tag Manager -->
+  <!-- CSS crítico inline para header y banner -->
+  <style>
+    /* Prevenir FOUC del header */
+    header, .header { opacity: 1 !important; }
+    
+    /* Asegurar que banner principal sea visible */
+    #section-dual-custom-banner,
+    [data-section-type="dual-custom-banner"] {
+      opacity: 1 !important;
+    }
+    
+    /* Skeleton del header más rápido */
+    .header-skeleton { display: none; }
+  </style>
   
   <script src="{{ 'skeleton-loader.js' | asset_url }}" defer></script>
   {{ 'store-directory.css' | asset_url | stylesheet_tag }}
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
-  
 
   <!-- Carousel Manager -->
   <script src="{{ 'carousel-manager.js' | asset_url }}" defer></script>
+  
+  <!-- Google Tag Manager - Defer para no bloquear render -->
+  <script>
+    window.addEventListener('load', function() {
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-56NBWSM9');
+    });
+  </script>
 </head>
 
 <body{% render 'layout-get-body-attributes' %}>
