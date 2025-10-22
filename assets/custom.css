@@ -566,7 +566,7 @@ button.btn.btn--size-large span {
     }
 carousel-products.d-block {
     padding: 15px;
-   max-width: 1320px;
+    max-width: 100%;
     margin: 0 auto;
 }
 .product-collection__more-info a, .product-collection__more-info a:visited, .product-collection__more-info a:active, .product-collection__more-info a:link, .product-wishlist__collections a, .product-wishlist__collections a:visited, .product-wishlist__collections a:active, .product-wishlist__collections a:link, .product-compare__collections a, .product-compare__collections a:visited, .product-compare__collections a:active, .product-compare__collections a:link, .product-featured__collections a, .product-featured__collections a:visited, .product-featured__collections a:active, .product-featured__collections a:link {
