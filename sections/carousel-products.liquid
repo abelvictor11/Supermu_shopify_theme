@@ -99,6 +99,13 @@
                             </div>
                             {% include 'preloader-spinner' %}
                         {%- endif -%}
+                        
+                        {%- if section.settings.bullets -%}
+                            <!-- Scrollbar personalizado en lugar de dots -->
+                            <div class="carousel__scrollbar" data-carousel-scrollbar>
+                                <div class="carousel__scrollbar-drag" data-carousel-scrollbar-drag></div>
+                            </div>
+                        {%- endif -%}
                     </div>
                 </div>
             </div>
@@ -199,11 +206,132 @@
                 padding: 0 10px;
             }
         }
+        
+        /* Ocultar dots tradicionales */
+        .carousel-products .slick-dots {
+            display: none !important;
+        }
+        
+        /* Scrollbar personalizado en lugar de dots */
+        .carousel-products .carousel__scrollbar {
+            position: relative;
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        
+        .carousel-products .carousel__scrollbar-drag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #e30613;
+            border-radius: 3px;
+            transition: left 0.3s ease, width 0.3s ease;
+            min-width: 40px;
+        }
+        
+        .carousel-products .carousel__scrollbar:hover .carousel__scrollbar-drag {
+            background: #c40510;
+        }
+        
+        /* Scrollbar más grande en hover */
+        .carousel-products .carousel__scrollbar:hover {
+            height: 8px;
+        }
     </style>
     
     <script>
         theme.AssetsLoader.require('scripts', 'carousel_products');
         theme.AssetsLoader.require('scripts', 'skeleton-loader');
+        
+        // Scrollbar personalizado para carousel
+        (function() {
+            const carouselSection = document.querySelector('[data-section-id="{{ section.id }}"]');
+            if (!carouselSection) return;
+            
+            const scrollbar = carouselSection.querySelector('[data-carousel-scrollbar]');
+            const scrollbarDrag = carouselSection.querySelector('[data-carousel-scrollbar-drag]');
+            const carouselSlick = carouselSection.querySelector('[data-js-carousel-slick]');
+            
+            if (!scrollbar || !scrollbarDrag || !carouselSlick) return;
+            
+            // Esperar a que Slick se inicialice
+            const checkSlick = setInterval(function() {
+                if (typeof $ !== 'undefined' && $(carouselSlick).hasClass('slick-initialized')) {
+                    clearInterval(checkSlick);
+                    initScrollbar();
+                }
+            }, 100);
+            
+            function initScrollbar() {
+                const $carousel = $(carouselSlick);
+                
+                // Actualizar scrollbar en cada cambio de slide
+                $carousel.on('afterChange', function(event, slick, currentSlide) {
+                    updateScrollbar(slick, currentSlide);
+                });
+                
+                // Inicializar posición
+                const slick = $carousel.slick('getSlick');
+                updateScrollbar(slick, slick.currentSlide);
+                
+                // Click en scrollbar para navegar
+                scrollbar.addEventListener('click', function(e) {
+                    const rect = scrollbar.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const percentage = clickX / rect.width;
+                    const slideCount = slick.slideCount;
+                    const slidesToShow = slick.options.slidesToShow;
+                    const maxSlide = slideCount - slidesToShow;
+                    const targetSlide = Math.round(percentage * maxSlide);
+                    
+                    $carousel.slick('slickGoTo', targetSlide);
+                });
+                
+                // Drag del scrollbar
+                let isDragging = false;
+                
+                scrollbarDrag.addEventListener('mousedown', function(e) {
+                    isDragging = true;
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('mousemove', function(e) {
+                    if (!isDragging) return;
+                    
+                    const rect = scrollbar.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+                    const slideCount = slick.slideCount;
+                    const slidesToShow = slick.options.slidesToShow;
+                    const maxSlide = slideCount - slidesToShow;
+                    const targetSlide = Math.round(percentage * maxSlide);
+                    
+                    $carousel.slick('slickGoTo', targetSlide);
+                });
+                
+                document.addEventListener('mouseup', function() {
+                    isDragging = false;
+                });
+            }
+            
+            function updateScrollbar(slick, currentSlide) {
+                const slideCount = slick.slideCount;
+                const slidesToShow = slick.options.slidesToShow;
+                const maxSlide = slideCount - slidesToShow;
+                
+                // Calcular ancho y posición del drag
+                const dragWidth = (slidesToShow / slideCount) * 100;
+                const dragLeft = (currentSlide / maxSlide) * (100 - dragWidth);
+                
+                scrollbarDrag.style.width = dragWidth + '%';
+                scrollbarDrag.style.left = dragLeft + '%';
+            }
+        })();
     </script>
 {%- else -%}
     {% render 'no-blocks' %}
