@@ -269,12 +269,24 @@
             
             console.log('Scrollbar elements found');
             
-            // El tema usa un sistema custom de carousel, no Slick estándar
-            // Esperar a que el carousel esté listo
-            setTimeout(function() {
+            // Esperar a que jQuery esté cargado
+            function waitForJQuery(callback) {
+                if (typeof $ !== 'undefined' && typeof $.fn.slick !== 'undefined') {
+                    console.log('jQuery and Slick loaded');
+                    callback();
+                } else {
+                    console.log('Waiting for jQuery and Slick...');
+                    setTimeout(function() {
+                        waitForJQuery(callback);
+                    }, 100);
+                }
+            }
+            
+            // Esperar a que jQuery y el carousel estén listos
+            waitForJQuery(function() {
                 console.log('Initializing scrollbar with theme carousel system');
                 initScrollbar();
-            }, 2000);
+            });
             
             function initScrollbar() {
                 console.log('initScrollbar called');
