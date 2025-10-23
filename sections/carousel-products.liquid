@@ -252,22 +252,22 @@
         (function() {
             const carouselSection = document.querySelector('[data-section-id="{{ section.id }}"]');
             if (!carouselSection) {
-                console.log('Carousel section not found for ID: {{ section.id }}');
+                console.log('Carousel section not found');
                 return;
             }
-            console.log('Carousel scrollbar initializing for section: {{ section.id }}');
+            console.log('Carousel scrollbar initializing');
             
             const scrollbar = carouselSection.querySelector('[data-carousel-scrollbar]');
             const scrollbarDrag = carouselSection.querySelector('[data-carousel-scrollbar-drag]');
             const carouselSlick = carouselSection.querySelector('[data-js-carousel-slick]');
             const carouselWrapper = carouselSection.querySelector('.carousel__slider_wrapper');
             
-            console.log('Scrollbar elements:', { scrollbar, scrollbarDrag, carouselSlick, carouselWrapper });
-            
             if (!scrollbar || !scrollbarDrag || !carouselSlick) {
                 console.log('Missing scrollbar elements - bullets setting might be OFF');
                 return;
             }
+            
+            console.log('Scrollbar elements found');
             
             // Esperar a que Slick se inicialice
             const checkSlick = setInterval(function() {
