@@ -270,41 +270,14 @@
                 return;
             }
             
-            console.log('Scrollbar elements found for section:', sectionId);
+            console.log('[' + sectionId + '] Scrollbar elements found, initializing immediately');
             
-            // Esperar a que jQuery esté cargado con timeout
-            let jQueryAttempts = 0;
-            function waitForJQuery(callback) {
-                jQueryAttempts++;
-                
-                if (typeof $ !== 'undefined' && typeof $.fn !== 'undefined') {
-                    console.log('[' + sectionId + '] jQuery loaded, checking for Slick...');
-                    
-                    // jQuery está cargado, intentar inicializar incluso si Slick no está completamente listo
-                    if (typeof $.fn.slick !== 'undefined') {
-                        console.log('[' + sectionId + '] Slick plugin found');
-                    } else {
-                        console.log('[' + sectionId + '] Slick plugin not found, will try anyway');
-                    }
-                    callback();
-                } else if (jQueryAttempts > 100) {
-                    console.log('[' + sectionId + '] jQuery timeout after 10 seconds, aborting');
-                    return;
-                } else {
-                    if (jQueryAttempts % 10 === 0) {
-                        console.log('[' + sectionId + '] Still waiting for jQuery... attempt', jQueryAttempts);
-                    }
-                    setTimeout(function() {
-                        waitForJQuery(callback);
-                    }, 100);
-                }
-            }
-            
-            // Esperar a que jQuery y el carousel estén listos
-            waitForJQuery(function() {
-                console.log('[' + sectionId + '] Initializing scrollbar with theme carousel system');
+            // NO esperar jQuery - usar JavaScript nativo
+            // Esperar solo a que el DOM esté listo
+            setTimeout(function() {
+                console.log('[' + sectionId + '] Starting scrollbar initialization');
                 initScrollbar();
-            });
+            }, 1000);
             
             function initScrollbar() {
                 console.log('[' + sectionId + '] initScrollbar called - Slick transform observation');
