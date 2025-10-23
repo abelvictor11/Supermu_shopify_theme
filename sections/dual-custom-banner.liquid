@@ -655,7 +655,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (slideContent) {
                 const bgDesktop = slideContent.getAttribute('data-bg-desktop');
                 const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                const bgUrl = isMobile ? bgMobile : bgDesktop;
+                // Si es mobile y hay imagen mobile, usar mobile, sino usar desktop
+                const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
                 
                 // Cargar primera imagen inmediatamente
                 if (index === 0) {
@@ -670,7 +671,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (slideContent) {
                 const bgDesktop = slideContent.getAttribute('data-bg-desktop');
                 const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                const bgUrl = isMobile ? bgMobile : bgDesktop;
+                // Si es mobile y hay imagen mobile, usar mobile, sino usar desktop
+                const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
                 
                 // Cargar primera imagen inmediatamente
                 if (index === 0) {
@@ -697,7 +699,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (slideContent) {
                         const bgDesktop = slideContent.getAttribute('data-bg-desktop');
                         const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                        const bgUrl = isMobile ? bgMobile : bgDesktop;
+                        const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
                         slideContent.style.backgroundImage = `url('${bgUrl}')`;
                     }
                 }
@@ -709,7 +711,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (slideContent) {
                         const bgDesktop = slideContent.getAttribute('data-bg-desktop');
                         const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                        const bgUrl = isMobile ? bgMobile : bgDesktop;
+                        const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
                         slideContent.style.backgroundImage = `url('${bgUrl}')`;
                     }
                 }
@@ -843,7 +845,7 @@ document.addEventListener('DOMContentLoaded', function() {
             section.querySelectorAll('.slide-content').forEach(slideContent => {
                 const bgDesktop = slideContent.getAttribute('data-bg-desktop');
                 const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                const bgUrl = isMobile ? bgMobile : bgDesktop;
+                const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
                 if (slideContent.style.backgroundImage) {
                     slideContent.style.backgroundImage = `url('${bgUrl}')`;
                 }
