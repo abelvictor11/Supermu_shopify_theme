@@ -269,44 +269,76 @@
             
             console.log('Scrollbar elements found');
             
-            // Esperar a que Slick se inicialice
-            let checkAttempts = 0;
-            const checkSlick = setInterval(function() {
-                checkAttempts++;
-                console.log('Checking Slick initialization, attempt:', checkAttempts);
-                
-                if (typeof $ !== 'undefined' && $(carouselSlick).hasClass('slick-initialized')) {
-                    clearInterval(checkSlick);
-                    console.log('Slick initialized, starting scrollbar setup');
-                    initScrollbar();
-                } else if (checkAttempts > 50) {
-                    clearInterval(checkSlick);
-                    console.log('Slick initialization timeout - trying alternative method');
-                    // Intentar de todas formas
-                    setTimeout(function() {
-                        if (typeof $ !== 'undefined') {
-                            initScrollbar();
-                        }
-                    }, 1000);
-                }
-            }, 100);
+            // El tema usa un sistema custom de carousel, no Slick estándar
+            // Esperar a que el carousel esté listo
+            setTimeout(function() {
+                console.log('Initializing scrollbar with theme carousel system');
+                initScrollbar();
+            }, 2000);
             
             function initScrollbar() {
                 console.log('initScrollbar called');
+                
+                if (typeof $ === 'undefined') {
+                    console.log('jQuery not loaded yet');
+                    return;
+                }
+                
                 const $carousel = $(carouselSlick);
+                
+                // Verificar si ya tiene slick
+                if ($carousel.hasClass('slick-initialized')) {
+                    console.log('Slick already initialized, setting up scrollbar');
+                    setupScrollbarEvents($carousel);
+                } else {
+                    console.log('Waiting for slick to initialize via MutationObserver');
+                    // Usar MutationObserver para detectar cuando se agrega la clase
+                    const observer = new MutationObserver(function(mutations) {
+                        if ($carousel.hasClass('slick-initialized')) {
+                            console.log('Slick initialized detected!');
+                            observer.disconnect();
+                            setupScrollbarEvents($carousel);
+                        }
+                    });
+                    
+                    observer.observe(carouselSlick, {
+                        attributes: true,
+                        attributeFilter: ['class']
+                    });
+                    
+                    // Timeout de seguridad
+                    setTimeout(function() {
+                        observer.disconnect();
+                        console.log('MutationObserver timeout, trying anyway');
+                        setupScrollbarEvents($carousel);
+                    }, 5000);
+                }
+            }
+            
+            function setupScrollbarEvents($carousel) {
+                console.log('Setting up scrollbar events');
                 
                 // Actualizar scrollbar en cada cambio de slide
                 $carousel.on('afterChange', function(event, slick, currentSlide) {
+                    console.log('afterChange event, slide:', currentSlide);
                     updateScrollbar(slick, currentSlide);
                 });
                 
                 // También actualizar en beforeChange para sincronización inmediata
                 $carousel.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+                    console.log('beforeChange event, next slide:', nextSlide);
                     updateScrollbar(slick, nextSlide);
                 });
                 
                 // Inicializar posición
-                updateScrollbar($carousel.slick('getSlick'), $carousel.slick('slickCurrentSlide'));
+                try {
+                    const slick = $carousel.slick('getSlick');
+                    const currentSlide = slick.currentSlide || 0;
+                    console.log('Initial slide:', currentSlide);
+                    updateScrollbar(slick, currentSlide);
+                } catch(e) {
+                    console.log('Error getting slick instance:', e);
+                }
                 
                 // Click en scrollbar para navegar
                 scrollbar.addEventListener('click', function(e) {
