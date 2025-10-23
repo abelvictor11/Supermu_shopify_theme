@@ -342,10 +342,37 @@
                     updateScrollbar(slick, nextSlide);
                 });
                 
+                // Listener adicional para eventos del tema
+                carouselSlick.addEventListener('afterChange', function(e) {
+                    console.log('DOM afterChange event detected');
+                    try {
+                        const slick = $carousel.slick('getSlick');
+                        updateScrollbar(slick, slick.currentSlide);
+                    } catch(err) {
+                        console.log('Error in DOM event handler:', err);
+                    }
+                });
+                
+                // Polling como fallback para detectar cambios
+                let lastSlide = 0;
+                setInterval(function() {
+                    try {
+                        const slick = $carousel.slick('getSlick');
+                        if (slick && slick.currentSlide !== lastSlide) {
+                            console.log('Polling detected slide change:', lastSlide, '->', slick.currentSlide);
+                            lastSlide = slick.currentSlide;
+                            updateScrollbar(slick, slick.currentSlide);
+                        }
+                    } catch(e) {
+                        // Ignorar errores de polling
+                    }
+                }, 200);
+                
                 // Inicializar posición
                 try {
                     const slick = $carousel.slick('getSlick');
                     const currentSlide = slick.currentSlide || 0;
+                    lastSlide = currentSlide;
                     console.log('Initial slide:', currentSlide);
                     updateScrollbar(slick, currentSlide);
                 } catch(e) {
