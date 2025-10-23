@@ -248,14 +248,17 @@
         theme.AssetsLoader.require('scripts', 'carousel_products');
         theme.AssetsLoader.require('scripts', 'skeleton-loader');
         
-        // Scrollbar personalizado para carousel
+        // Scrollbar personalizado para carousel - Específico para esta sección
         (function() {
-            const carouselSection = document.querySelector('[data-section-id="{{ section.id }}"]');
+            // Usar el ID de sección específico para evitar conflictos entre múltiples carousels
+            const sectionId = '{{ section.id }}';
+            const carouselSection = document.querySelector('[data-section-id="' + sectionId + '"]');
+            
             if (!carouselSection) {
-                console.log('Carousel section not found');
+                console.log('Carousel section not found:', sectionId);
                 return;
             }
-            console.log('Carousel scrollbar initializing');
+            console.log('Carousel scrollbar initializing for section:', sectionId);
             
             const scrollbar = carouselSection.querySelector('[data-carousel-scrollbar]');
             const scrollbarDrag = carouselSection.querySelector('[data-carousel-scrollbar-drag]');
@@ -263,11 +266,11 @@
             const carouselWrapper = carouselSection.querySelector('.carousel__slider_wrapper');
             
             if (!scrollbar || !scrollbarDrag || !carouselSlick) {
-                console.log('Missing scrollbar elements - bullets setting might be OFF');
+                console.log('Missing scrollbar elements for section:', sectionId);
                 return;
             }
             
-            console.log('Scrollbar elements found');
+            console.log('Scrollbar elements found for section:', sectionId);
             
             // Esperar a que jQuery esté cargado
             function waitForJQuery(callback) {
@@ -328,28 +331,28 @@
             }
             
             function setupScrollbarEvents($carousel) {
-                console.log('Setting up scrollbar events');
+                console.log('[' + sectionId + '] Setting up scrollbar events');
                 
                 // Actualizar scrollbar en cada cambio de slide
                 $carousel.on('afterChange', function(event, slick, currentSlide) {
-                    console.log('afterChange event, slide:', currentSlide);
+                    console.log('[' + sectionId + '] afterChange event, slide:', currentSlide);
                     updateScrollbar(slick, currentSlide);
                 });
                 
                 // También actualizar en beforeChange para sincronización inmediata
                 $carousel.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
-                    console.log('beforeChange event, next slide:', nextSlide);
+                    console.log('[' + sectionId + '] beforeChange event, next slide:', nextSlide);
                     updateScrollbar(slick, nextSlide);
                 });
                 
                 // Listener adicional para eventos del tema
                 carouselSlick.addEventListener('afterChange', function(e) {
-                    console.log('DOM afterChange event detected');
+                    console.log('[' + sectionId + '] DOM afterChange event detected');
                     try {
                         const slick = $carousel.slick('getSlick');
                         updateScrollbar(slick, slick.currentSlide);
                     } catch(err) {
-                        console.log('Error in DOM event handler:', err);
+                        console.log('[' + sectionId + '] Error in DOM event handler:', err);
                     }
                 });
                 
@@ -359,7 +362,7 @@
                     try {
                         const slick = $carousel.slick('getSlick');
                         if (slick && slick.currentSlide !== lastSlide) {
-                            console.log('Polling detected slide change:', lastSlide, '->', slick.currentSlide);
+                            console.log('[' + sectionId + '] Polling detected slide change:', lastSlide, '->', slick.currentSlide);
                             lastSlide = slick.currentSlide;
                             updateScrollbar(slick, slick.currentSlide);
                         }
@@ -373,10 +376,10 @@
                     const slick = $carousel.slick('getSlick');
                     const currentSlide = slick.currentSlide || 0;
                     lastSlide = currentSlide;
-                    console.log('Initial slide:', currentSlide);
+                    console.log('[' + sectionId + '] Initial slide:', currentSlide);
                     updateScrollbar(slick, currentSlide);
                 } catch(e) {
-                    console.log('Error getting slick instance:', e);
+                    console.log('[' + sectionId + '] Error getting slick instance:', e);
                 }
                 
                 // Click en scrollbar para navegar
