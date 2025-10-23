@@ -256,6 +256,7 @@
             const scrollbar = carouselSection.querySelector('[data-carousel-scrollbar]');
             const scrollbarDrag = carouselSection.querySelector('[data-carousel-scrollbar-drag]');
             const carouselSlick = carouselSection.querySelector('[data-js-carousel-slick]');
+            const carouselWrapper = carouselSection.querySelector('.carousel__slider_wrapper');
             
             if (!scrollbar || !scrollbarDrag || !carouselSlick) return;
             
@@ -275,12 +276,19 @@
                     updateScrollbar(slick, currentSlide);
                 });
                 
+                // También actualizar en beforeChange para sincronización inmediata
+                $carousel.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+                    updateScrollbar(slick, nextSlide);
+                });
+                
                 // Inicializar posición
-                const slick = $carousel.slick('getSlick');
-                updateScrollbar(slick, slick.currentSlide);
+                updateScrollbar($carousel.slick('getSlick'), $carousel.slick('slickCurrentSlide'));
                 
                 // Click en scrollbar para navegar
                 scrollbar.addEventListener('click', function(e) {
+                    if (e.target === scrollbarDrag) return; // Ignorar clicks en el drag
+                    
+                    const slick = $carousel.slick('getSlick');
                     const rect = scrollbar.getBoundingClientRect();
                     const clickX = e.clientX - rect.left;
                     const percentage = clickX / rect.width;
@@ -298,11 +306,13 @@
                 scrollbarDrag.addEventListener('mousedown', function(e) {
                     isDragging = true;
                     e.preventDefault();
+                    e.stopPropagation();
                 });
                 
                 document.addEventListener('mousemove', function(e) {
                     if (!isDragging) return;
                     
+                    const slick = $carousel.slick('getSlick');
                     const rect = scrollbar.getBoundingClientRect();
                     const clickX = e.clientX - rect.left;
                     const percentage = Math.max(0, Math.min(1, clickX / rect.width));
@@ -317,16 +327,39 @@
                 document.addEventListener('mouseup', function() {
                     isDragging = false;
                 });
+                
+                // Control con scroll horizontal del mouse
+                if (carouselWrapper) {
+                    carouselWrapper.addEventListener('wheel', function(e) {
+                        // Solo si hay scroll horizontal (Shift + scroll o trackpad horizontal)
+                        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                            e.preventDefault();
+                            
+                            const slick = $carousel.slick('getSlick');
+                            
+                            // Determinar dirección
+                            if (e.deltaX > 0) {
+                                // Scroll derecha = siguiente
+                                $carousel.slick('slickNext');
+                            } else if (e.deltaX < 0) {
+                                // Scroll izquierda = anterior
+                                $carousel.slick('slickPrev');
+                            }
+                        }
+                    }, { passive: false });
+                }
             }
             
             function updateScrollbar(slick, currentSlide) {
+                if (!slick || typeof currentSlide === 'undefined') return;
+                
                 const slideCount = slick.slideCount;
                 const slidesToShow = slick.options.slidesToShow;
-                const maxSlide = slideCount - slidesToShow;
+                const maxSlide = Math.max(1, slideCount - slidesToShow);
                 
                 // Calcular ancho y posición del drag
                 const dragWidth = (slidesToShow / slideCount) * 100;
-                const dragLeft = (currentSlide / maxSlide) * (100 - dragWidth);
+                const dragLeft = maxSlide > 0 ? (currentSlide / maxSlide) * (100 - dragWidth) : 0;
                 
                 scrollbarDrag.style.width = dragWidth + '%';
                 scrollbarDrag.style.left = dragLeft + '%';
