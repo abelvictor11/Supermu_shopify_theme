@@ -307,55 +307,74 @@
             });
             
             function initScrollbar() {
-                console.log('[' + sectionId + '] initScrollbar called - IKEA style implementation');
+                console.log('[' + sectionId + '] initScrollbar called - Slick transform observation');
                 
-                // Implementación independiente tipo IKEA - no depende de Slick
-                // Observar el contenedor del carousel para detectar cambios visuales
+                // Slick usa CSS transform, no scrollLeft
+                // Necesitamos observar el transform del .slick-track
                 
-                let currentPosition = 0;
-                let isScrolling = false;
-                
-                // Función para actualizar el scrollbar basado en la posición visual del carousel
-                function updateScrollbarFromDOM() {
-                    // Obtener el ancho total del contenido vs el ancho visible
-                    const scrollWidth = carouselSlick.scrollWidth;
-                    const clientWidth = carouselSlick.clientWidth;
+                function updateScrollbarFromSlick() {
+                    // Buscar el slick-track que Slick crea
+                    const slickTrack = carouselSlick.querySelector('.slick-track');
                     
-                    if (scrollWidth <= clientWidth) {
-                        // No hay scroll necesario
+                    if (!slickTrack) {
+                        console.log('[' + sectionId + '] slick-track not found yet');
+                        return;
+                    }
+                    
+                    // Obtener el transform actual
+                    const transform = window.getComputedStyle(slickTrack).transform;
+                    
+                    if (!transform || transform === 'none') {
+                        scrollbarDrag.style.left = '0%';
+                        return;
+                    }
+                    
+                    // Extraer translateX del transform matrix
+                    const matrix = transform.match(/matrix.*\((.+)\)/);
+                    if (!matrix) return;
+                    
+                    const values = matrix[1].split(', ');
+                    const translateX = parseFloat(values[4]) || 0; // translateX es el 5to valor
+                    
+                    // Calcular dimensiones
+                    const trackWidth = slickTrack.offsetWidth;
+                    const containerWidth = carouselSlick.offsetWidth;
+                    const maxTranslate = trackWidth - containerWidth;
+                    
+                    if (maxTranslate <= 0) {
                         scrollbarDrag.style.width = '100%';
                         scrollbarDrag.style.left = '0%';
                         return;
                     }
                     
-                    // Calcular posición actual del scroll
-                    const scrollLeft = carouselSlick.scrollLeft || 0;
+                    // translateX es negativo cuando se mueve a la derecha
+                    const currentPosition = Math.abs(translateX);
+                    const percentage = (currentPosition / maxTranslate) * 100;
                     
-                    // Calcular ancho y posición del drag
-                    const dragWidth = (clientWidth / scrollWidth) * 100;
-                    const dragLeft = (scrollLeft / (scrollWidth - clientWidth)) * (100 - dragWidth);
+                    // Calcular ancho del drag (proporción visible)
+                    const dragWidth = (containerWidth / trackWidth) * 100;
                     
                     scrollbarDrag.style.width = Math.max(dragWidth, 10) + '%';
-                    scrollbarDrag.style.left = Math.min(Math.max(dragLeft, 0), 100 - dragWidth) + '%';
+                    scrollbarDrag.style.left = Math.min(Math.max(percentage, 0), 100 - dragWidth) + '%';
                     
                     console.log('[' + sectionId + '] Scrollbar updated:', {
-                        scrollLeft: scrollLeft,
-                        scrollWidth: scrollWidth,
-                        clientWidth: clientWidth,
-                        dragWidth: dragWidth + '%',
-                        dragLeft: dragLeft + '%'
+                        translateX: translateX,
+                        currentPosition: currentPosition,
+                        maxTranslate: maxTranslate,
+                        percentage: percentage + '%',
+                        dragWidth: dragWidth + '%'
                     });
                 }
                 
                 // Actualizar cada 100ms (polling)
-                setInterval(updateScrollbarFromDOM, 100);
+                const intervalId = setInterval(updateScrollbarFromSlick, 100);
                 
-                // Actualizar inmediatamente
-                setTimeout(updateScrollbarFromDOM, 500);
-                setTimeout(updateScrollbarFromDOM, 1000);
-                setTimeout(updateScrollbarFromDOM, 2000);
+                // Actualizar inmediatamente con delays
+                setTimeout(updateScrollbarFromSlick, 500);
+                setTimeout(updateScrollbarFromSlick, 1000);
+                setTimeout(updateScrollbarFromSlick, 2000);
                 
-                console.log('[' + sectionId + '] IKEA-style scrollbar initialized with DOM observation');
+                console.log('[' + sectionId + '] Slick transform observer initialized');
             }
             
             // Función antigua - ya no se usa con implementación IKEA
