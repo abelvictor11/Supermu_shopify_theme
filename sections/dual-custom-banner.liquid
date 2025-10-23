@@ -551,10 +551,12 @@
 
 @media screen and (max-width: 768px) {
     .grid-item-banner_small {
-        aspect-ratio: 1;
+        aspect-ratio: 16 / 9;
+        /* Cambio de 1:1 a 16:9 para mejor visualización del contenido */
     }
     .grid-item-banner_large{
-        aspect-ratio: 600 / 220;
+        aspect-ratio: 16 / 9;
+        /* Cambio de 600/220 a 16:9 para evitar cortar contenido */
     }
     .grid-content h2 {
         font-size: 20px;
