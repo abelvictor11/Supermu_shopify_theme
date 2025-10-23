@@ -23,11 +23,13 @@
               {%- assign link_key = 'link_' | append: i -%}
               
               {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
+                {%- assign mobile_image_key = 'image_mobile_' | append: i -%}
+                {%- assign mobile_image = block.settings[mobile_image_key] -%}
                 <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
                   <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
                     style="background: {{ block.settings.bg_color }};" 
                     data-bg-desktop="{{ block.settings[image_key] | image_url: width: 1400 }}"
-                    data-bg-mobile="{{ block.settings[image_key] | image_url: width: 538, height: 318, crop: 'center' }}">
+                    data-bg-mobile="{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ block.settings[image_key] | image_url: width: 800 }}{% endif %}">
                     <div class="grid-content">
                       <p>{{ block.settings[subtitle_key] }}</p>
                       <h2>{{ block.settings[title_key] }}</h2>
@@ -64,11 +66,13 @@
               {%- assign link_key = 'link_' | append: i -%}
               
               {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
+                {%- assign mobile_image_key = 'image_mobile_' | append: i -%}
+                {%- assign mobile_image = block.settings[mobile_image_key] -%}
                 <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
                   <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
                     style="background: {{ block.settings.bg_color }};" 
                     data-bg-desktop="{{ block.settings[image_key] | image_url: width: 600 }}"
-                    data-bg-mobile="{{ block.settings[image_key] | image_url: width: 400, height: 400, crop: 'center' }}">
+                    data-bg-mobile="{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ block.settings[image_key] | image_url: width: 800 }}{% endif %}">
                     <div class="grid-content">
                       <p>{{ block.settings[subtitle_key] }}</p>
                       <h2>{{ block.settings[title_key] }}</h2>
@@ -133,7 +137,8 @@
       "settings": [
         { "type": "header", "content": "Slide 1" },
         { "type": "checkbox", "id": "slide_1_enabled", "label": "Habilitar Slide 1", "default": true },
-        { "type": "image_picker", "id": "image_1", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_1", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_1", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_1", "label": "Título", "default": "Título Principal" },
         { "type": "text", "id": "subtitle_1", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_1", "label": "Texto del Botón CTA", "default": "Comprar ahora" },
@@ -141,7 +146,8 @@
 
         { "type": "header", "content": "Slide 2" },
         { "type": "checkbox", "id": "slide_2_enabled", "label": "Habilitar Slide 2", "default": false },
-        { "type": "image_picker", "id": "image_2", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_2", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_2", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_2", "label": "Título" },
         { "type": "text", "id": "subtitle_2", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_2", "label": "Texto del Botón CTA" },
@@ -149,7 +155,8 @@
 
         { "type": "header", "content": "Slide 3" },
         { "type": "checkbox", "id": "slide_3_enabled", "label": "Habilitar Slide 3", "default": false },
-        { "type": "image_picker", "id": "image_3", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_3", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_3", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_3", "label": "Título" },
         { "type": "text", "id": "subtitle_3", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_3", "label": "Texto del Botón CTA" },
@@ -157,7 +164,8 @@
 
         { "type": "header", "content": "Slide 4" },
         { "type": "checkbox", "id": "slide_4_enabled", "label": "Habilitar Slide 4", "default": false },
-        { "type": "image_picker", "id": "image_4", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_4", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_4", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_4", "label": "Título" },
         { "type": "text", "id": "subtitle_4", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_4", "label": "Texto del Botón CTA" },
@@ -165,7 +173,8 @@
 
         { "type": "header", "content": "Slide 5" },
         { "type": "checkbox", "id": "slide_5_enabled", "label": "Habilitar Slide 5", "default": false },
-        { "type": "image_picker", "id": "image_5", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_5", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_5", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_5", "label": "Título" },
         { "type": "text", "id": "subtitle_5", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_5", "label": "Texto del Botón CTA" },
@@ -173,7 +182,8 @@
 
         { "type": "header", "content": "Slide 6" },
         { "type": "checkbox", "id": "slide_6_enabled", "label": "Habilitar Slide 6", "default": false },
-        { "type": "image_picker", "id": "image_6", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_6", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_6", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_6", "label": "Título" },
         { "type": "text", "id": "subtitle_6", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_6", "label": "Texto del Botón CTA" },
@@ -181,7 +191,8 @@
 
         { "type": "header", "content": "Slide 7" },
         { "type": "checkbox", "id": "slide_7_enabled", "label": "Habilitar Slide 7", "default": false },
-        { "type": "image_picker", "id": "image_7", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_7", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_7", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_7", "label": "Título" },
         { "type": "text", "id": "subtitle_7", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_7", "label": "Texto del Botón CTA" },
@@ -189,7 +200,8 @@
 
         { "type": "header", "content": "Slide 8" },
         { "type": "checkbox", "id": "slide_8_enabled", "label": "Habilitar Slide 8", "default": false },
-        { "type": "image_picker", "id": "image_8", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_8", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_8", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_8", "label": "Título" },
         { "type": "text", "id": "subtitle_8", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_8", "label": "Texto del Botón CTA" },
@@ -197,7 +209,8 @@
 
         { "type": "header", "content": "Slide 9" },
         { "type": "checkbox", "id": "slide_9_enabled", "label": "Habilitar Slide 9", "default": false },
-        { "type": "image_picker", "id": "image_9", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_9", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_9", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_9", "label": "Título" },
         { "type": "text", "id": "subtitle_9", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_9", "label": "Texto del Botón CTA" },
@@ -205,7 +218,8 @@
 
         { "type": "header", "content": "Slide 10" },
         { "type": "checkbox", "id": "slide_10_enabled", "label": "Habilitar Slide 10", "default": false },
-        { "type": "image_picker", "id": "image_10", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_10", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_10", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_10", "label": "Título" },
         { "type": "text", "id": "subtitle_10", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_10", "label": "Texto del Botón CTA" },
@@ -221,7 +235,8 @@
       "settings": [
         { "type": "header", "content": "Slide 1" },
         { "type": "checkbox", "id": "slide_1_enabled", "label": "Habilitar Slide 1", "default": true },
-        { "type": "image_picker", "id": "image_1", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_1", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_1", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_1", "label": "Título", "default": "Título Principal" },
         { "type": "text", "id": "subtitle_1", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_1", "label": "Texto del Botón CTA", "default": "Comprar ahora" },
@@ -229,7 +244,8 @@
 
         { "type": "header", "content": "Slide 2" },
         { "type": "checkbox", "id": "slide_2_enabled", "label": "Habilitar Slide 2", "default": false },
-        { "type": "image_picker", "id": "image_2", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_2", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_2", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_2", "label": "Título" },
         { "type": "text", "id": "subtitle_2", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_2", "label": "Texto del Botón CTA" },
@@ -237,7 +253,8 @@
 
         { "type": "header", "content": "Slide 3" },
         { "type": "checkbox", "id": "slide_3_enabled", "label": "Habilitar Slide 3", "default": false },
-        { "type": "image_picker", "id": "image_3", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_3", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_3", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_3", "label": "Título" },
         { "type": "text", "id": "subtitle_3", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_3", "label": "Texto del Botón CTA" },
@@ -245,7 +262,8 @@
 
         { "type": "header", "content": "Slide 4" },
         { "type": "checkbox", "id": "slide_4_enabled", "label": "Habilitar Slide 4", "default": false },
-        { "type": "image_picker", "id": "image_4", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_4", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_4", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_4", "label": "Título" },
         { "type": "text", "id": "subtitle_4", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_4", "label": "Texto del Botón CTA" },
@@ -253,7 +271,8 @@
 
         { "type": "header", "content": "Slide 5" },
         { "type": "checkbox", "id": "slide_5_enabled", "label": "Habilitar Slide 5", "default": false },
-        { "type": "image_picker", "id": "image_5", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_5", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_5", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_5", "label": "Título" },
         { "type": "text", "id": "subtitle_5", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_5", "label": "Texto del Botón CTA" },
@@ -261,7 +280,8 @@
 
         { "type": "header", "content": "Slide 6" },
         { "type": "checkbox", "id": "slide_6_enabled", "label": "Habilitar Slide 6", "default": false },
-        { "type": "image_picker", "id": "image_6", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_6", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_6", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_6", "label": "Título" },
         { "type": "text", "id": "subtitle_6", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_6", "label": "Texto del Botón CTA" },
@@ -269,7 +289,8 @@
 
         { "type": "header", "content": "Slide 7" },
         { "type": "checkbox", "id": "slide_7_enabled", "label": "Habilitar Slide 7", "default": false },
-        { "type": "image_picker", "id": "image_7", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_7", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_7", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_7", "label": "Título" },
         { "type": "text", "id": "subtitle_7", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_7", "label": "Texto del Botón CTA" },
@@ -277,7 +298,8 @@
 
         { "type": "header", "content": "Slide 8" },
         { "type": "checkbox", "id": "slide_8_enabled", "label": "Habilitar Slide 8", "default": false },
-        { "type": "image_picker", "id": "image_8", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_8", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_8", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_8", "label": "Título" },
         { "type": "text", "id": "subtitle_8", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_8", "label": "Texto del Botón CTA" },
@@ -285,7 +307,8 @@
 
         { "type": "header", "content": "Slide 9" },
         { "type": "checkbox", "id": "slide_9_enabled", "label": "Habilitar Slide 9", "default": false },
-        { "type": "image_picker", "id": "image_9", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_9", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_9", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_9", "label": "Título" },
         { "type": "text", "id": "subtitle_9", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_9", "label": "Texto del Botón CTA" },
@@ -293,7 +316,8 @@
 
         { "type": "header", "content": "Slide 10" },
         { "type": "checkbox", "id": "slide_10_enabled", "label": "Habilitar Slide 10", "default": false },
-        { "type": "image_picker", "id": "image_10", "label": "Imagen de Fondo" },
+        { "type": "image_picker", "id": "image_10", "label": "Imagen Desktop" },
+        { "type": "image_picker", "id": "image_mobile_10", "label": "Imagen Mobile (opcional)" },
         { "type": "text", "id": "title_10", "label": "Título" },
         { "type": "text", "id": "subtitle_10", "label": "Subtítulo" },
         { "type": "text", "id": "cta_text_10", "label": "Texto del Botón CTA" },
@@ -551,12 +575,12 @@
 
 @media screen and (max-width: 768px) {
     .grid-item-banner_small {
-        aspect-ratio: 16 / 9;
-        /* Cambio de 1:1 a 16:9 para mejor visualización del contenido */
+        aspect-ratio: auto;
+        /* Sin restricción - usa dimensiones naturales de la imagen mobile */
     }
     .grid-item-banner_large{
-        aspect-ratio: 16 / 9;
-        /* Cambio de 600/220 a 16:9 para evitar cortar contenido */
+        aspect-ratio: auto;
+        /* Sin restricción - usa dimensiones naturales de la imagen mobile */
     }
     .grid-content h2 {
         font-size: 20px;
