@@ -575,12 +575,14 @@
 
 @media screen and (max-width: 768px) {
     .grid-item-banner_small {
-        aspect-ratio: auto;
-        /* Sin restricción - usa dimensiones naturales de la imagen mobile */
+        aspect-ratio: 4 / 3;
+        /* Proporción 4:3 para mobile - muestra contenido completo */
+        min-height: 300px;
     }
     .grid-item-banner_large{
-        aspect-ratio: auto;
-        /* Sin restricción - usa dimensiones naturales de la imagen mobile */
+        aspect-ratio: 4 / 3;
+        /* Proporción 4:3 para mobile - muestra contenido completo */
+        min-height: 300px;
     }
     .grid-content h2 {
         font-size: 20px;
