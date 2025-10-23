@@ -307,29 +307,59 @@
             });
             
             function initScrollbar() {
-                console.log('[' + sectionId + '] initScrollbar called');
+                console.log('[' + sectionId + '] initScrollbar called - IKEA style implementation');
                 
-                if (typeof $ === 'undefined') {
-                    console.log('[' + sectionId + '] jQuery not loaded yet');
-                    return;
+                // Implementación independiente tipo IKEA - no depende de Slick
+                // Observar el contenedor del carousel para detectar cambios visuales
+                
+                let currentPosition = 0;
+                let isScrolling = false;
+                
+                // Función para actualizar el scrollbar basado en la posición visual del carousel
+                function updateScrollbarFromDOM() {
+                    // Obtener el ancho total del contenido vs el ancho visible
+                    const scrollWidth = carouselSlick.scrollWidth;
+                    const clientWidth = carouselSlick.clientWidth;
+                    
+                    if (scrollWidth <= clientWidth) {
+                        // No hay scroll necesario
+                        scrollbarDrag.style.width = '100%';
+                        scrollbarDrag.style.left = '0%';
+                        return;
+                    }
+                    
+                    // Calcular posición actual del scroll
+                    const scrollLeft = carouselSlick.scrollLeft || 0;
+                    
+                    // Calcular ancho y posición del drag
+                    const dragWidth = (clientWidth / scrollWidth) * 100;
+                    const dragLeft = (scrollLeft / (scrollWidth - clientWidth)) * (100 - dragWidth);
+                    
+                    scrollbarDrag.style.width = Math.max(dragWidth, 10) + '%';
+                    scrollbarDrag.style.left = Math.min(Math.max(dragLeft, 0), 100 - dragWidth) + '%';
+                    
+                    console.log('[' + sectionId + '] Scrollbar updated:', {
+                        scrollLeft: scrollLeft,
+                        scrollWidth: scrollWidth,
+                        clientWidth: clientWidth,
+                        dragWidth: dragWidth + '%',
+                        dragLeft: dragLeft + '%'
+                    });
                 }
                 
-                const $carousel = $(carouselSlick);
+                // Actualizar cada 100ms (polling)
+                setInterval(updateScrollbarFromDOM, 100);
                 
-                // Escuchar el evento 'init' que el tema dispara cuando Slick se inicializa
-                $carousel.on('init', function(event, slick) {
-                    console.log('[' + sectionId + '] Slick init event fired!');
-                    setupScrollbarEvents($carousel);
-                });
+                // Actualizar inmediatamente
+                setTimeout(updateScrollbarFromDOM, 500);
+                setTimeout(updateScrollbarFromDOM, 1000);
+                setTimeout(updateScrollbarFromDOM, 2000);
                 
-                // Si ya está inicializado, configurar inmediatamente
-                if ($carousel.hasClass('slick-initialized')) {
-                    console.log('[' + sectionId + '] Slick already initialized');
-                    setupScrollbarEvents($carousel);
-                }
+                console.log('[' + sectionId + '] IKEA-style scrollbar initialized with DOM observation');
             }
             
-            function setupScrollbarEvents($carousel) {
+            // Función antigua - ya no se usa con implementación IKEA
+            function setupScrollbarEvents_OLD($carousel) {
                 console.log('[' + sectionId + '] Setting up scrollbar events');
                 
                 // Actualizar scrollbar en cada cambio de slide
