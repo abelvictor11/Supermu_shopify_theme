@@ -270,11 +270,24 @@
             console.log('Scrollbar elements found');
             
             // Esperar a que Slick se inicialice
+            let checkAttempts = 0;
             const checkSlick = setInterval(function() {
+                checkAttempts++;
+                console.log('Checking Slick initialization, attempt:', checkAttempts);
+                
                 if (typeof $ !== 'undefined' && $(carouselSlick).hasClass('slick-initialized')) {
                     clearInterval(checkSlick);
                     console.log('Slick initialized, starting scrollbar setup');
                     initScrollbar();
+                } else if (checkAttempts > 50) {
+                    clearInterval(checkSlick);
+                    console.log('Slick initialization timeout - trying alternative method');
+                    // Intentar de todas formas
+                    setTimeout(function() {
+                        if (typeof $ !== 'undefined') {
+                            initScrollbar();
+                        }
+                    }, 1000);
                 }
             }, 100);
             
