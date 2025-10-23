@@ -307,41 +307,25 @@
             });
             
             function initScrollbar() {
-                console.log('initScrollbar called');
+                console.log('[' + sectionId + '] initScrollbar called');
                 
                 if (typeof $ === 'undefined') {
-                    console.log('jQuery not loaded yet');
+                    console.log('[' + sectionId + '] jQuery not loaded yet');
                     return;
                 }
                 
                 const $carousel = $(carouselSlick);
                 
-                // Verificar si ya tiene slick
-                if ($carousel.hasClass('slick-initialized')) {
-                    console.log('Slick already initialized, setting up scrollbar');
+                // Escuchar el evento 'init' que el tema dispara cuando Slick se inicializa
+                $carousel.on('init', function(event, slick) {
+                    console.log('[' + sectionId + '] Slick init event fired!');
                     setupScrollbarEvents($carousel);
-                } else {
-                    console.log('Waiting for slick to initialize via MutationObserver');
-                    // Usar MutationObserver para detectar cuando se agrega la clase
-                    const observer = new MutationObserver(function(mutations) {
-                        if ($carousel.hasClass('slick-initialized')) {
-                            console.log('Slick initialized detected!');
-                            observer.disconnect();
-                            setupScrollbarEvents($carousel);
-                        }
-                    });
-                    
-                    observer.observe(carouselSlick, {
-                        attributes: true,
-                        attributeFilter: ['class']
-                    });
-                    
-                    // Timeout de seguridad
-                    setTimeout(function() {
-                        observer.disconnect();
-                        console.log('MutationObserver timeout, trying anyway');
-                        setupScrollbarEvents($carousel);
-                    }, 5000);
+                });
+                
+                // Si ya está inicializado, configurar inmediatamente
+                if ($carousel.hasClass('slick-initialized')) {
+                    console.log('[' + sectionId + '] Slick already initialized');
+                    setupScrollbarEvents($carousel);
                 }
             }
             
