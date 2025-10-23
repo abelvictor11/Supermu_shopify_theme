@@ -251,24 +251,35 @@
         // Scrollbar personalizado para carousel
         (function() {
             const carouselSection = document.querySelector('[data-section-id="{{ section.id }}"]');
-            if (!carouselSection) return;
+            if (!carouselSection) {
+                console.log('Carousel section not found for ID: {{ section.id }}');
+                return;
+            }
+            console.log('Carousel scrollbar initializing for section: {{ section.id }}');
             
             const scrollbar = carouselSection.querySelector('[data-carousel-scrollbar]');
             const scrollbarDrag = carouselSection.querySelector('[data-carousel-scrollbar-drag]');
             const carouselSlick = carouselSection.querySelector('[data-js-carousel-slick]');
             const carouselWrapper = carouselSection.querySelector('.carousel__slider_wrapper');
             
-            if (!scrollbar || !scrollbarDrag || !carouselSlick) return;
+            console.log('Scrollbar elements:', { scrollbar, scrollbarDrag, carouselSlick, carouselWrapper });
+            
+            if (!scrollbar || !scrollbarDrag || !carouselSlick) {
+                console.log('Missing scrollbar elements - bullets setting might be OFF');
+                return;
+            }
             
             // Esperar a que Slick se inicialice
             const checkSlick = setInterval(function() {
                 if (typeof $ !== 'undefined' && $(carouselSlick).hasClass('slick-initialized')) {
                     clearInterval(checkSlick);
+                    console.log('Slick initialized, starting scrollbar setup');
                     initScrollbar();
                 }
             }, 100);
             
             function initScrollbar() {
+                console.log('initScrollbar called');
                 const $carousel = $(carouselSlick);
                 
                 // Actualizar scrollbar en cada cambio de slide
