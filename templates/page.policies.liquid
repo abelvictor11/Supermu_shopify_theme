@@ -1,2 +1,8 @@
 {% layout 'theme' %}
-{% render 'policy-navigation' %}
+
+{%- comment -%}
+  Este template ahora usa sections en lugar del snippet hardcodeado.
+  Configura el contenido desde el personalizador de Shopify.
+{%- endcomment -%}
+
+{% section 'policies-content' %}
