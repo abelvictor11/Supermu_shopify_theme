@@ -1,0 +1,246 @@
+<div class="container policy-container">
+  <div class="row">
+    <!-- Sidebar (columna izquierda) -->
+    <div class="col-md-3">
+      <div class="position-sticky" style="top: 20px;">
+        <nav class="nav policies-nav">
+          {% for block in section.blocks %}
+            {% if block.type == 'policy' and block.settings.enabled %}
+              <a class="nav-link {% if forloop.first %}active{% endif %}" 
+                 href="#{{ block.settings.anchor_id }}"
+                 {{ block.shopify_attributes }}>
+                {{ block.settings.title }}
+              </a>
+            {% endif %}
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    
+    <!-- Contenido (columna derecha) -->
+    <div class="col-md-9 politicas">
+      {% for block in section.blocks %}
+        {% if block.type == 'policy' and block.settings.enabled %}
+          <section id="{{ block.settings.anchor_id }}" class="py-5" {{ block.shopify_attributes }}>
+            <h2>{{ block.settings.title }}</h2>
+            <div class="policy-content">
+              {{ block.settings.content }}
+            </div>
+          </section>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+.policy-container {
+  padding: 2rem 0;
+}
+
+.policies-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.policies-nav .nav-link {
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.policies-nav .nav-link:hover {
+  background-color: #f5f5f5;
+  border-left-color: #de0101;
+}
+
+.policies-nav .nav-link.active {
+  background-color: #fff5f5;
+  border-left-color: #de0101;
+  color: #de0101;
+  font-weight: 600;
+}
+
+.politicas section {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+}
+
+.politicas section:last-child {
+  border-bottom: none;
+}
+
+.politicas h2 {
+  color: #de0101;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+}
+
+.politicas h6 {
+  color: #333;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.politicas p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.politicas ul {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+}
+
+.politicas ul li {
+  margin-bottom: 0.5rem;
+}
+
+.politicas table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.politicas table th,
+.politicas table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.politicas table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .position-sticky {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  .policies-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+  
+  .policies-nav .nav-link {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .policies-nav .nav-link.active {
+    border-left: none;
+    border-bottom-color: #de0101;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Smooth scroll para los enlaces de navegación
+  const navLinks = document.querySelectorAll('.policies-nav .nav-link');
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Remover clase active de todos
+      navLinks.forEach(l => l.classList.remove('active'));
+      
+      // Agregar clase active al clickeado
+      this.classList.add('active');
+      
+      // Scroll suave a la sección
+      const targetId = this.getAttribute('href');
+      const targetSection = document.querySelector(targetId);
+      
+      if (targetSection) {
+        targetSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+  
+  // Detectar sección visible y actualizar navegación
+  const sections = document.querySelectorAll('.politicas section');
+  
+  const observerOptions = {
+    root: null,
+    rootMargin: '-20% 0px -70% 0px',
+    threshold: 0
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${id}`) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }, observerOptions);
+  
+  sections.forEach(section => observer.observe(section));
+});
+</script>
+
+{% schema %}
+{
+  "name": "Contenido de Políticas",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "policy",
+      "name": "Política",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Habilitar esta política",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título de la política",
+          "default": "Título de la política"
+        },
+        {
+          "type": "text",
+          "id": "anchor_id",
+          "label": "ID de ancla (sin espacios ni caracteres especiales)",
+          "default": "politica",
+          "info": "Ejemplo: descuentos, devoluciones, garantias"
+        },
+        {
+          "type": "html",
+          "id": "content",
+          "label": "Contenido de la política",
+          "default": "<p>Contenido de la política aquí...</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contenido de Políticas",
+      "category": "Contenido"
+    }
+  ]
+}
+{% endschema %}
