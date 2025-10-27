@@ -6,10 +6,12 @@ Params:
 Behavior:
   - Uses weekday-specific mapping to tag→percent.
   - Shows first matching tag's discount.
+  - Can be globally disabled via settings.daily_discounts_enabled
 {%- endcomment -%}
 {%- assign _product = product -%}
 {%- assign _mode = mode | default: 'html' -%}
-{%- if _product -%}
+{%- assign _enabled = settings.daily_discounts_enabled | default: true -%}
+{%- if _product and _enabled -%}
   {%- assign _weekday = 'now' | date: '%w' -%} 
   {%- comment -%} 0=Sunday,1=Monday,...6=Saturday {%- endcomment -%}
   {%- case _weekday -%}
