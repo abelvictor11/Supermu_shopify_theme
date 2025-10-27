@@ -10,7 +10,11 @@ Behavior:
 {%- endcomment -%}
 {%- assign _product = product -%}
 {%- assign _mode = mode | default: 'html' -%}
-{%- assign _enabled = settings.daily_discounts_enabled | default: true -%}
+{%- comment -%}Check if daily discounts are enabled (nil/blank = disabled, true = enabled){%- endcomment -%}
+{%- assign _enabled = false -%}
+{%- if settings.daily_discounts_enabled == true -%}
+  {%- assign _enabled = true -%}
+{%- endif -%}
 {%- if _product and _enabled -%}
   {%- assign _weekday = 'now' | date: '%w' -%} 
   {%- comment -%} 0=Sunday,1=Monday,...6=Saturday {%- endcomment -%}
