@@ -85,5 +85,8 @@ Behavior:
       (daily debug) day='{{ _current_day }}' rules='{{ _discount_rules }}' matched='{{ _debug_matched }}' rp={{ _debug_percent }} tags=[{% for t in _product.tags %}<code>{{ t }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}]
     </div>
   {%- endif -%}
+{%- else -%}
+  {%- comment -%}Daily discounts disabled: return 0 in percent mode{%- endcomment -%}
+  {%- if _mode == 'percent' -%}0{%- endif -%}
 {%- endif -%}
 
