@@ -1,0 +1,18 @@
+{%- comment -%}
+Debug snippet para verificar el valor de daily_discounts_enabled
+Solo visible en design mode
+{%- endcomment -%}
+{%- if request.design_mode -%}
+<div style="border:2px solid #f00;padding:16px;margin:16px;background:#fff;color:#000;font-family:monospace;">
+  <h3 style="margin:0 0 10px 0;">🔍 Debug: Daily Discounts Setting</h3>
+  <p><strong>settings.daily_discounts_enabled:</strong> {{ settings.daily_discounts_enabled }}</p>
+  <p><strong>Type:</strong> {{ settings.daily_discounts_enabled | type_of }}</p>
+  <p><strong>Default value (true):</strong> {{ settings.daily_discounts_enabled | default: true }}</p>
+  <hr style="margin:10px 0;">
+  <p style="font-size:12px;margin:0;">
+    ℹ️ Si ves "false" arriba, los descuentos diarios están desactivados.<br>
+    ℹ️ Si ves "true" o vacío, están activados.<br>
+    ℹ️ Cambia el setting en Theme Settings → Descuentos Diarios
+  </p>
+</div>
+{%- endif -%}
