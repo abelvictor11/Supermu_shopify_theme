@@ -181,26 +181,12 @@
                 autoplay: this.settings.autoplay,
                 autoplaySpeed: this.settings.speed,
                 infinite: this.settings.infinite,
-                slidesToShow: 10, // Máximo en pantallas muy grandes
+                slidesToShow: 5, // Máximo en pantallas grandes (desktop)
                 slidesToScroll: 1,
                 touchMove: true,
                 swipeToSlide: true,
                 rtl: theme.rtl,
                 responsive: [
-                    {
-                        breakpoint: 1536, // 2xl screens
-                        settings: {
-                            slidesToShow: 8,
-                            slidesToScroll: 1
-                        }
-                    },
-                    {
-                        breakpoint: 1280, // xl screens
-                        settings: {
-                            slidesToShow: 6,
-                            slidesToScroll: 1
-                        }
-                    },
                     {
                         breakpoint: 1024, // lg screens
                         settings: {

@@ -68,19 +68,15 @@ const carouselConfig = {
                 spaceBetween: 15
             },
             768: {
-                slidesPerView: 4,
+                slidesPerView: 3,
                 spaceBetween: 20
             },
             1024: {
-                slidesPerView: 6,
+                slidesPerView: 4,
                 spaceBetween: 20
             },
             1280: {
-                slidesPerView: 8,
-                spaceBetween: 20
-            },
-            1536: {
-                slidesPerView: 10,
+                slidesPerView: 5,
                 spaceBetween: 20
             }
         }
