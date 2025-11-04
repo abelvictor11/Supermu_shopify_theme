@@ -476,5 +476,3 @@ window.addEventListener('DOMContentLoaded', function() {
         subtree: true
     });
 })();
-
-
