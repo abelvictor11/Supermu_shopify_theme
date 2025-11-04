@@ -1231,7 +1231,7 @@ span#searchbuscar {
 .product-collection__image {
     position: relative;
     overflow: hidden;
-    min-height: 270px;
+    min-height: auto;
 }
 
 /* Asegurar que las imágenes mantengan su aspecto */
