@@ -170,7 +170,76 @@
                _.$slider.addClass('initialized');
             });
 
-            this.$slick.slick({
+            // Detectar si está dentro de two-column-carousel-banner (50% width)
+            var isTwoColumn = this.$container.closest('.two-column-carousel-banner').length > 0;
+            
+            // Configuración para two-column (máximo 3-4 items por el 50% de ancho)
+            var twoColumnConfig = {
+                lazyLoad: false,
+                arrows: this.settings.arrows,
+                prevArrow: this.$prev,
+                nextArrow: this.$next,
+                dots: this.settings.bullets,
+                dotsClass: 'slick-dots d-flex flex-wrap flex-center list-unstyled pt-7',
+                adaptiveHeight: true,
+                autoplay: this.settings.autoplay,
+                autoplaySpeed: this.settings.speed,
+                infinite: this.settings.infinite,
+                slidesToShow: 4, // Máximo 4 en pantallas muy grandes
+                slidesToScroll: 1,
+                touchMove: true,
+                swipeToSlide: true,
+                rtl: theme.rtl,
+                responsive: [
+                    {
+                        breakpoint: 1920, // Full HD+
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 1280, // xl screens
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 1024, // lg screens
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 768, // md screens
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 640, // sm screens
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480, // xs screens
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1,
+                            arrows: false,
+                            dots: true
+                        }
+                    }
+                ]
+            };
+            
+            // Configuración para carrusel full-width (ancho completo)
+            var fullWidthConfig = {
                 lazyLoad: false,
                 arrows: this.settings.arrows,
                 prevArrow: this.$prev,
@@ -232,7 +301,10 @@
                         }
                     }
                 ]
-            });
+            };
+
+            // Aplicar la configuración apropiada
+            this.$slick.slick(isTwoColumn ? twoColumnConfig : fullWidthConfig);
         }
 
         loadProducts($button, loader) {
