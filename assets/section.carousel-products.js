@@ -181,23 +181,23 @@
                 autoplay: this.settings.autoplay,
                 autoplaySpeed: this.settings.speed,
                 infinite: this.settings.infinite,
-                slidesToShow: 10, // Máximo en pantallas muy grandes
+                slidesToShow: 8, // Máximo en pantallas muy grandes (1920px+)
                 slidesToScroll: 1,
                 touchMove: true,
                 swipeToSlide: true,
                 rtl: theme.rtl,
                 responsive: [
                     {
-                        breakpoint: 1536, // 2xl screens
+                        breakpoint: 1920, // Full HD+
                         settings: {
-                            slidesToShow: 8,
+                            slidesToShow: 5,
                             slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 1280, // xl screens
                         settings: {
-                            slidesToShow: 6,
+                            slidesToShow: 4,
                             slidesToScroll: 1
                         }
                     },
