@@ -52,6 +52,42 @@ const carouselConfig = {
                 spaceBetween: 20
             }
         }
+    },
+
+    // Configuración específica para el carrusel de productos
+    products: {
+        slidesPerView: 1,
+        spaceBetween: 15,
+        breakpoints: {
+            480: {
+                slidesPerView: 2,
+                spaceBetween: 15
+            },
+            640: {
+                slidesPerView: 3,
+                spaceBetween: 15
+            },
+            768: {
+                slidesPerView: 3,
+                spaceBetween: 20
+            },
+            1024: {
+                slidesPerView: 4,
+                spaceBetween: 20
+            },
+            1280: {
+                slidesPerView: 4,
+                spaceBetween: 20
+            },
+            1920: {
+                slidesPerView: 5,
+                spaceBetween: 20
+            },
+            2560: {
+                slidesPerView: 8,
+                spaceBetween: 20
+            }
+        }
     }
 };
 

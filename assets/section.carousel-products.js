@@ -181,35 +181,49 @@
                 autoplay: this.settings.autoplay,
                 autoplaySpeed: this.settings.speed,
                 infinite: this.settings.infinite,
-                slidesToShow: this.settings.count,
+                slidesToShow: 8, // Máximo en pantallas muy grandes (1920px+)
                 slidesToScroll: 1,
                 touchMove: true,
                 swipeToSlide: true,
                 rtl: theme.rtl,
                 responsive: [
                     {
-                        breakpoint: theme.breakpoints.values.xl,
+                        breakpoint: 1920, // Full HD+
+                        settings: {
+                            slidesToShow: 5,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 1280, // xl screens
                         settings: {
                             slidesToShow: 4,
                             slidesToScroll: 1
                         }
                     },
                     {
-                        breakpoint: theme.breakpoints.values.md,
+                        breakpoint: 1024, // lg screens
+                        settings: {
+                            slidesToShow: 4,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 768, // md screens
                         settings: {
                             slidesToShow: 3,
                             slidesToScroll: 1
                         }
                     },
                     {
-                        breakpoint: theme.breakpoints.values.sm,
+                        breakpoint: 640, // sm screens
                         settings: {
                             slidesToShow: 2,
                             slidesToScroll: 1
                         }
                     },
                     {
-                        breakpoint: 576,
+                        breakpoint: 480, // xs screens
                         settings: {
                             slidesToShow: 1,
                             slidesToScroll: 1,
