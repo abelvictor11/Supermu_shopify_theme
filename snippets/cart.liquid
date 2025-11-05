@@ -130,7 +130,7 @@
                                   onkeydown="return event.keyCode === 8 || event.keyCode === 46 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)"
                                   oninput="{% if cart_limits_enabled %}this.value = Math.max(1, Math.min({{ cart_item_max }}, this.value));{% else %}this.value = Math.max(1, this.value);{% endif %} updateCartItem(this)"
                                   data-line="{{ forloop.index }}"
-                                  data-price="{{ item.variant.price | money_without_currency | remove: ',' }}"
+                                  data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
                               >
                             </div>
                             <div class="col-sm-4 text-right" data-line-total="{{ forloop.index }}">
@@ -154,17 +154,10 @@
 
                   {%- assign total_savings = 0 -%}
                   {%- for item in cart.items -%}
-                    {%- assign item_quantity = item.quantity %}
-                    {%- if cart_limits_enabled and item_quantity > cart_item_max %}{% assign item_quantity = cart_item_max %}{% endif %}
-
-                    {% if item.variant.compare_at_price > item.variant.price %}
-                      {%- assign line_savings = item.variant.compare_at_price
-                        | minus: item.variant.price
-                        | times: item_quantity
-                      -%}
-                      {%- assign total_savings = total_savings | plus: line_savings -%}
-                    {% endif %}
-
+                    {%- comment -%}
+                      Solo contamos descuentos de Shopify (códigos/automáticos)
+                      NO incluimos compare_at_price para alinear con checkout
+                    {%- endcomment -%}
                     {% if item.line_level_discount_allocations.size > 0 %}
                       {% for discount in item.line_level_discount_allocations %}
                         {%- assign total_savings = total_savings | plus: discount.amount -%}
@@ -245,19 +238,10 @@ function updateCartSubtotal() {
 
 function updateSavings() {
     let totalSavings = 0;
+    // Solo contamos descuentos de Shopify (códigos/automáticos)
+    // NO incluimos compare_at_price para alinear con checkout
     document.querySelectorAll('[data-line]').forEach(row => {
-        const comparePriceEl = row.querySelector('.text-muted.line-through');
         const discountEls = row.querySelectorAll('.cart-discount');
-
-        const input = row.querySelector('.quantity-input');
-        const raw = parseInt(input.value);
-        const quantity = CART_LIMITS_ENABLED ? Math.min(CART_ITEM_MAX, raw) : raw;
-        const price = parseFloat(input.dataset.price);
-
-        if(comparePriceEl) {
-            const comparePrice = parseFloat(comparePriceEl.textContent.replace(/[^0-9.-]+/g,""));
-            totalSavings += (comparePrice - price) * quantity;
-        }
 
         discountEls.forEach(el => {
             const discountAmount = parseFloat(el.textContent.replace(/[^0-9.-]+/g,""));
@@ -268,6 +252,10 @@ function updateSavings() {
     const savingsElement = document.querySelector('.cart__total-discounts h3');
     if(savingsElement && totalSavings > 0) {
         savingsElement.textContent = '-' + formatMoney(totalSavings);
+    } else if(savingsElement) {
+        // Ocultar sección si no hay ahorros
+        const savingsContainer = document.querySelector('.cart__total-discounts');
+        if(savingsContainer) savingsContainer.style.display = 'none';
     }
 }
 
