@@ -130,7 +130,7 @@
                                   onkeydown="return event.keyCode === 8 || event.keyCode === 46 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)"
                                   oninput="{% if cart_limits_enabled %}this.value = Math.max(1, Math.min({{ cart_item_max }}, this.value));{% else %}this.value = Math.max(1, this.value);{% endif %} updateCartItem(this)"
                                   data-line="{{ forloop.index }}"
-                                  data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
+                                  data-price="{{ item.variant.price | money_without_currency | remove: ',' }}"
                               >
                             </div>
                             <div class="col-sm-4 text-right" data-line-total="{{ forloop.index }}">
