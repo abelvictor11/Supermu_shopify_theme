@@ -315,6 +315,23 @@
                                 {%- endfor -%}
                             </ul>
                         {%- endif -%}
+                        {%- if block.settings.certificate_image != blank -%}
+                            <div class="footer__certificate-image mt-10 mt-lg-15">
+                                {%- if block.settings.certificate_link != blank -%}
+                                    <a href="{{ block.settings.certificate_link }}" target="_blank" rel="noopener">
+                                        <img src="{{ block.settings.certificate_image | img_url: 'master' }}" 
+                                             alt="{{ block.settings.title | default: 'Certificado de seguridad' }}" 
+                                             style="max-width: {{ block.settings.certificate_width }}px; height: auto;"
+                                             loading="lazy">
+                                    </a>
+                                {%- else -%}
+                                    <img src="{{ block.settings.certificate_image | img_url: 'master' }}" 
+                                         alt="{{ block.settings.title | default: 'Certificado de seguridad' }}" 
+                                         style="max-width: {{ block.settings.certificate_width }}px; height: auto;"
+                                         loading="lazy">
+                                {%- endif -%}
+                            </div>
+                        {%- endif -%}
                     </div>
                 </div>
             </div>
@@ -956,6 +973,30 @@
                     "label": "t:sections.footer.blocks.menu.settings.rows_limit.label",
                     "info": "t:sections.footer.blocks.menu.settings.rows_limit.info",
                     "default": 0
+                },
+                {
+                    "type": "header",
+                    "content": "Imagen/Logo de certificado"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "certificate_image",
+                    "label": "Imagen de certificado de seguridad"
+                },
+                {
+                    "type": "url",
+                    "id": "certificate_link",
+                    "label": "Enlace del certificado (opcional)"
+                },
+                {
+                    "type": "range",
+                    "id": "certificate_width",
+                    "min": 50,
+                    "max": 300,
+                    "step": 10,
+                    "unit": "px",
+                    "label": "Ancho de la imagen",
+                    "default": 150
                 }
             ]
         },
