@@ -672,45 +672,77 @@
 }
 
 /* ========== AJUSTES DEL HEADER ========== */
-/* Ajustar el buscador para que no se monte sobre el botón */
+/* Estilo Walmart: Logo, Selector y Sidebar fijos, Buscador expandible */
 @media (min-width: 1025px) {
-  /* Para header tipo 2 y 3 con buscador centrado */
-  .header__store-selector ~ .header__search-form.position-lg-absolute {
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: calc(100% - 600px);
-    margin-left: 140px;
+  /* Logo con ancho fijo */
+  .header__logo-wrapper,
+  .header__logo {
+    flex-shrink: 0;
   }
   
-  /* Para header tipo 1 y 4 con buscador en flex */
-  .header__store-selector ~ .d-flex .header__search-form {
-    max-width: 500px;
+  /* Selector con ancho fijo */
+  .header__store-selector {
+    flex-shrink: 0;
+    width: auto;
+    min-width: fit-content;
+  }
+  
+  /* Botón del selector con ancho máximo */
+  .walmart-store-btn {
+    max-width: 280px;
+    min-width: 240px;
+  }
+  
+  /* Sidebar/acciones con ancho fijo */
+  .header__actions {
+    flex-shrink: 0;
+  }
+  
+  /* Buscador expandible - ocupa todo el espacio disponible */
+  .header__search-form {
+    flex: 1 1 auto !important;
+    max-width: 100% !important;
+    min-width: 200px;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Para headers con buscador position-absolute, cambiar a relative */
+  .header__store-selector ~ .header__search-form.position-lg-absolute {
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+    flex: 1 1 auto;
+    max-width: 100% !important;
+  }
+  
+  /* Contenedor flex del buscador */
+  .header__store-selector ~ .d-flex {
     flex: 1;
+  }
+  
+  .header__store-selector ~ .d-flex .header__search-form {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
+  
+  /* Input del buscador ocupa todo el ancho */
+  .header__search-form input[type="search"],
+  .header__search-form .header__search-input {
+    width: 100%;
   }
 }
 
 @media (min-width: 1025px) and (max-width: 1280px) {
-  /* En pantallas medianas, reducir el ancho del buscador */
-  .header__store-selector ~ .header__search-form.position-lg-absolute {
-    max-width: calc(100% - 700px);
-    margin-left: 100px;
-  }
-  
+  /* En pantallas medianas, botón del selector más compacto */
   .walmart-store-btn {
     max-width: 220px;
+    min-width: 200px;
   }
   
   .walmart-store-btn-label,
   .walmart-store-btn-text {
     font-size: 11px;
-  }
-}
-
-@media (min-width: 1280px) {
-  /* En pantallas grandes, dar más espacio */
-  .header__store-selector ~ .header__search-form.position-lg-absolute {
-    max-width: 600px;
-    margin-left: 160px;
   }
 }
 
