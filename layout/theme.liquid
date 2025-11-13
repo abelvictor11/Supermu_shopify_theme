@@ -28,6 +28,7 @@
   
   <script src="{{ 'skeleton-loader.js' | asset_url }}" defer></script>
   {{ 'store-directory.css' | asset_url | stylesheet_tag }}
+  {{ 'store-selector.css' | asset_url | stylesheet_tag }}
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
 
@@ -59,6 +60,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   {% section 'product-variants' %}
 {%- endif -%}
 {% sections 'header-group' %}
+
+<!-- Store Selector Modal -->
+{% include 'store-selector' %}
+<script src="{{ 'store-selector.js' | asset_url }}" defer></script>
 
 <main id="MainContent">
   <div class="menu-overlay"></div>  

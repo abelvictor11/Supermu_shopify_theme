@@ -1,0 +1,50 @@
+{% comment %}
+  Botón para cambiar la tienda seleccionada
+  Se puede incluir en el header, toolbar, o cualquier sección
+{% endcomment %}
+
+<button type="button" class="store-selector-trigger" id="change-store-btn" aria-label="Cambiar tienda">
+  <span class="store-selector-trigger-icon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  </span>
+  <div class="store-selector-trigger-info">
+    <p class="selected-store-label">Tu tienda</p>
+    <p class="selected-store-name">Selecciona una tienda</p>
+    <p class="selected-store-address" style="display: none;"></p>
+  </div>
+  <span class="store-selector-trigger-arrow">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </span>
+</button>
+
+<style>
+.store-selector-trigger-arrow {
+  flex-shrink: 0;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.store-selector-trigger:hover .store-selector-trigger-arrow {
+  transform: translateY(2px);
+}
+
+/* Responsive - ocultar en móvil si no hay espacio */
+@media (max-width: 480px) {
+  .store-selector-trigger {
+    padding: 6px 12px;
+  }
+  
+  .selected-store-name {
+    font-size: 12px;
+  }
+  
+  .selected-store-address {
+    display: none !important;
+  }
+}
+</style>
