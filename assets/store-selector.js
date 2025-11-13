@@ -1,365 +1,459 @@
 /**
- * Store Selector - Sistema de selección de tienda con geolocalización
- * Guarda la preferencia del usuario en localStorage
+ * Walmart Store Selector
+ * Sistema de selección de tienda estilo Walmart
  */
 
-class StoreSelector {
+class WalmartStoreSelector {
   constructor() {
-    this.STORAGE_KEY = 'selected_store';
-    this.overlay = document.getElementById('store-selector-overlay');
-    this.searchInput = document.getElementById('store-search-input');
-    this.storeList = document.getElementById('store-list');
-    this.btnUseLocation = document.getElementById('btn-use-location');
-    this.geolocationStatus = document.getElementById('geolocation-status');
-    this.storeContainer = document.getElementById('store-items-container');
-    this.selectedStore = null;
+    this.STORAGE_KEY = 'walmart_selected_store';
+    this.DELIVERY_MODE_KEY = 'walmart_delivery_mode';
+    
+    // Elementos del DOM
+    this.headerBtn = document.getElementById('walmart-store-trigger');
+    this.dropdown = document.getElementById('store-selector-dropdown');
+    this.modal = document.getElementById('store-selector-modal');
+    this.modalOverlay = document.querySelector('.walmart-modal-overlay');
+    
+    // Datos
     this.stores = [];
+    this.selectedStore = null;
+    this.deliveryMode = 'retiro'; // envio, retiro, entrega
+    this.userLocation = null;
     
     this.init();
   }
 
   async init() {
-    // Cargar datos de tiendas
+    // Cargar tiendas
     await this.loadStores();
-
-    // Verificar si ya hay una tienda seleccionada
-    const savedStore = this.getSavedStore();
     
-    if (savedStore) {
-      this.selectedStore = savedStore;
-      this.updateHeaderDisplay();
-    } else {
-      // Primera vez: mostrar el modal automáticamente después de 1 segundo
-      setTimeout(() => {
-        this.showModal();
-      }, 1000);
-    }
-
+    // Cargar datos guardados
+    this.loadSavedData();
+    
+    // Actualizar UI
+    this.updateHeaderButton();
+    
+    // Eventos
     this.attachEventListeners();
+    
+    // Si no hay tienda seleccionada, mostrar dropdown después de 1.5 seg
+    if (!this.selectedStore) {
+      setTimeout(() => {
+        this.showDropdown();
+      }, 1500);
+    }
   }
 
   async loadStores() {
     try {
-      const url = window.STORE_DIRECTORY_URL || '/pages/tiendas';
+      const url = window.STORE_DIRECTORY_URL || '/pages/store-directory';
+      console.log('Cargando tiendas desde:', url);
+      
       const response = await fetch(url);
       const html = await response.text();
       
-      // Parsear el HTML para extraer información de las tiendas
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const storeCards = doc.querySelectorAll('.store-card');
       
-      this.stores = Array.from(storeCards).map((card, index) => ({
-        id: index.toString(),
-        name: card.querySelector('.store-card__name')?.textContent.trim() || '',
-        zone: card.dataset.zone || '',
-        address: card.querySelector('.store-card__address')?.textContent.trim().replace(/\s+/g, ' ') || '',
-        phone: card.querySelector('.store-card__phone')?.textContent.trim() || '',
-        latitude: card.dataset.lat || '',
-        longitude: card.dataset.lng || '',
-        logo: card.querySelector('.header-logo-card img')?.src || '',
-        featured: card.classList.contains('store-card--featured')
-      }));
-
-      this.renderStores();
+      console.log('Tiendas encontradas:', storeCards.length);
+      
+      this.stores = Array.from(storeCards).map((card, index) => {
+        const logo = card.querySelector('.header-logo-card img');
+        return {
+          id: index.toString(),
+          name: card.querySelector('.store-card__name')?.textContent.trim() || '',
+          zone: card.dataset.zone || '',
+          address: card.querySelector('.store-card__address')?.textContent.trim().replace(/^\s*\n\s*/g, '').replace(/\s+/g, ' ') || '',
+          phone: card.querySelector('.store-card__phone')?.textContent.trim() || '',
+          latitude: parseFloat(card.dataset.lat) || 0,
+          longitude: parseFloat(card.dataset.lng) || 0,
+          logo: logo ? logo.src : '',
+          featured: card.classList.contains('store-card--featured')
+        };
+      }).filter(store => store.name && store.latitude && store.longitude);
+      
+      console.log('Tiendas procesadas:', this.stores.length);
+      
+      if (this.stores.length > 0) {
+        this.renderStoresInModal();
+      }
     } catch (error) {
       console.error('Error cargando tiendas:', error);
       this.stores = [];
-      this.storeContainer.innerHTML = '<p class="error-loading">Error cargando tiendas. Por favor recarga la página.</p>';
     }
   }
 
-  renderStores() {
-    if (!this.storeContainer) return;
-
-    if (this.stores.length === 0) {
-      this.storeContainer.innerHTML = '<p>No hay tiendas disponibles</p>';
-      return;
+  loadSavedData() {
+    try {
+      const savedStore = localStorage.getItem(this.STORAGE_KEY);
+      const savedMode = localStorage.getItem(this.DELIVERY_MODE_KEY);
+      
+      if (savedStore) {
+        this.selectedStore = JSON.parse(savedStore);
+      }
+      
+      if (savedMode) {
+        this.deliveryMode = savedMode;
+      }
+    } catch (e) {
+      console.error('Error cargando datos guardados:', e);
     }
-
-    this.storeContainer.innerHTML = this.stores.map(store => `
-      <div class="store-item" 
-           data-store-id="${store.id}"
-           data-store-name="${store.name}"
-           data-store-zone="${store.zone}"
-           data-store-address="${store.address}"
-           data-store-lat="${store.latitude}"
-           data-store-lng="${store.longitude}">
-        <div class="store-item-logo">
-          ${store.logo ? 
-            `<img src="${store.logo}" alt="${store.name}">` :
-            `<div class="store-item-logo-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="#dd0a0a">
-                <path d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203.21-4.243 4.242a3 3 0 0 1-4.097.135l-.144-.135-4.244-4.243A9 9 0 0 1 18.364 4.636zM12 8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
-              </svg>
-            </div>`
-          }
-        </div>
-        <div class="store-item-info">
-          <h3 class="store-item-name">${store.name}</h3>
-          <p class="store-item-address">${store.address}</p>
-          <p class="store-item-zone">Zona ${this.capitalizeZone(store.zone)}</p>
-        </div>
-        <div class="store-item-action">
-          <button class="btn-select-store" data-store-id="${store.id}">
-            Seleccionar
-          </button>
-        </div>
-      </div>
-    `).join('');
   }
 
-  capitalizeZone(zone) {
-    const zones = {
-      'norte': 'Norte',
-      'sur': 'Sur',
-      'este': 'Oriente',
-      'oeste': 'Occidente',
-      'centro': 'Centro'
-    };
-    return zones[zone] || zone;
+  saveData() {
+    try {
+      if (this.selectedStore) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.selectedStore));
+      }
+      localStorage.setItem(this.DELIVERY_MODE_KEY, this.deliveryMode);
+    } catch (e) {
+      console.error('Error guardando datos:', e);
+    }
   }
 
   attachEventListeners() {
-    // Cerrar modal
-    const closeBtn = document.querySelector('.store-selector-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => this.closeModal());
+    // Botón del header
+    if (this.headerBtn) {
+      this.headerBtn.addEventListener('click', () => this.toggleDropdown());
     }
 
-    // Click fuera del modal para cerrar
-    if (this.overlay) {
-      this.overlay.addEventListener('click', (e) => {
-        if (e.target === this.overlay) {
-          this.closeModal();
-        }
-      });
+    // Cerrar dropdown
+    const dropdownClose = document.querySelector('.walmart-dropdown-close');
+    if (dropdownClose) {
+      dropdownClose.addEventListener('click', () => this.hideDropdown());
     }
 
-    // Búsqueda de tiendas
-    if (this.searchInput) {
-      this.searchInput.addEventListener('input', (e) => {
-        this.filterStores(e.target.value);
-      });
-    }
-
-    // Botón de geolocalización
-    if (this.btnUseLocation) {
-      this.btnUseLocation.addEventListener('click', () => {
-        this.requestGeolocation();
-      });
-    }
-
-    // Botones de selección de tienda
+    // Click fuera del dropdown
     document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('btn-select-store')) {
-        const storeId = e.target.dataset.storeId;
-        this.selectStore(storeId);
+      if (this.dropdown && this.dropdown.style.display !== 'none') {
+        if (!this.dropdown.contains(e.target) && !this.headerBtn.contains(e.target)) {
+          this.hideDropdown();
+        }
       }
     });
 
-    // Botón en el header para cambiar tienda
-    const changeStoreBtn = document.getElementById('change-store-btn');
-    if (changeStoreBtn) {
-      changeStoreBtn.addEventListener('click', () => {
-        this.showModal();
+    // Opciones de entrega
+    const options = document.querySelectorAll('.walmart-option');
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        const mode = option.dataset.option;
+        this.selectDeliveryMode(mode);
       });
+    });
+
+    // Geolocalización (dropdown)
+    const btnUseLocation = document.getElementById('walmart-use-location');
+    if (btnUseLocation) {
+      btnUseLocation.addEventListener('click', () => this.requestGeolocation());
+    }
+
+    // Geolocalización (modal)
+    const btnUseLocationModal = document.getElementById('walmart-use-location-modal');
+    if (btnUseLocationModal) {
+      btnUseLocationModal.addEventListener('click', () => this.requestGeolocationModal());
+    }
+
+    // Búsqueda en modal
+    const modalSearchInput = document.getElementById('walmart-modal-search-input');
+    if (modalSearchInput) {
+      modalSearchInput.addEventListener('input', (e) => this.filterStores(e.target.value));
+    }
+
+    // Cerrar modal
+    const modalClose = document.querySelector('.walmart-modal-close');
+    if (modalClose) {
+      modalClose.addEventListener('click', () => this.closeStoreModal());
+    }
+
+    if (this.modalOverlay) {
+      this.modalOverlay.addEventListener('click', () => this.closeStoreModal());
+    }
+
+    // Guardar tienda seleccionada
+    const btnSave = document.getElementById('walmart-save-store');
+    if (btnSave) {
+      btnSave.addEventListener('click', () => this.saveSelectedStore());
     }
   }
 
-  showModal() {
-    if (this.overlay) {
-      this.overlay.style.display = 'flex';
+  showDropdown() {
+    if (this.dropdown) {
+      this.dropdown.style.display = 'block';
+      
+      // Si hay tienda seleccionada, mostrarla
+      if (this.selectedStore) {
+        this.showSuggestedStore(this.selectedStore);
+      }
+    }
+  }
+
+  hideDropdown() {
+    if (this.dropdown) {
+      this.dropdown.style.display = 'none';
+    }
+  }
+
+  toggleDropdown() {
+    if (this.dropdown.style.display === 'none' || !this.dropdown.style.display) {
+      this.showDropdown();
+    } else {
+      this.hideDropdown();
+    }
+  }
+
+  selectDeliveryMode(mode) {
+    this.deliveryMode = mode;
+    
+    // Actualizar UI
+    const options = document.querySelectorAll('.walmart-option');
+    options.forEach(opt => {
+      if (opt.dataset.option === mode) {
+        opt.classList.add('walmart-option-selected');
+      } else {
+        opt.classList.remove('walmart-option-selected');
+      }
+    });
+    
+    this.saveData();
+  }
+
+  openStoreModal() {
+    if (this.modal) {
+      this.modal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
+      this.hideDropdown();
     }
   }
 
-  closeModal() {
-    if (this.overlay) {
-      this.overlay.style.display = 'none';
+  closeStoreModal() {
+    if (this.modal) {
+      this.modal.style.display = 'none';
       document.body.style.overflow = '';
     }
   }
 
-  selectStore(storeId) {
-    const storeElement = document.querySelector(`[data-store-id="${storeId}"]`);
-    if (!storeElement) return;
+  renderStoresInModal() {
+    const container = document.getElementById('walmart-modal-stores');
+    if (!container || this.stores.length === 0) return;
 
-    const store = {
-      id: storeId,
-      name: storeElement.dataset.storeName,
-      zone: storeElement.dataset.storeZone,
-      address: storeElement.dataset.storeAddress,
-      latitude: storeElement.dataset.storeLat,
-      longitude: storeElement.dataset.storeLng
-    };
+    const html = this.stores.map(store => `
+      <div class="walmart-store-item" data-store-id="${store.id}" onclick="window.storeSelector.selectStoreFromModal('${store.id}')">
+        <div class="walmart-store-item-icon">
+          ${store.logo ? 
+            `<img src="${store.logo}" alt="${store.name}">` :
+            `<svg width="40" height="40" viewBox="0 0 24 24" fill="var(--walmart-blue)">
+              <path d="M12 2l9 4v6c0 5.55-3.84 10.74-9 12-5.16-1.26-9-6.45-9-12V6l9-4z"/>
+            </svg>`
+          }
+        </div>
+        <div class="walmart-store-item-info">
+          <h3 class="walmart-store-item-name">${store.name}</h3>
+          <p class="walmart-store-item-address">${store.address}</p>
+          ${store.zone ? `<p class="walmart-store-item-zone">Zona ${this.capitalizeZone(store.zone)}</p>` : ''}
+        </div>
+      </div>
+    `).join('');
 
-    this.selectedStore = store;
-    this.saveStore(store);
-    this.updateHeaderDisplay();
-    this.closeModal();
-
-    // Disparar evento personalizado para que otras partes de la app lo sepan
-    window.dispatchEvent(new CustomEvent('storeSelected', { 
-      detail: store 
-    }));
+    container.innerHTML = html;
   }
 
-  saveStore(store) {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(store));
-    } catch (e) {
-      console.error('Error guardando tienda en localStorage:', e);
-    }
-  }
+  selectStoreFromModal(storeId) {
+    const store = this.stores.find(s => s.id === storeId);
+    if (!store) return;
 
-  getSavedStore() {
-    try {
-      const saved = localStorage.getItem(this.STORAGE_KEY);
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      console.error('Error leyendo tienda de localStorage:', e);
-      return null;
-    }
-  }
-
-  updateHeaderDisplay() {
-    const headerStoreBtn = document.getElementById('change-store-btn');
-    if (!headerStoreBtn || !this.selectedStore) return;
-
-    const storeNameEl = headerStoreBtn.querySelector('.selected-store-name');
-    const storeAddressEl = headerStoreBtn.querySelector('.selected-store-address');
-
-    if (storeNameEl) {
-      storeNameEl.textContent = this.selectedStore.name;
-    }
-    if (storeAddressEl) {
-      storeAddressEl.textContent = this.selectedStore.address;
-    }
-  }
-
-  filterStores(searchTerm) {
-    const term = searchTerm.toLowerCase().trim();
-    const storeItems = document.querySelectorAll('.store-item');
-    let visibleCount = 0;
-
-    storeItems.forEach(item => {
-      const name = item.dataset.storeName.toLowerCase();
-      const address = item.dataset.storeAddress.toLowerCase();
-      const zone = item.dataset.storeZone.toLowerCase();
-
-      if (name.includes(term) || address.includes(term) || zone.includes(term)) {
-        item.style.display = '';
-        visibleCount++;
+    // Marcar como seleccionada en la UI
+    const items = document.querySelectorAll('.walmart-store-item');
+    items.forEach(item => {
+      if (item.dataset.storeId === storeId) {
+        item.classList.add('selected');
       } else {
-        item.style.display = 'none';
+        item.classList.remove('selected');
       }
     });
 
-    const noResults = document.getElementById('no-results');
-    if (noResults) {
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    // Habilitar botón de guardar
+    const btnSave = document.getElementById('walmart-save-store');
+    if (btnSave) {
+      btnSave.disabled = false;
+      btnSave.dataset.storeId = storeId;
+    }
+  }
+
+  saveSelectedStore() {
+    const btnSave = document.getElementById('walmart-save-store');
+    const storeId = btnSave?.dataset.storeId;
+    
+    if (!storeId) return;
+
+    const store = this.stores.find(s => s.id === storeId);
+    if (!store) return;
+
+    this.selectedStore = store;
+    this.saveData();
+    this.updateHeaderButton();
+    this.showSuggestedStore(store);
+    this.closeStoreModal();
+
+    // Disparar evento
+    window.dispatchEvent(new CustomEvent('storeSelected', { detail: store }));
+  }
+
+  updateHeaderButton() {
+    const textEl = document.getElementById('walmart-header-store-text');
+    if (!textEl) return;
+
+    if (this.selectedStore) {
+      textEl.textContent = `${this.selectedStore.name} • ${this.selectedStore.zone || ''}`;
+    } else {
+      textEl.textContent = 'Selecciona una tienda';
+    }
+  }
+
+  showSuggestedStore(store) {
+    const container = document.getElementById('walmart-suggested-store');
+    const nameEl = document.getElementById('walmart-store-name');
+    const addressEl = document.getElementById('walmart-store-address');
+
+    if (container && nameEl && addressEl) {
+      nameEl.textContent = store.name;
+      addressEl.textContent = store.address;
+      container.style.display = 'flex';
     }
   }
 
   requestGeolocation() {
     if (!navigator.geolocation) {
-      this.showGeolocationStatus('Tu navegador no soporta geolocalización', 'error');
+      alert('Tu navegador no soporta geolocalización');
       return;
     }
 
-    this.showGeolocationStatus('Obteniendo tu ubicación...', 'loading');
-    this.btnUseLocation.disabled = true;
+    const btn = document.getElementById('walmart-use-location');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Obteniendo ubicación...';
+    }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-        this.findNearestStore(latitude, longitude);
+        this.userLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        
+        const nearest = this.findNearestStore(this.userLocation);
+        if (nearest) {
+          this.showSuggestedStore(nearest.store);
+        }
+
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            Usar mi ubicación actual
+          `;
+        }
       },
       (error) => {
-        let message = 'No pudimos obtener tu ubicación';
+        console.error('Error de geolocalización:', error);
+        alert('No pudimos obtener tu ubicación');
         
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            message = 'Permiso de ubicación denegado. Por favor, habilítalo en tu navegador.';
-            break;
-          case error.POSITION_UNAVAILABLE:
-            message = 'Ubicación no disponible. Intenta más tarde.';
-            break;
-          case error.TIMEOUT:
-            message = 'Tiempo de espera agotado. Intenta nuevamente.';
-            break;
+        if (btn) {
+          btn.disabled = false;
         }
-        
-        this.showGeolocationStatus(message, 'error');
-        this.btnUseLocation.disabled = false;
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000 // 5 minutos
       }
     );
   }
 
-  findNearestStore(userLat, userLng) {
-    let nearestStore = null;
+  requestGeolocationModal() {
+    if (!navigator.geolocation) {
+      this.showGeoStatus('Tu navegador no soporta geolocalización', 'error');
+      return;
+    }
+
+    this.showGeoStatus('Obteniendo tu ubicación...', 'loading');
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.userLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        
+        const nearest = this.findNearestStore(this.userLocation);
+        if (nearest) {
+          this.showGeoStatus(`Tienda más cercana: ${nearest.store.name} (${nearest.distance.toFixed(1)} km)`, 'success');
+          this.sortStoresByDistance();
+        } else {
+          this.showGeoStatus('No encontramos tiendas cercanas', 'error');
+        }
+      },
+      (error) => {
+        console.error('Error de geolocalización:', error);
+        this.showGeoStatus('No pudimos obtener tu ubicación', 'error');
+      }
+    );
+  }
+
+  showGeoStatus(message, type) {
+    const status = document.getElementById('walmart-geo-status');
+    if (!status) return;
+
+    status.textContent = message;
+    status.className = `walmart-geolocation-status ${type}`;
+    status.style.display = 'block';
+
+    if (type === 'success' || type === 'error') {
+      setTimeout(() => {
+        status.style.display = 'none';
+      }, 5000);
+    }
+  }
+
+  findNearestStore(location) {
+    if (!location || this.stores.length === 0) return null;
+
+    let nearest = null;
     let minDistance = Infinity;
 
     this.stores.forEach(store => {
-      if (!store.latitude || !store.longitude) return;
-
-      const storeLat = parseFloat(store.latitude);
-      const storeLng = parseFloat(store.longitude);
-
-      if (isNaN(storeLat) || isNaN(storeLng)) return;
-
-      const distance = this.calculateDistance(userLat, userLng, storeLat, storeLng);
+      const distance = this.calculateDistance(
+        location.latitude,
+        location.longitude,
+        store.latitude,
+        store.longitude
+      );
 
       if (distance < minDistance) {
         minDistance = distance;
-        nearestStore = store;
+        nearest = store;
       }
     });
 
-    if (nearestStore) {
-      this.showGeolocationStatus(
-        `¡Encontramos ${nearestStore.name} cerca de ti! (${minDistance.toFixed(1)} km)`,
-        'success'
-      );
-      
-      // Resaltar la tienda más cercana
-      this.highlightStore(nearestStore.id);
-      
-      // Auto-seleccionar si está muy cerca (< 2km)
-      if (minDistance < 2) {
-        setTimeout(() => {
-          this.selectStore(nearestStore.id);
-        }, 2000);
-      }
-    } else {
-      this.showGeolocationStatus('No encontramos tiendas cercanas', 'error');
-    }
-
-    this.btnUseLocation.disabled = false;
+    return nearest ? { store: nearest, distance: minDistance } : null;
   }
 
-  highlightStore(storeId) {
-    // Quitar resaltado previo
-    document.querySelectorAll('.store-item').forEach(item => {
-      item.classList.remove('nearest-store');
-    });
+  sortStoresByDistance() {
+    if (!this.userLocation) return;
 
-    // Resaltar tienda más cercana
-    const storeElement = document.querySelector(`[data-store-id="${storeId}"]`);
-    if (storeElement) {
-      storeElement.classList.add('nearest-store');
-      storeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    const storesWithDistance = this.stores.map(store => ({
+      ...store,
+      distance: this.calculateDistance(
+        this.userLocation.latitude,
+        this.userLocation.longitude,
+        store.latitude,
+        store.longitude
+      )
+    })).sort((a, b) => a.distance - b.distance);
+
+    this.stores = storesWithDistance;
+    this.renderStoresInModal();
   }
 
   calculateDistance(lat1, lon1, lat2, lon2) {
-    // Fórmula de Haversine para calcular distancia entre dos puntos
     const R = 6371; // Radio de la Tierra en km
     const dLat = this.toRad(lat2 - lat1);
     const dLon = this.toRad(lon2 - lon1);
@@ -377,26 +471,56 @@ class StoreSelector {
     return degrees * (Math.PI / 180);
   }
 
-  showGeolocationStatus(message, type) {
-    if (!this.geolocationStatus) return;
+  filterStores(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    const items = document.querySelectorAll('.walmart-store-item');
+    let visibleCount = 0;
 
-    this.geolocationStatus.textContent = message;
-    this.geolocationStatus.className = `geolocation-status geolocation-status--${type}`;
-    this.geolocationStatus.style.display = 'block';
+    items.forEach(item => {
+      const name = item.querySelector('.walmart-store-item-name')?.textContent.toLowerCase() || '';
+      const address = item.querySelector('.walmart-store-item-address')?.textContent.toLowerCase() || '';
+      
+      if (name.includes(term) || address.includes(term) || !term) {
+        item.style.display = '';
+        visibleCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
 
-    if (type === 'success' || type === 'error') {
-      setTimeout(() => {
-        this.geolocationStatus.style.display = 'none';
-      }, 5000);
+    // Mostrar mensaje si no hay resultados
+    const container = document.getElementById('walmart-modal-stores');
+    const noResults = container.querySelector('.walmart-no-results');
+    
+    if (visibleCount === 0 && term) {
+      if (!noResults) {
+        const div = document.createElement('div');
+        div.className = 'walmart-no-results';
+        div.innerHTML = '<p>No se encontraron tiendas con ese criterio</p>';
+        container.appendChild(div);
+      }
+    } else if (noResults) {
+      noResults.remove();
     }
+  }
+
+  capitalizeZone(zone) {
+    const zones = {
+      'norte': 'Norte',
+      'sur': 'Sur',
+      'este': 'Oriente',
+      'oeste': 'Occidente',
+      'centro': 'Centro'
+    };
+    return zones[zone] || zone;
   }
 }
 
 // Inicializar cuando el DOM esté listo
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    window.storeSelector = new StoreSelector();
+    window.storeSelector = new WalmartStoreSelector();
   });
 } else {
-  window.storeSelector = new StoreSelector();
+  window.storeSelector = new WalmartStoreSelector();
 }
