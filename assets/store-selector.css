@@ -671,6 +671,49 @@
   cursor: not-allowed;
 }
 
+/* ========== AJUSTES DEL HEADER ========== */
+/* Ajustar el buscador para que no se monte sobre el botón */
+@media (min-width: 1025px) {
+  /* Para header tipo 2 y 3 con buscador centrado */
+  .header__store-selector ~ .header__search-form.position-lg-absolute {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100% - 600px);
+    margin-left: 140px;
+  }
+  
+  /* Para header tipo 1 y 4 con buscador en flex */
+  .header__store-selector ~ .d-flex .header__search-form {
+    max-width: 500px;
+    flex: 1;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  /* En pantallas medianas, reducir el ancho del buscador */
+  .header__store-selector ~ .header__search-form.position-lg-absolute {
+    max-width: calc(100% - 700px);
+    margin-left: 100px;
+  }
+  
+  .walmart-store-btn {
+    max-width: 220px;
+  }
+  
+  .walmart-store-btn-label,
+  .walmart-store-btn-text {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 1280px) {
+  /* En pantallas grandes, dar más espacio */
+  .header__store-selector ~ .header__search-form.position-lg-absolute {
+    max-width: 600px;
+    margin-left: 160px;
+  }
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .walmart-store-btn {
