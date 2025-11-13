@@ -1393,6 +1393,10 @@
                         <div class="header__logo-wrapper">
                             {{ logo_html }}
                         </div>
+                        <!-- Store Selector Walmart -->
+                        <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
+                            {% include 'store-selector-button' %}
+                        </div>
                         <div class="d-flex ml-auto">
                             <div class="header__search-form search-ajax d-none d-lg-block" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
@@ -1579,6 +1583,10 @@
                         <div class="container d-flex align-items-center position-lg-relative">
                             {{ btn_menu_html }}
                             {{ logo_html }}
+                            <!-- Store Selector Walmart -->
+                            <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
+                                {% include 'store-selector-button' %}
+                            </div>
                             <div class="header__search-form search-ajax d-none d-lg-block position-lg-absolute" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
@@ -1734,6 +1742,10 @@
                         <div class="container d-flex align-items-center position-lg-relative">
                             {{ btn_menu_html }}
                             {{ logo_html }}
+                            <!-- Store Selector Walmart -->
+                            <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
+                                {% include 'store-selector-button' %}
+                            </div>
                             <div class="header__search-form search-ajax d-lg-block position-lg-absolute" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
@@ -1899,6 +1911,10 @@
                         <div class="container d-flex align-items-center position-lg-relative">
                             {{ btn_menu_html }}
                             {{ logo_html }}
+                            <!-- Store Selector Walmart -->
+                            <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
+                                {% include 'store-selector-button' %}
+                            </div>
                             <div class="d-flex ml-auto">
                                 <div class="header__search-form search-ajax d-none d-lg-block" data-js-max-products="5">
                                     {%- if settings.search_predictive_enabled -%}
