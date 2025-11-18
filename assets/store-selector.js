@@ -7,6 +7,8 @@ class WalmartStoreSelector {
   constructor() {
     this.STORAGE_KEY = 'walmart_selected_store';
     this.DELIVERY_MODE_KEY = 'walmart_delivery_mode';
+    this.DROPDOWN_CLOSED_KEY = 'walmart_dropdown_closed';
+    this.COOKIE_EXPIRY_DAYS = 30; // Cookie expira en 30 días
     
     // Elementos del DOM
     this.headerBtn = document.getElementById('walmart-store-trigger');
@@ -36,8 +38,9 @@ class WalmartStoreSelector {
     // Eventos
     this.attachEventListeners();
     
-    // Si no hay tienda seleccionada, mostrar dropdown después de 1.5 seg
-    if (!this.selectedStore) {
+    // Si no hay tienda seleccionada Y el usuario no ha cerrado el dropdown manualmente, mostrar después de 1.5 seg
+    const dropdownClosedByUser = this.getCookie(this.DROPDOWN_CLOSED_KEY);
+    if (!this.selectedStore && !dropdownClosedByUser) {
       setTimeout(() => {
         this.showDropdown();
       }, 1500);
@@ -121,14 +124,14 @@ class WalmartStoreSelector {
     // Cerrar dropdown
     const dropdownClose = document.querySelector('.walmart-dropdown-close');
     if (dropdownClose) {
-      dropdownClose.addEventListener('click', () => this.hideDropdown());
+      dropdownClose.addEventListener('click', () => this.hideDropdown(true));
     }
 
     // Click fuera del dropdown
     document.addEventListener('click', (e) => {
       if (this.dropdown && this.dropdown.style.display !== 'none') {
         if (!this.dropdown.contains(e.target) && !this.headerBtn.contains(e.target)) {
-          this.hideDropdown();
+          this.hideDropdown(true);
         }
       }
     });
@@ -181,6 +184,9 @@ class WalmartStoreSelector {
     if (this.dropdown) {
       this.dropdown.style.display = 'block';
       
+      // Limpiar cookie de cierre cuando el usuario abre manualmente
+      this.deleteCookie(this.DROPDOWN_CLOSED_KEY);
+      
       // Si hay tienda seleccionada, mostrarla
       if (this.selectedStore) {
         this.showSuggestedStore(this.selectedStore);
@@ -188,9 +194,14 @@ class WalmartStoreSelector {
     }
   }
 
-  hideDropdown() {
+  hideDropdown(closedByUser = false) {
     if (this.dropdown) {
       this.dropdown.style.display = 'none';
+      
+      // Si fue cerrado por el usuario (click en X o fuera del dropdown), guardar en cookie
+      if (closedByUser) {
+        this.setCookie(this.DROPDOWN_CLOSED_KEY, 'true', this.COOKIE_EXPIRY_DAYS);
+      }
     }
   }
 
@@ -513,6 +524,33 @@ class WalmartStoreSelector {
       'centro': 'Centro'
     };
     return zones[zone] || zone;
+  }
+
+  // ========== FUNCIONES DE COOKIES ==========
+  
+  setCookie(name, value, days) {
+    let expires = '';
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = '; expires=' + date.toUTCString();
+    }
+    document.cookie = name + '=' + (value || '') + expires + '; path=/';
+  }
+
+  getCookie(name) {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  deleteCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999; path=/';
   }
 }
 
