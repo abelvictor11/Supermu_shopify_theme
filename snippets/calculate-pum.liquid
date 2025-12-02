@@ -1,8 +1,15 @@
 {%- comment -%}
 Calcula el PUM (Precio por Unidad de Medida) considerando descuentos activos.
+Soporta metafields a nivel de variante (prioridad) o producto (fallback).
+
 Params:
   - product: required - El producto
-  - mode: 'html' (default) renderiza el HTML completo, 'price_only' solo retorna el precio a usar
+  - mode: 'html' (default) renderiza el HTML completo, 'price_only' solo retorna el precio a usar, 'pum_only' solo el PUM
+
+Metafields soportados (variante o producto):
+  - custom.factor_unidad_de_medida (texto, ej: "1,0" o "0,45359")
+  - custom.unidad_de_medida_pum (texto, ej: "kg", "lb", "unidad")
+
 Usage:
   {% render 'calculate-pum', product: product %}
 {%- endcomment -%}
@@ -46,10 +53,23 @@ Usage:
     {%- assign _final_price = _original_price | minus: _discount_amount -%}
   {%- endif -%}
 
-  {%- comment -%} 4. Obtener factor y unidad de medida {%- endcomment -%}
-  {%- assign factor_text = _product.metafields.custom.factor_unidad_de_medida.value | default: "1,0" -%}
+  {%- comment -%} 4. Obtener factor y unidad de medida (priorizar variante, luego producto) {%- endcomment -%}
+  {%- assign variant_factor = current_variant.metafields.custom.factor_unidad_de_medida.value -%}
+  {%- assign variant_unidad = current_variant.metafields.custom.unidad_de_medida_pum -%}
+  
+  {%- if variant_factor != blank -%}
+    {%- assign factor_text = variant_factor | default: "1,0" -%}
+  {%- else -%}
+    {%- assign factor_text = _product.metafields.custom.factor_unidad_de_medida.value | default: "1,0" -%}
+  {%- endif -%}
+  
   {%- assign factor = factor_text | replace: ",", "." | plus: 0 -%}
-  {%- assign unidad_medida = _product.metafields.custom.unidad_de_medida_pum -%}
+  
+  {%- if variant_unidad != blank -%}
+    {%- assign unidad_medida = variant_unidad -%}
+  {%- else -%}
+    {%- assign unidad_medida = _product.metafields.custom.unidad_de_medida_pum -%}
+  {%- endif -%}
 
   {%- comment -%} 5. Convertir precio a decimal y calcular PUM {%- endcomment -%}
   {%- assign precio_decimal = _final_price | divided_by: 100.0 -%}

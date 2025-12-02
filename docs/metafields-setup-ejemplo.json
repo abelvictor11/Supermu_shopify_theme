@@ -1,0 +1,184 @@
+{
+  "metafield_definitions": {
+    "title": "Configuración de Metafields para Venta por Unidades",
+    "description": "Define estos metafields en Shopify Admin → Settings → Metafields → Variants",
+    "definitions": [
+      {
+        "namespace": "custom",
+        "key": "factor_unidad_de_medida",
+        "name": "Factor Unidad de Medida",
+        "description": "Factor de conversión para calcular PUM. Usar coma como decimal (ej: 1,0 o 0,45359)",
+        "type": "single_line_text_field",
+        "validations": {
+          "format": "Usar coma como separador decimal",
+          "examples": ["1,0", "0,45359", "0,001"]
+        }
+      },
+      {
+        "namespace": "custom",
+        "key": "unidad_de_medida_pum",
+        "name": "Unidad de Medida PUM",
+        "description": "Unidad para mostrar el PUM (kg, lb, g, unidad, etc.)",
+        "type": "single_line_text_field",
+        "validations": {
+          "format": "Texto corto sin espacios",
+          "examples": ["kg", "lb", "g", "oz", "unidad"]
+        }
+      }
+    ]
+  },
+  "ejemplo_producto_tomate": {
+    "nombre_producto": "Tomate Rojo",
+    "sku_base": "TOM-001",
+    "precio_base_kilo": 10.00,
+    "variantes": [
+      {
+        "nombre": "1 Kilo",
+        "sku": "TOM-001-KG",
+        "precio": 10.00,
+        "peso": 1000,
+        "unidad_peso": "g",
+        "metafields": {
+          "custom.factor_unidad_de_medida": "1,0",
+          "custom.unidad_de_medida_pum": "kg"
+        },
+        "resultado_esperado": {
+          "sin_descuento": "$10.00/kg",
+          "con_25_descuento": "$7.50/kg"
+        }
+      },
+      {
+        "nombre": "1 Libra",
+        "sku": "TOM-001-LB",
+        "precio": 4.54,
+        "peso": 453.59,
+        "unidad_peso": "g",
+        "calculo_precio": "10.00 × 0.45359 = 4.536 ≈ 4.54",
+        "metafields": {
+          "custom.factor_unidad_de_medida": "0,45359",
+          "custom.unidad_de_medida_pum": "lb"
+        },
+        "resultado_esperado": {
+          "sin_descuento": "$10.01/lb",
+          "con_25_descuento": "$7.51/lb"
+        }
+      },
+      {
+        "nombre": "1 Unidad",
+        "sku": "TOM-001-UN",
+        "precio": 1.50,
+        "peso": 150,
+        "unidad_peso": "g",
+        "nota": "Precio fijo basado en peso promedio de un tomate (~150g)",
+        "metafields": {
+          "custom.factor_unidad_de_medida": "1,0",
+          "custom.unidad_de_medida_pum": "unidad"
+        },
+        "resultado_esperado": {
+          "sin_descuento": "$1.50/unidad",
+          "con_25_descuento": "$1.13/unidad"
+        }
+      }
+    ]
+  },
+  "ejemplo_producto_cebolla": {
+    "nombre_producto": "Cebolla Blanca",
+    "sku_base": "CEBO-001",
+    "precio_base_kilo": 8.00,
+    "variantes": [
+      {
+        "nombre": "1 Kilo",
+        "sku": "CEBO-001-KG",
+        "precio": 8.00,
+        "metafields": {
+          "custom.factor_unidad_de_medida": "1,0",
+          "custom.unidad_de_medida_pum": "kg"
+        }
+      },
+      {
+        "nombre": "1 Libra",
+        "sku": "CEBO-001-LB",
+        "precio": 3.63,
+        "calculo_precio": "8.00 × 0.45359 = 3.629 ≈ 3.63",
+        "metafields": {
+          "custom.factor_unidad_de_medida": "0,45359",
+          "custom.unidad_de_medida_pum": "lb"
+        }
+      },
+      {
+        "nombre": "1 Unidad",
+        "sku": "CEBO-001-UN",
+        "precio": 0.80,
+        "nota": "Precio fijo basado en peso promedio de una cebolla (~100g)",
+        "metafields": {
+          "custom.factor_unidad_de_medida": "1,0",
+          "custom.unidad_de_medida_pum": "unidad"
+        }
+      }
+    ]
+  },
+  "tabla_conversion": {
+    "descripcion": "Factores de conversión comunes para metafield factor_unidad_de_medida",
+    "base": "1 kilogramo = 1,0",
+    "conversiones": {
+      "libra": "0,45359",
+      "onza": "0,02835",
+      "gramo": "0,001",
+      "miligramo": "0,000001",
+      "tonelada": "1000,0"
+    },
+    "nota": "IMPORTANTE: Usar COMA como separador decimal, no punto"
+  },
+  "instrucciones_shopify_admin": {
+    "paso_1": {
+      "titulo": "Crear definiciones de metafields",
+      "navegacion": "Shopify Admin → Settings → Metafields → Variants",
+      "accion": "Clic en 'Add definition'",
+      "campos": [
+        {
+          "campo": "Name",
+          "valor": "Factor Unidad de Medida"
+        },
+        {
+          "campo": "Namespace and key",
+          "valor": "custom.factor_unidad_de_medida"
+        },
+        {
+          "campo": "Type",
+          "valor": "Single line text"
+        },
+        {
+          "campo": "Description",
+          "valor": "Factor para calcular PUM. Usar coma como decimal."
+        }
+      ]
+    },
+    "paso_2": {
+      "titulo": "Repetir para segunda definición",
+      "campos": [
+        {
+          "campo": "Name",
+          "valor": "Unidad de Medida PUM"
+        },
+        {
+          "campo": "Namespace and key",
+          "valor": "custom.unidad_de_medida_pum"
+        },
+        {
+          "campo": "Type",
+          "valor": "Single line text"
+        }
+      ]
+    },
+    "paso_3": {
+      "titulo": "Configurar metafields en variantes",
+      "navegacion": "Products → [Tu Producto] → Selecciona una variante",
+      "accion": "Scroll hasta 'Metafields' y configura los valores",
+      "ejemplo": {
+        "variante": "1 Kilo",
+        "Factor Unidad de Medida": "1,0",
+        "Unidad de Medida PUM": "kg"
+      }
+    }
+  }
+}
