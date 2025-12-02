@@ -1,0 +1,74 @@
+{%- comment -%}
+DIAGNÓSTICO DEL SELECTOR DE UNIDADES
+Agregar temporalmente a product-collection.liquid o PDP para debugear
+{%- endcomment -%}
+
+<div style="background: #fff3cd; border: 2px solid #856404; padding: 15px; margin: 10px 0; font-size: 12px; font-family: monospace;">
+  <strong style="color: #856404;">🔍 DEBUG Unit Selector - Producto: {{ product.title }}</strong><br><br>
+  
+  <strong>1. Tiene opción "Presentación"?</strong><br>
+  {%- assign has_presentation = false -%}
+  {%- for option in product.options_with_values -%}
+    {%- assign option_name_lower = option.name | downcase -%}
+    {%- if option_name_lower == 'presentación' or option_name_lower == 'presentacion' -%}
+      {%- assign has_presentation = true -%}
+      ✅ SÍ - Opción encontrada: "{{ option.name }}"<br>
+      Valores: {{ option.values | join: ', ' }}<br>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- unless has_presentation -%}
+    ❌ NO - No tiene opción "Presentación"<br>
+  {%- endunless -%}
+  <br>
+  
+  <strong>2. Tiene metafield price_per_kilo?</strong><br>
+  {%- if product.metafields.custom.price_per_kilo != blank -%}
+    ✅ SÍ - Valor: {{ product.metafields.custom.price_per_kilo }}<br>
+  {%- else -%}
+    ❌ NO - Metafield vacío o no existe<br>
+  {%- endif -%}
+  <br>
+  
+  <strong>3. Tiene metafield unit_weight?</strong><br>
+  {%- if product.metafields.custom.unit_weight != blank -%}
+    ✅ SÍ - Valor: {{ product.metafields.custom.unit_weight }}<br>
+  {%- else -%}
+    ❌ NO - Metafield vacío (se usará default 0.15)<br>
+  {%- endif -%}
+  <br>
+  
+  <strong>4. Variants del producto:</strong><br>
+  Total: {{ product.variants.size }}<br>
+  {%- for v in product.variants limit: 5 -%}
+    - ID: {{ v.id }} | Título: {{ v.title }} | Precio: {{ v.price | money }} | Disponible: {{ v.available }}<br>
+  {%- endfor -%}
+  <br>
+  
+  <strong>5. Variant actual (current_variant):</strong><br>
+  {%- assign current_variant = variant | default: product.selected_or_first_available_variant -%}
+  ID: {{ current_variant.id }}<br>
+  Título: {{ current_variant.title }}<br>
+  Precio: {{ current_variant.price | money }}<br>
+  <br>
+  
+  <strong>6. Opciones del producto:</strong><br>
+  {%- for option in product.options_with_values -%}
+    Opción {{ forloop.index }}: "{{ option.name }}" - Valores: {{ option.values | join: ', ' }}<br>
+  {%- endfor -%}
+  {%- if product.options_with_values.size == 0 -%}
+    ⚠️ No tiene opciones (solo Default Title)<br>
+  {%- endif -%}
+  <br>
+  
+  <strong>7. ¿Debería mostrar el selector?</strong><br>
+  {%- if has_presentation or product.metafields.custom.price_per_kilo != blank -%}
+    ✅ SÍ - Cumple requisitos<br>
+    {%- if has_presentation -%}
+      Modo: VARIANTS (precio correcto en carrito)<br>
+    {%- else -%}
+      Modo: FALLBACK (solo visual, precio no se refleja en carrito)<br>
+    {%- endif -%}
+  {%- else -%}
+    ❌ NO - No cumple ningún requisito<br>
+  {%- endif -%}
+</div>
