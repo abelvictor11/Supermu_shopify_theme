@@ -116,10 +116,12 @@
     
     console.log(`[Unit Selector] PUM: $${priceInPesos} / ${mult} = $${pricePerKg.toFixed(2)}/kg`);
     
-    // Buscar el span del precio dentro del PUM
-    const pumPriceSpan = pumElement.querySelector('span:last-child');
-    if (pumPriceSpan) {
-      pumPriceSpan.textContent = ` $${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} /kg`;
+    // El PUM tiene formato: <div class="icon-pum">...</div> $XX.XX /kg
+    // Necesitamos reemplazar el contenido después del ícono
+    const iconPum = pumElement.querySelector('.icon-pum');
+    if (iconPum && iconPum.nextSibling) {
+      // Reemplazar el nodo de texto después del ícono
+      iconPum.nextSibling.textContent = ` $${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} /kg`;
       console.log(`[Unit Selector] Updated PUM to $${pricePerKg.toFixed(0)}/kg`);
     }
   }

@@ -71,33 +71,39 @@ Usage:
   <style>
     .unit-selector {
       margin-bottom: 15px;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
     
     .unit-selector__label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 500;
       color: #333;
-      font-size: 14px;
+      font-size: 13px;
     }
     
     .unit-selector__options {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
+      width: 100%;
     }
     
     .unit-selector__option {
       background: white;
       border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 12px 8px;
+      border-radius: 6px;
+      padding: 8px 4px;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
+      min-width: 0;
+      overflow: hidden;
     }
     
     .unit-selector__option:hover {
@@ -112,13 +118,23 @@ Usage:
     }
     
     .unit-selector__option-name {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
     }
     
     .unit-selector__option-price {
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
     }
     
     @media (max-width: 640px) {
