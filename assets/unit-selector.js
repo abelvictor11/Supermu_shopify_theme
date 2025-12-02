@@ -115,7 +115,7 @@
     const originalUpdateCart = window.updateCart;
     const originalChangeCartQuantity = window.changeCartQuantity;
     
-    // Wrapper para updateCart
+    // Wrapper para updateCart (colecciones)
     if (typeof originalUpdateCart === 'function') {
       window.updateCart = async function(variantId, quantity, container) {
         const convertedQuantity = convertToKilos(variantId, quantity);
@@ -124,7 +124,7 @@
       };
     }
     
-    // Wrapper para changeCartQuantity
+    // Wrapper para changeCartQuantity (colecciones)
     if (typeof originalChangeCartQuantity === 'function') {
       window.changeCartQuantity = async function(variantId, quantity, container) {
         const convertedQuantity = convertToKilos(variantId, quantity);
@@ -132,6 +132,37 @@
         return originalChangeCartQuantity.call(this, variantId, convertedQuantity, container);
       };
     }
+    
+    // Interceptar form submit del PDP
+    document.addEventListener('submit', function(e) {
+      const form = e.target;
+      
+      // Solo interceptar forms de add-to-cart
+      if (form.getAttribute('data-type') !== 'add-to-cart-form') return;
+      
+      // Buscar selector de unidades en la página
+      const unitSelector = document.querySelector('.unit-selector');
+      if (!unitSelector) return;
+      
+      // Obtener multiplicador
+      const multiplierInput = unitSelector.querySelector('.unit-selector__selected-multiplier');
+      const multiplier = multiplierInput ? parseFloat(multiplierInput.value) : 1;
+      
+      // Si es kilo (multiplicador = 1), no hacer nada
+      if (multiplier === 1) return;
+      
+      // Obtener input de cantidad
+      const quantityInput = form.querySelector('input[name="quantity"]');
+      if (!quantityInput) return;
+      
+      const originalQuantity = parseInt(quantityInput.value) || 1;
+      const convertedQuantity = originalQuantity * multiplier;
+      
+      console.log(`[Unit Selector] PDP Form - Converting ${originalQuantity} → ${convertedQuantity} kg`);
+      
+      // Modificar la cantidad en el form
+      quantityInput.value = convertedQuantity;
+    }, true); // useCapture = true para interceptar antes
   }
   
   /**
