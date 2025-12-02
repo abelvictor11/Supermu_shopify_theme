@@ -175,33 +175,86 @@
   }
   
   /**
-   * Obtener datos del selector activo
+   * Obtener datos del selector activo para un variant específico
    */
   function getActiveUnitData(variantId) {
-    // Buscar selector por variant ID o el primero disponible
     let selector = null;
+    const vid = String(variantId);
     
-    if (variantId) {
-      selector = document.querySelector(`[data-variant-id="${variantId}"] .unit-selector`);
+    console.log(`[Unit Selector v2] Looking for selector with variant: ${vid}`);
+    
+    // 1. Buscar selector por variant ID en el data attribute del selector mismo
+    if (vid) {
+      selector = document.querySelector(`.unit-selector[data-variant-id="${vid}"]`);
+      if (selector) console.log('[Unit Selector v2] Found by direct data-variant-id');
     }
     
+    // 2. Buscar en product-item que contenga el variant ID
+    if (!selector && vid) {
+      // Buscar el product-item que tiene este variant en su data-js-product-variants
+      const productItems = document.querySelectorAll('product-item.product-collection');
+      for (const item of productItems) {
+        const variantsData = item.getAttribute('data-js-product-variants');
+        if (variantsData && variantsData.includes(vid)) {
+          selector = item.querySelector('.unit-selector');
+          if (selector) {
+            console.log('[Unit Selector v2] Found in product-item by variants data');
+            break;
+          }
+        }
+      }
+    }
+    
+    // 3. Buscar en .acciones con data-variant-id y subir al contenedor
+    if (!selector && vid) {
+      const acciones = document.querySelector(`.acciones[data-variant-id="${vid}"]`);
+      if (acciones) {
+        const productCard = acciones.closest('product-item') || acciones.closest('.product-collection');
+        if (productCard) {
+          selector = productCard.querySelector('.unit-selector');
+          if (selector) console.log('[Unit Selector v2] Found via .acciones container');
+        }
+      }
+    }
+    
+    // 4. Buscar por data-product-id en el selector (usando el product ID del variant)
+    if (!selector && vid) {
+      // Buscar todos los selectores y ver si alguno tiene el variant correcto
+      const allSelectors = document.querySelectorAll('.unit-selector');
+      for (const sel of allSelectors) {
+        if (sel.dataset.variantId === vid) {
+          selector = sel;
+          console.log('[Unit Selector v2] Found by iterating all selectors');
+          break;
+        }
+      }
+    }
+    
+    // 5. Fallback: buscar el primero (para PDP donde solo hay uno)
     if (!selector) {
       selector = document.querySelector('.unit-selector');
+      if (selector) console.log('[Unit Selector v2] Using fallback (first selector)');
     }
     
     if (!selector) {
-      return { multiplier: 1, unitName: 'Kilo', price: 0 };
+      console.log('[Unit Selector v2] No selector found');
+      return { multiplier: 1, unitName: 'Kilo', price: 0, found: false };
     }
     
     const multiplierInput = selector.querySelector('.unit-selector__selected-multiplier');
     const unitInput = selector.querySelector('.unit-selector__selected-unit');
     const priceInput = selector.querySelector('.unit-selector__selected-price');
     
-    return {
+    const data = {
       multiplier: multiplierInput ? parseFloat(multiplierInput.value) : 1,
       unitName: unitInput ? unitInput.value : 'Kilo',
-      price: priceInput ? parseFloat(priceInput.value) : 0
+      price: priceInput ? parseFloat(priceInput.value) : 0,
+      found: true
     };
+    
+    console.log(`[Unit Selector v2] getActiveUnitData result:`, data);
+    
+    return data;
   }
   
   /**
@@ -260,7 +313,6 @@
     window.fetch = async function(url, options) {
       // Solo interceptar llamadas a /cart/add
       if (typeof url === 'string' && url.includes('/cart/add')) {
-        const unitData = getActiveUnitData();
         
         if (options && options.body) {
           try {
@@ -273,11 +325,18 @@
             }
             
             if (body) {
-              // Modificar cantidad
-              if (unitData.multiplier !== 1) {
-                if (body.items && Array.isArray(body.items)) {
-                  body.items.forEach(item => {
-                    if (item.quantity) {
+              // Procesar items array (formato usado por custom.js)
+              if (body.items && Array.isArray(body.items)) {
+                body.items.forEach(item => {
+                  // Obtener datos del selector para este variant específico
+                  const variantId = item.id;
+                  const unitData = getActiveUnitData(variantId);
+                  
+                  console.log(`[Unit Selector v2] Fetch intercepted for variant ${variantId}:`, unitData);
+                  
+                  if (unitData.found) {
+                    // Modificar cantidad
+                    if (unitData.multiplier !== 1 && item.quantity) {
                       const originalQty = parseFloat(item.quantity);
                       item.quantity = originalQty * unitData.multiplier;
                       console.log(`[Unit Selector v2] Fetch: ${originalQty} → ${item.quantity} kg`);
@@ -285,22 +344,22 @@
                     // Agregar propiedad
                     item.properties = item.properties || {};
                     item.properties['Presentación'] = unitData.unitName;
-                  });
-                } else if (body.quantity) {
-                  const originalQty = parseFloat(body.quantity);
-                  body.quantity = originalQty * unitData.multiplier;
-                  body.properties = body.properties || {};
-                  body.properties['Presentación'] = unitData.unitName;
-                  console.log(`[Unit Selector v2] Fetch: ${originalQty} → ${body.quantity} kg`);
-                }
-              } else {
-                // Aún agregar propiedad aunque sea kilo
-                if (body.items && Array.isArray(body.items)) {
-                  body.items.forEach(item => {
-                    item.properties = item.properties || {};
-                    item.properties['Presentación'] = unitData.unitName;
-                  });
-                } else {
+                  }
+                });
+              } 
+              // Procesar formato simple (id, quantity)
+              else if (body.id) {
+                const variantId = body.id;
+                const unitData = getActiveUnitData(variantId);
+                
+                console.log(`[Unit Selector v2] Fetch intercepted for variant ${variantId}:`, unitData);
+                
+                if (unitData.found) {
+                  if (unitData.multiplier !== 1 && body.quantity) {
+                    const originalQty = parseFloat(body.quantity);
+                    body.quantity = originalQty * unitData.multiplier;
+                    console.log(`[Unit Selector v2] Fetch: ${originalQty} → ${body.quantity} kg`);
+                  }
                   body.properties = body.properties || {};
                   body.properties['Presentación'] = unitData.unitName;
                 }
@@ -308,10 +367,11 @@
               
               if (isJSON) {
                 options.body = JSON.stringify(body);
+                console.log('[Unit Selector v2] Modified fetch body:', body);
               }
             }
           } catch (err) {
-            // No es JSON, ignorar
+            console.warn('[Unit Selector v2] Error parsing fetch body:', err);
           }
         }
       }
