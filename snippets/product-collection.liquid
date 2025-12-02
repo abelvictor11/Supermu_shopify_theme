@@ -245,7 +245,7 @@
                     {%- endif -%}
 
 {%- comment -%} Selector de unidades (kilo/libra/unidad) {%- endcomment -%}
-{% render 'unit-selector', product: product, variant: current_variant %}
+{% render 'unit-selector', product: product, variant: current_variant, context: 'collection' %}
 
                   
 {% render 'calculate-pum', product: product %}

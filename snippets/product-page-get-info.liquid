@@ -284,7 +284,7 @@
             
             {%- comment -%} Selector de unidades (kilo/libra/unidad) {%- endcomment -%}
             <div class="product-page-info__unit-selector mb-15">
-                {% render 'unit-selector', product: product, variant: current_variant %}
+                {% render 'unit-selector', product: product, variant: current_variant, context: 'pdp' %}
             </div>
             
             {%- when 'popups' -%}
