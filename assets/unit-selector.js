@@ -98,10 +98,10 @@
    * Actualizar PUM (Precio por Unidad de Medida)
    */
   function updatePUM(price, multiplier) {
-    // Buscar el PUM en el PDP o colección
-    const pumElement = document.querySelector('.custom-pum');
-    if (!pumElement) {
-      console.log('[Unit Selector] No PUM element found');
+    // Buscar todos los PUM en la página (puede haber varios)
+    const pumElements = document.querySelectorAll('.custom-pum');
+    if (pumElements.length === 0) {
+      console.log('[Unit Selector] No PUM elements found');
       return;
     }
     
@@ -110,20 +110,21 @@
     // Precio en centavos, necesitamos en pesos
     const priceInPesos = price / 100;
     
-    // PUM = precio actual / multiplicador
-    // Esto nos da el precio por kilo
+    // PUM siempre debe mostrar el precio por kilo (base)
+    // Cuando seleccionamos libra, el precio mostrado es menor
+    // pero el PUM debe seguir mostrando el precio por kilo
     const pricePerKg = priceInPesos / mult;
     
     console.log(`[Unit Selector] PUM: $${priceInPesos} / ${mult} = $${pricePerKg.toFixed(2)}/kg`);
     
-    // El PUM tiene formato: <div class="icon-pum">...</div> $XX.XX /kg
-    // Necesitamos reemplazar el contenido después del ícono
-    const iconPum = pumElement.querySelector('.icon-pum');
-    if (iconPum && iconPum.nextSibling) {
-      // Reemplazar el nodo de texto después del ícono
-      iconPum.nextSibling.textContent = ` $${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} /kg`;
-      console.log(`[Unit Selector] Updated PUM to $${pricePerKg.toFixed(0)}/kg`);
-    }
+    pumElements.forEach(pumElement => {
+      // Buscar el span con clase pum-price
+      const pumPriceSpan = pumElement.querySelector('.pum-price');
+      if (pumPriceSpan) {
+        pumPriceSpan.textContent = ` $${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} /kg`;
+        console.log(`[Unit Selector] Updated PUM to $${pricePerKg.toFixed(0)}/kg`);
+      }
+    });
   }
   
   /**
@@ -145,7 +146,7 @@
     if (typeof originalUpdateCart === 'function') {
       window.updateCart = async function(variantId, quantity, container) {
         const convertedQuantity = convertToKilos(variantId, quantity);
-        console.log(`[Unit Selector] Converting ${quantity} → ${convertedQuantity} kg`);
+        console.log(`[Unit Selector] updateCart - Converting ${quantity} → ${convertedQuantity} kg`);
         return originalUpdateCart.call(this, variantId, convertedQuantity, container);
       };
     }
@@ -154,7 +155,7 @@
     if (typeof originalChangeCartQuantity === 'function') {
       window.changeCartQuantity = async function(variantId, quantity, container) {
         const convertedQuantity = convertToKilos(variantId, quantity);
-        console.log(`[Unit Selector] Converting ${quantity} → ${convertedQuantity} kg`);
+        console.log(`[Unit Selector] changeCartQuantity - Converting ${quantity} → ${convertedQuantity} kg`);
         return originalChangeCartQuantity.call(this, variantId, convertedQuantity, container);
       };
     }
@@ -181,14 +182,115 @@
       const quantityInput = form.querySelector('input[name="quantity"]');
       if (!quantityInput) return;
       
-      const originalQuantity = parseInt(quantityInput.value) || 1;
+      const originalQuantity = parseFloat(quantityInput.value) || 1;
       const convertedQuantity = originalQuantity * multiplier;
       
-      console.log(`[Unit Selector] PDP Form - Converting ${originalQuantity} → ${convertedQuantity} kg`);
+      console.log(`[Unit Selector] Form submit - Converting ${originalQuantity} → ${convertedQuantity} kg`);
       
       // Modificar la cantidad en el form
       quantityInput.value = convertedQuantity;
     }, true); // useCapture = true para interceptar antes
+    
+    // Interceptar fetch API para /cart/add.js
+    const originalFetch = window.fetch;
+    window.fetch = async function(url, options) {
+      // Solo interceptar llamadas a /cart/add.js
+      if (typeof url === 'string' && url.includes('/cart/add')) {
+        const unitSelector = document.querySelector('.unit-selector');
+        if (unitSelector) {
+          const multiplierInput = unitSelector.querySelector('.unit-selector__selected-multiplier');
+          const multiplier = multiplierInput ? parseFloat(multiplierInput.value) : 1;
+          
+          if (multiplier !== 1 && options && options.body) {
+            try {
+              let body;
+              if (typeof options.body === 'string') {
+                body = JSON.parse(options.body);
+              } else if (options.body instanceof FormData) {
+                // Convertir FormData a objeto
+                body = {};
+                for (let [key, value] of options.body.entries()) {
+                  body[key] = value;
+                }
+              }
+              
+              if (body && body.quantity) {
+                const originalQty = parseFloat(body.quantity);
+                const convertedQty = originalQty * multiplier;
+                body.quantity = convertedQty;
+                
+                console.log(`[Unit Selector] Fetch /cart/add - Converting ${originalQty} → ${convertedQty} kg`);
+                
+                if (typeof options.body === 'string') {
+                  options.body = JSON.stringify(body);
+                } else if (options.body instanceof FormData) {
+                  const newFormData = new FormData();
+                  for (let key in body) {
+                    newFormData.append(key, body[key]);
+                  }
+                  options.body = newFormData;
+                }
+              }
+            } catch (err) {
+              console.warn('[Unit Selector] Error parsing fetch body:', err);
+            }
+          }
+        }
+      }
+      
+      return originalFetch.apply(this, arguments);
+    };
+    
+    // Interceptar XMLHttpRequest para /cart/add.js
+    const originalXHROpen = XMLHttpRequest.prototype.open;
+    const originalXHRSend = XMLHttpRequest.prototype.send;
+    
+    XMLHttpRequest.prototype.open = function(method, url) {
+      this._unitSelectorUrl = url;
+      return originalXHROpen.apply(this, arguments);
+    };
+    
+    XMLHttpRequest.prototype.send = function(body) {
+      if (this._unitSelectorUrl && this._unitSelectorUrl.includes('/cart/add')) {
+        const unitSelector = document.querySelector('.unit-selector');
+        if (unitSelector) {
+          const multiplierInput = unitSelector.querySelector('.unit-selector__selected-multiplier');
+          const multiplier = multiplierInput ? parseFloat(multiplierInput.value) : 1;
+          
+          if (multiplier !== 1 && body) {
+            try {
+              let parsed;
+              if (typeof body === 'string') {
+                // URL encoded o JSON
+                if (body.includes('quantity=')) {
+                  // URL encoded
+                  const params = new URLSearchParams(body);
+                  const originalQty = parseFloat(params.get('quantity')) || 1;
+                  const convertedQty = originalQty * multiplier;
+                  params.set('quantity', convertedQty);
+                  body = params.toString();
+                  console.log(`[Unit Selector] XHR /cart/add - Converting ${originalQty} → ${convertedQty} kg`);
+                } else {
+                  // JSON
+                  parsed = JSON.parse(body);
+                  if (parsed.quantity) {
+                    const originalQty = parseFloat(parsed.quantity);
+                    const convertedQty = originalQty * multiplier;
+                    parsed.quantity = convertedQty;
+                    body = JSON.stringify(parsed);
+                    console.log(`[Unit Selector] XHR /cart/add - Converting ${originalQty} → ${convertedQty} kg`);
+                  }
+                }
+              }
+            } catch (err) {
+              console.warn('[Unit Selector] Error parsing XHR body:', err);
+            }
+          }
+        }
+      }
+      
+      return originalXHRSend.call(this, body);
+    };
   }
   
   /**
