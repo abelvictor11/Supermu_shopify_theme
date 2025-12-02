@@ -69,34 +69,58 @@
     // Calcular nuevo precio
     const newPrice = Math.round(basePrice * mult);
     
-    // Buscar el contenedor de precio del producto
-    const productCard = document.querySelector(`[data-variant-id="${variantId}"]`);
-    if (!productCard) return;
+    console.log(`[Unit Selector] Updating price: ${basePrice} × ${mult} = ${newPrice}`);
     
-    const priceElement = productCard.querySelector('.product-collection__price .price');
-    if (priceElement) {
-      // Formatear precio (asumiendo formato COP)
+    // Buscar el precio en el PDP (tiene data-js-product-price)
+    const pdpPriceElement = document.querySelector('[data-js-product-price] span');
+    if (pdpPriceElement) {
       const formattedPrice = formatMoney(newPrice);
-      priceElement.textContent = formattedPrice;
+      pdpPriceElement.textContent = formattedPrice;
+      console.log(`[Unit Selector] Updated PDP price to ${formattedPrice}`);
     }
     
-    // Actualizar PUM si existe
-    updatePUM(productCard, newPrice, multiplier);
+    // Buscar el precio en tarjetas de colección
+    const productCard = document.querySelector(`[data-variant-id="${variantId}"]`);
+    if (productCard) {
+      const collectionPriceElement = productCard.querySelector('.product-collection__price .price');
+      if (collectionPriceElement) {
+        const formattedPrice = formatMoney(newPrice);
+        collectionPriceElement.textContent = formattedPrice;
+        console.log(`[Unit Selector] Updated collection card price to ${formattedPrice}`);
+      }
+    }
+    
+    // Actualizar PUM
+    updatePUM(newPrice, mult);
   }
   
   /**
    * Actualizar PUM (Precio por Unidad de Medida)
    */
-  function updatePUM(container, price, multiplier) {
-    const pumElement = container.querySelector('.custom-pum');
-    if (!pumElement) return;
+  function updatePUM(price, multiplier) {
+    // Buscar el PUM en el PDP o colección
+    const pumElement = document.querySelector('.custom-pum');
+    if (!pumElement) {
+      console.log('[Unit Selector] No PUM element found');
+      return;
+    }
     
     const mult = parseFloat(multiplier);
-    const unitPrice = price / (mult * 100);  // Convertir de centavos
     
-    const pumText = pumElement.querySelector('span:last-child');
-    if (pumText) {
-      pumText.textContent = ` $${unitPrice.toFixed(2)} /kg`;
+    // Precio en centavos, necesitamos en pesos
+    const priceInPesos = price / 100;
+    
+    // PUM = precio actual / multiplicador
+    // Esto nos da el precio por kilo
+    const pricePerKg = priceInPesos / mult;
+    
+    console.log(`[Unit Selector] PUM: $${priceInPesos} / ${mult} = $${pricePerKg.toFixed(2)}/kg`);
+    
+    // Buscar el span del precio dentro del PUM
+    const pumPriceSpan = pumElement.querySelector('span:last-child');
+    if (pumPriceSpan) {
+      pumPriceSpan.textContent = ` $${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} /kg`;
+      console.log(`[Unit Selector] Updated PUM to $${pricePerKg.toFixed(0)}/kg`);
     }
   }
   
