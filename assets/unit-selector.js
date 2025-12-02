@@ -68,8 +68,27 @@
           console.log(`[Unit Selector v3] Selected: ${unitName}, Variant: ${newVariantId}, Price: $${price/100}`);
           
           if (useVariants && newVariantId) {
-            // Cambiar el variant
+            // MODO VARIANTS: Cambiar el variant
             changeVariant(selector, newVariantId, price, context);
+          } else {
+            // MODO FALLBACK (metafield): Solo actualizar visualmente
+            const multiplier = parseFloat(this.dataset.multiplier) || 1;
+            const multiplierInput = selector.querySelector('.unit-selector__selected-multiplier');
+            const priceInput = selector.querySelector('.unit-selector__selected-price');
+            
+            if (multiplierInput) multiplierInput.value = multiplier;
+            if (priceInput) priceInput.value = price;
+            
+            // Actualizar precio mostrado
+            updateDisplayedPrice(price, context, selector);
+            
+            // Actualizar PUM si existe
+            const pricePerKilo = parseFloat(selector.dataset.pricePerKilo) || 0;
+            if (pricePerKilo) {
+              updatePUM(selector, pricePerKilo);
+            }
+            
+            console.log(`[Unit Selector v3] Fallback mode: Updated price display to $${price/100}`);
           }
         });
       });
@@ -190,6 +209,25 @@
   function formatMoney(cents) {
     const amount = cents / 100;
     return `$${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+  }
+  
+  /**
+   * Actualizar PUM (siempre muestra precio por kilo)
+   */
+  function updatePUM(selector, pricePerKilo) {
+    const container = selector.closest('product-item') || selector.closest('[data-js-product]') || document;
+    const pumElement = container.querySelector('.custom-pum');
+    
+    if (!pumElement) return;
+    
+    const pricePerKg = pricePerKilo / 100;
+    const formattedPUM = `$${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+    
+    const pumPriceSpan = pumElement.querySelector('.pum-price');
+    if (pumPriceSpan) {
+      pumPriceSpan.textContent = ` ${formattedPUM} /kg`;
+      console.log(`[Unit Selector v3] Updated PUM: ${formattedPUM}/kg`);
+    }
   }
   
   /**

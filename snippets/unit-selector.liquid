@@ -32,7 +32,14 @@ Usage:
   {%- endif -%}
 {%- endfor -%}
 
-{%- comment -%} Solo mostrar si tiene opción de presentación {%- endcomment -%}
+{%- comment -%} Fallback: usar metafield price_per_kilo si no hay variants de presentación {%- endcomment -%}
+{%- assign price_per_kilo_meta = product.metafields.custom.price_per_kilo -%}
+{%- assign has_price_per_kilo = false -%}
+{%- if price_per_kilo_meta != blank -%}
+  {%- assign has_price_per_kilo = true -%}
+{%- endif -%}
+
+{%- comment -%} Mostrar si tiene opción de presentación O metafield price_per_kilo {%- endcomment -%}
 {%- if has_presentation_option -%}
   
   {%- comment -%} Mapear valores de presentación a variants {%- endcomment -%}
@@ -118,6 +125,159 @@ Usage:
            class="unit-selector__selected-unit" 
            name="properties[Presentación]" 
            value="{% if active_kilo %}Kilo{% elsif active_libra %}Libra{% elsif active_unidad %}Unidad{% endif %}">
+  </div>
+  
+  <style>
+    .unit-selector {
+      margin-bottom: 15px;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    
+    .unit-selector__label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+      font-size: 13px;
+    }
+    
+    .unit-selector__options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      width: 100%;
+    }
+    
+    .unit-selector__option {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 8px 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    
+    .unit-selector__option:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+    
+    .unit-selector__option.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .unit-selector__option-name {
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .unit-selector__option-price {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
+    }
+    
+    @media (max-width: 640px) {
+      .unit-selector__options {
+        grid-template-columns: 1fr;
+      }
+      
+      .unit-selector__option {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+  </style>
+
+{%- elsif has_price_per_kilo -%}
+  {%- comment -%} 
+    MODO FALLBACK: Mostrar selector visual con metafield price_per_kilo
+    NOTA: El precio en carrito será el del variant principal (limitación de Shopify)
+    Para que funcione correctamente, configurar variants de Presentación
+  {%- endcomment -%}
+  
+  {%- assign price_per_kilo = price_per_kilo_meta | plus: 0 -%}
+  {%- assign unit_weight = product.metafields.custom.unit_weight | default: 0.15 | plus: 0 -%}
+  {%- assign variant_id = current_variant.id -%}
+  
+  {%- comment -%} Calcular precios para cada presentación (solo visual) {%- endcomment -%}
+  {%- assign price_kg = price_per_kilo -%}
+  {%- assign price_lb = price_per_kilo | times: 0.45359 | round -%}
+  {%- assign price_unit = price_per_kilo | times: unit_weight | round -%}
+  
+  <div class="unit-selector" 
+       data-product-id="{{ product.id }}" 
+       data-variant-id="{{ variant_id }}"
+       data-price-per-kilo="{{ price_per_kilo }}"
+       data-unit-weight="{{ unit_weight }}"
+       data-context="{{ selector_context }}"
+       data-use-variants="false">
+    
+    <label class="unit-selector__label">Presentación:</label>
+    
+    <div class="unit-selector__options">
+      <button type="button" 
+              class="unit-selector__option active" 
+              data-unit="kilo" 
+              data-multiplier="1"
+              data-price="{{ price_kg }}">
+        <span class="unit-selector__option-name">Kilo</span>
+        <span class="unit-selector__option-price">{{ price_kg | money }}</span>
+      </button>
+      
+      <button type="button" 
+              class="unit-selector__option" 
+              data-unit="libra" 
+              data-multiplier="0.45359"
+              data-price="{{ price_lb }}">
+        <span class="unit-selector__option-name">Libra</span>
+        <span class="unit-selector__option-price">{{ price_lb | money }}</span>
+      </button>
+      
+      <button type="button" 
+              class="unit-selector__option" 
+              data-unit="unidad" 
+              data-multiplier="{{ unit_weight }}"
+              data-price="{{ price_unit }}">
+        <span class="unit-selector__option-name">Unidad</span>
+        <span class="unit-selector__option-price">{{ price_unit | money }}</span>
+      </button>
+    </div>
+    
+    {%- comment -%} Campos ocultos {%- endcomment -%}
+    <input type="hidden" 
+           class="unit-selector__selected-unit" 
+           name="properties[Presentación]" 
+           value="Kilo">
+    
+    <input type="hidden" 
+           class="unit-selector__selected-multiplier" 
+           data-multiplier-value
+           value="1">
+           
+    <input type="hidden"
+           class="unit-selector__selected-price"
+           data-selected-price
+           value="{{ price_kg }}">
   </div>
   
   <style>
