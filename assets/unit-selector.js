@@ -1,29 +1,22 @@
 /**
- * Sistema de Selector de Unidades v2.0
- * Permite vender productos por kilo, libra o unidad con un solo SKU
- * Envía la presentación seleccionada al carrito y a la orden
+ * Sistema de Selector de Unidades v3.0
+ * Usa VARIANTS para cada presentación (Kilo, Libra, Unidad)
  * 
  * Flujo:
  * 1. Usuario selecciona presentación (Kilo/Libra/Unidad)
- * 2. Precio se actualiza dinámicamente
- * 3. PUM se recalcula (siempre muestra precio/kg)
- * 4. Al agregar al carrito:
- *    - Cantidad se convierte a kilos
- *    - Propiedad "Presentación" se envía al carrito
- * 5. En el carrito y orden se ve: "Presentación: Libra"
+ * 2. Se cambia el variant seleccionado
+ * 3. El precio se actualiza automáticamente
+ * 4. Al agregar al carrito se usa el variant correcto con su precio
+ * 
+ * Configuración en Shopify:
+ * - Crear opción "Presentación" con valores: Kilo, Libra, Unidad
+ * - Cada variant tiene su precio correspondiente
  */
 
 (function() {
   'use strict';
   
-  console.log('[Unit Selector v2] Loading...');
-  
-  // Nombres de presentación para mostrar en carrito
-  const UNIT_NAMES = {
-    kg: 'Kilo',
-    lb: 'Libra',
-    unidad: 'Unidad'
-  };
+  console.log('[Unit Selector v3] Loading...');
   
   /**
    * Inicializar todos los selectores de unidades
@@ -33,26 +26,27 @@
     
     if (selectors.length === 0) return;
     
-    console.log(`[Unit Selector v2] Initializing ${selectors.length} selector(s)`);
+    console.log(`[Unit Selector v3] Initializing ${selectors.length} selector(s)`);
     
     selectors.forEach(selector => {
       selector.setAttribute('data-initialized', 'true');
       
       const options = selector.querySelectorAll('.unit-selector__option');
       const unitInput = selector.querySelector('.unit-selector__selected-unit');
-      const multiplierInput = selector.querySelector('.unit-selector__selected-multiplier');
-      const priceInput = selector.querySelector('.unit-selector__selected-price');
-      const pricePerKilo = parseFloat(selector.dataset.pricePerKilo) || 0;
-      const variantId = selector.dataset.variantId;
       const context = selector.dataset.context || 'pdp';
+      const useVariants = selector.dataset.useVariants === 'true';
+      const productId = selector.dataset.productId;
       
-      console.log(`[Unit Selector v2] Context: ${context}, Variant: ${variantId}, Price/kg: ${pricePerKilo}`);
+      console.log(`[Unit Selector v3] Context: ${context}, UseVariants: ${useVariants}, Product: ${productId}`);
       
       // Manejar clic en opciones
       options.forEach(option => {
         option.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
+          
+          // No hacer nada si está deshabilitado
+          if (this.disabled) return;
           
           // Remover active de todas las opciones
           options.forEach(opt => opt.classList.remove('active'));
@@ -62,36 +56,85 @@
           
           // Obtener datos de la opción
           const unit = this.dataset.unit;
-          const multiplier = parseFloat(this.dataset.multiplier);
+          const newVariantId = this.dataset.variantId;
           const price = parseFloat(this.dataset.price);
-          const unitName = UNIT_NAMES[unit] || unit;
           
-          // Actualizar inputs ocultos
+          // Capitalizar nombre de unidad
+          const unitName = unit.charAt(0).toUpperCase() + unit.slice(1);
+          
+          // Actualizar input oculto de presentación
           if (unitInput) unitInput.value = unitName;
-          if (multiplierInput) multiplierInput.value = multiplier;
-          if (priceInput) priceInput.value = price;
           
-          console.log(`[Unit Selector v2] Selected: ${unitName} (×${multiplier}) = $${price/100}`);
+          console.log(`[Unit Selector v3] Selected: ${unitName}, Variant: ${newVariantId}, Price: $${price/100}`);
           
-          // Actualizar precio mostrado
-          updateDisplayedPrice(selector, price, context);
-          
-          // Actualizar PUM
-          updatePUM(selector, pricePerKilo);
-          
-          // Si es PDP, copiar el input de presentación al formulario
-          if (context === 'pdp') {
-            copyPropertyToForm(unitName);
+          if (useVariants && newVariantId) {
+            // Cambiar el variant
+            changeVariant(selector, newVariantId, price, context);
           }
         });
       });
       
-      // Si es PDP, copiar el valor inicial al formulario
+      // Si es PDP, asegurar que el input de presentación esté en el form
       if (context === 'pdp') {
         const initialUnit = unitInput ? unitInput.value : 'Kilo';
         copyPropertyToForm(initialUnit);
       }
     });
+  }
+  
+  /**
+   * Cambiar el variant seleccionado
+   */
+  function changeVariant(selector, variantId, price, context) {
+    console.log(`[Unit Selector v3] Changing variant to: ${variantId}`);
+    
+    // Actualizar el data-variant-id del selector
+    selector.dataset.variantId = variantId;
+    
+    if (context === 'pdp') {
+      // En PDP: actualizar el input hidden del form y disparar evento
+      const form = document.querySelector('form[data-type="add-to-cart-form"]');
+      if (form) {
+        // Actualizar input de variant ID
+        const variantInput = form.querySelector('input[name="id"]');
+        if (variantInput) {
+          variantInput.value = variantId;
+          console.log(`[Unit Selector v3] Updated form variant input to: ${variantId}`);
+        }
+        
+        // Actualizar precio mostrado
+        updateDisplayedPrice(price, context, selector);
+        
+        // Disparar evento de cambio de variant para que el tema actualice
+        const event = new CustomEvent('variant:change', {
+          detail: { variant: { id: variantId, price: price } }
+        });
+        document.dispatchEvent(event);
+        
+        // También intentar actualizar via el sistema del tema
+        if (window.theme && window.theme.Product) {
+          // Buscar el select de variants y cambiarlo
+          const variantSelect = form.querySelector('select[name="id"]');
+          if (variantSelect) {
+            variantSelect.value = variantId;
+            variantSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      }
+    } else {
+      // En colección: actualizar el data-variant-id del contenedor .acciones
+      const productCard = selector.closest('product-item') || selector.closest('.product-collection');
+      if (productCard) {
+        const acciones = productCard.querySelector('.acciones');
+        if (acciones) {
+          acciones.setAttribute('data-variant-id', variantId);
+          console.log(`[Unit Selector v3] Updated .acciones variant to: ${variantId}`);
+        }
+        
+        // Actualizar precio mostrado en la card
+        updateDisplayedPrice(price, context, selector);
+      }
+    }
   }
   
   /**
@@ -101,7 +144,6 @@
     const form = document.querySelector('form[data-type="add-to-cart-form"]');
     if (!form) return;
     
-    // Buscar o crear el input de presentación dentro del form
     let propInput = form.querySelector('input[name="properties[Presentación]"]');
     
     if (!propInput) {
@@ -109,17 +151,17 @@
       propInput.type = 'hidden';
       propInput.name = 'properties[Presentación]';
       form.appendChild(propInput);
-      console.log('[Unit Selector v2] Created property input in form');
+      console.log('[Unit Selector v3] Created property input in form');
     }
     
     propInput.value = unitName;
-    console.log(`[Unit Selector v2] Set form property: Presentación = ${unitName}`);
+    console.log(`[Unit Selector v3] Set form property: Presentación = ${unitName}`);
   }
   
   /**
    * Actualizar precio mostrado
    */
-  function updateDisplayedPrice(selector, price, context) {
+  function updateDisplayedPrice(price, context, selector) {
     const formattedPrice = formatMoney(price);
     
     if (context === 'pdp') {
@@ -127,42 +169,18 @@
       const pdpPrice = document.querySelector('[data-js-product-price] span');
       if (pdpPrice) {
         pdpPrice.textContent = formattedPrice;
-        console.log(`[Unit Selector v2] Updated PDP price: ${formattedPrice}`);
+        console.log(`[Unit Selector v3] Updated PDP price: ${formattedPrice}`);
       }
     } else {
       // Buscar precio en la card de colección
-      const card = selector.closest('[data-variant-id]') || selector.closest('.product-collection');
+      const card = selector.closest('product-item') || selector.closest('.product-collection');
       if (card) {
         const cardPrice = card.querySelector('.product-collection__price .price');
         if (cardPrice) {
           cardPrice.textContent = formattedPrice;
-          console.log(`[Unit Selector v2] Updated card price: ${formattedPrice}`);
+          console.log(`[Unit Selector v3] Updated card price: ${formattedPrice}`);
         }
       }
-    }
-  }
-  
-  /**
-   * Actualizar PUM (siempre muestra precio por kilo)
-   */
-  function updatePUM(selector, pricePerKilo) {
-    // Buscar PUM cercano al selector o en toda la página
-    const container = selector.closest('[data-js-product]') || document;
-    const pumElement = container.querySelector('.custom-pum');
-    
-    if (!pumElement) {
-      console.log('[Unit Selector v2] No PUM element found');
-      return;
-    }
-    
-    const pricePerKg = pricePerKilo / 100;
-    const formattedPUM = `$${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
-    
-    // Buscar span.pum-price o actualizar texto directamente
-    const pumPriceSpan = pumElement.querySelector('.pum-price');
-    if (pumPriceSpan) {
-      pumPriceSpan.textContent = ` ${formattedPUM} /kg`;
-      console.log(`[Unit Selector v2] Updated PUM: ${formattedPUM}/kg`);
     }
   }
   
@@ -175,143 +193,40 @@
   }
   
   /**
-   * Obtener datos del selector activo para un variant específico
+   * Obtener el variant seleccionado del selector para un producto
    */
-  function getActiveUnitData(variantId) {
+  function getSelectedVariantData(productId) {
     let selector = null;
-    const vid = String(variantId);
     
-    console.log(`[Unit Selector v2] Looking for selector with variant: ${vid}`);
-    
-    // 1. Buscar selector por variant ID en el data attribute del selector mismo
-    if (vid) {
-      selector = document.querySelector(`.unit-selector[data-variant-id="${vid}"]`);
-      if (selector) console.log('[Unit Selector v2] Found by direct data-variant-id');
+    if (productId) {
+      selector = document.querySelector(`.unit-selector[data-product-id="${productId}"]`);
     }
     
-    // 2. Buscar en product-item que contenga el variant ID
-    if (!selector && vid) {
-      // Buscar el product-item que tiene este variant en su data-js-product-variants
-      const productItems = document.querySelectorAll('product-item.product-collection');
-      for (const item of productItems) {
-        const variantsData = item.getAttribute('data-js-product-variants');
-        if (variantsData && variantsData.includes(vid)) {
-          selector = item.querySelector('.unit-selector');
-          if (selector) {
-            console.log('[Unit Selector v2] Found in product-item by variants data');
-            break;
-          }
-        }
-      }
-    }
-    
-    // 3. Buscar en .acciones con data-variant-id y subir al contenedor
-    if (!selector && vid) {
-      const acciones = document.querySelector(`.acciones[data-variant-id="${vid}"]`);
-      if (acciones) {
-        const productCard = acciones.closest('product-item') || acciones.closest('.product-collection');
-        if (productCard) {
-          selector = productCard.querySelector('.unit-selector');
-          if (selector) console.log('[Unit Selector v2] Found via .acciones container');
-        }
-      }
-    }
-    
-    // 4. Buscar por data-product-id en el selector (usando el product ID del variant)
-    if (!selector && vid) {
-      // Buscar todos los selectores y ver si alguno tiene el variant correcto
-      const allSelectors = document.querySelectorAll('.unit-selector');
-      for (const sel of allSelectors) {
-        if (sel.dataset.variantId === vid) {
-          selector = sel;
-          console.log('[Unit Selector v2] Found by iterating all selectors');
-          break;
-        }
-      }
-    }
-    
-    // 5. Fallback: buscar el primero (para PDP donde solo hay uno)
     if (!selector) {
       selector = document.querySelector('.unit-selector');
-      if (selector) console.log('[Unit Selector v2] Using fallback (first selector)');
     }
     
     if (!selector) {
-      console.log('[Unit Selector v2] No selector found');
-      return { multiplier: 1, unitName: 'Kilo', price: 0, found: false };
+      return null;
     }
     
-    const multiplierInput = selector.querySelector('.unit-selector__selected-multiplier');
-    const unitInput = selector.querySelector('.unit-selector__selected-unit');
-    const priceInput = selector.querySelector('.unit-selector__selected-price');
+    const activeOption = selector.querySelector('.unit-selector__option.active');
+    if (!activeOption) return null;
     
-    const data = {
-      multiplier: multiplierInput ? parseFloat(multiplierInput.value) : 1,
-      unitName: unitInput ? unitInput.value : 'Kilo',
-      price: priceInput ? parseFloat(priceInput.value) : 0,
-      found: true
+    return {
+      variantId: activeOption.dataset.variantId,
+      unit: activeOption.dataset.unit,
+      price: parseFloat(activeOption.dataset.price)
     };
-    
-    console.log(`[Unit Selector v2] getActiveUnitData result:`, data);
-    
-    return data;
   }
   
   /**
-   * Interceptar el tema para modificar datos antes de enviar al carrito
-   */
-  function interceptThemeCart() {
-    // Esperar a que el tema cargue
-    const checkTheme = setInterval(() => {
-      if (window.theme && window.theme.Cart) {
-        clearInterval(checkTheme);
-        
-        // Guardar referencia al método original serializeForm
-        const originalSerializeForm = window.theme.Cart.serializeForm;
-        
-        if (typeof originalSerializeForm === 'function') {
-          window.theme.Cart.serializeForm = function($form, serialize_obj = {}) {
-            // Llamar al método original
-            const result = originalSerializeForm.call(this, $form, serialize_obj);
-            
-            // Obtener datos del selector de unidades
-            const unitData = getActiveUnitData();
-            
-            // Modificar cantidad si hay multiplicador diferente de 1
-            if (unitData.multiplier !== 1 && result.quantity) {
-              const originalQty = parseFloat(result.quantity);
-              const convertedQty = originalQty * unitData.multiplier;
-              result.quantity = convertedQty;
-              console.log(`[Unit Selector v2] Theme serializeForm: ${originalQty} → ${convertedQty} kg`);
-            }
-            
-            // Agregar propiedad de presentación
-            if (unitData.unitName) {
-              result.properties = result.properties || {};
-              result.properties['Presentación'] = unitData.unitName;
-              console.log(`[Unit Selector v2] Added property: Presentación = ${unitData.unitName}`);
-            }
-            
-            return result;
-          };
-          
-          console.log('[Unit Selector v2] Intercepted theme.Cart.serializeForm');
-        }
-      }
-    }, 100);
-    
-    // Timeout después de 5 segundos
-    setTimeout(() => clearInterval(checkTheme), 5000);
-  }
-  
-  /**
-   * Interceptar fetch para /cart/add.js (para cards de colección con custom.js)
+   * Interceptar fetch para asegurar que se use el variant correcto
    */
   function interceptFetch() {
     const originalFetch = window.fetch;
     
     window.fetch = async function(url, options) {
-      // Solo interceptar llamadas a /cart/add
       if (typeof url === 'string' && url.includes('/cart/add')) {
         
         if (options && options.body) {
@@ -325,53 +240,42 @@
             }
             
             if (body) {
-              // Procesar items array (formato usado por custom.js)
+              let modified = false;
+              
+              // Procesar items array
               if (body.items && Array.isArray(body.items)) {
                 body.items.forEach(item => {
-                  // Obtener datos del selector para este variant específico
-                  const variantId = item.id;
-                  const unitData = getActiveUnitData(variantId);
-                  
-                  console.log(`[Unit Selector v2] Fetch intercepted for variant ${variantId}:`, unitData);
-                  
-                  if (unitData.found) {
-                    // Modificar cantidad
-                    if (unitData.multiplier !== 1 && item.quantity) {
-                      const originalQty = parseFloat(item.quantity);
-                      item.quantity = originalQty * unitData.multiplier;
-                      console.log(`[Unit Selector v2] Fetch: ${originalQty} → ${item.quantity} kg`);
+                  // Buscar si hay un selector para este producto
+                  const selector = findSelectorForVariant(item.id);
+                  if (selector) {
+                    const activeOption = selector.querySelector('.unit-selector__option.active');
+                    if (activeOption) {
+                      const correctVariantId = activeOption.dataset.variantId;
+                      const unitName = activeOption.dataset.unit;
+                      
+                      // Cambiar al variant correcto si es diferente
+                      if (correctVariantId && correctVariantId !== String(item.id)) {
+                        console.log(`[Unit Selector v3] Fetch: Changing variant ${item.id} → ${correctVariantId}`);
+                        item.id = parseInt(correctVariantId);
+                        modified = true;
+                      }
+                      
+                      // Agregar propiedad de presentación
+                      item.properties = item.properties || {};
+                      item.properties['Presentación'] = unitName.charAt(0).toUpperCase() + unitName.slice(1);
+                      modified = true;
                     }
-                    // Agregar propiedad
-                    item.properties = item.properties || {};
-                    item.properties['Presentación'] = unitData.unitName;
                   }
                 });
-              } 
-              // Procesar formato simple (id, quantity)
-              else if (body.id) {
-                const variantId = body.id;
-                const unitData = getActiveUnitData(variantId);
-                
-                console.log(`[Unit Selector v2] Fetch intercepted for variant ${variantId}:`, unitData);
-                
-                if (unitData.found) {
-                  if (unitData.multiplier !== 1 && body.quantity) {
-                    const originalQty = parseFloat(body.quantity);
-                    body.quantity = originalQty * unitData.multiplier;
-                    console.log(`[Unit Selector v2] Fetch: ${originalQty} → ${body.quantity} kg`);
-                  }
-                  body.properties = body.properties || {};
-                  body.properties['Presentación'] = unitData.unitName;
-                }
               }
               
-              if (isJSON) {
+              if (modified && isJSON) {
                 options.body = JSON.stringify(body);
-                console.log('[Unit Selector v2] Modified fetch body:', body);
+                console.log('[Unit Selector v3] Modified fetch body:', body);
               }
             }
           } catch (err) {
-            console.warn('[Unit Selector v2] Error parsing fetch body:', err);
+            console.warn('[Unit Selector v3] Error parsing fetch body:', err);
           }
         }
       }
@@ -379,20 +283,52 @@
       return originalFetch.apply(this, arguments);
     };
     
-    console.log('[Unit Selector v2] Intercepted fetch API');
+    console.log('[Unit Selector v3] Intercepted fetch API');
+  }
+  
+  /**
+   * Buscar el selector que contiene un variant específico
+   */
+  function findSelectorForVariant(variantId) {
+    const vid = String(variantId);
+    
+    // Buscar en todos los selectores
+    const selectors = document.querySelectorAll('.unit-selector');
+    for (const selector of selectors) {
+      // Verificar si alguna opción tiene este variant
+      const options = selector.querySelectorAll('.unit-selector__option');
+      for (const opt of options) {
+        if (opt.dataset.variantId === vid) {
+          return selector;
+        }
+      }
+      
+      // También verificar el data-variant-id del selector
+      if (selector.dataset.variantId === vid) {
+        return selector;
+      }
+    }
+    
+    // Buscar por product-item
+    const acciones = document.querySelector(`.acciones[data-variant-id="${vid}"]`);
+    if (acciones) {
+      const productCard = acciones.closest('product-item') || acciones.closest('.product-collection');
+      if (productCard) {
+        return productCard.querySelector('.unit-selector');
+      }
+    }
+    
+    return null;
   }
   
   /**
    * Inicializar sistema
    */
   function init() {
-    console.log('[Unit Selector v2] Initializing...');
+    console.log('[Unit Selector v3] Initializing...');
     
     // Inicializar selectores existentes
     initUnitSelectors();
-    
-    // Interceptar tema
-    interceptThemeCart();
     
     // Interceptar fetch
     interceptFetch();
@@ -416,7 +352,7 @@
       });
       
       if (shouldInit) {
-        console.log('[Unit Selector v2] New selectors detected');
+        console.log('[Unit Selector v3] New selectors detected');
         initUnitSelectors();
       }
     });
@@ -426,7 +362,7 @@
       subtree: true
     });
     
-    console.log('[Unit Selector v2] Ready!');
+    console.log('[Unit Selector v3] Ready!');
   }
   
   // Inicializar cuando el DOM esté listo
