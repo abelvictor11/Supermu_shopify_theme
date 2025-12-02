@@ -11,9 +11,11 @@ Usage:
   {% render 'unit-selector', product: product, variant: current_variant %}
 {%- endcomment -%}
 
-{%- assign allow_unit_selection = product.metafields.custom.allow_unit_selection | default: false -%}
+{%- assign allow_unit_selection = product.metafields.custom.allow_unit_selection -%}
+{%- assign price_per_kilo_meta = product.metafields.custom.price_per_kilo -%}
 
-{%- if allow_unit_selection -%}
+{%- comment -%} Activar selector si metafield es TRUE o si existe price_per_kilo {%- endcomment -%}
+{%- if allow_unit_selection == true or price_per_kilo_meta != blank -%}
   {%- assign price_per_kilo = product.metafields.custom.price_per_kilo | default: product.price -%}
   {%- assign unit_weight = product.metafields.custom.unit_weight | default: 0.15 -%}
   {%- assign variant_id = variant.id | default: product.selected_or_first_available_variant.id -%}
