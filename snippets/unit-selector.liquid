@@ -3,28 +3,34 @@ Selector de unidades para productos vendidos por peso/unidad.
 Convierte automáticamente a kilos para SIESA manteniendo un solo SKU.
 
 Metafields requeridos (producto):
-  - custom.allow_unit_selection (boolean) - Habilita selector de unidades
-  - custom.price_per_kilo (number) - Precio base por kilo
-  - custom.unit_weight (number) - Peso promedio de 1 unidad en kg (ej: 0.15 para 150g)
+  - custom.price_per_kilo (number) - Precio base por kilo EN CENTAVOS
+  - custom.unit_weight (number, opcional) - Peso promedio de 1 unidad en kg (ej: 0.15 para 150g)
 
 Usage:
-  {% render 'unit-selector', product: product, variant: current_variant %}
+  {% render 'unit-selector', product: product, variant: current_variant, context: 'pdp' %}
+  {% render 'unit-selector', product: product, variant: current_variant, context: 'collection' %}
 {%- endcomment -%}
 
-{%- assign allow_unit_selection = product.metafields.custom.allow_unit_selection -%}
 {%- assign price_per_kilo_meta = product.metafields.custom.price_per_kilo -%}
 
-{%- comment -%} Activar selector si metafield es TRUE o si existe price_per_kilo {%- endcomment -%}
-{%- if allow_unit_selection == true or price_per_kilo_meta != blank -%}
-  {%- assign price_per_kilo = product.metafields.custom.price_per_kilo | default: product.price -%}
-  {%- assign unit_weight = product.metafields.custom.unit_weight | default: 0.15 -%}
+{%- comment -%} Solo mostrar si existe price_per_kilo {%- endcomment -%}
+{%- if price_per_kilo_meta != blank -%}
+  {%- assign price_per_kilo = price_per_kilo_meta | plus: 0 -%}
+  {%- assign unit_weight = product.metafields.custom.unit_weight | default: 0.15 | plus: 0 -%}
   {%- assign variant_id = variant.id | default: product.selected_or_first_available_variant.id -%}
+  {%- assign selector_context = context | default: 'pdp' -%}
+  
+  {%- comment -%} Calcular precios para cada presentación {%- endcomment -%}
+  {%- assign price_kg = price_per_kilo -%}
+  {%- assign price_lb = price_per_kilo | times: 0.45359 | round -%}
+  {%- assign price_unit = price_per_kilo | times: unit_weight | round -%}
   
   <div class="unit-selector" 
        data-product-id="{{ product.id }}" 
        data-variant-id="{{ variant_id }}"
        data-price-per-kilo="{{ price_per_kilo }}"
-       data-unit-weight="{{ unit_weight }}">
+       data-unit-weight="{{ unit_weight }}"
+       data-context="{{ selector_context }}">
     
     <label class="unit-selector__label">Presentación:</label>
     
@@ -32,40 +38,46 @@ Usage:
       <button type="button" 
               class="unit-selector__option active" 
               data-unit="kg" 
-              data-multiplier="1">
-        <span class="unit-selector__option-name">Por Kilo</span>
-        <span class="unit-selector__option-price" data-price-display>{{ price_per_kilo | money }}</span>
+              data-multiplier="1"
+              data-price="{{ price_kg }}">
+        <span class="unit-selector__option-name">Kilo</span>
+        <span class="unit-selector__option-price">{{ price_kg | money }}</span>
       </button>
       
       <button type="button" 
               class="unit-selector__option" 
               data-unit="lb" 
-              data-multiplier="0.45359">
-        <span class="unit-selector__option-name">Por Libra</span>
-        {%- assign price_per_lb = price_per_kilo | times: 0.45359 | divided_by: 100.0 | times: 100 | round -%}
-        <span class="unit-selector__option-price" data-price-display>{{ price_per_lb | money }}</span>
+              data-multiplier="0.45359"
+              data-price="{{ price_lb }}">
+        <span class="unit-selector__option-name">Libra</span>
+        <span class="unit-selector__option-price">{{ price_lb | money }}</span>
       </button>
       
       <button type="button" 
               class="unit-selector__option" 
               data-unit="unidad" 
-              data-multiplier="{{ unit_weight }}">
-        <span class="unit-selector__option-name">Por Unidad</span>
-        {%- assign price_per_unit = price_per_kilo | times: unit_weight | divided_by: 100.0 | times: 100 | round -%}
-        <span class="unit-selector__option-price" data-price-display>{{ price_per_unit | money }}</span>
+              data-multiplier="{{ unit_weight }}"
+              data-price="{{ price_unit }}">
+        <span class="unit-selector__option-name">Unidad</span>
+        <span class="unit-selector__option-price">{{ price_unit | money }}</span>
       </button>
     </div>
     
-    {%- comment -%} Campo oculto para almacenar la unidad seleccionada {%- endcomment -%}
+    {%- comment -%} Campos ocultos - se copiarán al form del PDP vía JS {%- endcomment -%}
     <input type="hidden" 
            class="unit-selector__selected-unit" 
-           name="properties[_unit]" 
-           value="kg">
+           name="properties[Presentación]" 
+           value="Kilo">
     
     <input type="hidden" 
            class="unit-selector__selected-multiplier" 
-           name="properties[_multiplier]" 
+           data-multiplier-value
            value="1">
+           
+    <input type="hidden"
+           class="unit-selector__selected-price"
+           data-selected-price
+           value="{{ price_kg }}">
   </div>
   
   <style>
