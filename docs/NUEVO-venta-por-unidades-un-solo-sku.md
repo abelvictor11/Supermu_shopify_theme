@@ -1,8 +1,97 @@
-# 🎯 Sistema de Venta por Unidades - UN SOLO SKU
+# 🎯 Sistema de Venta por Presentaciones v3.0
 
-## ⚠️ IMPORTANTE: Sistema Actualizado
+## ⚠️ IMPORTANTE: Cambio de Enfoque
 
-Esta es la implementación correcta para integración con SIESA. **NO usar variantes de Shopify**.
+**Shopify NO soporta cantidades decimales** - redondea todo a enteros.
+Por lo tanto, el enfoque de "convertir a kilos" (0.45359 kg para libra) **NO funciona**.
+
+## ✅ Solución: Usar VARIANTS por Presentación
+
+En lugar de un solo SKU con cantidades decimales, usamos **variants separados** para cada presentación.
+
+---
+
+## 📋 Configuración en Shopify Admin
+
+### Paso 1: Crear la Opción "Presentación"
+
+1. Ir a **Productos** → Seleccionar producto
+2. En **Opciones** → Click "Agregar opciones"
+3. Nombre de opción: `Presentación`
+4. Valores: `Kilo`, `Libra`, `Unidad`
+
+### Paso 2: Configurar Precios de Variants
+
+| Variant | Precio | Cálculo |
+|---------|--------|---------|
+| **Kilo** | $7,500 | Precio base |
+| **Libra** | $3,402 | $7,500 × 0.45359 |
+| **Unidad** | $1,125 | $7,500 × 0.15 (peso promedio) |
+
+### Paso 3: Configurar SKUs
+
+Puedes usar el mismo SKU base con sufijo:
+- Kilo: `LIMON-001-KG`
+- Libra: `LIMON-001-LB`
+- Unidad: `LIMON-001-UN`
+
+---
+
+## 🔧 Cómo Funciona el Código
+
+### `snippets/unit-selector.liquid`
+
+1. **Detecta** si el producto tiene opción "Presentación"
+2. **Mapea** cada valor a su variant correspondiente
+3. **Renderiza** botones con el precio de cada variant
+
+### `assets/unit-selector.js` (v3.0)
+
+1. **Al hacer clic** en una presentación:
+   - Cambia el variant seleccionado
+   - Actualiza el precio mostrado
+   - Actualiza el `data-variant-id` en `.acciones`
+2. **Al agregar al carrito**:
+   - Se usa el variant correcto con su precio
+   - Se agrega propiedad "Presentación" para referencia
+
+---
+
+## 🧪 Testing
+
+1. Crear un producto de prueba con opción "Presentación"
+2. Agregar variants: Kilo ($7,500), Libra ($3,402), Unidad ($1,125)
+3. Ir a la página del producto o colección
+4. Seleccionar "Libra"
+5. Agregar al carrito
+6. Verificar en carrito:
+   - Precio: $3,402 ✅
+   - Cantidad: 1 ✅
+   - Presentación: Libra ✅
+
+---
+
+## 📝 Notas Técnicas
+
+- El selector solo aparece si el producto tiene opción "Presentación"
+- Soporta variaciones del nombre: "Presentación", "Presentacion"
+- Soporta variaciones de valores: "Kilo/kg", "Libra/lb", "Unidad/un/und"
+- Los variants no disponibles se muestran deshabilitados
+
+---
+
+# ~~Sistema Anterior (DEPRECADO)~~ 
+
+> El sistema anterior intentaba usar cantidades decimales, pero Shopify las redondea a enteros.
+> Se mantiene la documentación abajo solo como referencia histórica.
+
+---
+
+# ~~Sistema de Venta por Unidades - UN SOLO SKU~~ (NO FUNCIONA)
+
+## ~~IMPORTANTE: Sistema Actualizado~~
+
+~~Esta es la implementación correcta para integración con SIESA. **NO usar variantes de Shopify**.~~
 
 ---
 

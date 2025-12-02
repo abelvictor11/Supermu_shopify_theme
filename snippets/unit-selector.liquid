@@ -1,83 +1,123 @@
 {%- comment -%}
 Selector de unidades para productos vendidos por peso/unidad.
-Convierte automáticamente a kilos para SIESA manteniendo un solo SKU.
+Usa VARIANTS para cada presentación (Kilo, Libra, Unidad).
 
-Metafields requeridos (producto):
-  - custom.price_per_kilo (number) - Precio base por kilo EN CENTAVOS
-  - custom.unit_weight (number, opcional) - Peso promedio de 1 unidad en kg (ej: 0.15 para 150g)
+Configuración en Shopify:
+  1. Crear opción "Presentación" con valores: Kilo, Libra, Unidad
+  2. Crear variants con precios correspondientes:
+     - Kilo: precio base (ej: $7,500)
+     - Libra: precio × 0.45359 (ej: $3,402)
+     - Unidad: precio × peso_unidad (ej: $1,125 para 150g)
+
+El selector detecta automáticamente si el producto tiene variants de presentación.
+Si no los tiene, no muestra el selector.
 
 Usage:
   {% render 'unit-selector', product: product, variant: current_variant, context: 'pdp' %}
   {% render 'unit-selector', product: product, variant: current_variant, context: 'collection' %}
 {%- endcomment -%}
 
-{%- assign price_per_kilo_meta = product.metafields.custom.price_per_kilo -%}
+{%- assign selector_context = context | default: 'pdp' -%}
+{%- assign current_variant = variant | default: product.selected_or_first_available_variant -%}
 
-{%- comment -%} Solo mostrar si existe price_per_kilo {%- endcomment -%}
-{%- if price_per_kilo_meta != blank -%}
-  {%- assign price_per_kilo = price_per_kilo_meta | plus: 0 -%}
-  {%- assign unit_weight = product.metafields.custom.unit_weight | default: 0.15 | plus: 0 -%}
-  {%- assign variant_id = variant.id | default: product.selected_or_first_available_variant.id -%}
-  {%- assign selector_context = context | default: 'pdp' -%}
+{%- comment -%} Detectar si el producto tiene variants de presentación {%- endcomment -%}
+{%- assign has_presentation_option = false -%}
+{%- assign presentation_option_index = nil -%}
+{%- for option in product.options_with_values -%}
+  {%- assign option_name_lower = option.name | downcase -%}
+  {%- if option_name_lower == 'presentación' or option_name_lower == 'presentacion' -%}
+    {%- assign has_presentation_option = true -%}
+    {%- assign presentation_option_index = forloop.index0 -%}
+    {%- assign presentation_values = option.values -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Solo mostrar si tiene opción de presentación {%- endcomment -%}
+{%- if has_presentation_option -%}
   
-  {%- comment -%} Calcular precios para cada presentación {%- endcomment -%}
-  {%- assign price_kg = price_per_kilo -%}
-  {%- assign price_lb = price_per_kilo | times: 0.45359 | round -%}
-  {%- assign price_unit = price_per_kilo | times: unit_weight | round -%}
+  {%- comment -%} Mapear valores de presentación a variants {%- endcomment -%}
+  {%- assign variant_kilo = nil -%}
+  {%- assign variant_libra = nil -%}
+  {%- assign variant_unidad = nil -%}
+  
+  {%- for v in product.variants -%}
+    {%- assign v_option = v.options[presentation_option_index] | downcase -%}
+    {%- if v_option == 'kilo' or v_option == 'kg' -%}
+      {%- assign variant_kilo = v -%}
+    {%- elsif v_option == 'libra' or v_option == 'lb' -%}
+      {%- assign variant_libra = v -%}
+    {%- elsif v_option == 'unidad' or v_option == 'un' or v_option == 'und' -%}
+      {%- assign variant_unidad = v -%}
+    {%- endif -%}
+  {%- endfor -%}
+  
+  {%- comment -%} Determinar cuál está activo {%- endcomment -%}
+  {%- assign current_option = current_variant.options[presentation_option_index] | downcase -%}
+  {%- assign active_kilo = false -%}
+  {%- assign active_libra = false -%}
+  {%- assign active_unidad = false -%}
+  
+  {%- if current_option == 'kilo' or current_option == 'kg' -%}
+    {%- assign active_kilo = true -%}
+  {%- elsif current_option == 'libra' or current_option == 'lb' -%}
+    {%- assign active_libra = true -%}
+  {%- elsif current_option == 'unidad' or current_option == 'un' or current_option == 'und' -%}
+    {%- assign active_unidad = true -%}
+  {%- else -%}
+    {%- assign active_kilo = true -%}
+  {%- endif -%}
   
   <div class="unit-selector" 
        data-product-id="{{ product.id }}" 
-       data-variant-id="{{ variant_id }}"
-       data-price-per-kilo="{{ price_per_kilo }}"
-       data-unit-weight="{{ unit_weight }}"
-       data-context="{{ selector_context }}">
+       data-variant-id="{{ current_variant.id }}"
+       data-context="{{ selector_context }}"
+       data-use-variants="true">
     
     <label class="unit-selector__label">Presentación:</label>
     
     <div class="unit-selector__options">
-      <button type="button" 
-              class="unit-selector__option active" 
-              data-unit="kg" 
-              data-multiplier="1"
-              data-price="{{ price_kg }}">
-        <span class="unit-selector__option-name">Kilo</span>
-        <span class="unit-selector__option-price">{{ price_kg | money }}</span>
-      </button>
+      {%- if variant_kilo -%}
+        <button type="button" 
+                class="unit-selector__option{% if active_kilo %} active{% endif %}" 
+                data-unit="kilo"
+                data-variant-id="{{ variant_kilo.id }}"
+                data-price="{{ variant_kilo.price }}"
+                {% unless variant_kilo.available %}disabled{% endunless %}>
+          <span class="unit-selector__option-name">Kilo</span>
+          <span class="unit-selector__option-price">{{ variant_kilo.price | money }}</span>
+        </button>
+      {%- endif -%}
       
-      <button type="button" 
-              class="unit-selector__option" 
-              data-unit="lb" 
-              data-multiplier="0.45359"
-              data-price="{{ price_lb }}">
-        <span class="unit-selector__option-name">Libra</span>
-        <span class="unit-selector__option-price">{{ price_lb | money }}</span>
-      </button>
+      {%- if variant_libra -%}
+        <button type="button" 
+                class="unit-selector__option{% if active_libra %} active{% endif %}" 
+                data-unit="libra"
+                data-variant-id="{{ variant_libra.id }}"
+                data-price="{{ variant_libra.price }}"
+                {% unless variant_libra.available %}disabled{% endunless %}>
+          <span class="unit-selector__option-name">Libra</span>
+          <span class="unit-selector__option-price">{{ variant_libra.price | money }}</span>
+        </button>
+      {%- endif -%}
       
-      <button type="button" 
-              class="unit-selector__option" 
-              data-unit="unidad" 
-              data-multiplier="{{ unit_weight }}"
-              data-price="{{ price_unit }}">
-        <span class="unit-selector__option-name">Unidad</span>
-        <span class="unit-selector__option-price">{{ price_unit | money }}</span>
-      </button>
+      {%- if variant_unidad -%}
+        <button type="button" 
+                class="unit-selector__option{% if active_unidad %} active{% endif %}" 
+                data-unit="unidad"
+                data-variant-id="{{ variant_unidad.id }}"
+                data-price="{{ variant_unidad.price }}"
+                {% unless variant_unidad.available %}disabled{% endunless %}>
+          <span class="unit-selector__option-name">Unidad</span>
+          <span class="unit-selector__option-price">{{ variant_unidad.price | money }}</span>
+        </button>
+      {%- endif -%}
     </div>
     
-    {%- comment -%} Campos ocultos - se copiarán al form del PDP vía JS {%- endcomment -%}
+    {%- comment -%} Campo oculto para la presentación seleccionada {%- endcomment -%}
     <input type="hidden" 
            class="unit-selector__selected-unit" 
            name="properties[Presentación]" 
-           value="Kilo">
-    
-    <input type="hidden" 
-           class="unit-selector__selected-multiplier" 
-           data-multiplier-value
-           value="1">
-           
-    <input type="hidden"
-           class="unit-selector__selected-price"
-           data-selected-price
-           value="{{ price_kg }}">
+           value="{% if active_kilo %}Kilo{% elsif active_libra %}Libra{% elsif active_unidad %}Unidad{% endif %}">
   </div>
   
   <style>
