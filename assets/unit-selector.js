@@ -68,8 +68,19 @@
           console.log(`[Unit Selector v3] Selected: ${unitName}, Variant: ${newVariantId}, Price: $${price/100}`);
           
           if (useVariants && newVariantId) {
-            // Cambiar el variant
+            // MODO VARIANTS: Cambiar el variant
             changeVariant(selector, newVariantId, price, context);
+          } else {
+            // MODO FALLBACK: Solo actualizar visualmente
+            const multiplier = parseFloat(this.dataset.multiplier) || 1;
+            const multiplierInput = selector.querySelector('.unit-selector__selected-multiplier');
+            const priceInput = selector.querySelector('.unit-selector__selected-price');
+            
+            if (multiplierInput) multiplierInput.value = multiplier;
+            if (priceInput) priceInput.value = price;
+            
+            updateDisplayedPrice(price, context, selector);
+            console.log(`[Unit Selector v3] Fallback mode: price display updated`);
           }
         });
       });
