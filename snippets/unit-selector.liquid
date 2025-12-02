@@ -1,0 +1,133 @@
+{%- comment -%}
+Selector de unidades para productos vendidos por peso/unidad.
+Convierte automáticamente a kilos para SIESA manteniendo un solo SKU.
+
+Metafields requeridos (producto):
+  - custom.allow_unit_selection (boolean) - Habilita selector de unidades
+  - custom.price_per_kilo (number) - Precio base por kilo
+  - custom.unit_weight (number) - Peso promedio de 1 unidad en kg (ej: 0.15 para 150g)
+
+Usage:
+  {% render 'unit-selector', product: product, variant: current_variant %}
+{%- endcomment -%}
+
+{%- assign allow_unit_selection = product.metafields.custom.allow_unit_selection | default: false -%}
+
+{%- if allow_unit_selection -%}
+  {%- assign price_per_kilo = product.metafields.custom.price_per_kilo | default: product.price -%}
+  {%- assign unit_weight = product.metafields.custom.unit_weight | default: 0.15 -%}
+  {%- assign variant_id = variant.id | default: product.selected_or_first_available_variant.id -%}
+  
+  <div class="unit-selector" 
+       data-product-id="{{ product.id }}" 
+       data-variant-id="{{ variant_id }}"
+       data-price-per-kilo="{{ price_per_kilo }}"
+       data-unit-weight="{{ unit_weight }}">
+    
+    <label class="unit-selector__label">Presentación:</label>
+    
+    <div class="unit-selector__options">
+      <button type="button" 
+              class="unit-selector__option active" 
+              data-unit="kg" 
+              data-multiplier="1">
+        <span class="unit-selector__option-name">Por Kilo</span>
+        <span class="unit-selector__option-price" data-price-display>{{ price_per_kilo | money }}</span>
+      </button>
+      
+      <button type="button" 
+              class="unit-selector__option" 
+              data-unit="lb" 
+              data-multiplier="0.45359">
+        <span class="unit-selector__option-name">Por Libra</span>
+        {%- assign price_per_lb = price_per_kilo | times: 0.45359 | divided_by: 100.0 | times: 100 | round -%}
+        <span class="unit-selector__option-price" data-price-display>{{ price_per_lb | money }}</span>
+      </button>
+      
+      <button type="button" 
+              class="unit-selector__option" 
+              data-unit="unidad" 
+              data-multiplier="{{ unit_weight }}">
+        <span class="unit-selector__option-name">Por Unidad</span>
+        {%- assign price_per_unit = price_per_kilo | times: unit_weight | divided_by: 100.0 | times: 100 | round -%}
+        <span class="unit-selector__option-price" data-price-display>{{ price_per_unit | money }}</span>
+      </button>
+    </div>
+    
+    {%- comment -%} Campo oculto para almacenar la unidad seleccionada {%- endcomment -%}
+    <input type="hidden" 
+           class="unit-selector__selected-unit" 
+           name="properties[_unit]" 
+           value="kg">
+    
+    <input type="hidden" 
+           class="unit-selector__selected-multiplier" 
+           name="properties[_multiplier]" 
+           value="1">
+  </div>
+  
+  <style>
+    .unit-selector {
+      margin-bottom: 15px;
+    }
+    
+    .unit-selector__label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    .unit-selector__options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    
+    .unit-selector__option {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .unit-selector__option:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+    
+    .unit-selector__option.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .unit-selector__option-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .unit-selector__option-price {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    @media (max-width: 640px) {
+      .unit-selector__options {
+        grid-template-columns: 1fr;
+      }
+      
+      .unit-selector__option {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+  </style>
+{%- endif -%}
