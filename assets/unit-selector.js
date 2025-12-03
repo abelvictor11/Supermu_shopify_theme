@@ -79,8 +79,16 @@
             if (multiplierInput) multiplierInput.value = multiplier;
             if (priceInput) priceInput.value = price;
             
+            // Actualizar precio mostrado
             updateDisplayedPrice(price, context, selector);
-            console.log(`[Unit Selector v3] Fallback mode: price display updated`);
+            
+            // Actualizar PUM (siempre muestra precio por kilo)
+            const pricePerKilo = parseFloat(selector.dataset.pricePerKilo) || 0;
+            if (pricePerKilo) {
+              updatePUM(selector, pricePerKilo);
+            }
+            
+            console.log(`[Unit Selector v3] Fallback mode: price and PUM updated`);
           }
         });
       });
@@ -201,6 +209,28 @@
   function formatMoney(cents) {
     const amount = cents / 100;
     return `$${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+  }
+  
+  /**
+   * Actualizar PUM (Precio por Unidad de Medida) - siempre muestra precio por kilo
+   */
+  function updatePUM(selector, pricePerKilo) {
+    const container = selector.closest('product-item') || selector.closest('[data-js-product]') || document;
+    const pumElement = container.querySelector('.custom-pum');
+    
+    if (!pumElement) {
+      console.log('[Unit Selector v3] No PUM element found');
+      return;
+    }
+    
+    const pricePerKg = pricePerKilo / 100;
+    const formattedPUM = `$${pricePerKg.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+    
+    const pumPriceSpan = pumElement.querySelector('.pum-price');
+    if (pumPriceSpan) {
+      pumPriceSpan.textContent = ` ${formattedPUM} /kg`;
+      console.log(`[Unit Selector v3] Updated PUM: ${formattedPUM}/kg`);
+    }
   }
   
   /**
