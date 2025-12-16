@@ -4,7 +4,11 @@
 {%- endcomment -%}
 
 <div class="coverage-alert">
-  <div class="coverage-alert__icon">🔔</div>
+  <div class="coverage-alert__icon">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+    </svg>
+  </div>
   <div class="coverage-alert__content">
     <p class="coverage-alert__title">¡Recordatorio Importante!</p>
     <p class="coverage-alert__text">
@@ -31,9 +35,12 @@
 }
 
 .coverage-alert__icon {
-  font-size: 1.4em;
-  line-height: 1;
   flex-shrink: 0;
+  color: #d97706;
+}
+
+.coverage-alert__icon svg {
+  display: block;
 }
 
 .coverage-alert__content {
@@ -81,8 +88,9 @@
   gap: 10px;
 }
 
-.popup-cart .coverage-alert__icon {
-  font-size: 1.2em;
+.popup-cart .coverage-alert__icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .popup-cart .coverage-alert__title {
