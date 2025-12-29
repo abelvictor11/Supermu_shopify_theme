@@ -1746,6 +1746,12 @@
                         <div class="container d-flex align-items-center position-lg-relative">
                             {{ btn_menu_html }}
                             {{ logo_html }}
+                            <!-- Sidebar Menu -->
+                            {%- if settings.sidebar_menu_enabled -%}
+                                <div class="header__sidebar-menu-btn d-flex align-items-center ml-15">
+                                    {% render 'sidebar-menu' %}
+                                </div>
+                            {%- endif -%}
                             <div class="header__search-form search-ajax d-lg-block position-lg-absolute" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
