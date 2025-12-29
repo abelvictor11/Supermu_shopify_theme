@@ -1,0 +1,693 @@
+{%- comment -%}
+  Collection Featured Banner Section
+  - Banner con imagen de fondo
+  - Producto destacado con slider
+  - Fila de productos seleccionables
+  - Botón "Ver más productos"
+{%- endcomment -%}
+
+{% include 'global-variables' %}
+
+{%- assign banner_image = section.settings.banner_image -%}
+{%- assign banner_image_mobile = section.settings.banner_image_mobile -%}
+{%- assign featured_product = all_products[section.settings.featured_product] -%}
+{%- assign button_text = section.settings.button_text | default: 'Ver más productos' -%}
+{%- assign button_url = section.settings.button_url -%}
+{%- assign show_section = section.settings.show_section -%}
+
+{%- if show_section == false -%}
+  {%- break -%}
+{%- endif -%}
+
+<div class="collection-featured-banner" data-section-id="{{ section.id }}" data-section-type="collection-featured-banner">
+  {%- comment -%} Banner de fondo con producto destacado {%- endcomment -%}
+  <div class="cfb-banner position-relative overflow-hidden">
+    {%- if banner_image != blank -%}
+      <div class="cfb-banner__image absolute-stretch{% if banner_image_mobile != blank %} d-none d-md-block{% endif %}">
+        <img 
+          src="{{ banner_image | image_url: width: 1920 }}"
+          srcset="{{ banner_image | image_url: width: 640 }} 640w,
+                  {{ banner_image | image_url: width: 960 }} 960w,
+                  {{ banner_image | image_url: width: 1280 }} 1280w,
+                  {{ banner_image | image_url: width: 1920 }} 1920w"
+          sizes="100vw"
+          alt="{{ section.settings.banner_alt | escape }}"
+          loading="lazy"
+          class="w-100 h-100 object-cover"
+        >
+      </div>
+      {%- if banner_image_mobile != blank -%}
+        <div class="cfb-banner__image cfb-banner__image--mobile absolute-stretch d-md-none">
+          <img 
+            src="{{ banner_image_mobile | image_url: width: 768 }}"
+            srcset="{{ banner_image_mobile | image_url: width: 480 }} 480w,
+                    {{ banner_image_mobile | image_url: width: 768 }} 768w"
+            sizes="100vw"
+            alt="{{ section.settings.banner_alt | escape }}"
+            loading="lazy"
+            class="w-100 h-100 object-cover"
+          >
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="cfb-banner__placeholder absolute-stretch" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+    {%- endif -%}
+
+    {%- comment -%} Contenido del banner {%- endcomment -%}
+    <div class="cfb-banner__content position-relative">
+      <div class="container">
+        <div class="row align-items-center justify-content-between">
+          {%- comment -%} Texto del banner {%- endcomment -%}
+          <div class="col-12 col-lg-6 cfb-banner__text-col">
+            {%- if section.settings.banner_title != blank -%}
+              <h2 class="cfb-banner__title">{{ section.settings.banner_title }}</h2>
+            {%- endif -%}
+            {%- if section.settings.banner_subtitle != blank -%}
+              <p class="cfb-banner__subtitle">{{ section.settings.banner_subtitle }}</p>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} Producto destacado con slider {%- endcomment -%}
+          {%- if featured_product != blank -%}
+            <div class="col-12 col-lg-5 cfb-featured-product">
+              <div class="cfb-featured-product__wrapper">
+                {%- comment -%} Slider de imágenes del producto {%- endcomment -%}
+                <div class="cfb-featured-product__slider" data-cfb-slider>
+                  <div class="cfb-featured-product__slides" data-cfb-slides>
+                    {%- for image in featured_product.images limit: 5 -%}
+                      <div class="cfb-featured-product__slide{% if forloop.first %} active{% endif %}" data-slide-index="{{ forloop.index0 }}">
+                        <a href="{{ featured_product.url }}">
+                          <img 
+                            src="{{ image | image_url: width: 600 }}"
+                            alt="{{ image.alt | escape | default: featured_product.title }}"
+                            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                            class="cfb-featured-product__image"
+                          >
+                        </a>
+                      </div>
+                    {%- endfor -%}
+                  </div>
+                  
+                  {%- if featured_product.images.size > 1 -%}
+                    <button class="cfb-slider__arrow cfb-slider__arrow--prev" data-cfb-prev aria-label="Anterior">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button class="cfb-slider__arrow cfb-slider__arrow--next" data-cfb-next aria-label="Siguiente">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  {%- endif -%}
+                </div>
+
+                {%- comment -%} Info del producto destacado {%- endcomment -%}
+                <div class="cfb-featured-product__info">
+                  {%- comment -%} Etiqueta de descuento {%- endcomment -%}
+                  {%- assign current_variant = featured_product.selected_or_first_available_variant -%}
+                  {%- if current_variant.compare_at_price > current_variant.price -%}
+                    {%- assign discount_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
+                    <div class="cfb-featured-product__discount-badge">
+                      -{{ discount_percent }}%
+                    </div>
+                  {%- endif -%}
+
+                  <div class="cfb-featured-product__price-block">
+                    <span class="cfb-featured-product__price">
+                      {{ current_variant.price | money_without_trailing_zeros }}
+                    </span>
+                    {%- if current_variant.compare_at_price > current_variant.price -%}
+                      <span class="cfb-featured-product__compare-price">
+                        {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+                      </span>
+                    {%- endif -%}
+                  </div>
+
+                  <h3 class="cfb-featured-product__title">
+                    <a href="{{ featured_product.url }}">{{ featured_product.title }}</a>
+                  </h3>
+                  
+                  {%- if section.settings.show_featured_weight and featured_product.variants.first.weight > 0 -%}
+                    <p class="cfb-featured-product__weight">
+                      {{ featured_product.variants.first.weight | weight_with_unit }}
+                    </p>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Fila de productos seleccionados {%- endcomment -%}
+  {%- assign products_count = 0 -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'product' and block.settings.product != blank -%}
+      {%- assign products_count = products_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if products_count > 0 -%}
+    <div class="cfb-products">
+      <div class="container">
+        <div class="cfb-products__grid">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'product' -%}
+              {%- assign product = all_products[block.settings.product] -%}
+              {%- if product != blank -%}
+                <div class="cfb-products__item" {{ block.shopify_attributes }}>
+                  {% include 'product-collection' with product: product, url_without_collection: true %}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} Botón ver más {%- endcomment -%}
+        {%- if button_text != blank -%}
+          <div class="cfb-products__button-wrapper">
+            <a href="{{ button_url | default: collection.url }}" class="cfb-products__button btn">
+              {{ button_text }}
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  /* ========================================
+     Collection Featured Banner Styles
+     ======================================== */
+  
+  .collection-featured-banner {
+    margin-bottom: 40px;
+  }
+
+  /* Banner */
+  .cfb-banner {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+  }
+
+  @media (min-width: 992px) {
+    .cfb-banner {
+      min-height: 500px;
+    }
+  }
+
+  .cfb-banner__image,
+  .cfb-banner__placeholder {
+    z-index: 0;
+  }
+
+  .cfb-banner__image img {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .cfb-banner__content {
+    z-index: 1;
+    width: 100%;
+    padding: 40px 0;
+  }
+
+  @media (min-width: 992px) {
+    .cfb-banner__content {
+      padding: 60px 0;
+    }
+  }
+
+  /* Texto del banner */
+  .cfb-banner__title {
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    line-height: 1.2;
+  }
+
+  @media (min-width: 768px) {
+    .cfb-banner__title {
+      font-size: 42px;
+    }
+  }
+
+  .cfb-banner__subtitle {
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+    font-size: 16px;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    opacity: 0.9;
+  }
+
+  @media (min-width: 768px) {
+    .cfb-banner__subtitle {
+      font-size: 18px;
+    }
+  }
+
+  /* Producto destacado */
+  .cfb-featured-product {
+    margin-top: 30px;
+  }
+
+  @media (min-width: 992px) {
+    .cfb-featured-product {
+      margin-top: 0;
+    }
+  }
+
+  .cfb-featured-product__wrapper {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 576px) {
+    .cfb-featured-product__wrapper {
+      flex-direction: row;
+      align-items: stretch;
+    }
+  }
+
+  /* Slider del producto destacado */
+  .cfb-featured-product__slider {
+    position: relative;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 576px) {
+    .cfb-featured-product__slider {
+      width: 45%;
+      max-width: none;
+      margin: 0;
+    }
+  }
+
+  .cfb-featured-product__slides {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .cfb-featured-product__slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .cfb-featured-product__slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cfb-featured-product__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 15px;
+  }
+
+  /* Flechas del slider */
+  .cfb-slider__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    z-index: 2;
+    color: #333;
+  }
+
+  .cfb-slider__arrow:hover {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .cfb-slider__arrow--prev {
+    left: 8px;
+  }
+
+  .cfb-slider__arrow--next {
+    right: 8px;
+  }
+
+  /* Info del producto destacado */
+  .cfb-featured-product__info {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .cfb-featured-product__discount-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #e30613;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 4px;
+  }
+
+  .cfb-featured-product__price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .cfb-featured-product__price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #e30613;
+  }
+
+  .cfb-featured-product__compare-price {
+    font-size: 18px;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  .cfb-featured-product__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px;
+    line-height: 1.3;
+  }
+
+  .cfb-featured-product__title a {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .cfb-featured-product__title a:hover {
+    color: #e30613;
+  }
+
+  .cfb-featured-product__weight {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+
+  /* Grid de productos */
+  .cfb-products {
+    padding: 30px 0 40px;
+    background: #fff;
+  }
+
+  .cfb-products__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  @media (min-width: 576px) {
+    .cfb-products__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .cfb-products__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 25px;
+    }
+  }
+
+  .cfb-products__item {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .cfb-products__item:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  /* Botón ver más */
+  .cfb-products__button-wrapper {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .cfb-products__button {
+    display: inline-block;
+    background: {{ section.settings.button_bg_color | default: '#e30613' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+  }
+
+  .cfb-products__button:hover {
+    background: {{ section.settings.button_bg_color | default: '#e30613' | color_darken: 10 }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(227, 6, 19, 0.3);
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!section) return;
+
+    const slider = section.querySelector('[data-cfb-slider]');
+    if (!slider) return;
+
+    const slides = slider.querySelectorAll('.cfb-featured-product__slide');
+    const prevBtn = slider.querySelector('[data-cfb-prev]');
+    const nextBtn = slider.querySelector('[data-cfb-next]');
+    
+    if (slides.length <= 1) return;
+
+    let currentIndex = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+      currentIndex = index;
+    }
+
+    function nextSlide() {
+      const next = (currentIndex + 1) % slides.length;
+      showSlide(next);
+    }
+
+    function prevSlide() {
+      const prev = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(prev);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+    // Auto-play opcional
+    {% if section.settings.autoplay %}
+    let autoplayInterval = setInterval(nextSlide, {{ section.settings.autoplay_speed | default: 5 | times: 1000 }});
+    
+    slider.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
+    slider.addEventListener('mouseleave', () => {
+      autoplayInterval = setInterval(nextSlide, {{ section.settings.autoplay_speed | default: 5 | times: 1000 }});
+    });
+    {% endif %}
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    slider.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Banner Destacado Colección",
+  "tag": "section",
+  "class": "section-collection-featured-banner",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_section",
+      "label": "Mostrar sección",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Imagen del banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image_mobile",
+      "label": "Imagen del banner (móvil)",
+      "info": "Opcional. Se usará en dispositivos móviles."
+    },
+    {
+      "type": "text",
+      "id": "banner_alt",
+      "label": "Texto alternativo del banner",
+      "default": "Banner promocional"
+    },
+    {
+      "type": "textarea",
+      "id": "banner_title",
+      "label": "Título del banner",
+      "default": "Celebra a lo grande\na precios pequeños"
+    },
+    {
+      "type": "text",
+      "id": "banner_subtitle",
+      "label": "Subtítulo del banner"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Producto Destacado"
+    },
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Producto destacado"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_featured_weight",
+      "label": "Mostrar peso del producto",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Reproducción automática del slider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Velocidad de autoplay",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "Ver más productos"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Enlace del botón",
+      "info": "Dejar vacío para usar la URL de la colección actual"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Color de fondo del botón",
+      "default": "#e30613"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color del texto del botón",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Producto",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Producto"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner Destacado Colección",
+      "category": "4) Collections",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ],
+  "templates": ["collection"]
+}
+{% endschema %}
