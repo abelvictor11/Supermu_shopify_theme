@@ -18,18 +18,22 @@
   {%- break -%}
 {%- endif -%}
 
-{%- comment -%} Contar productos destacados {%- endcomment -%}
-{%- assign featured_products = "" | split: "," -%}
+{%- comment -%} Recopilar todos los productos {%- endcomment -%}
+{%- assign all_block_products = "" | split: "," -%}
 {%- for block in section.blocks -%}
-  {%- if block.type == 'featured_product' and block.settings.product != blank -%}
-    {%- assign featured_products = featured_products | push: block -%}
+  {%- if block.settings.product != blank -%}
+    {%- assign all_block_products = all_block_products | push: block -%}
   {%- endif -%}
 {%- endfor -%}
 
-{%- comment -%} Contar productos de la fila inferior {%- endcomment -%}
+{%- comment -%} Productos destacados = primeros N productos (según configuración) {%- endcomment -%}
+{%- assign featured_count = section.settings.featured_products_count | default: 4 -%}
+{%- assign featured_products = "" | split: "," -%}
 {%- assign row_products = "" | split: "," -%}
-{%- for block in section.blocks -%}
-  {%- if block.type == 'product' and block.settings.product != blank -%}
+{%- for block in all_block_products -%}
+  {%- if forloop.index <= featured_count -%}
+    {%- assign featured_products = featured_products | push: block -%}
+  {%- else -%}
     {%- assign row_products = row_products | push: block -%}
   {%- endif -%}
 {%- endfor -%}
@@ -631,6 +635,20 @@
     },
     {
       "type": "header",
+      "content": "Productos Destacados"
+    },
+    {
+      "type": "range",
+      "id": "featured_products_count",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "label": "Cantidad de productos destacados",
+      "info": "Los primeros N productos aparecerán en el carrusel del banner",
+      "default": 4
+    },
+    {
+      "type": "header",
       "content": "Botón"
     },
     {
@@ -660,21 +678,9 @@
   ],
   "blocks": [
     {
-      "type": "featured_product",
-      "name": "Producto Destacado",
-      "limit": 8,
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Producto"
-        }
-      ]
-    },
-    {
       "type": "product",
-      "name": "Producto Fila",
-      "limit": 8,
+      "name": "Producto",
+      "limit": 16,
       "settings": [
         {
           "type": "product",
@@ -689,10 +695,10 @@
       "name": "Banner Destacado",
       "category": "4) Collections",
       "blocks": [
-        { "type": "featured_product" },
-        { "type": "featured_product" },
-        { "type": "featured_product" },
-        { "type": "featured_product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
         { "type": "product" },
         { "type": "product" },
         { "type": "product" },
