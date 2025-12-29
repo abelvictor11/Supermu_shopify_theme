@@ -1,167 +1,111 @@
 {%- comment -%}
-  Collection Featured Banner Section v2
+  Banner Destacado para Colecciones
   - Banner con imagen de fondo
-  - Carrusel de productos destacados superpuesto al banner (hasta 8 items)
-  - Fila de productos seleccionables
-  - Botón "Ver más productos"
+  - Carrusel de productos destacados superpuesto
+  - Fila de productos inferior
 {%- endcomment -%}
 
 {% include 'global-variables' %}
+
+{%- assign show_section = section.settings.show_section -%}
+{%- if show_section == false -%}{%- break -%}{%- endif -%}
 
 {%- assign banner_image = section.settings.banner_image -%}
 {%- assign banner_image_mobile = section.settings.banner_image_mobile -%}
 {%- assign button_text = section.settings.button_text | default: 'Ver más productos' -%}
 {%- assign button_url = section.settings.button_url -%}
-{%- assign show_section = section.settings.show_section -%}
-
-{%- if show_section == false -%}
-  {%- break -%}
-{%- endif -%}
-
-{%- comment -%} Recopilar todos los productos {%- endcomment -%}
-{%- assign all_block_products = "" | split: "," -%}
-{%- for block in section.blocks -%}
-  {%- if block.settings.product != blank -%}
-    {%- assign all_block_products = all_block_products | push: block -%}
-  {%- endif -%}
-{%- endfor -%}
-
-{%- comment -%} Productos destacados = primeros N productos (según configuración) {%- endcomment -%}
 {%- assign featured_count = section.settings.featured_products_count | default: 4 -%}
-{%- assign featured_products = "" | split: "," -%}
-{%- assign row_products = "" | split: "," -%}
-{%- for block in all_block_products -%}
-  {%- if forloop.index <= featured_count -%}
-    {%- assign featured_products = featured_products | push: block -%}
-  {%- else -%}
-    {%- assign row_products = row_products | push: block -%}
-  {%- endif -%}
-{%- endfor -%}
 
-<div class="collection-featured-banner" data-section-id="{{ section.id }}" data-section-type="collection-featured-banner">
-  {%- comment -%} Banner de fondo {%- endcomment -%}
-  <div class="cfb-banner position-relative overflow-visible">
+<div class="cfb-section" data-section-id="{{ section.id }}">
+  
+  {%- comment -%} === BANNER === {%- endcomment -%}
+  <div class="cfb-banner">
     {%- if banner_image != blank -%}
-      <div class="cfb-banner__image{% if banner_image_mobile != blank %} d-none d-md-block{% endif %}">
-        <img 
-          src="{{ banner_image | image_url: width: 1920 }}"
-          srcset="{{ banner_image | image_url: width: 640 }} 640w,
-                  {{ banner_image | image_url: width: 960 }} 960w,
-                  {{ banner_image | image_url: width: 1280 }} 1280w,
-                  {{ banner_image | image_url: width: 1920 }} 1920w"
-          sizes="100vw"
-          alt="{{ section.settings.banner_alt | escape }}"
-          loading="lazy"
-          class="w-100 h-100 object-cover"
-        >
-      </div>
+      <img 
+        src="{{ banner_image | image_url: width: 1920 }}"
+        alt="{{ section.settings.banner_alt | escape }}"
+        class="cfb-banner__img{% if banner_image_mobile != blank %} d-none d-md-block{% endif %}"
+      >
       {%- if banner_image_mobile != blank -%}
-        <div class="cfb-banner__image cfb-banner__image--mobile d-md-none">
-          <img 
-            src="{{ banner_image_mobile | image_url: width: 768 }}"
-            srcset="{{ banner_image_mobile | image_url: width: 480 }} 480w,
-                    {{ banner_image_mobile | image_url: width: 768 }} 768w"
-            sizes="100vw"
-            alt="{{ section.settings.banner_alt | escape }}"
-            loading="lazy"
-            class="w-100 h-100 object-cover"
-          >
-        </div>
+        <img 
+          src="{{ banner_image_mobile | image_url: width: 768 }}"
+          alt="{{ section.settings.banner_alt | escape }}"
+          class="cfb-banner__img d-md-none"
+        >
       {%- endif -%}
     {%- else -%}
-      <div class="cfb-banner__placeholder" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+      <div class="cfb-banner__placeholder"></div>
     {%- endif -%}
-
-    {%- comment -%} Contenido del banner - Título {%- endcomment -%}
+    
     <div class="cfb-banner__content">
       <div class="container">
-        <div class="cfb-banner__text">
-          {%- if section.settings.banner_title != blank -%}
-            <h2 class="cfb-banner__title">{{ section.settings.banner_title }}</h2>
-          {%- endif -%}
-          {%- if section.settings.banner_subtitle != blank -%}
-            <p class="cfb-banner__subtitle">{{ section.settings.banner_subtitle }}</p>
-          {%- endif -%}
+        {%- if section.settings.banner_title != blank -%}
+          <h2 class="cfb-banner__title">{{ section.settings.banner_title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.banner_subtitle != blank -%}
+          <p class="cfb-banner__subtitle">{{ section.settings.banner_subtitle }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} === PRODUCTOS DESTACADOS (carrusel superpuesto) === {%- endcomment -%}
+  {%- if section.blocks.size > 0 -%}
+    <div class="cfb-featured">
+      <div class="container">
+        <div class="cfb-featured__grid">
+          {%- for block in section.blocks limit: featured_count -%}
+            {%- assign product = all_products[block.settings.product] -%}
+            {%- if product != blank -%}
+              {%- assign variant = product.selected_or_first_available_variant -%}
+              {%- assign has_discount = false -%}
+              {%- assign discount_pct = 0 -%}
+              {%- if variant.compare_at_price > variant.price -%}
+                {%- assign has_discount = true -%}
+                {%- assign discount_pct = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price -%}
+              {%- endif -%}
+              
+              <div class="cfb-card" {{ block.shopify_attributes }}>
+                <a href="{{ product.url }}" class="cfb-card__link">
+                  <div class="cfb-card__img-wrap">
+                    {%- if product.featured_image != blank -%}
+                      <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title | escape }}" class="cfb-card__img">
+                    {%- else -%}
+                      <div class="cfb-card__no-img">{{ product.title | truncate: 1, '' }}</div>
+                    {%- endif -%}
+                    
+                    {%- if has_discount -%}
+                      <span class="cfb-card__badge">-{{ discount_pct }}%</span>
+                    {%- endif -%}
+                    
+                    <div class="cfb-card__price-box">
+                      {%- if has_discount -%}
+                        <span class="cfb-card__old-price">{{ variant.compare_at_price | money_without_trailing_zeros }}</span>
+                      {%- endif -%}
+                      <span class="cfb-card__price">{{ variant.price | money_without_trailing_zeros }}</span>
+                    </div>
+                  </div>
+                  <div class="cfb-card__info">
+                    <h3 class="cfb-card__title">{{ product.title }}</h3>
+                    {%- if product.vendor != blank -%}
+                      <p class="cfb-card__vendor">{{ product.vendor }}</p>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
         </div>
       </div>
     </div>
+  {%- endif -%}
 
-    {%- comment -%} Carrusel de productos destacados superpuesto {%- endcomment -%}
-    {%- if featured_products.size > 0 -%}
-      <div class="cfb-carousel-wrapper">
-        <div class="container">
-          <div class="cfb-carousel" data-cfb-carousel>
-            <div class="cfb-carousel__track" data-cfb-track>
-              {%- for block in featured_products -%}
-                {%- assign product = all_products[block.settings.product] -%}
-                {%- if product != blank -%}
-                  {%- assign current_variant = product.selected_or_first_available_variant -%}
-                  {%- assign has_discount = false -%}
-                  {%- assign discount_percent = 0 -%}
-                  {%- if current_variant.compare_at_price > current_variant.price -%}
-                    {%- assign has_discount = true -%}
-                    {%- assign discount_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
-                  {%- endif -%}
-                  
-                  <div class="cfb-carousel__item" {{ block.shopify_attributes }}>
-                    <a href="{{ product.url }}" class="cfb-card">
-                      <div class="cfb-card__image-wrapper">
-                        <img 
-                          src="{{ product.featured_image | image_url: width: 400 }}"
-                          alt="{{ product.featured_image.alt | escape | default: product.title }}"
-                          loading="lazy"
-                          class="cfb-card__image"
-                        >
-                        {%- if has_discount -%}
-                          <div class="cfb-card__badge">
-                            -{{ discount_percent }}%
-                          </div>
-                        {%- endif -%}
-                        
-                        <div class="cfb-card__price-overlay">
-                          {%- if has_discount -%}
-                            <span class="cfb-card__compare-price">{{ current_variant.compare_at_price | money_without_trailing_zeros }}</span>
-                          {%- endif -%}
-                          <span class="cfb-card__price">{{ current_variant.price | money_without_trailing_zeros }}</span>
-                        </div>
-                      </div>
-                      
-                      <div class="cfb-card__info">
-                        <h3 class="cfb-card__title">{{ product.title }}</h3>
-                        {%- if product.vendor != blank -%}
-                          <p class="cfb-card__vendor">{{ product.vendor }}</p>
-                        {%- endif -%}
-                      </div>
-                    </a>
-                  </div>
-                {%- endif -%}
-              {%- endfor -%}
-            </div>
-            
-            {%- if featured_products.size > 4 -%}
-              <button class="cfb-carousel__arrow cfb-carousel__arrow--prev" data-cfb-prev aria-label="Anterior">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </button>
-              <button class="cfb-carousel__arrow cfb-carousel__arrow--next" data-cfb-next aria-label="Siguiente">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
-            {%- endif -%}
-          </div>
-        </div>
-      </div>
-    {%- endif -%}
-  </div>
-
-  {%- comment -%} Fila de productos seleccionados {%- endcomment -%}
-  {%- if row_products.size > 0 -%}
+  {%- comment -%} === FILA DE PRODUCTOS INFERIOR === {%- endcomment -%}
+  {%- if section.blocks.size > featured_count -%}
     <div class="cfb-products">
       <div class="container">
         <div class="cfb-products__grid">
-          {%- for block in row_products -%}
+          {%- for block in section.blocks offset: featured_count -%}
             {%- assign product = all_products[block.settings.product] -%}
             {%- if product != blank -%}
               <div class="cfb-products__item" {{ block.shopify_attributes }}>
@@ -170,13 +114,10 @@
             {%- endif -%}
           {%- endfor -%}
         </div>
-
-        {%- comment -%} Botón ver más {%- endcomment -%}
+        
         {%- if button_text != blank -%}
-          <div class="cfb-products__button-wrapper">
-            <a href="{{ button_url | default: collection.url }}" class="cfb-products__button btn">
-              {{ button_text }}
-            </a>
+          <div class="cfb-products__btn-wrap">
+            <a href="{{ button_url | default: collection.url }}" class="cfb-products__btn">{{ button_text }}</a>
           </div>
         {%- endif -%}
       </div>
@@ -185,409 +126,101 @@
 </div>
 
 <style>
-  /* ========================================
-     Collection Featured Banner Styles v2
-     ======================================== */
-  
-  .collection-featured-banner {
-    margin-bottom: 40px;
-  }
+.cfb-section { margin-bottom: 40px; }
 
-  /* Banner */
-  .cfb-banner {
-    position: relative;
-    overflow: visible;
-  }
+/* Banner */
+.cfb-banner { position: relative; min-height: 300px; overflow: hidden; }
+@media (min-width: 768px) { .cfb-banner { min-height: 400px; } }
 
-  .cfb-banner__image {
-    position: relative;
-    width: 100%;
-    height: 350px;
-    overflow: hidden;
-  }
+.cfb-banner__img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+.cfb-banner__placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 
-  @media (min-width: 768px) {
-    .cfb-banner__image {
-      height: 420px;
-    }
-  }
+.cfb-banner__content { position: relative; z-index: 2; padding: 40px 0 120px; }
+@media (min-width: 768px) { .cfb-banner__content { padding: 60px 0 140px; } }
 
-  @media (min-width: 992px) {
-    .cfb-banner__image {
-      height: 480px;
-    }
-  }
+.cfb-banner__title { 
+  color: {{ section.settings.text_color | default: '#ffffff' }}; 
+  font-size: 28px; font-weight: 700; margin: 0 0 10px; 
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3); white-space: pre-line; 
+}
+@media (min-width: 768px) { .cfb-banner__title { font-size: 42px; } }
 
-  .cfb-banner__image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
+.cfb-banner__subtitle { 
+  color: {{ section.settings.text_color | default: '#ffffff' }}; 
+  font-size: 16px; margin: 0; opacity: 0.9; 
+}
 
-  .cfb-banner__placeholder {
-    height: 420px;
-  }
+/* Productos Destacados */
+.cfb-featured { margin-top: -80px; position: relative; z-index: 10; padding-bottom: 20px; }
+@media (min-width: 768px) { .cfb-featured { margin-top: -100px; } }
 
-  /* Contenido del banner */
-  .cfb-banner__content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 40px 0;
-    z-index: 1;
-  }
+.cfb-featured__grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 12px; 
+}
+@media (min-width: 576px) { .cfb-featured__grid { grid-template-columns: repeat(3, 1fr); gap: 15px; } }
+@media (min-width: 992px) { .cfb-featured__grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 
-  @media (min-width: 768px) {
-    .cfb-banner__content {
-      padding: 60px 0;
-    }
-  }
+/* Card */
+.cfb-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.cfb-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.15); transform: translateY(-4px); }
+.cfb-card__link { display: block; text-decoration: none; transition: transform 0.3s; }
 
-  .cfb-banner__text {
-    max-width: 500px;
-  }
+.cfb-card__img-wrap { position: relative; aspect-ratio: 1; background: #f8f8f8; }
+.cfb-card__img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+.cfb-card__no-img { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #ccc; }
 
-  .cfb-banner__title {
-    color: {{ section.settings.text_color | default: '#ffffff' }};
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    line-height: 1.2;
-    white-space: pre-line;
-  }
+.cfb-card__badge { 
+  position: absolute; top: 10px; right: 0; 
+  background: #e30613; color: #fff; 
+  font-size: 12px; font-weight: 700; 
+  padding: 4px 10px 4px 12px; 
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%); 
+}
 
-  @media (min-width: 768px) {
-    .cfb-banner__title {
-      font-size: 38px;
-    }
-  }
+.cfb-card__price-box { 
+  position: absolute; bottom: 10px; right: 10px; 
+  background: #c8102e; color: #fff; 
+  padding: 8px 12px; border-radius: 4px; 
+  text-align: right; line-height: 1.2; 
+}
+.cfb-card__old-price { display: block; font-size: 11px; text-decoration: line-through; color: #ffeb3b; }
+.cfb-card__price { display: block; font-size: 18px; font-weight: 700; }
+@media (min-width: 768px) { .cfb-card__price { font-size: 22px; } }
 
-  @media (min-width: 992px) {
-    .cfb-banner__title {
-      font-size: 46px;
-    }
-  }
+.cfb-card__info { padding: 12px 15px 15px; }
+.cfb-card__title { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cfb-card__vendor { font-size: 12px; color: #666; margin: 0; font-style: italic; }
 
-  .cfb-banner__subtitle {
-    color: {{ section.settings.text_color | default: '#ffffff' }};
-    font-size: 16px;
-    margin: 0;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    opacity: 0.9;
-  }
+/* Fila de productos */
+.cfb-products { padding: 30px 0 40px; background: #fff; }
+.cfb-products__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+@media (min-width: 576px) { .cfb-products__grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+@media (min-width: 992px) { .cfb-products__grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } }
 
-  /* Carrusel de productos destacados */
-  .cfb-carousel-wrapper {
-    position: relative;
-    margin-top: -80px;
-    z-index: 10;
-    padding-bottom: 20px;
-  }
-
-  @media (min-width: 768px) {
-    .cfb-carousel-wrapper {
-      margin-top: -100px;
-    }
-  }
-
-  .cfb-carousel {
-    position: relative;
-  }
-
-  .cfb-carousel__track {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  @media (min-width: 576px) {
-    .cfb-carousel__track {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-  }
-
-  @media (min-width: 992px) {
-    .cfb-carousel__track {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-    }
-  }
-
-  .cfb-carousel__item {
-    flex: 0 0 auto;
-  }
-
-  /* Card de producto destacado - Estilo similar a la imagen */
-  .cfb-card {
-    display: block;
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    text-decoration: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .cfb-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-  }
-
-  .cfb-card__image-wrapper {
-    position: relative;
-    aspect-ratio: 1;
-    background: #f8f8f8;
-    overflow: hidden;
-  }
-
-  .cfb-card__image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 10px;
-    transition: transform 0.3s ease;
-  }
-
-  .cfb-card:hover .cfb-card__image {
-    transform: scale(1.05);
-  }
-
-  /* Badge de descuento - Estilo bandera */
-  .cfb-card__badge {
-    position: absolute;
-    top: 10px;
-    right: 0;
-    background: #e30613;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px 10px 4px 12px;
-    clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
-  }
-
-  @media (min-width: 768px) {
-    .cfb-card__badge {
-      font-size: 13px;
-      padding: 5px 12px 5px 14px;
-    }
-  }
-
-  /* Overlay de precio en la imagen */
-  .cfb-card__price-overlay {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: #c8102e;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 4px;
-    text-align: right;
-    line-height: 1.2;
-  }
-
-  .cfb-card__compare-price {
-    display: block;
-    font-size: 11px;
-    text-decoration: line-through;
-    opacity: 0.8;
-    color: #ffeb3b;
-  }
-
-  .cfb-card__price {
-    display: block;
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  @media (min-width: 768px) {
-    .cfb-card__price {
-      font-size: 22px;
-    }
-  }
-
-  /* Info del producto */
-  .cfb-card__info {
-    padding: 12px 15px 15px;
-    background: #fff;
-  }
-
-  .cfb-card__title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 4px;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .cfb-card__vendor {
-    font-size: 12px;
-    color: #666;
-    margin: 0;
-    font-style: italic;
-  }
-
-  /* Flechas del carrusel */
-  .cfb-carousel__arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(255,255,255,0.95);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
-    z-index: 5;
-    color: #333;
-  }
-
-  @media (min-width: 992px) {
-    .cfb-carousel__arrow {
-      display: flex;
-    }
-  }
-
-  .cfb-carousel__arrow:hover {
-    background: #fff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  }
-
-  .cfb-carousel__arrow--prev {
-    left: -20px;
-  }
-
-  .cfb-carousel__arrow--next {
-    right: -20px;
-  }
-
-  /* Grid de productos inferior */
-  .cfb-products {
-    padding: 30px 0 40px;
-    background: #fff;
-  }
-
-  .cfb-products__grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  @media (min-width: 576px) {
-    .cfb-products__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-  }
-
-  @media (min-width: 992px) {
-    .cfb-products__grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 25px;
-    }
-  }
-
-  .cfb-products__item {
-    background: #fff;
-  }
-
-  /* Botón ver más */
-  .cfb-products__button-wrapper {
-    text-align: center;
-    margin-top: 30px;
-  }
-
-  .cfb-products__button {
-    display: inline-block;
-    background: {{ section.settings.button_bg_color | default: '#333' }};
-    color: {{ section.settings.button_text_color | default: '#ffffff' }};
-    padding: 12px 30px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    border: 2px solid {{ section.settings.button_bg_color | default: '#333' }};
-  }
-
-  .cfb-products__button:hover {
-    background: transparent;
-    color: {{ section.settings.button_bg_color | default: '#333' }};
-  }
+.cfb-products__btn-wrap { text-align: center; margin-top: 30px; }
+.cfb-products__btn { 
+  display: inline-block; 
+  background: {{ section.settings.button_bg_color | default: '#333' }}; 
+  color: {{ section.settings.button_text_color | default: '#fff' }}; 
+  padding: 12px 30px; border-radius: 4px; 
+  font-size: 14px; font-weight: 600; 
+  text-decoration: none; text-transform: uppercase; 
+  border: 2px solid {{ section.settings.button_bg_color | default: '#333' }}; 
+  transition: all 0.3s; 
+}
+.cfb-products__btn:hover { 
+  background: transparent; 
+  color: {{ section.settings.button_bg_color | default: '#333' }}; 
+}
 </style>
-
-<script>
-  (function() {
-    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
-    if (!section) return;
-
-    const carousel = section.querySelector('[data-cfb-carousel]');
-    if (!carousel) return;
-
-    const track = carousel.querySelector('[data-cfb-track]');
-    const prevBtn = carousel.querySelector('[data-cfb-prev]');
-    const nextBtn = carousel.querySelector('[data-cfb-next]');
-    const items = track.querySelectorAll('.cfb-carousel__item');
-    
-    if (items.length <= 4) return;
-
-    let currentIndex = 0;
-    const itemsPerView = window.innerWidth >= 992 ? 4 : window.innerWidth >= 576 ? 3 : 2;
-    const maxIndex = Math.max(0, items.length - itemsPerView);
-
-    function updateCarousel() {
-      // En grid no necesitamos scroll, pero podemos ocultar/mostrar items
-      items.forEach((item, i) => {
-        if (i >= currentIndex && i < currentIndex + itemsPerView) {
-          item.style.display = 'block';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    }
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        currentIndex = Math.max(0, currentIndex - 1);
-        updateCarousel();
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        currentIndex = Math.min(maxIndex, currentIndex + 1);
-        updateCarousel();
-      });
-    }
-
-    // Mostrar todos inicialmente si hay 4 o menos
-    if (items.length <= itemsPerView) {
-      items.forEach(item => item.style.display = 'block');
-    } else {
-      updateCarousel();
-    }
-  })();
-</script>
 
 {% schema %}
 {
   "name": "Banner Destacado",
   "tag": "section",
-  "class": "section-collection-featured-banner",
+  "class": "section-cfb",
   "settings": [
     {
       "type": "checkbox",
@@ -607,25 +240,24 @@
     {
       "type": "image_picker",
       "id": "banner_image_mobile",
-      "label": "Imagen del banner (móvil)",
-      "info": "Opcional. Se usará en dispositivos móviles."
+      "label": "Imagen móvil (opcional)"
     },
     {
       "type": "text",
       "id": "banner_alt",
-      "label": "Texto alternativo del banner",
+      "label": "Texto alternativo",
       "default": "Banner promocional"
     },
     {
       "type": "textarea",
       "id": "banner_title",
-      "label": "Título del banner",
+      "label": "Título",
       "default": "Celebra a lo grande\na precios pequeños"
     },
     {
       "type": "text",
       "id": "banner_subtitle",
-      "label": "Subtítulo del banner"
+      "label": "Subtítulo"
     },
     {
       "type": "color",
@@ -635,7 +267,7 @@
     },
     {
       "type": "header",
-      "content": "Productos Destacados"
+      "content": "Productos"
     },
     {
       "type": "range",
@@ -643,8 +275,8 @@
       "min": 1,
       "max": 8,
       "step": 1,
-      "label": "Cantidad de productos destacados",
-      "info": "Los primeros N productos aparecerán en el carrusel del banner",
+      "label": "Productos en carrusel",
+      "info": "Los primeros N productos van al carrusel del banner",
       "default": 4
     },
     {
@@ -660,19 +292,18 @@
     {
       "type": "url",
       "id": "button_url",
-      "label": "Enlace del botón",
-      "info": "Dejar vacío para usar la URL de la colección actual"
+      "label": "Enlace del botón"
     },
     {
       "type": "color",
       "id": "button_bg_color",
-      "label": "Color de fondo del botón",
+      "label": "Color del botón",
       "default": "#333333"
     },
     {
       "type": "color",
       "id": "button_text_color",
-      "label": "Color del texto del botón",
+      "label": "Color texto botón",
       "default": "#ffffff"
     }
   ],
@@ -680,7 +311,7 @@
     {
       "type": "product",
       "name": "Producto",
-      "limit": 16,
+      "limit": 12,
       "settings": [
         {
           "type": "product",
@@ -695,10 +326,6 @@
       "name": "Banner Destacado",
       "category": "4) Collections",
       "blocks": [
-        { "type": "product" },
-        { "type": "product" },
-        { "type": "product" },
-        { "type": "product" },
         { "type": "product" },
         { "type": "product" },
         { "type": "product" },
