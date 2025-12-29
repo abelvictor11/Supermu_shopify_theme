@@ -1397,7 +1397,13 @@
                         <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                             {% include 'store-selector-button' %}
                         </div>
-                        <div class="d-flex ml-auto">
+                        <div class="d-flex ml-auto align-items-center">
+                            <!-- Sidebar Menu -->
+                            {%- if settings.sidebar_menu_enabled -%}
+                                <div class="header__sidebar-menu-btn d-flex align-items-center mr-15">
+                                    {% render 'sidebar-menu' %}
+                                </div>
+                            {%- endif -%}
                             <div class="header__search-form search-ajax d-none d-lg-block" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
@@ -1587,6 +1593,12 @@
                             <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                                 {% include 'store-selector-button' %}
                             </div>
+                            <!-- Sidebar Menu -->
+                            {%- if settings.sidebar_menu_enabled -%}
+                                <div class="header__sidebar-menu-btn d-flex align-items-center ml-15">
+                                    {% render 'sidebar-menu' %}
+                                </div>
+                            {%- endif -%}
                             <div class="header__search-form search-ajax d-none d-lg-block position-lg-absolute" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
@@ -1746,6 +1758,12 @@
                             <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                                 {% include 'store-selector-button' %}
                             </div>
+                            <!-- Sidebar Menu -->
+                            {%- if settings.sidebar_menu_enabled -%}
+                                <div class="header__sidebar-menu-btn d-flex align-items-center ml-15">
+                                    {% render 'sidebar-menu' %}
+                                </div>
+                            {%- endif -%}
                             <div class="header__search-form search-ajax d-lg-block position-lg-absolute" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
@@ -1915,7 +1933,13 @@
                             <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                                 {% include 'store-selector-button' %}
                             </div>
-                            <div class="d-flex ml-auto">
+                            <div class="d-flex ml-auto align-items-center">
+                                <!-- Sidebar Menu -->
+                                {%- if settings.sidebar_menu_enabled -%}
+                                    <div class="header__sidebar-menu-btn d-flex align-items-center mr-15">
+                                        {% render 'sidebar-menu' %}
+                                    </div>
+                                {%- endif -%}
                                 <div class="header__search-form search-ajax d-none d-lg-block" data-js-max-products="5">
                                     {%- if settings.search_predictive_enabled -%}
                                         <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
