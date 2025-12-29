@@ -59,8 +59,27 @@
 {%- endif -%}
 
 {%- if _enabled and _visible -%}
+  {%- comment -%} 
+    Filtrar opciones por metafield de producto: custom.cortes_disponibles
+    Si el producto tiene este metafield, solo muestra los cortes listados.
+    Si no tiene el metafield, muestra todas las opciones.
+    Si el metafield contiene "ninguno" o está vacío con solo ese valor, no muestra el selector.
+    El metafield debe ser tipo "list.single_line_text_field" con los iconos disponibles (ej: cubos, entero, filete, ninguno)
+  {%- endcomment -%}
+  {%- assign _product_cortes = product.metafields.custom.cortes_disponibles.value -%}
+  {%- assign _has_product_filter = false -%}
+  {%- assign _hide_selector = false -%}
+  {%- if _product_cortes and _product_cortes.size > 0 -%}
+    {%- assign _has_product_filter = true -%}
+    {%- assign _product_cortes_str = _product_cortes | join: '|' | downcase -%}
+    {%- comment -%} Si solo tiene "ninguno", ocultar el selector completamente {%- endcomment -%}
+    {%- if _product_cortes.size == 1 and _product_cortes_str contains 'ninguno' -%}
+      {%- assign _hide_selector = true -%}
+    {%- endif -%}
+  {%- endif -%}
+
   <div class="product-page-info__field product-page-info__custom-fields mb-20">
-    {%- if _sel and _sel.options and _sel.options.size > 0 -%}
+    {%- if _sel and _sel.options and _sel.options.size > 0 and _hide_selector == false -%}
       {%- assign _sel_id = 'pdp-select-' | append: section.id -%}
       {%- assign _sel_type = _sel.type | default: 'dropdown' -%}
       
@@ -73,10 +92,22 @@
           {%- for opt in _sel.options -%}
             {%- assign _opt_value = opt.value | default: opt -%}
             {%- assign _opt_icon = opt.icon | default: 'default' -%}
-            <button type="button" class="pdp-icon-grid__item" data-value="{{ _opt_value | strip }}" title="{{ _opt_value }}">
-              <span class="pdp-icon-grid__icon pdp-icon-grid__icon--{{ _opt_icon }}"></span>
-              <span class="pdp-icon-grid__label">{{ _opt_value }}</span>
-            </button>
+            
+            {%- comment -%} Verificar si este corte está disponible para el producto {%- endcomment -%}
+            {%- assign _show_option = true -%}
+            {%- if _has_product_filter -%}
+              {%- assign _opt_icon_lower = _opt_icon | downcase -%}
+              {%- unless _product_cortes_str contains _opt_icon_lower -%}
+                {%- assign _show_option = false -%}
+              {%- endunless -%}
+            {%- endif -%}
+            
+            {%- if _show_option -%}
+              <button type="button" class="pdp-icon-grid__item" data-value="{{ _opt_value | strip }}" title="{{ _opt_value }}">
+                <span class="pdp-icon-grid__icon pdp-icon-grid__icon--{{ _opt_icon }}"></span>
+                <span class="pdp-icon-grid__label">{{ _opt_value }}</span>
+              </button>
+            {%- endif -%}
           {%- endfor -%}
         </div>
         {%- if _sel_required -%}
@@ -88,7 +119,20 @@
           <option value="" disabled selected>{{ _sel_placeholder }}</option>
           {%- for opt in _sel.options -%}
             {%- assign _opt_value = opt.value | default: opt -%}
-            <option value="{{ _opt_value | strip }}">{{ _opt_value }}</option>
+            {%- assign _opt_icon = opt.icon | default: 'default' -%}
+            
+            {%- comment -%} Verificar si este corte está disponible para el producto {%- endcomment -%}
+            {%- assign _show_option = true -%}
+            {%- if _has_product_filter -%}
+              {%- assign _opt_icon_lower = _opt_icon | downcase -%}
+              {%- unless _product_cortes_str contains _opt_icon_lower -%}
+                {%- assign _show_option = false -%}
+              {%- endunless -%}
+            {%- endif -%}
+            
+            {%- if _show_option -%}
+              <option value="{{ _opt_value | strip }}">{{ _opt_value }}</option>
+            {%- endif -%}
           {%- endfor -%}
         </select>
       {%- endif -%}
