@@ -111,9 +111,9 @@
 </div>
 
 <style>
-/* Trigger Button */
+/* Trigger Button - Solo visible en desktop */
 .sidebar-menu-trigger {
-  display: flex;
+  display: none; /* Oculto en móviles */
   align-items: center;
   gap: 8px;
   background: none;
@@ -125,6 +125,13 @@
   color: inherit;
   transition: opacity 0.2s;
 }
+
+@media (min-width: 1025px) {
+  .sidebar-menu-trigger {
+    display: flex; /* Visible solo en desktop */
+  }
+}
+
 .sidebar-menu-trigger:hover { opacity: 0.7; }
 
 .sidebar-menu-trigger__icon {
@@ -143,10 +150,7 @@
 }
 
 .sidebar-menu-trigger__text {
-  display: none;
-}
-@media (min-width: 768px) {
-  .sidebar-menu-trigger__text { display: inline; }
+  display: inline;
 }
 
 /* Overlay */
@@ -216,6 +220,16 @@
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.sidebar-menu__list li::before {
+  display: none !important;
+  content: none !important;
+}
+
+.sidebar-menu__item::before {
+  display: none !important;
+  content: none !important;
 }
 
 .sidebar-menu__list--level-0 {
