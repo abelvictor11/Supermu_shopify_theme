@@ -18,7 +18,7 @@
   {%- break -%}
 {%- endif -%}
 
-{%- comment -%} Recopilar todos los productos {%- endcomment -%}
+{%- comment -%} Recopilar todos los productos de los bloques {%- endcomment -%}
 {%- assign all_block_products = "" | split: "," -%}
 {%- for block in section.blocks -%}
   {%- if block.settings.product != blank -%}
@@ -37,6 +37,15 @@
     {%- assign row_products = row_products | push: block -%}
   {%- endif -%}
 {%- endfor -%}
+
+{%- comment -%} DEBUG - Solo visible en modo diseño {%- endcomment -%}
+{%- if request.design_mode -%}
+<!-- DEBUG: Total bloques: {{ section.blocks.size }} -->
+<!-- DEBUG: Bloques con producto: {{ all_block_products.size }} -->
+<!-- DEBUG: Featured count config: {{ featured_count }} -->
+<!-- DEBUG: Featured products: {{ featured_products.size }} -->
+<!-- DEBUG: Row products: {{ row_products.size }} -->
+{%- endif -%}
 
 <div class="collection-featured-banner" data-section-id="{{ section.id }}" data-section-type="collection-featured-banner">
   {%- comment -%} Banner de fondo {%- endcomment -%}
