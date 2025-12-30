@@ -174,7 +174,7 @@
 
                   <div class="cart__subtotal mb-10">
                     <h5 class="mb-3">{{ 'cart.general.subtotal' | t }}</h5>
-                    <h3 class="mb-0" id="cart-subtotal">
+                    <h3 class="mb-0" id="cart-subtotal" data-price-cents="{{ cart.total_price }}">
                       {{ cart.total_price | money }}
                     </h3>
                   </div>
