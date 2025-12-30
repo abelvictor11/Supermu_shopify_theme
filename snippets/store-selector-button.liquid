@@ -1,0 +1,24 @@
+{% comment %}
+  Botón Walmart para cambiar tienda/método de entrega
+  Se incluye en el header
+{% endcomment %}
+
+<button type="button" class="walmart-store-btn" id="walmart-store-trigger" aria-label="Seleccionar tienda">
+  <div class="walmart-store-btn-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  </div>
+  <div class="walmart-store-btn-content">
+    <span class="walmart-store-btn-label">¿Retiro o entrega?</span>
+    <span class="walmart-store-btn-text" id="walmart-header-store-text">
+      Selecciona una tienda
+    </span>
+  </div>
+  <div class="walmart-store-btn-arrow">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </div>
+</button>

@@ -1,0 +1,101 @@
+{%- comment -%}
+  Alerta de cobertura de entrega - Se muestra antes del botón de checkout
+  Uso: {% render 'coverage-alert' %}
+{%- endcomment -%}
+
+<div class="coverage-alert">
+  <div class="coverage-alert__icon">🔔</div>
+  <div class="coverage-alert__content">
+    <p class="coverage-alert__title">¡Recordatorio Importante!</p>
+    <p class="coverage-alert__text">
+      Antes de pagar, verifica que tu dirección esté dentro de nuestra 
+      <a href="/pages/condiciones-de-entrega" class="coverage-alert__link">zona de cobertura</a>.
+    </p>
+    <p class="coverage-alert__note">
+      Al hacer clic en "Pagar", confirmas que has verificado la cobertura.
+    </p>
+  </div>
+</div>
+
+<style>
+.coverage-alert {
+  display: flex;
+  gap: 12px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #f59e0b;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 16px 0;
+  font-family: inherit;
+}
+
+.coverage-alert__icon {
+  font-size: 1.4em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.coverage-alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.coverage-alert__title {
+  margin: 0 0 6px 0;
+  font-weight: 700;
+  font-size: 0.95em;
+  color: #92400e;
+}
+
+.coverage-alert__text {
+  margin: 0 0 8px 0;
+  font-size: 0.88em;
+  line-height: 1.45;
+  color: #451a03;
+}
+
+.coverage-alert__link {
+  color: #d97706;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.coverage-alert__link:hover {
+  color: #b45309;
+}
+
+.coverage-alert__note {
+  margin: 0;
+  font-size: 0.8em;
+  color: #78350f;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* Versión compacta para popup cart */
+.popup-cart .coverage-alert {
+  padding: 10px 12px;
+  margin: 12px 0;
+  gap: 10px;
+}
+
+.popup-cart .coverage-alert__icon {
+  font-size: 1.2em;
+}
+
+.popup-cart .coverage-alert__title {
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.popup-cart .coverage-alert__text {
+  font-size: 0.82em;
+  margin-bottom: 6px;
+}
+
+.popup-cart .coverage-alert__note {
+  font-size: 0.75em;
+}
+</style>

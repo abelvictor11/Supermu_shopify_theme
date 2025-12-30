@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Precios por Unidad - Supermu</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border 0.3s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .results {
+      margin-top: 30px;
+      padding: 24px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: none;
+    }
+    
+    .results.show {
+      display: block;
+    }
+    
+    .results h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+    
+    .variant-result {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .variant-result h3 {
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .variant-result p {
+      color: #666;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    
+    .variant-result .price {
+      color: #667eea;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .metafield-code {
+      background: #2d3748;
+      color: #68d391;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .container {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛒 Calculadora de Precios por Unidad</h1>
+    <p class="subtitle">Herramienta para calcular precios de variantes (Kilo, Libra, Unidad)</p>
+    
+    <div class="input-group">
+      <label for="productName">Nombre del Producto</label>
+      <input type="text" id="productName" placeholder="Ej: Tomate Rojo" value="Tomate">
+    </div>
+    
+    <div class="input-group">
+      <label for="skuBase">SKU Base</label>
+      <input type="text" id="skuBase" placeholder="Ej: TOM-001" value="TOM-001">
+    </div>
+    
+    <div class="grid">
+      <div class="input-group">
+        <label for="priceKilo">💰 Precio por Kilo ($)</label>
+        <input type="number" id="priceKilo" step="0.01" placeholder="10.00" value="10.00">
+      </div>
+      
+      <div class="input-group">
+        <label for="priceUnit">💰 Precio por Unidad ($)</label>
+        <input type="number" id="priceUnit" step="0.01" placeholder="1.50" value="1.50">
+      </div>
+    </div>
+    
+    <button class="btn" onclick="calcular()">✨ Calcular Precios</button>
+    
+    <div class="results" id="results">
+      <h2>📊 Resultados</h2>
+      <div id="resultsContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const FACTOR_LB = 0.45359; // 1 libra = 0.45359 kg
+    
+    function calcular() {
+      const productName = document.getElementById('productName').value || 'Producto';
+      const skuBase = document.getElementById('skuBase').value || 'PROD-001';
+      const priceKilo = parseFloat(document.getElementById('priceKilo').value) || 0;
+      const priceUnit = parseFloat(document.getElementById('priceUnit').value) || 0;
+      
+      if (priceKilo <= 0) {
+        alert('⚠️ Por favor ingresa un precio válido por kilo');
+        return;
+      }
+      
+      // Calcular precio por libra
+      const priceLb = priceKilo * FACTOR_LB;
+      
+      // Generar resultados
+      const variants = [
+        {
+          name: '1 Kilo',
+          sku: `${skuBase}-KG`,
+          price: priceKilo.toFixed(2),
+          factor: '1,0',
+          unit: 'kg',
+          pum: (priceKilo / 1).toFixed(2)
+        },
+        {
+          name: '1 Libra',
+          sku: `${skuBase}-LB`,
+          price: priceLb.toFixed(2),
+          factor: '0,45359',
+          unit: 'lb',
+          pum: (priceLb / FACTOR_LB).toFixed(2),
+          calculation: `${priceKilo.toFixed(2)} × 0.45359`
+        },
+        {
+          name: '1 Unidad',
+          sku: `${skuBase}-UN`,
+          price: priceUnit.toFixed(2),
+          factor: '1,0',
+          unit: 'unidad',
+          pum: priceUnit.toFixed(2)
+        }
+      ];
+      
+      // Renderizar resultados
+      let html = '';
+      
+      variants.forEach(v => {
+        html += `
+          <div class="variant-result">
+            <h3>${productName} - ${v.name}</h3>
+            <p><strong>SKU:</strong> ${v.sku}</p>
+            <p class="price">Precio: $${v.price}</p>
+            ${v.calculation ? `<p><small>Cálculo: ${v.calculation} = $${v.price}</small></p>` : ''}
+            <p><strong>PUM:</strong> $${v.pum}/${v.unit}</p>
+            <div class="metafield-code">
+factor_unidad_de_medida: ${v.factor}
+unidad_de_medida_pum: ${v.unit}
+            </div>
+          </div>
+        `;
+      });
+      
+      // Agregar tabla de configuración Shopify
+      html += `
+        <div class="variant-result" style="border-left-color: #48bb78;">
+          <h3>📋 Configuración en Shopify</h3>
+          <p><strong>1.</strong> Crea el producto: <em>${productName}</em></p>
+          <p><strong>2.</strong> Agrega opción: <code>Presentación</code> con valores:</p>
+          <p style="margin-left: 20px;">• 1 Kilo<br>• 1 Libra<br>• 1 Unidad</p>
+          <p><strong>3.</strong> Asigna precios calculados arriba a cada variante</p>
+          <p><strong>4.</strong> Configura metafields usando los valores mostrados</p>
+        </div>
+      `;
+      
+      document.getElementById('resultsContent').innerHTML = html;
+      document.getElementById('results').classList.add('show');
+      
+      // Scroll suave a resultados
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // Calcular automáticamente cuando cambian los valores
+    document.getElementById('priceKilo').addEventListener('input', () => {
+      if (document.getElementById('results').classList.contains('show')) {
+        calcular();
+      }
+    });
+    
+    document.getElementById('priceUnit').addEventListener('input', () => {
+      if (document.getElementById('results').classList.contains('show')) {
+        calcular();
+      }
+    });
+  </script>
+</body>
+</html>

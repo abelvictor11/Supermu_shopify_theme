@@ -88,6 +88,7 @@
                                             <span>{{ 'general.popups.cart.checkbox_html' | t }}</span>
                                         </label>
                                     {%- endif -%}
+                                    {% render 'coverage-alert' %}
                                     <input type="submit" class="btn btn--full btn--secondary input-checkbox-disable-body" name="checkout" value="{{ 'general.popups.cart.button_to_checkout' | t }}">
                                     
                                 </div>
