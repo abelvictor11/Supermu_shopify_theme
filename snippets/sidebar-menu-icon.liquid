@@ -1,0 +1,215 @@
+{%- comment -%}
+  Sidebar Menu Icon - Renderiza icono según el handle/título del link
+  Uso: {% render 'sidebar-menu-icon', link: link %}
+{%- endcomment -%}
+
+{%- assign link_handle = link.handle | downcase -%}
+{%- assign link_title = link.title | downcase -%}
+
+{%- comment -%} Mapeo de iconos por categoría de supermercado {%- endcomment -%}
+
+{%- case link_handle -%}
+  {%- when 'aseo' or 'limpieza' or 'hogar' -%}
+    {%- assign icon = 'cleaning' -%}
+  {%- when 'despensa' or 'abarrotes' or 'alimentos' -%}
+    {%- assign icon = 'pantry' -%}
+  {%- when 'licores' or 'licor' or 'bebidas-alcoholicas' or 'vinos' or 'cervezas' -%}
+    {%- assign icon = 'liquor' -%}
+  {%- when 'farmacia' or 'salud' or 'medicamentos' -%}
+    {%- assign icon = 'pharmacy' -%}
+  {%- when 'bebidas' or 'refrescos' or 'jugos' -%}
+    {%- assign icon = 'drinks' -%}
+  {%- when 'lacteos' or 'leche' or 'quesos' -%}
+    {%- assign icon = 'dairy' -%}
+  {%- when 'carnes' or 'carniceria' or 'pollo' or 'res' -%}
+    {%- assign icon = 'meat' -%}
+  {%- when 'frutas' or 'verduras' or 'frutas-y-verduras' or 'frescos' -%}
+    {%- assign icon = 'produce' -%}
+  {%- when 'panaderia' or 'pan' or 'pasteleria' -%}
+    {%- assign icon = 'bakery' -%}
+  {%- when 'congelados' or 'helados' -%}
+    {%- assign icon = 'frozen' -%}
+  {%- when 'mascotas' or 'pets' -%}
+    {%- assign icon = 'pets' -%}
+  {%- when 'bebes' or 'bebe' or 'infantil' -%}
+    {%- assign icon = 'baby' -%}
+  {%- when 'snacks' or 'dulces' or 'golosinas' or 'confiteria' -%}
+    {%- assign icon = 'snacks' -%}
+  {%- when 'ofertas' or 'promociones' or 'descuentos' -%}
+    {%- assign icon = 'offers' -%}
+  {%- when 'inicio' or 'home' -%}
+    {%- assign icon = 'home' -%}
+  {%- when 'contacto' or 'contact' -%}
+    {%- assign icon = 'contact' -%}
+  {%- when 'todos' or 'catalogo' or 'productos' or 'tienda' -%}
+    {%- assign icon = 'store' -%}
+  {%- else -%}
+    {%- comment -%} Fallback: buscar por contenido del título {%- endcomment -%}
+    {%- if link_title contains 'aseo' or link_title contains 'limpieza' -%}
+      {%- assign icon = 'cleaning' -%}
+    {%- elsif link_title contains 'despensa' or link_title contains 'abarrotes' -%}
+      {%- assign icon = 'pantry' -%}
+    {%- elsif link_title contains 'licor' or link_title contains 'vino' or link_title contains 'cerveza' -%}
+      {%- assign icon = 'liquor' -%}
+    {%- elsif link_title contains 'farmacia' or link_title contains 'salud' -%}
+      {%- assign icon = 'pharmacy' -%}
+    {%- elsif link_title contains 'bebida' or link_title contains 'refresco' -%}
+      {%- assign icon = 'drinks' -%}
+    {%- elsif link_title contains 'lacteo' or link_title contains 'leche' -%}
+      {%- assign icon = 'dairy' -%}
+    {%- elsif link_title contains 'carne' or link_title contains 'pollo' -%}
+      {%- assign icon = 'meat' -%}
+    {%- elsif link_title contains 'fruta' or link_title contains 'verdura' -%}
+      {%- assign icon = 'produce' -%}
+    {%- elsif link_title contains 'pan' or link_title contains 'pastel' -%}
+      {%- assign icon = 'bakery' -%}
+    {%- elsif link_title contains 'congelado' or link_title contains 'helado' -%}
+      {%- assign icon = 'frozen' -%}
+    {%- elsif link_title contains 'mascota' or link_title contains 'pet' -%}
+      {%- assign icon = 'pets' -%}
+    {%- elsif link_title contains 'bebe' or link_title contains 'infantil' -%}
+      {%- assign icon = 'baby' -%}
+    {%- elsif link_title contains 'snack' or link_title contains 'dulce' or link_title contains 'golosina' -%}
+      {%- assign icon = 'snacks' -%}
+    {%- elsif link_title contains 'oferta' or link_title contains 'promo' -%}
+      {%- assign icon = 'offers' -%}
+    {%- else -%}
+      {%- assign icon = 'default' -%}
+    {%- endif -%}
+{%- endcase -%}
+
+<span class="sidebar-menu__icon">
+{%- case icon -%}
+  {%- when 'cleaning' -%}
+    {%- comment -%} Spray bottle / cleaning {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2v4M8 6h8M9 6v2a3 3 0 0 0 6 0V6"/>
+      <rect x="8" y="10" width="8" height="12" rx="1"/>
+      <path d="M10 14h4M10 18h4"/>
+    </svg>
+  {%- when 'pantry' -%}
+    {%- comment -%} Shelf / pantry {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <line x1="3" y1="9" x2="21" y2="9"/>
+      <line x1="3" y1="15" x2="21" y2="15"/>
+      <path d="M7 6h2M7 12h2M7 18h2"/>
+    </svg>
+  {%- when 'liquor' -%}
+    {%- comment -%} Wine bottle {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 2h4v5l2 3v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10l2-3V2z"/>
+      <line x1="10" y1="2" x2="14" y2="2"/>
+      <path d="M8 14h8"/>
+    </svg>
+  {%- when 'pharmacy' -%}
+    {%- comment -%} Medical cross / pill {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <line x1="12" y1="8" x2="12" y2="16"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+  {%- when 'drinks' -%}
+    {%- comment -%} Bottle / drink {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 2h8v3l-1 2v13a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V7L8 5V2z"/>
+      <line x1="8" y1="2" x2="16" y2="2"/>
+      <path d="M9 12h6"/>
+    </svg>
+  {%- when 'dairy' -%}
+    {%- comment -%} Milk carton {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 6l2-4h8l2 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6z"/>
+      <path d="M6 6h12"/>
+      <path d="M10 10h4"/>
+    </svg>
+  {%- when 'meat' -%}
+    {%- comment -%} Meat / drumstick {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15.5 3.5a5 5 0 0 1 5 5c0 2-1 3.5-2.5 4.5L12 19l-1.5 1.5a2 2 0 0 1-2.8 0l-1.2-1.2a2 2 0 0 1 0-2.8L8 15l6-6c1-1.5 2.5-2.5 4.5-2.5z"/>
+      <circle cx="17" cy="7" r="1"/>
+    </svg>
+  {%- when 'produce' -%}
+    {%- comment -%} Apple / fruit {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2c1 0 2 1 2 2s-1 2-2 2"/>
+      <path d="M12 6c-4 0-7 3-7 7s3 8 7 8 7-4 7-8-3-7-7-7z"/>
+      <path d="M12 6c0-2 2-4 4-4"/>
+    </svg>
+  {%- when 'bakery' -%}
+    {%- comment -%} Bread {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 10c0-3 2-5 7-5s7 2 7 5c0 2-1 3-2 4v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-6c-1-1-2-2-2-4z"/>
+      <path d="M8 10c0-1 1-2 4-2s4 1 4 2"/>
+    </svg>
+  {%- when 'frozen' -%}
+    {%- comment -%} Snowflake / frozen {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="2" x2="12" y2="22"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+      <line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  {%- when 'pets' -%}
+    {%- comment -%} Paw print {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="16" r="4"/>
+      <circle cx="6" cy="10" r="2"/>
+      <circle cx="18" cy="10" r="2"/>
+      <circle cx="8" cy="5" r="2"/>
+      <circle cx="16" cy="5" r="2"/>
+    </svg>
+  {%- when 'baby' -%}
+    {%- comment -%} Baby bottle {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 2h6v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V2z"/>
+      <rect x="7" y="5" width="10" height="17" rx="2"/>
+      <path d="M7 10h10"/>
+      <path d="M10 14h4"/>
+    </svg>
+  {%- when 'snacks' -%}
+    {%- comment -%} Cookie / snack {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <circle cx="9" cy="9" r="1" fill="currentColor"/>
+      <circle cx="14" cy="8" r="1" fill="currentColor"/>
+      <circle cx="8" cy="14" r="1" fill="currentColor"/>
+      <circle cx="15" cy="14" r="1" fill="currentColor"/>
+      <circle cx="12" cy="12" r="1" fill="currentColor"/>
+    </svg>
+  {%- when 'offers' -%}
+    {%- comment -%} Tag / discount {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+      <line x1="7" y1="7" x2="7.01" y2="7"/>
+    </svg>
+  {%- when 'home' -%}
+    {%- comment -%} Home {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  {%- when 'contact' -%}
+    {%- comment -%} Mail / contact {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+  {%- when 'store' -%}
+    {%- comment -%} Store / grid {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7"/>
+      <rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+    </svg>
+  {%- else -%}
+    {%- comment -%} Default: shopping bag {%- endcomment -%}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 0 1-8 0"/>
+    </svg>
+{%- endcase -%}
+</span>

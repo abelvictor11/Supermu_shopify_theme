@@ -43,7 +43,7 @@
         <li class="sidebar-menu__item{% if link.links.size > 0 %} has-children{% endif %}">
           {%- if link.links.size > 0 -%}
             <div class="sidebar-menu__link-wrapper">
-              <a href="{{ link.url }}" class="sidebar-menu__link">{{ link.title }}</a>
+              <a href="{{ link.url }}" class="sidebar-menu__link">{% render 'sidebar-menu-icon', link: link %}{{ link.title }}</a>
               <button class="sidebar-menu__toggle" data-menu-toggle aria-label="Expandir {{ link.title }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="9 18 15 12 9 6"></polyline>
@@ -68,7 +68,7 @@
                 <li class="sidebar-menu__item{% if child_link.links.size > 0 %} has-children{% endif %}">
                   {%- if child_link.links.size > 0 -%}
                     <div class="sidebar-menu__link-wrapper">
-                      <a href="{{ child_link.url }}" class="sidebar-menu__link">{{ child_link.title }}</a>
+                      <a href="{{ child_link.url }}" class="sidebar-menu__link">{% render 'sidebar-menu-icon', link: child_link %}{{ child_link.title }}</a>
                       <button class="sidebar-menu__toggle" data-menu-toggle aria-label="Expandir {{ child_link.title }}">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <polyline points="9 18 15 12 9 6"></polyline>
@@ -91,18 +91,18 @@
                       </li>
                       {%- for grandchild_link in child_link.links -%}
                         <li class="sidebar-menu__item">
-                          <a href="{{ grandchild_link.url }}" class="sidebar-menu__link">{{ grandchild_link.title }}</a>
+                          <a href="{{ grandchild_link.url }}" class="sidebar-menu__link">{% render 'sidebar-menu-icon', link: grandchild_link %}{{ grandchild_link.title }}</a>
                         </li>
                       {%- endfor -%}
                     </ul>
                   {%- else -%}
-                    <a href="{{ child_link.url }}" class="sidebar-menu__link">{{ child_link.title }}</a>
+                    <a href="{{ child_link.url }}" class="sidebar-menu__link">{% render 'sidebar-menu-icon', link: child_link %}{{ child_link.title }}</a>
                   {%- endif -%}
                 </li>
               {%- endfor -%}
             </ul>
           {%- else -%}
-            <a href="{{ link.url }}" class="sidebar-menu__link">{{ link.title }}</a>
+            <a href="{{ link.url }}" class="sidebar-menu__link">{% render 'sidebar-menu-icon', link: link %}{{ link.title }}</a>
           {%- endif -%}
         </li>
       {%- endfor -%}
@@ -274,13 +274,28 @@
 }
 
 .sidebar-menu__link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex: 1;
   padding: 15px 20px;
   color: #333;
   text-decoration: none;
   font-size: 15px;
   transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-menu__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: #666;
+}
+.sidebar-menu__link:hover .sidebar-menu__icon {
+  color: #333;
 }
 .sidebar-menu__link:hover {
   background: #f8f8f8;
