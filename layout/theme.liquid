@@ -207,6 +207,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const priceElement = document.querySelector(CART_TOTAL_SELECTOR);
     if (!priceElement) return null;
     
+    // Primero intentar leer el atributo data-price-cents (valor original sin conversión)
+    const priceCents = priceElement.getAttribute('data-price-cents');
+    if (priceCents) {
+      // Shopify guarda precios en centavos, dividir por 100 para obtener pesos COP
+      // Ejemplo: 2392000 centavos = $23.920 COP
+      const numericValue = parseInt(priceCents, 10) / 100;
+      console.log('Precio desde data-price-cents:', priceCents, '→', numericValue, 'COP');
+      return isNaN(numericValue) ? null : numericValue;
+    }
+    
+    // Fallback: parsear el texto (puede estar afectado por conversión de moneda)
     const priceText = priceElement.textContent.trim();
     // Formato colombiano: $41.512 → 41512
     const numericValue = parseFloat(
