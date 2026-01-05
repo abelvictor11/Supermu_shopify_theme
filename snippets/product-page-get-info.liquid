@@ -281,6 +281,12 @@
                 {{ variants_select_html | remove: 'd-none' }}
             {%- endif -%}
             {%- assign variants_select_html = blank -%}
+            
+            {%- comment -%} Selector de unidades (kilo/libra/unidad) {%- endcomment -%}
+            <div class="product-page-info__unit-selector mb-15">
+                {% render 'unit-selector', product: product, variant: current_variant, context: 'pdp' %}
+            </div>
+            
             {%- when 'popups' -%}
             {%- assign show_size_guide = settings.product_info_show_size_guide -%}
             {%- assign show_delivery_return = settings.product_info_show_delivery_return -%}
