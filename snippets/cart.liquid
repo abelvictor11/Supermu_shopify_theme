@@ -174,8 +174,10 @@
 
                   <div class="cart__subtotal mb-10">
                     <h5 class="mb-3">{{ 'cart.general.subtotal' | t }}</h5>
-                    <h3 class="mb-0" id="cart-subtotal">
-                      {{ cart.total_price | money }}
+                    <h3 class="mb-0" id="cart-subtotal" data-price-cents="{{ cart.total_price }}">
+                      {%- comment -%}Precio en COP sin conversión de moneda{%- endcomment -%}
+                      {%- assign price_cop = cart.total_price | divided_by: 100 -%}
+                      <span class="notranslate">${{ price_cop | money_without_currency | replace: ',', '.' }}</span>
                     </h3>
                   </div>
                   <p>{{ 'cart.general.shipping_at_checkout' | t }}</p>
