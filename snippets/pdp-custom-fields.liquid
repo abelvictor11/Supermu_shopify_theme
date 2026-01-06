@@ -138,9 +138,11 @@
       {%- endif -%}
     {%- endif -%}
 
-    {%- assign _txt_id = 'pdp-text-' | append: section.id -%}
-    <label for="{{ _txt_id }}" class="mb-6">{{ _txt_label }}</label>
-    <textarea id="{{ _txt_id }}" name="properties[{{ _txt_label }}]" form="{{ product_form_id }}" placeholder="{{ _txt_placeholder }}" maxlength="{{ _txt_maxlen }}" class="mb-0"{% if _txt_required %} required{% endif %}></textarea>
+    {%- unless _hide_selector -%}
+      {%- assign _txt_id = 'pdp-text-' | append: section.id -%}
+      <label for="{{ _txt_id }}" class="mb-6">{{ _txt_label }}</label>
+      <textarea id="{{ _txt_id }}" name="properties[{{ _txt_label }}]" form="{{ product_form_id }}" placeholder="{{ _txt_placeholder }}" maxlength="{{ _txt_maxlen }}" class="mb-0"{% if _txt_required %} required{% endif %}></textarea>
+    {%- endunless -%}
   </div>
 
   {%- if _sel_type == 'icon_grid' -%}
