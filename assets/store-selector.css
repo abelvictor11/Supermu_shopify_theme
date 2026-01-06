@@ -698,8 +698,9 @@
     flex-shrink: 0;
   }
   
-  /* Buscador expandible - ocupa todo el espacio disponible */
-  .header__search-form {
+  /* Buscador expandible SOLO cuando hay selector de tienda */
+  .header__store-selector ~ .header__search-form,
+  .header__store-selector ~ .d-flex .header__search-form {
     flex: 1 1 auto !important;
     max-width: 100% !important;
     min-width: 200px;
@@ -707,28 +708,23 @@
     margin-right: 0 !important;
   }
   
-  /* Para headers con buscador position-absolute, cambiar a relative */
+  /* Para headers con buscador position-absolute, cambiar a relative SOLO cuando hay selector */
   .header__store-selector ~ .header__search-form.position-lg-absolute {
     position: relative !important;
     left: auto !important;
     transform: none !important;
-    flex: 1 1 auto;
-    max-width: 100% !important;
   }
   
-  /* Contenedor flex del buscador */
+  /* Contenedor flex del buscador SOLO cuando hay selector */
   .header__store-selector ~ .d-flex {
     flex: 1;
   }
   
-  .header__store-selector ~ .d-flex .header__search-form {
-    flex: 1 1 auto;
-    max-width: 100%;
-  }
-  
-  /* Input del buscador ocupa todo el ancho */
-  .header__search-form input[type="search"],
-  .header__search-form .header__search-input {
+  /* Input del buscador ocupa todo el ancho SOLO cuando hay selector */
+  .header__store-selector ~ .header__search-form input[type="search"],
+  .header__store-selector ~ .header__search-form .header__search-input,
+  .header__store-selector ~ .d-flex .header__search-form input[type="search"],
+  .header__store-selector ~ .d-flex .header__search-form .header__search-input {
     width: 100%;
   }
 }
