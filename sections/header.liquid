@@ -1394,9 +1394,11 @@
                             {{ logo_html }}
                         </div>
                         <!-- Store Selector Walmart -->
+                        {%- if section.settings.show_store_selector -%}
                         <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                             {% include 'store-selector-button' %}
                         </div>
+                        {%- endif -%}
                         <div class="d-flex ml-auto align-items-center">
                             <!-- Sidebar Menu -->
                             {%- if settings.sidebar_menu_enabled -%}
@@ -1590,9 +1592,11 @@
                             {{ btn_menu_html }}
                             {{ logo_html }}
                             <!-- Store Selector Walmart -->
+                            {%- if section.settings.show_store_selector -%}
                             <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                                 {% include 'store-selector-button' %}
                             </div>
+                            {%- endif -%}
                             <!-- Sidebar Menu -->
                             {%- if settings.sidebar_menu_enabled -%}
                                 <div class="header__sidebar-menu-btn d-flex align-items-center ml-15">
@@ -1755,9 +1759,11 @@
                             {{ btn_menu_html }}
                             {{ logo_html }}
                             <!-- Store Selector Walmart -->
+                            {%- if section.settings.show_store_selector -%}
                             <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                                 {% include 'store-selector-button' %}
                             </div>
+                            {%- endif -%}
                             <!-- Sidebar Menu -->
                             {%- if settings.sidebar_menu_enabled -%}
                                 <div class="header__sidebar-menu-btn d-flex align-items-center ml-15">
@@ -1930,9 +1936,11 @@
                             {{ btn_menu_html }}
                             {{ logo_html }}
                             <!-- Store Selector Walmart -->
+                            {%- if section.settings.show_store_selector -%}
                             <div class="header__store-selector d-none d-lg-block ml-15 ml-lg-20">
                                 {% include 'store-selector-button' %}
                             </div>
+                            {%- endif -%}
                             <div class="d-flex ml-auto align-items-center">
                                 <!-- Sidebar Menu -->
                                 {%- if settings.sidebar_menu_enabled -%}
@@ -2177,6 +2185,13 @@
             "label": "t:sections.header.settings.logo_mobile_centered.label",
             "info": "t:sections.header.settings.logo_mobile_centered.info",
             "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "show_store_selector",
+            "label": "Mostrar selector de tienda",
+            "info": "Muestra el botón de selección de tienda junto al logo",
+            "default": true
         },
         {
             "type": "range",
