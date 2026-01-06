@@ -28,11 +28,15 @@
   
   <script src="{{ 'skeleton-loader.js' | asset_url }}" defer></script>
   {{ 'store-directory.css' | asset_url | stylesheet_tag }}
+  {{ 'store-selector.css' | asset_url | stylesheet_tag }}
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
 
   <!-- Carousel Manager -->
   <script src="{{ 'carousel-manager.js' | asset_url }}" defer></script>
+  
+  <!-- Unit Selector (Kilo/Libra/Unidad) -->
+  <script src="{{ 'unit-selector.js' | asset_url }}" defer></script>
   
   <!-- Google Tag Manager - Defer para no bloquear render -->
   <script>
@@ -59,6 +63,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   {% section 'product-variants' %}
 {%- endif -%}
 {% sections 'header-group' %}
+
+<!-- Store Selector Modal -->
+{% include 'store-selector' %}
+<script src="{{ 'store-selector.js' | asset_url }}" defer></script>
 
 <main id="MainContent">
   <div class="menu-overlay"></div>  
@@ -207,17 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const priceElement = document.querySelector(CART_TOTAL_SELECTOR);
     if (!priceElement) return null;
     
-    // Primero intentar leer el atributo data-price-cents (valor original sin conversión)
-    const priceCents = priceElement.getAttribute('data-price-cents');
-    if (priceCents) {
-      // Shopify guarda precios en centavos, dividir por 100 para obtener pesos COP
-      // Ejemplo: 2392000 centavos = $23.920 COP
-      const numericValue = parseInt(priceCents, 10) / 100;
-      console.log('Precio desde data-price-cents:', priceCents, '→', numericValue, 'COP');
-      return isNaN(numericValue) ? null : numericValue;
-    }
-    
-    // Fallback: parsear el texto (puede estar afectado por conversión de moneda)
     const priceText = priceElement.textContent.trim();
     // Formato colombiano: $41.512 → 41512
     const numericValue = parseFloat(
@@ -237,9 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
         padding: 12px 15px;
         margin: 15px 0;
         background: #FFF5F5;
-        border-left: 4px solid #FF0000;
-        border: 1px solid #ff0000;
-        border-radius: 8px;
+        border-left: 3px solid #FF0000;
+        border-radius: 0 4px 4px 0;
         display: flex;
         align-items: center;
         gap: 10px;

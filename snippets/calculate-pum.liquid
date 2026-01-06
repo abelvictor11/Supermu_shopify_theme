@@ -1,8 +1,15 @@
 {%- comment -%}
 Calcula el PUM (Precio por Unidad de Medida) considerando descuentos activos.
+Soporta metafields a nivel de variante (prioridad) o producto (fallback).
+
 Params:
   - product: required - El producto
-  - mode: 'html' (default) renderiza el HTML completo, 'price_only' solo retorna el precio a usar
+  - mode: 'html' (default) renderiza el HTML completo, 'price_only' solo retorna el precio a usar, 'pum_only' solo el PUM
+
+Metafields soportados (variante o producto):
+  - custom.factor_unidad_de_medida (texto, ej: "1,0" o "0,45359")
+  - custom.unidad_de_medida_pum (texto, ej: "kg", "lb", "unidad")
+
 Usage:
   {% render 'calculate-pum', product: product %}
 {%- endcomment -%}
@@ -46,10 +53,23 @@ Usage:
     {%- assign _final_price = _original_price | minus: _discount_amount -%}
   {%- endif -%}
 
-  {%- comment -%} 4. Obtener factor y unidad de medida {%- endcomment -%}
-  {%- assign factor_text = _product.metafields.custom.factor_unidad_de_medida.value | default: "1,0" -%}
+  {%- comment -%} 4. Obtener factor y unidad de medida (priorizar variante, luego producto) {%- endcomment -%}
+  {%- assign variant_factor = current_variant.metafields.custom.factor_unidad_de_medida.value -%}
+  {%- assign variant_unidad = current_variant.metafields.custom.unidad_de_medida_pum -%}
+  
+  {%- if variant_factor != blank -%}
+    {%- assign factor_text = variant_factor | default: "1,0" -%}
+  {%- else -%}
+    {%- assign factor_text = _product.metafields.custom.factor_unidad_de_medida.value | default: "1,0" -%}
+  {%- endif -%}
+  
   {%- assign factor = factor_text | replace: ",", "." | plus: 0 -%}
-  {%- assign unidad_medida = _product.metafields.custom.unidad_de_medida_pum -%}
+  
+  {%- if variant_unidad != blank -%}
+    {%- assign unidad_medida = variant_unidad -%}
+  {%- else -%}
+    {%- assign unidad_medida = _product.metafields.custom.unidad_de_medida_pum -%}
+  {%- endif -%}
 
   {%- comment -%} 5. Convertir precio a decimal y calcular PUM {%- endcomment -%}
   {%- assign precio_decimal = _final_price | divided_by: 100.0 -%}
@@ -107,7 +127,7 @@ Usage:
   <path class="st2" d="M186.68,167.06c.22,5.46-2.05,14.51,6.29,13.46,6.18-.78,3.75-9.07,4.18-13.46,31.72,1.55,59.18,28.83,60.64,60.64-5.63.05-15.26-1.83-13.33,6.94,1.18,5.38,9.25,3.09,13.33,3.54-1.3,31.67-28.98,59.34-60.64,60.64-.05-5.63,1.83-15.26-6.94-13.33-5.38,1.18-3.09,9.25-3.54,13.33-31.67-1.3-59.34-28.98-60.64-60.64,5.75-.32,14.21,2.23,13.44-6.3-.53-5.86-9.29-3.9-13.44-4.18,1.36-31.73,28.91-59.08,60.64-60.64ZM226.89,197.96c-1.43-1.43-4.92-2.3-6.49-.54l-21.02,20.95c-7.84-2.4-16.12-1.31-20.82,6.08-9.37,14.74,9.06,31.85,23.1,20.85,6.55-5.13,6.93-12.29,4.82-19.83l20.95-21.02c1.76-1.57.89-5.06-.54-6.49Z"/>
   <path d="M226.89,197.96c1.43,1.43,2.3,4.92.54,6.49l-20.95,21.02c2.11,7.54,1.73,14.7-4.82,19.83-14.04,10.99-32.47-6.12-23.1-20.85,4.69-7.39,12.98-8.48,20.82-6.08l21.02-20.95c1.57-1.76,5.06-.89,6.49.54ZM190.21,227.84c-4.65,1.02-4.81,8.61-.59,10,9.64,3.18,10.45-12.17.59-10Z"/>
   <path class="st2" d="M190.21,227.84c9.86-2.17,9.06,13.18-.59,10-4.22-1.39-4.06-8.98.59-10Z"/>
-</svg></div> ${{ pum_formatted }} /{{ unidad_medida }}
+</svg></div><span class="pum-price"> ${{ pum_formatted }} /{{ unidad_medida }}</span>
     </div>
   {%- endif -%}
 
