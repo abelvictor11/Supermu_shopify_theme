@@ -334,6 +334,16 @@ window.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Verificar si el producto requiere selección de corte
+            if (accionesContainer.hasAttribute('data-requires-corte')) {
+                const productUrl = accionesContainer.getAttribute('data-product-url');
+                console.log('[Instant Cart] Product requires corte selection, redirecting to PDP:', productUrl);
+                if (productUrl) {
+                    window.location.href = productUrl;
+                }
+                return;
+            }
+            
             const variantId = accionesContainer.getAttribute('data-variant-id');
             const quantityWrapper = accionesContainer.querySelector('.product-collection__quantity-wrapper');
             const quantityInput = quantityWrapper?.querySelector('input[type="number"]');
