@@ -308,56 +308,39 @@
         
         var $ = jQuery;
         var $grids = $('.pdp-icon-grid');
-        if (!$grids.length) return;
+        if (!$grids.length) {
+          console.log('[Corte Validation] No grids found');
+          return;
+        }
+        
+        var corteSelected = false;
+        var $corteInput = null;
+        var $currentGrid = null;
         
         // Click en iconos de corte
         $grids.each(function() {
           var $grid = $(this);
+          $currentGrid = $grid;
           var inputId = $grid.data('icon-grid-for');
-          var $input = $('#' + inputId);
+          $corteInput = $('#' + inputId);
           var $errorMsg = $grid.next('.pdp-icon-grid__error');
-          var $modal = $('#corte-required-modal');
-          var $product = $grid.closest('[data-js-product]');
-          var $addBtn = $product.find('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]');
-          
-          // Deshabilitar botón inicialmente si no hay corte seleccionado
-          if ($input.length && !$input.val()) {
-            $addBtn.addClass('corte-validation-blocked');
-          }
           
           // Click en iconos
           $grid.on('click', '.pdp-icon-grid__item', function() {
             var $item = $(this);
             $grid.find('.pdp-icon-grid__item').removeClass('is-selected');
             $item.addClass('is-selected');
-            $input.val($item.data('value'));
+            $corteInput.val($item.data('value'));
+            corteSelected = true;
             $errorMsg.addClass('d-none');
             $grid.removeClass('pdp-icon-grid--error');
-            // Habilitar botón
-            $addBtn.removeClass('corte-validation-blocked');
+            console.log('[Corte Validation] Corte selected:', $item.data('value'));
           });
         });
         
-        // Interceptar click en botones de agregar al carrito ANTES del handler del tema
-        // Usar delegación con namespace para poder controlarlo
-        $(document).on('click.corteValidation', '.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]', function(e) {
-          var $btn = $(this);
-          var $product = $btn.closest('[data-js-product]');
-          var $corteInput = $product.find('input[data-corte-required="true"]');
-          
-          // Si no hay input de corte en este producto, dejar pasar
-          if (!$corteInput.length) return;
-          
-          // Si ya tiene valor, dejar pasar
-          if ($corteInput.val()) return;
-          
-          // Bloquear el evento
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          
-          // Mostrar error
-          var $grid = $('.pdp-icon-grid[data-icon-grid-for="' + $corteInput.attr('id') + '"]');
+        // Función para validar y mostrar error
+        function showCorteError() {
+          var $grid = $currentGrid;
           var $errorMsg = $grid.next('.pdp-icon-grid__error');
           var $modal = $('#corte-required-modal');
           
@@ -368,34 +351,62 @@
           $('html, body').animate({
             scrollTop: $grid.offset().top - 100
           }, 400);
+        }
+        
+        // Interceptar en fase de CAPTURA antes de que jQuery reciba el evento
+        document.addEventListener('click', function(e) {
+          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]');
+          if (!btn) return;
+          
+          // Verificar si hay un input de corte requerido
+          if (!$corteInput || !$corteInput.length) return;
+          
+          // Si ya tiene valor, dejar pasar
+          if ($corteInput.val()) {
+            console.log('[Corte Validation] Corte already selected, allowing add to cart');
+            return;
+          }
+          
+          // Bloquear el evento COMPLETAMENTE
+          console.log('[Corte Validation] Blocking add to cart - no corte selected');
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          showCorteError();
           
           return false;
-        });
+        }, true); // TRUE = fase de captura, se ejecuta ANTES de bubbling
         
-        // Mover nuestro handler al principio de la cola de eventos
-        var handlers = $._data(document, 'events');
-        if (handlers && handlers.click) {
-          var ourHandler = handlers.click.filter(function(h) { return h.namespace === 'corteValidation'; })[0];
-          if (ourHandler) {
-            handlers.click = handlers.click.filter(function(h) { return h.namespace !== 'corteValidation'; });
-            handlers.click.unshift(ourHandler);
+        // También interceptar mousedown para bloquear antes de click
+        document.addEventListener('mousedown', function(e) {
+          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]');
+          if (!btn) return;
+          
+          if (!$corteInput || !$corteInput.length) return;
+          
+          if (!$corteInput.val()) {
+            console.log('[Corte Validation] Blocking mousedown - no corte selected');
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
           }
-        }
+        }, true);
         
         // Cerrar modal
         $('#corte-required-modal').on('click', '.corte-modal__overlay, .corte-modal__btn', function() {
           $('#corte-required-modal').hide();
         });
         
-        console.log('[Corte Validation] Initialized successfully');
+        console.log('[Corte Validation] Initialized successfully with capture listeners');
       }
       
       // Inicializar cuando el DOM esté listo
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initCorteValidation);
       } else {
-        // Dar tiempo a que jQuery y el tema carguen
-        setTimeout(initCorteValidation, 500);
+        setTimeout(initCorteValidation, 100);
       }
     })();
   </script>
