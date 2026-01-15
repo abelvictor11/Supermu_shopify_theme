@@ -299,88 +299,103 @@
   
   <script>
     (function() {
-      // Esperar a que el DOM esté listo
       function initCorteValidation() {
-        var grids = document.querySelectorAll('.pdp-icon-grid');
-        if (!grids.length) return;
+        // Esperar a que jQuery esté disponible
+        if (typeof jQuery === 'undefined') {
+          setTimeout(initCorteValidation, 100);
+          return;
+        }
         
-        grids.forEach(function(grid) {
-          var inputId = grid.dataset.iconGridFor;
-          var input = document.getElementById(inputId);
-          if (!input) return;
+        var $ = jQuery;
+        var $grids = $('.pdp-icon-grid');
+        if (!$grids.length) return;
+        
+        // Click en iconos de corte
+        $grids.each(function() {
+          var $grid = $(this);
+          var inputId = $grid.data('icon-grid-for');
+          var $input = $('#' + inputId);
+          var $errorMsg = $grid.next('.pdp-icon-grid__error');
+          var $modal = $('#corte-required-modal');
+          var $product = $grid.closest('[data-js-product]');
+          var $addBtn = $product.find('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]');
           
-          var items = grid.querySelectorAll('.pdp-icon-grid__item');
-          var errorMsg = grid.nextElementSibling;
-          var modal = document.getElementById('corte-required-modal');
+          // Deshabilitar botón inicialmente si no hay corte seleccionado
+          if ($input.length && !$input.val()) {
+            $addBtn.addClass('corte-validation-blocked');
+          }
           
-          // Click en iconos de corte
-          items.forEach(function(item) {
-            item.addEventListener('click', function() {
-              items.forEach(function(i) { i.classList.remove('is-selected'); });
-              item.classList.add('is-selected');
-              input.value = item.dataset.value;
-              if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
-                errorMsg.classList.add('d-none');
-              }
-              grid.classList.remove('pdp-icon-grid--error');
-            });
+          // Click en iconos
+          $grid.on('click', '.pdp-icon-grid__item', function() {
+            var $item = $(this);
+            $grid.find('.pdp-icon-grid__item').removeClass('is-selected');
+            $item.addClass('is-selected');
+            $input.val($item.data('value'));
+            $errorMsg.addClass('d-none');
+            $grid.removeClass('pdp-icon-grid--error');
+            // Habilitar botón
+            $addBtn.removeClass('corte-validation-blocked');
           });
         });
         
-        // Interceptar clicks en botones de agregar al carrito (Shella theme)
-        document.addEventListener('click', function(e) {
-          var addBtn = e.target.closest('[data-js-product-button-add-to-cart], .js-product-button-add-to-cart, [type="submit"][name="add"]');
-          if (!addBtn) return;
+        // Interceptar click en botones de agregar al carrito ANTES del handler del tema
+        // Usar delegación con namespace para poder controlarlo
+        $(document).on('click.corteValidation', '.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]', function(e) {
+          var $btn = $(this);
+          var $product = $btn.closest('[data-js-product]');
+          var $corteInput = $product.find('input[data-corte-required="true"]');
           
-          // Buscar el input de corte requerido en el mismo formulario o sección
-          var form = addBtn.closest('form');
-          var section = addBtn.closest('.product-page, .product-page-info, [data-section-id]');
-          var container = form || section;
-          if (!container) return;
+          // Si no hay input de corte en este producto, dejar pasar
+          if (!$corteInput.length) return;
           
-          var corteInput = container.querySelector('input[data-corte-required="true"]');
-          if (!corteInput) return; // No hay selector de corte en este producto
+          // Si ya tiene valor, dejar pasar
+          if ($corteInput.val()) return;
           
-          // Validar que se haya seleccionado un corte
-          if (!corteInput.value) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            
-            var grid = document.querySelector('.pdp-icon-grid[data-icon-grid-for="' + corteInput.id + '"]');
-            var errorMsg = grid ? grid.nextElementSibling : null;
-            var modal = document.getElementById('corte-required-modal');
-            
-            // Mostrar modal
-            if (modal) modal.style.display = 'flex';
-            // Mostrar error inline
-            if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
-              errorMsg.classList.remove('d-none');
-            }
-            // Resaltar grid
-            if (grid) {
-              grid.classList.add('pdp-icon-grid--error');
-              grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            return false;
+          // Bloquear el evento
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          // Mostrar error
+          var $grid = $('.pdp-icon-grid[data-icon-grid-for="' + $corteInput.attr('id') + '"]');
+          var $errorMsg = $grid.next('.pdp-icon-grid__error');
+          var $modal = $('#corte-required-modal');
+          
+          $modal.css('display', 'flex');
+          $errorMsg.removeClass('d-none');
+          $grid.addClass('pdp-icon-grid--error');
+          
+          $('html, body').animate({
+            scrollTop: $grid.offset().top - 100
+          }, 400);
+          
+          return false;
+        });
+        
+        // Mover nuestro handler al principio de la cola de eventos
+        var handlers = $._data(document, 'events');
+        if (handlers && handlers.click) {
+          var ourHandler = handlers.click.filter(function(h) { return h.namespace === 'corteValidation'; })[0];
+          if (ourHandler) {
+            handlers.click = handlers.click.filter(function(h) { return h.namespace !== 'corteValidation'; });
+            handlers.click.unshift(ourHandler);
           }
-        }, true); // Captura en fase de captura para interceptar antes que otros handlers
+        }
         
         // Cerrar modal
-        var modal = document.getElementById('corte-required-modal');
-        if (modal) {
-          modal.querySelector('.corte-modal__overlay').addEventListener('click', function() {
-            modal.style.display = 'none';
-          });
-        }
+        $('#corte-required-modal').on('click', '.corte-modal__overlay, .corte-modal__btn', function() {
+          $('#corte-required-modal').hide();
+        });
+        
+        console.log('[Corte Validation] Initialized successfully');
       }
       
       // Inicializar cuando el DOM esté listo
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initCorteValidation);
       } else {
-        initCorteValidation();
+        // Dar tiempo a que jQuery y el tema carguen
+        setTimeout(initCorteValidation, 500);
       }
     })();
   </script>
