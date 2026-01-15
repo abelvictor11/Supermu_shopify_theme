@@ -299,94 +299,103 @@
   
   <script>
     (function() {
+      // Variables globales para el validador
+      var corteInputs = {};
+      var gridsMap = {};
+      
+      function showCorteError(inputId) {
+        var grid = gridsMap[inputId];
+        if (!grid) return;
+        
+        var errorMsg = grid.nextElementSibling;
+        var modal = document.getElementById('corte-required-modal');
+        
+        if (modal) modal.style.display = 'flex';
+        if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
+          errorMsg.classList.remove('d-none');
+        }
+        grid.classList.add('pdp-icon-grid--error');
+        grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      
       function initCorteValidation() {
-        // Esperar a que jQuery esté disponible
-        if (typeof jQuery === 'undefined') {
-          setTimeout(initCorteValidation, 100);
+        var grids = document.querySelectorAll('.pdp-icon-grid');
+        if (!grids.length) {
+          console.log('[Corte Validation] No grids found on page');
           return;
         }
         
-        var $ = jQuery;
-        var $grids = $('.pdp-icon-grid');
-        if (!$grids.length) {
-          console.log('[Corte Validation] No grids found');
-          return;
-        }
-        
-        var corteSelected = false;
-        var $corteInput = null;
-        var $currentGrid = null;
-        
-        // Click en iconos de corte
-        $grids.each(function() {
-          var $grid = $(this);
-          $currentGrid = $grid;
-          var inputId = $grid.data('icon-grid-for');
-          $corteInput = $('#' + inputId);
-          var $errorMsg = $grid.next('.pdp-icon-grid__error');
-          
-          // Click en iconos
-          $grid.on('click', '.pdp-icon-grid__item', function() {
-            var $item = $(this);
-            $grid.find('.pdp-icon-grid__item').removeClass('is-selected');
-            $item.addClass('is-selected');
-            $corteInput.val($item.data('value'));
-            corteSelected = true;
-            $errorMsg.addClass('d-none');
-            $grid.removeClass('pdp-icon-grid--error');
-            console.log('[Corte Validation] Corte selected:', $item.data('value'));
-          });
+        // Mapear inputs y grids
+        grids.forEach(function(grid) {
+          var inputId = grid.getAttribute('data-icon-grid-for');
+          var input = document.getElementById(inputId);
+          if (input) {
+            corteInputs[inputId] = input;
+            gridsMap[inputId] = grid;
+            
+            // Click en iconos de corte
+            grid.querySelectorAll('.pdp-icon-grid__item').forEach(function(item) {
+              item.addEventListener('click', function() {
+                grid.querySelectorAll('.pdp-icon-grid__item').forEach(function(i) {
+                  i.classList.remove('is-selected');
+                });
+                item.classList.add('is-selected');
+                input.value = item.getAttribute('data-value');
+                
+                var errorMsg = grid.nextElementSibling;
+                if (errorMsg) errorMsg.classList.add('d-none');
+                grid.classList.remove('pdp-icon-grid--error');
+                
+                console.log('[Corte Validation] Selected:', input.value);
+              });
+            });
+          }
         });
         
-        // Función para validar y mostrar error
-        function showCorteError() {
-          var $grid = $currentGrid;
-          var $errorMsg = $grid.next('.pdp-icon-grid__error');
-          var $modal = $('#corte-required-modal');
-          
-          $modal.css('display', 'flex');
-          $errorMsg.removeClass('d-none');
-          $grid.addClass('pdp-icon-grid--error');
-          
-          $('html, body').animate({
-            scrollTop: $grid.offset().top - 100
-          }, 400);
-        }
-        
-        // Interceptar en fase de CAPTURA antes de que jQuery reciba el evento
+        // INTERCEPTAR EN FASE DE CAPTURA - Se ejecuta ANTES que cualquier otro handler
         document.addEventListener('click', function(e) {
-          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]');
+          // Buscar si el click es en un botón de agregar al carrito
+          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart], button[name="add"]');
           if (!btn) return;
           
-          // Verificar si hay un input de corte requerido
-          if (!$corteInput || !$corteInput.length) return;
+          // Buscar el producto contenedor
+          var product = btn.closest('[data-js-product]');
+          if (!product) return;
           
-          // Si ya tiene valor, dejar pasar
-          if ($corteInput.val()) {
-            console.log('[Corte Validation] Corte already selected, allowing add to cart');
-            return;
+          // Buscar input de corte requerido en este producto
+          var corteInput = product.querySelector('input[data-corte-required="true"]');
+          if (!corteInput) return; // No tiene selector de corte
+          
+          // Si ya seleccionó un corte, dejar pasar
+          if (corteInput.value && corteInput.value.trim() !== '') {
+            console.log('[Corte Validation] Corte selected, allowing:', corteInput.value);
+            return; // Permite el evento
           }
           
-          // Bloquear el evento COMPLETAMENTE
-          console.log('[Corte Validation] Blocking add to cart - no corte selected');
+          // BLOQUEAR COMPLETAMENTE
+          console.log('[Corte Validation] BLOCKING - No corte selected');
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
           
-          showCorteError();
+          showCorteError(corteInput.id);
           
           return false;
-        }, true); // TRUE = fase de captura, se ejecuta ANTES de bubbling
+        }, true); // TRUE = FASE DE CAPTURA
         
-        // También interceptar mousedown para bloquear antes de click
+        // También bloquear en mousedown por si acaso
         document.addEventListener('mousedown', function(e) {
-          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart]');
+          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart], button[name="add"]');
           if (!btn) return;
           
-          if (!$corteInput || !$corteInput.length) return;
+          var product = btn.closest('[data-js-product]');
+          if (!product) return;
           
-          if (!$corteInput.val()) {
-            console.log('[Corte Validation] Blocking mousedown - no corte selected');
+          var corteInput = product.querySelector('input[data-corte-required="true"]');
+          if (!corteInput) return;
+          
+          if (!corteInput.value || corteInput.value.trim() === '') {
+            console.log('[Corte Validation] BLOCKING mousedown');
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -395,18 +404,25 @@
         }, true);
         
         // Cerrar modal
-        $('#corte-required-modal').on('click', '.corte-modal__overlay, .corte-modal__btn', function() {
-          $('#corte-required-modal').hide();
-        });
+        var modal = document.getElementById('corte-required-modal');
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target.classList.contains('corte-modal__overlay') || 
+                e.target.classList.contains('corte-modal__btn') ||
+                e.target.closest('.corte-modal__btn')) {
+              modal.style.display = 'none';
+            }
+          });
+        }
         
-        console.log('[Corte Validation] Initialized successfully with capture listeners');
+        console.log('[Corte Validation] Initialized with capture phase listeners');
       }
       
-      // Inicializar cuando el DOM esté listo
+      // Ejecutar inmediatamente - NO esperar a jQuery
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initCorteValidation);
       } else {
-        setTimeout(initCorteValidation, 100);
+        initCorteValidation();
       }
     })();
   </script>
