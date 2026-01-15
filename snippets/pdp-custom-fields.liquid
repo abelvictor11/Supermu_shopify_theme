@@ -299,57 +299,88 @@
   
   <script>
     (function() {
-      document.querySelectorAll('.pdp-icon-grid').forEach(function(grid) {
-        var inputId = grid.dataset.iconGridFor;
-        var input = document.getElementById(inputId);
-        var items = grid.querySelectorAll('.pdp-icon-grid__item');
-        var errorMsg = grid.nextElementSibling;
-        var modal = document.getElementById('corte-required-modal');
+      // Esperar a que el DOM esté listo
+      function initCorteValidation() {
+        var grids = document.querySelectorAll('.pdp-icon-grid');
+        if (!grids.length) return;
         
-        items.forEach(function(item) {
-          item.addEventListener('click', function() {
-            // Remove selection from all
-            items.forEach(function(i) { i.classList.remove('is-selected'); });
-            // Select this one
-            item.classList.add('is-selected');
-            // Update hidden input
-            input.value = item.dataset.value;
-            // Hide error if shown
-            if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
-              errorMsg.classList.add('d-none');
-            }
-            // Remove highlight from grid
-            grid.classList.remove('pdp-icon-grid--error');
+        grids.forEach(function(grid) {
+          var inputId = grid.dataset.iconGridFor;
+          var input = document.getElementById(inputId);
+          if (!input) return;
+          
+          var items = grid.querySelectorAll('.pdp-icon-grid__item');
+          var errorMsg = grid.nextElementSibling;
+          var modal = document.getElementById('corte-required-modal');
+          
+          // Click en iconos de corte
+          items.forEach(function(item) {
+            item.addEventListener('click', function() {
+              items.forEach(function(i) { i.classList.remove('is-selected'); });
+              item.classList.add('is-selected');
+              input.value = item.dataset.value;
+              if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
+                errorMsg.classList.add('d-none');
+              }
+              grid.classList.remove('pdp-icon-grid--error');
+            });
           });
         });
-
-        // Validation on form submit
-        var form = input.form;
-        if (form) {
-          form.addEventListener('submit', function(e) {
-            if (!input.value) {
-              e.preventDefault();
-              e.stopPropagation();
-              // Show modal
-              if (modal) modal.style.display = 'flex';
-              // Show inline error
-              if (errorMsg) errorMsg.classList.remove('d-none');
-              // Highlight grid
-              grid.classList.add('pdp-icon-grid--error');
-              // Scroll to grid
-              grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              return false;
+        
+        // Interceptar clicks en botones de agregar al carrito (Shella theme)
+        document.addEventListener('click', function(e) {
+          var addBtn = e.target.closest('[data-js-product-button-add-to-cart], .js-product-button-add-to-cart, [type="submit"][name="add"]');
+          if (!addBtn) return;
+          
+          // Buscar el input de corte requerido en el mismo formulario o sección
+          var form = addBtn.closest('form');
+          var section = addBtn.closest('.product-page, .product-page-info, [data-section-id]');
+          var container = form || section;
+          if (!container) return;
+          
+          var corteInput = container.querySelector('input[data-corte-required="true"]');
+          if (!corteInput) return; // No hay selector de corte en este producto
+          
+          // Validar que se haya seleccionado un corte
+          if (!corteInput.value) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            var grid = document.querySelector('.pdp-icon-grid[data-icon-grid-for="' + corteInput.id + '"]');
+            var errorMsg = grid ? grid.nextElementSibling : null;
+            var modal = document.getElementById('corte-required-modal');
+            
+            // Mostrar modal
+            if (modal) modal.style.display = 'flex';
+            // Mostrar error inline
+            if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
+              errorMsg.classList.remove('d-none');
             }
+            // Resaltar grid
+            if (grid) {
+              grid.classList.add('pdp-icon-grid--error');
+              grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            return false;
+          }
+        }, true); // Captura en fase de captura para interceptar antes que otros handlers
+        
+        // Cerrar modal
+        var modal = document.getElementById('corte-required-modal');
+        if (modal) {
+          modal.querySelector('.corte-modal__overlay').addEventListener('click', function() {
+            modal.style.display = 'none';
           });
         }
-      });
+      }
       
-      // Close modal on overlay click
-      var modal = document.getElementById('corte-required-modal');
-      if (modal) {
-        modal.querySelector('.corte-modal__overlay').addEventListener('click', function() {
-          modal.style.display = 'none';
-        });
+      // Inicializar cuando el DOM esté listo
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCorteValidation);
+      } else {
+        initCorteValidation();
       }
     })();
   </script>
