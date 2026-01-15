@@ -256,8 +256,18 @@
 
     
                   
+{%- comment -%} Detectar si el producto requiere corte {%- endcomment -%}
+{%- assign _card_requires_corte = false -%}
+{%- assign _card_cortes_meta = product.metafields.custom.cortes_disponibles -%}
+{%- if _card_cortes_meta != blank -%}
+    {%- assign _card_cortes_lower = _card_cortes_meta | downcase | strip -%}
+    {%- unless _card_cortes_lower == 'ninguno' or _card_cortes_lower == '' -%}
+        {%- assign _card_requires_corte = true -%}
+    {%- endunless -%}
+{%- endif -%}
+
 {% if product.available %}
-                  <div class="acciones" data-product-id="{{ product.id }}" data-variant-id="{{ current_variant.id }}" data-product-title="{{ product.title | escape }}">
+                  <div class="acciones" data-product-id="{{ product.id }}" data-variant-id="{{ current_variant.id }}" data-product-title="{{ product.title | escape }}" data-product-url="{{ product.url }}"{% if _card_requires_corte %} data-requires-corte="true"{% endif %}>
                     {%- if show_button_add_to_cart -%}
                         <button type="button" class="btn-agregar" data-action="add-to-cart-instant">
                             <span class="icon-plus">+</span>

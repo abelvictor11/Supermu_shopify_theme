@@ -6,6 +6,21 @@
     {%- assign max_quantity = 5 -%} 
 {%- endif %}
 
+{%- comment -%} Detectar si el producto requiere selección de corte {%- endcomment -%}
+{%- assign _product_requires_corte = false -%}
+{%- assign _product_cortes_meta = product.metafields.custom.cortes_disponibles -%}
+{%- if _product_cortes_meta != blank -%}
+    {%- assign _product_cortes_lower = _product_cortes_meta | downcase | strip -%}
+    {%- unless _product_cortes_lower == 'ninguno' or _product_cortes_lower == '' -%}
+        {%- assign _product_requires_corte = true -%}
+    {%- endunless -%}
+{%- endif -%}
+
+{%- comment -%} Si requiere corte, forzar redirección al PDP {%- endcomment -%}
+{%- if _product_requires_corte -%}
+    {%- assign enable_select_options_button = true -%}
+{%- endif -%}
+
 {%- form 'product',
     product,
     id: product_form_id,

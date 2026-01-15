@@ -83,11 +83,11 @@
       {%- assign _sel_id = 'pdp-select-' | append: section.id -%}
       {%- assign _sel_type = _sel.type | default: 'dropdown' -%}
       
-      <label for="{{ _sel_id }}" class="mb-6 d-block">{{ _sel_label }}{% if _sel_required %} <span class="text-danger">*</span>{% endif %}</label>
+      <label for="{{ _sel_id }}" class="mb-6 d-block">{{ _sel_label }} <span class="text-danger">*</span></label>
       
       {%- if _sel_type == 'icon_grid' -%}
         {%- comment -%} Icon Grid Mode {%- endcomment -%}
-        <input type="hidden" id="{{ _sel_id }}" name="properties[{{ _sel_label }}]" form="{{ product_form_id }}" value=""{% if _sel_required %} required{% endif %}>
+        <input type="hidden" id="{{ _sel_id }}" name="properties[{{ _sel_label }}]" form="{{ product_form_id }}" value="" required data-corte-required="true">
         <div class="pdp-icon-grid" data-icon-grid-for="{{ _sel_id }}">
           {%- for opt in _sel.options -%}
             {%- assign _opt_value = opt.value | default: opt -%}
@@ -110,12 +110,10 @@
             {%- endif -%}
           {%- endfor -%}
         </div>
-        {%- if _sel_required -%}
-          <p class="pdp-icon-grid__error d-none text-danger mt-5 mb-0" style="font-size: 12px;">Por favor seleccione una opción</p>
-        {%- endif -%}
+        <p class="pdp-icon-grid__error d-none text-danger mt-5 mb-0" style="font-size: 12px;">Por favor seleccione un tipo de corte</p>
       {%- else -%}
         {%- comment -%} Dropdown Mode (default) {%- endcomment -%}
-        <select id="{{ _sel_id }}" name="properties[{{ _sel_label }}]" form="{{ product_form_id }}" class="mb-10"{% if _sel_required %} required{% endif %}>
+        <select id="{{ _sel_id }}" name="properties[{{ _sel_label }}]" form="{{ product_form_id }}" class="mb-10" required data-corte-required="true">
           <option value="" disabled selected>{{ _sel_placeholder }}</option>
           {%- for opt in _sel.options -%}
             {%- assign _opt_value = opt.value | default: opt -%}
@@ -204,42 +202,219 @@
       font-weight: 600;
       color: #c8102e;
     }
+    /* Estado de error cuando no se ha seleccionado */
+    .pdp-icon-grid--error {
+      animation: shakeGrid 0.5s ease;
+    }
+    .pdp-icon-grid--error .pdp-icon-grid__item {
+      border-color: #c8102e;
+    }
+    @keyframes shakeGrid {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
   </style>
+  
+  {%- comment -%} Modal de alerta para corte obligatorio {%- endcomment -%}
+  <div id="corte-required-modal" class="corte-modal" style="display:none;">
+    <div class="corte-modal__overlay"></div>
+    <div class="corte-modal__content">
+      <div class="corte-modal__icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c8102e" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h3 class="corte-modal__title">Selecciona un tipo de corte</h3>
+      <p class="corte-modal__text">Por favor selecciona cómo deseas que preparemos tu producto antes de agregarlo al carrito.</p>
+      <button type="button" class="corte-modal__btn" onclick="document.getElementById('corte-required-modal').style.display='none';">Entendido</button>
+    </div>
+  </div>
+  <style>
+    .corte-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .corte-modal__overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    .corte-modal__content {
+      position: relative;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      animation: corteModalIn 0.3s ease;
+    }
+    @keyframes corteModalIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .corte-modal__icon {
+      margin-bottom: 15px;
+    }
+    .corte-modal__title {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: #333;
+    }
+    .corte-modal__text {
+      margin: 0 0 20px;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .corte-modal__btn {
+      background: #c8102e;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .corte-modal__btn:hover {
+      background: #a00d25;
+    }
+  </style>
+  
   <script>
     (function() {
-      document.querySelectorAll('.pdp-icon-grid').forEach(function(grid) {
-        var inputId = grid.dataset.iconGridFor;
-        var input = document.getElementById(inputId);
-        var items = grid.querySelectorAll('.pdp-icon-grid__item');
-        var errorMsg = grid.nextElementSibling;
+      // Variables globales para el validador
+      var gridsMap = {};
+      
+      function showCorteError(inputId) {
+        var grid = gridsMap[inputId];
+        if (!grid) return;
         
-        items.forEach(function(item) {
-          item.addEventListener('click', function() {
-            // Remove selection from all
-            items.forEach(function(i) { i.classList.remove('is-selected'); });
-            // Select this one
-            item.classList.add('is-selected');
-            // Update hidden input
-            input.value = item.dataset.value;
-            // Hide error if shown
-            if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
-              errorMsg.classList.add('d-none');
-            }
-          });
+        var errorMsg = grid.nextElementSibling;
+        var modal = document.getElementById('corte-required-modal');
+        
+        if (modal) modal.style.display = 'flex';
+        if (errorMsg && errorMsg.classList.contains('pdp-icon-grid__error')) {
+          errorMsg.classList.remove('d-none');
+        }
+        grid.classList.add('pdp-icon-grid--error');
+        grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      
+      function initCorteValidation() {
+        var grids = document.querySelectorAll('.pdp-icon-grid');
+        if (!grids.length) {
+          console.log('[Corte Validation] No grids found');
+          return;
+        }
+        
+        // Mapear grids
+        grids.forEach(function(grid) {
+          var inputId = grid.getAttribute('data-icon-grid-for');
+          var input = document.getElementById(inputId);
+          if (input) {
+            gridsMap[inputId] = grid;
+            
+            // Click en iconos
+            grid.querySelectorAll('.pdp-icon-grid__item').forEach(function(item) {
+              item.addEventListener('click', function() {
+                grid.querySelectorAll('.pdp-icon-grid__item').forEach(function(i) {
+                  i.classList.remove('is-selected');
+                });
+                item.classList.add('is-selected');
+                input.value = item.getAttribute('data-value');
+                
+                var errorMsg = grid.nextElementSibling;
+                if (errorMsg) errorMsg.classList.add('d-none');
+                grid.classList.remove('pdp-icon-grid--error');
+                
+                console.log('[Corte Validation] Selected:', input.value);
+              });
+            });
+          }
         });
-
-        // Validation on form submit
-        var form = input.form;
-        if (form && input.required) {
-          form.addEventListener('submit', function(e) {
-            if (!input.value) {
-              e.preventDefault();
-              if (errorMsg) errorMsg.classList.remove('d-none');
-              grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // INTERCEPTAR EN FASE DE CAPTURA - antes que jQuery
+        document.addEventListener('click', function(e) {
+          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart], button[name="add"]');
+          if (!btn) return;
+          
+          var product = btn.closest('[data-js-product]');
+          if (!product) return;
+          
+          var corteInput = product.querySelector('input[data-corte-required="true"]');
+          if (!corteInput) return;
+          
+          if (corteInput.value && corteInput.value.trim() !== '') {
+            console.log('[Corte Validation] OK:', corteInput.value);
+            return;
+          }
+          
+          console.log('[Corte Validation] BLOCKING add to cart');
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          showCorteError(corteInput.id);
+          return false;
+        }, true);
+        
+        // Bloquear mousedown también
+        document.addEventListener('mousedown', function(e) {
+          var btn = e.target.closest('.js-product-button-add-to-cart, [data-js-product-button-add-to-cart], button[name="add"]');
+          if (!btn) return;
+          
+          var product = btn.closest('[data-js-product]');
+          if (!product) return;
+          
+          var corteInput = product.querySelector('input[data-corte-required="true"]');
+          if (!corteInput) return;
+          
+          if (!corteInput.value || corteInput.value.trim() === '') {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+          }
+        }, true);
+        
+        // Cerrar modal
+        var modal = document.getElementById('corte-required-modal');
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target.classList.contains('corte-modal__overlay') || 
+                e.target.classList.contains('corte-modal__btn') ||
+                e.target.closest('.corte-modal__btn')) {
+              modal.style.display = 'none';
             }
           });
         }
-      });
+        
+        console.log('[Corte Validation] Ready');
+      }
+      
+      // Ejecutar inmediatamente
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCorteValidation);
+      } else {
+        initCorteValidation();
+      }
     })();
   </script>
   {%- endif -%}
