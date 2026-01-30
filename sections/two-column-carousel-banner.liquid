@@ -416,14 +416,31 @@
   margin-bottom: 15px;
 }
 
-/* Responsive */
+/* Responsive - Mobile: full width, 1 card visible */
 @media screen and (max-width: 767px) {
+  .two-column-carousel-banner .row {
+    flex-direction: column;
+  }
+  
+  .two-column-carousel-banner .carousel-column,
+  .two-column-carousel-banner .banner-column {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  
   .two-column-carousel-banner .carousel-column {
     margin-bottom: 20px;
+    order: 1;
+  }
+  
+  .two-column-carousel-banner .banner-column {
+    order: 2;
   }
   
   .two-column-carousel-banner .carousel-half-width .slick-slide {
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0;
   }
   
