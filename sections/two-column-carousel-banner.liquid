@@ -317,15 +317,16 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Función para inicializar la sección
-  function initSection() {
-    const section = document.getElementById('section-{{ section.id }}');
+(function($) {
+  'use strict';
+  
+  function initTwoColumnCarousel() {
+    var section = document.getElementById('section-{{ section.id }}');
     if (!section) return;
     
     // Mostrar contenido real
-    const loadedContents = section.querySelectorAll('.loaded-content');
-    loadedContents.forEach(content => {
+    var loadedContents = section.querySelectorAll('.loaded-content');
+    loadedContents.forEach(function(content) {
       content.style.display = '';
     });
     
@@ -333,73 +334,42 @@ document.addEventListener('DOMContentLoaded', function() {
     section.classList.remove('section-loading');
     section.classList.add('section-loaded');
     
-    // Cargar Slick y luego inicializar el carrusel
-    theme.AssetsLoader.loadManually([
-      ['styles', 'plugin_slick'],
-      ['scripts', 'plugin_slick']
-    ], function() {
-      const carousel = section.querySelector('[data-js-carousel]');
-      if (carousel && typeof $.fn.slick === 'function') {
-        $(carousel).slick({
-          infinite: carousel.dataset.infinite === 'true',
-          arrows: carousel.dataset.arrows === 'true',
-          dots: carousel.dataset.bullets === 'true',
-          autoplay: carousel.dataset.autoplay === 'true',
-          autoplaySpeed: parseInt(carousel.dataset.speed) || 3000,
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          responsive: [
-            {
-              breakpoint: 1200,
-              settings: {
-                slidesToShow: 2
-              }
-            },
-            {
-              breakpoint: 992,
-              settings: {
-                slidesToShow: 2
-              }
-            },
-            {
-              breakpoint: 767,
-              settings: {
-                slidesToShow: 1,
-                arrows: false,
-                dots: true
-              }
+    // Inicializar el carrusel con Slick
+    var $carousel = $(section).find('[data-js-carousel-slick]');
+    if ($carousel.length && $.fn.slick) {
+      $carousel.slick({
+        infinite: true,
+        arrows: true,
+        dots: true,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        prevArrow: $(section).find('[data-js-carousel-prev]'),
+        nextArrow: $(section).find('[data-js-carousel-next]'),
+        responsive: [
+          {
+            breakpoint: 768,
+            settings: {
+              slidesToShow: 1,
+              arrows: false
             }
-          ]
-        });
-      }
-    });
+          }
+        ]
+      });
+    }
   }
   
-  // Inicializar cuando las imágenes estén cargadas
-  const images = document.querySelectorAll('#section-{{ section.id }} img');
-  if (images.length > 0) {
-    let loadedImages = 0;
-    
-    images.forEach(img => {
-      if (img.complete) {
-        loadedImages++;
-      } else {
-        img.addEventListener('load', () => {
-          loadedImages++;
-          if (loadedImages === images.length) {
-            initSection();
-          }
-        });
-      }
-    });
-    
-    // Si todas las imágenes ya estaban cargadas
-    if (loadedImages === images.length) {
-      initSection();
+  // Esperar a que se cargue Slick
+  theme.AssetsLoader.loadManually([
+    ['styles', 'plugin_slick'],
+    ['scripts', 'plugin_slick']
+  ], function() {
+    if (document.readyState === 'complete') {
+      initTwoColumnCarousel();
+    } else {
+      document.addEventListener('DOMContentLoaded', initTwoColumnCarousel);
     }
-  } else {
-    // Si no hay imágenes, inicializar después de un tiempo
-    setTimeout(initSection, 1000);
-  }
-});
+  });
+})(jQueryTheme);
 </script>
