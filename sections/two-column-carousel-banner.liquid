@@ -141,6 +141,51 @@
 
 <script>
   theme.AssetsLoader.require('scripts', 'carousel_products');
+  
+  // Fix slide widths after Slick initializes
+  (function() {
+    var sectionId = '{{ section.id }}';
+    var maxAttempts = 20;
+    var attempts = 0;
+    
+    function fixSlideWidths() {
+      var section = document.getElementById('section-' + sectionId);
+      if (!section) return;
+      
+      var slickList = section.querySelector('.slick-list');
+      var slides = section.querySelectorAll('.slick-slide');
+      
+      if (!slickList || slides.length === 0) {
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(fixSlideWidths, 200);
+        }
+        return;
+      }
+      
+      // Calculate correct width based on container (50% of each = 2 slides visible)
+      var containerWidth = slickList.offsetWidth;
+      var slideWidth = Math.floor(containerWidth / 2) - 10; // 2 slides with gap
+      
+      slides.forEach(function(slide) {
+        slide.style.width = slideWidth + 'px';
+        slide.style.minWidth = slideWidth + 'px';
+        slide.style.maxWidth = slideWidth + 'px';
+      });
+      
+      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
+    }
+    
+    // Run after Slick initializes
+    setTimeout(fixSlideWidths, 500);
+    setTimeout(fixSlideWidths, 1000);
+    setTimeout(fixSlideWidths, 2000);
+    
+    // Also fix on window resize
+    window.addEventListener('resize', function() {
+      setTimeout(fixSlideWidths, 100);
+    });
+  })();
 </script>
 
 {% schema %}
