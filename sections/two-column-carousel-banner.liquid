@@ -148,10 +148,11 @@
       var section = document.getElementById('section-' + sectionId);
       if (!section) return;
       
+      var $slick = jQueryTheme(section).find('[data-js-carousel-slick]');
       var slickList = section.querySelector('.slick-list');
       var slides = section.querySelectorAll('.slick-slide');
       
-      if (!slickList || slides.length === 0) {
+      if (!slickList || slides.length === 0 || !$slick.length) {
         attempts++;
         if (attempts < maxAttempts) {
           setTimeout(fixSlideWidths, 200);
@@ -160,28 +161,25 @@
       }
       
       var isMobile = window.innerWidth <= 767;
+      var containerWidth = slickList.offsetWidth;
       
-      // Only fix widths on desktop - mobile uses default Slick behavior
-      if (!isMobile) {
-        var containerWidth = slickList.offsetWidth;
-        var slideWidth = Math.floor(containerWidth / 2) - 10;
-        
-        slides.forEach(function(slide) {
-          slide.style.width = slideWidth + 'px';
-          slide.style.minWidth = slideWidth + 'px';
-          slide.style.maxWidth = slideWidth + 'px';
-        });
-        
-        console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
-      } else {
-        // Reset inline styles on mobile
-        slides.forEach(function(slide) {
-          slide.style.width = '';
-          slide.style.minWidth = '';
-          slide.style.maxWidth = '';
-        });
-        console.log('[two-column-carousel] Mobile: using default Slick behavior');
-      }
+      // Calculate slide width based on viewport
+      var slidesVisible = isMobile ? 1 : 2;
+      var gap = isMobile ? 20 : 10;
+      var slideWidth = Math.floor(containerWidth / slidesVisible) - gap;
+      
+      slides.forEach(function(slide) {
+        slide.style.width = slideWidth + 'px';
+        slide.style.minWidth = slideWidth + 'px';
+        slide.style.maxWidth = slideWidth + 'px';
+      });
+      
+      // Refresh Slick to recalculate positions
+      try {
+        $slick.slick('setPosition');
+      } catch(e) {}
+      
+      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px', '(mobile:', isMobile, ')');
       
       // Setup navigation buttons
       setupNavButtons(section);
@@ -450,31 +448,15 @@
     order: 2;
   }
   
-  /* CRITICAL: Override Slick inline styles on mobile */
+  /* Mobile: Let Slick work normally, just constrain containers */
   .two-column-carousel-banner .carousel-half-width .slick-list {
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0;
     overflow: hidden !important;
   }
   
-  .two-column-carousel-banner .carousel-half-width .slick-track {
-    width: auto !important;
-    transform: none !important;
-    display: flex !important;
-  }
-  
-  .two-column-carousel-banner .carousel-half-width .slick-slide {
-    width: 100vw !important;
-    max-width: calc(100vw - 30px) !important;
-    min-width: auto !important;
-    margin: 0 !important;
-    float: none !important;
-  }
-  
   .two-column-carousel-banner .carousel__item {
-    width: 100% !important;
-    padding: 0 15px !important;
+    padding: 0 10px !important;
   }
   
   .two-column-carousel-banner .product-collection {
@@ -482,31 +464,10 @@
     max-width: 100% !important;
   }
   
-  .two-column-carousel-banner .product-collection__media {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
   .two-column-carousel-banner .product-collection__media img {
     width: 100% !important;
-    max-width: 100% !important;
     height: auto !important;
     object-fit: contain !important;
-  }
-  
-  .two-column-carousel-banner .slick-slide {
-    height: auto !important;
-  }
-  
-  .two-column-carousel-banner .carousel__products,
-  .two-column-carousel-banner .carousel__slick {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  .two-column-carousel-banner .slick-track {
-    display: flex !important;
-    align-items: flex-start !important;
   }
 }
 </style>
