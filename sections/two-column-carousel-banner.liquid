@@ -159,9 +159,10 @@
         return;
       }
       
-      // Calculate correct width based on container (50% of each = 2 slides visible)
       var containerWidth = slickList.offsetWidth;
-      var slideWidth = Math.floor(containerWidth / 2) - 10; // 2 slides with gap
+      var isMobile = window.innerWidth <= 767;
+      var slidesVisible = isMobile ? 1 : 2;
+      var slideWidth = Math.floor(containerWidth / slidesVisible) - (isMobile ? 0 : 10);
       
       slides.forEach(function(slide) {
         slide.style.width = slideWidth + 'px';
@@ -169,7 +170,7 @@
         slide.style.maxWidth = slideWidth + 'px';
       });
       
-      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
+      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px', '(mobile:', isMobile, ')');
       
       // Setup navigation buttons
       setupNavButtons(section);
