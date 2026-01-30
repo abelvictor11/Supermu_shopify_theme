@@ -448,5 +448,35 @@
   .two-column-carousel-banner .carousel-half-width .slick-list {
     margin: 0;
   }
+  
+  /* CRITICAL: Limit product card and image size on mobile */
+  .two-column-carousel-banner .product-collection {
+    max-width: 280px !important;
+    margin: 0 auto !important;
+  }
+  
+  .two-column-carousel-banner .product-collection__media,
+  .two-column-carousel-banner .product-collection__media img {
+    max-width: 280px !important;
+    max-height: 280px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+  
+  .two-column-carousel-banner .carousel__item {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+  }
+  
+  .two-column-carousel-banner .slick-slide {
+    height: auto !important;
+  }
+  
+  .two-column-carousel-banner .slick-track {
+    display: flex !important;
+    align-items: flex-start !important;
+  }
 }
 </style>
