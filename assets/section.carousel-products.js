@@ -170,6 +170,16 @@
                _.$slider.addClass('initialized');
             });
 
+            // Use data-count if specified and less than defaults (for half-width carousels)
+            var maxSlides = this.settings.count && this.settings.count < 8 ? this.settings.count : 8;
+            var defaultSlides = {
+                xl: Math.min(5, maxSlides),
+                lg: Math.min(4, maxSlides),
+                md: Math.min(3, maxSlides),
+                sm: Math.min(2, maxSlides),
+                xs: Math.min(1, maxSlides)
+            };
+            
             this.$slick.slick({
                 lazyLoad: false,
                 arrows: this.settings.arrows,
@@ -181,7 +191,7 @@
                 autoplay: this.settings.autoplay,
                 autoplaySpeed: this.settings.speed,
                 infinite: this.settings.infinite,
-                slidesToShow: 8, // Máximo en pantallas muy grandes (1920px+)
+                slidesToShow: maxSlides,
                 slidesToScroll: 1,
                 touchMove: true,
                 swipeToSlide: true,
@@ -190,42 +200,42 @@
                     {
                         breakpoint: 1920, // Full HD+
                         settings: {
-                            slidesToShow: 5,
+                            slidesToShow: defaultSlides.xl,
                             slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 1280, // xl screens
                         settings: {
-                            slidesToShow: 4,
+                            slidesToShow: defaultSlides.lg,
                             slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 1024, // lg screens
                         settings: {
-                            slidesToShow: 4,
+                            slidesToShow: defaultSlides.lg,
                             slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 768, // md screens
                         settings: {
-                            slidesToShow: 3,
+                            slidesToShow: defaultSlides.md,
                             slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 640, // sm screens
                         settings: {
-                            slidesToShow: 2,
+                            slidesToShow: defaultSlides.sm,
                             slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 480, // xs screens
                         settings: {
-                            slidesToShow: 1,
+                            slidesToShow: defaultSlides.xs,
                             slidesToScroll: 1,
                             arrows: false,
                             dots: true

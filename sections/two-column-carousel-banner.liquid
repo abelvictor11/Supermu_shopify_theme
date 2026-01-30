@@ -1,103 +1,135 @@
 {% comment %}
-  Two Column Carousel and Banner Section with Skeleton Loaders
+  Two Column Carousel and Banner Section
+  Uses the theme's carousel-products component with CSS overrides for half-width
 {% endcomment %}
 
-<div class="two-column-carousel-banner {% unless section.settings.collection != blank and section.settings.banner_image != blank %}section-loading{% endunless %}" id="section-{{ section.id }}">
+<div class="two-column-carousel-banner" id="section-{{ section.id }}">
   <div class="container-fluid">
-    <div class="row">
+    <div class="row align-items-stretch">
       {%- if section.settings.column_order == 'carousel_first' -%}
-        <!-- Columna del Carrusel -->
-        <div class="col-md-6 col-xs-12 col-sm-12 carousel-column">
-          <carousel-products class="d-block" data-section-id="{{ section.id }}" data-section-type="carousel-products">
-            <div class="carousel-wrapper">
+        <!-- Columna del Carrusel (50%) -->
+        <div class="col-md-6 col-12 carousel-column">
+          {%- if section.settings.collection != blank -%}
+            <carousel-products class="d-block carousel-half-width" data-section-id="{{ section.id }}" data-section-type="carousel-products">
               <div class="carousel carousel-products position-relative">
-                <!-- Skeleton para el título -->
-                <div class="carousel__head row mb-25 skeleton-loading">
-                  <div class="skeleton-loader skeleton-title"></div>
-                </div>
-                
-                <!-- Skeleton para el carrusel -->
-                <div class="carousel__slider_wrapper position-relative skeleton-loading">
-                  <div class="carousel__slider position-relative">
-                    <div class="carousel__products overflow-hidden">
-                      <div class="carousel__slick row">
-                        {%- for i in (1..3) -%}
-                          <div class="carousel__item col-auto">
-                            <div class="skeleton-product">
-                              <div class="skeleton-loader skeleton-product-image"></div>
-                              <div class="skeleton-loader skeleton-product-text"></div>
-                              <div class="skeleton-loader skeleton-product-text short"></div>
-                            </div>
-                          </div>
-                        {%- endfor -%}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Contenido real del carrusel (oculto inicialmente) -->
-                <div class="carousel__head row mb-25 loaded-content" style="display: none;">
+                <div class="carousel__head row mb-25">
                   <h2 class="h4 carousel__title home-section-title col-auto mw-100 mb-10 text-left">
                     {{ section.settings.carousel_title }}
                   </h2>
                 </div>
-                
-                <div class="carousel__slider_wrapper position-relative loaded-content" style="display: none;">
+                <div class="carousel__slider_wrapper position-relative">
                   <div class="carousel__slider position-relative js-slider-tracking"
                        data-js-carousel
                        data-autoplay="{{ section.settings.autoplay }}"
                        data-speed="{{ section.settings.speed | times: 1000 }}"
-                       data-count="3"
+                       data-count="2"
                        data-infinite="{{ section.settings.infinite }}"
                        data-arrows="{{ section.settings.arrows }}"
                        data-bullets="{{ section.settings.bullets }}">
                     {%- if section.settings.arrows -%}
-                      <div class="carousel__prev-placeholder position-absolute cursor-pointer" data-js-carousel-prev></div>
-                      <div class="carousel__prev position-absolute pointer-events-none" data-js-carousel-arrow><i>{% render 'icon-theme-006' %}</i></div>
+                      <div class="carousel__prev position-absolute cursor-pointer" data-js-carousel-prev data-js-carousel-arrow><i>{% render 'icon-theme-006' %}</i></div>
                     {%- endif -%}
-                    <div class="carousel__products overflow-hidden">
-                      <div class="carousel__slick row" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="3" data-async-ajax-loading="false">
+                    <div class="carousel__products w-100">
+                      <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="2" data-async-ajax-loading="false">
                         {%- for product in collections[section.settings.collection].products limit: 6 -%}
                           <div class="carousel__item col-auto">
-                            {%- assign disable_lazyload = carousel_products_image_lazyload_disable -%}
+                            {%- assign disable_lazyload = false -%}
                             {% include 'product-collection' with url_without_collection: true %}
                           </div>
                         {%- endfor -%}
                       </div>
                     </div>
                     {%- if section.settings.arrows -%}
-                      <div class="carousel__next-placeholder position-absolute cursor-pointer" data-js-carousel-next></div>
-                      <div class="carousel__next position-absolute pointer-events-none" data-js-carousel-arrow><i>{% render 'icon-theme-007' %}</i></div>
+                      <div class="carousel__next position-absolute cursor-pointer" data-js-carousel-next data-js-carousel-arrow><i>{% render 'icon-theme-007' %}</i></div>
                     {%- endif -%}
                   </div>
                 </div>
               </div>
+            </carousel-products>
+          {%- else -%}
+            <div class="no-collection-message">
+              <p>Selecciona una colección en la configuración de la sección.</p>
             </div>
-          </carousel-products>
+          {%- endif -%}
         </div>
         
-        <!-- Columna del Banner -->
-        <div class="col-md-6 col-xs-12 col-sm-12">
-          <!-- Skeleton para el banner -->
-          <div class="skeleton-loader skeleton-banner" {% if section.settings.banner_image != blank %}style="display: none;"{% endif %}></div>
-          
-          <!-- Banner real -->
-          <a href="{{ section.settings.banner_link | default: '#' }}" class="grid-item grid-item-banner_large loaded-content"
-             style="{% if section.settings.banner_image != blank %}background: {{ section.settings.banner_bg_color }}; background-image: url('{{ section.settings.banner_image | img_url: 'master' }}');{% else %}display: none;{% endif %}">
-            <div class="grid-content">
-              <p>{{ section.settings.banner_subtitle }}</p>
-              <h2>{{ section.settings.banner_title }}</h2>
-              {%- if section.settings.banner_cta_text != blank -%}
-                <div class="cta-button">
-                  {{ section.settings.banner_cta_text }}
-                </div>
-              {%- endif -%}
+        <!-- Columna del Banner (50%) -->
+        <div class="col-md-6 col-12 banner-column">
+          {%- if section.settings.banner_image != blank -%}
+            <a href="{{ section.settings.banner_link | default: '#' }}" class="banner-link">
+              <img src="{{ section.settings.banner_image | img_url: 'master' }}" 
+                   alt="{{ section.settings.banner_title | escape }}"
+                   class="banner-image"
+                   loading="lazy">
+            </a>
+          {%- else -%}
+            <div class="banner-placeholder">
+              <p>Selecciona una imagen de banner.</p>
             </div>
-          </a>
+          {%- endif -%}
         </div>
       {%- else -%}
-        <!-- Versión con el banner primero (misma lógica) -->
-        <!-- ... (repetir la misma estructura para el orden inverso) ... -->
+        <!-- Banner primero -->
+        <div class="col-md-6 col-12 banner-column">
+          {%- if section.settings.banner_image != blank -%}
+            <a href="{{ section.settings.banner_link | default: '#' }}" class="banner-link">
+              <img src="{{ section.settings.banner_image | img_url: 'master' }}" 
+                   alt="{{ section.settings.banner_title | escape }}"
+                   class="banner-image"
+                   loading="lazy">
+            </a>
+          {%- else -%}
+            <div class="banner-placeholder">
+              <p>Selecciona una imagen de banner.</p>
+            </div>
+          {%- endif -%}
+        </div>
+        
+        <!-- Carrusel segundo -->
+        <div class="col-md-6 col-12 carousel-column">
+          {%- if section.settings.collection != blank -%}
+            <carousel-products class="d-block carousel-half-width" data-section-id="{{ section.id }}-alt" data-section-type="carousel-products">
+              <div class="carousel carousel-products position-relative">
+                <div class="carousel__head row mb-25">
+                  <h2 class="h4 carousel__title home-section-title col-auto mw-100 mb-10 text-left">
+                    {{ section.settings.carousel_title }}
+                  </h2>
+                </div>
+                <div class="carousel__slider_wrapper position-relative">
+                  <div class="carousel__slider position-relative js-slider-tracking"
+                       data-js-carousel
+                       data-autoplay="{{ section.settings.autoplay }}"
+                       data-speed="{{ section.settings.speed | times: 1000 }}"
+                       data-count="2"
+                       data-infinite="{{ section.settings.infinite }}"
+                       data-arrows="{{ section.settings.arrows }}"
+                       data-bullets="{{ section.settings.bullets }}">
+                    {%- if section.settings.arrows -%}
+                      <div class="carousel__prev position-absolute cursor-pointer" data-js-carousel-prev data-js-carousel-arrow><i>{% render 'icon-theme-006' %}</i></div>
+                    {%- endif -%}
+                    <div class="carousel__products w-100">
+                      <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="2" data-async-ajax-loading="false">
+                        {%- for product in collections[section.settings.collection].products limit: 6 -%}
+                          <div class="carousel__item col-auto">
+                            {%- assign disable_lazyload = false -%}
+                            {% include 'product-collection' with url_without_collection: true %}
+                          </div>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                    {%- if section.settings.arrows -%}
+                      <div class="carousel__next position-absolute cursor-pointer" data-js-carousel-next data-js-carousel-arrow><i>{% render 'icon-theme-007' %}</i></div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            </carousel-products>
+          {%- else -%}
+            <div class="no-collection-message">
+              <p>Selecciona una colección en la configuración de la sección.</p>
+            </div>
+          {%- endif -%}
+        </div>
       {%- endif -%}
     </div>
   </div>
@@ -105,27 +137,98 @@
 
 <script>
   theme.AssetsLoader.require('scripts', 'carousel_products');
+  
+  // Fix slide widths after Slick initializes
+  (function() {
+    var sectionId = '{{ section.id }}';
+    var maxAttempts = 20;
+    var attempts = 0;
+    
+    function fixSlideWidths() {
+      var section = document.getElementById('section-' + sectionId);
+      if (!section) return;
+      
+      var slickList = section.querySelector('.slick-list');
+      var slides = section.querySelectorAll('.slick-slide');
+      
+      if (!slickList || slides.length === 0) {
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(fixSlideWidths, 200);
+        }
+        return;
+      }
+      
+      // Calculate correct width based on container (50% of each = 2 slides visible)
+      var containerWidth = slickList.offsetWidth;
+      var slideWidth = Math.floor(containerWidth / 2) - 10; // 2 slides with gap
+      
+      slides.forEach(function(slide) {
+        slide.style.width = slideWidth + 'px';
+        slide.style.minWidth = slideWidth + 'px';
+        slide.style.maxWidth = slideWidth + 'px';
+      });
+      
+      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
+      
+      // Setup navigation buttons
+      setupNavButtons(section);
+    }
+    
+    function setupNavButtons(section) {
+      var $slick = jQueryTheme(section).find('[data-js-carousel-slick]');
+      var prevBtn = section.querySelector('[data-js-carousel-prev]');
+      var nextBtn = section.querySelector('[data-js-carousel-next]');
+      
+      if (!$slick.length || (!prevBtn && !nextBtn)) return;
+      
+      // Remove existing listeners and add new ones
+      if (prevBtn) {
+        prevBtn.onclick = function(e) {
+          e.preventDefault();
+          $slick.slick('slickPrev');
+        };
+      }
+      
+      if (nextBtn) {
+        nextBtn.onclick = function(e) {
+          e.preventDefault();
+          $slick.slick('slickNext');
+        };
+      }
+      
+      console.log('[two-column-carousel] Navigation buttons connected');
+    }
+    
+    // Run after Slick initializes
+    setTimeout(fixSlideWidths, 500);
+    setTimeout(fixSlideWidths, 1000);
+    setTimeout(fixSlideWidths, 2000);
+    
+    // Also fix on window resize
+    window.addEventListener('resize', function() {
+      setTimeout(fixSlideWidths, 100);
+    });
+  })();
 </script>
 
 {% schema %}
 {
-  "name": "Carousel & Banner",
+  "name": "Carousel & Banner v2",
   "settings": [
     {
       "type": "select",
       "id": "column_order",
       "label": "Orden de Columnas",
       "options": [
-        {
-          "value": "carousel_first",
-          "label": "Carrusel Primero"
-        },
-        {
-          "value": "banner_first",
-          "label": "Banner Primero"
-        }
+        { "value": "carousel_first", "label": "Carrusel Primero" },
+        { "value": "banner_first", "label": "Banner Primero" }
       ],
       "default": "carousel_first"
+    },
+    {
+      "type": "header",
+      "content": "Carrusel"
     },
     {
       "type": "text",
@@ -147,7 +250,7 @@
     {
       "type": "range",
       "id": "speed",
-      "label": "Velocidad de Autoplay (segundos)",
+      "label": "Velocidad (segundos)",
       "min": 1,
       "max": 10,
       "step": 1,
@@ -168,8 +271,8 @@
     {
       "type": "checkbox",
       "id": "bullets",
-      "label": "Mostrar Puntos de Navegación",
-      "default": true
+      "label": "Mostrar Puntos",
+      "default": false
     },
     {
       "type": "header",
@@ -178,41 +281,17 @@
     {
       "type": "image_picker",
       "id": "banner_image",
-      "label": "Imagen de Fondo del Banner"
-    },
-    {
-      "type": "color",
-      "id": "banner_bg_color",
-      "label": "Color de Fondo del Banner",
-      "default": "#f5f5f5"
-    },
-    {
-      "type": "text",
-      "id": "banner_title",
-      "label": "Título del Banner",
-      "default": "Título del Banner"
-    },
-    {
-      "type": "text",
-      "id": "banner_subtitle",
-      "label": "Subtítulo del Banner",
-      "default": "Subtítulo del Banner"
-    },
-    {
-      "type": "text",
-      "id": "banner_cta_text",
-      "label": "Texto del Botón CTA",
-      "default": "Comprar Ahora"
+      "label": "Imagen del Banner"
     },
     {
       "type": "url",
       "id": "banner_link",
-      "label": "Enlace del Botón CTA"
+      "label": "Enlace del Banner"
     }
   ],
   "presets": [
     {
-      "name": "Carousel & Banner",
+      "name": "Carousel & Banner v2",
       "category": "Custom"
     }
   ]
@@ -220,151 +299,136 @@
 {% endschema %}
 
 <style>
+/* === Two Column Carousel Banner === */
 .two-column-carousel-banner {
-    padding: 40px 0;
-    max-width: 1770px;
-    margin: 0 auto;
-    overflow: hidden;
+  padding: 30px 0;
+  max-width: 1770px;
+  margin: 0 auto;
 }
 
 .two-column-carousel-banner .row {
-    align-items: center;
+  margin: 0 -15px;
 }
 
-/* Fix para evitar que el carrusel se salga */
+.two-column-carousel-banner .carousel-column,
+.two-column-carousel-banner .banner-column {
+  padding: 0 15px;
+}
+
+/* CRITICAL: Contain carousel within its column */
 .two-column-carousel-banner .carousel-column {
-    overflow: hidden;
-    position: relative;
+  overflow: hidden !important;
+  max-width: 50% !important;
 }
 
-.two-column-carousel-banner .carousel-wrapper {
-    overflow: hidden;
-    position: relative;
+.two-column-carousel-banner .carousel-half-width {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
-.two-column-carousel-banner .carousel__products {
-    overflow: hidden !important;
+.two-column-carousel-banner .carousel-half-width .carousel-products {
+  overflow: hidden !important;
+  max-width: 100% !important;
 }
 
-.two-column-carousel-banner .carousel__slick {
-    margin: 0 -10px;
+.two-column-carousel-banner .carousel-half-width .carousel__slider_wrapper {
+  overflow: hidden !important;
+  max-width: 100% !important;
 }
 
-.two-column-carousel-banner .carousel__item {
-    padding: 0 10px;
+.two-column-carousel-banner .carousel-half-width .carousel__products {
+  overflow: hidden !important;
+  max-width: 100% !important;
 }
 
-.two-column-carousel-banner .grid-item-banner_large {
-    position: relative;
-    padding: 20px;
-    color: #fff;
-    background-size: contain !important;
-    background-position: center;
-    border-radius: 10px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    background-repeat: no-repeat !important;
-    aspect-ratio: 2 / 1;
-    overflow: hidden;
+.two-column-carousel-banner .carousel-half-width .slick-list {
+  overflow: hidden !important;
+  max-width: 100% !important;
 }
 
-.grid-content {
-    padding: 15px;
-    border-radius: 5px;
+/* Banner styling */
+.two-column-carousel-banner .banner-link {
+  display: block;
+  height: 100%;
 }
 
-.carousel__head h2 {
-    font-size: 2em;
-    margin-bottom: 0;
-    color: #000;
-    line-height: 1;
-    font-weight: 900;
-    font-family: Bogle, Helvetica Neue, Helvetica, Arial;
+.two-column-carousel-banner .banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.two-column-carousel-banner .banner-placeholder,
+.two-column-carousel-banner .no-collection-message {
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === CRITICAL: Force carousel to show only 2 products === */
+.two-column-carousel-banner .carousel-half-width .slick-slide {
+  width: calc(50% - 10px) !important;
+  margin: 0 5px;
+}
+
+.two-column-carousel-banner .carousel-half-width .slick-list {
+  margin: 0 -5px;
+}
+
+.two-column-carousel-banner .carousel-half-width .slick-track {
+  display: flex !important;
+}
+
+/* Hide scrollbar in this section */
+.two-column-carousel-banner .carousel__scrollbar {
+  display: none !important;
+}
+
+/* Arrows positioning */
+.two-column-carousel-banner .carousel__prev {
+  left: 5px !important;
+}
+
+.two-column-carousel-banner .carousel__next {
+  right: 5px !important;
+}
+
+.two-column-carousel-banner .carousel__prev-placeholder {
+  left: 5px !important;
+}
+
+.two-column-carousel-banner .carousel__next-placeholder {
+  right: 5px !important;
+}
+
+/* Title styling */
+.two-column-carousel-banner .carousel__title {
+  font-size: 1.5em;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 15px;
 }
 
 /* Responsive */
-@media screen and (max-width: 768px) {
-    .two-column-carousel-banner .carousel-column {
-        margin-bottom: 20px;
-    }
-}
-</style>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Función para inicializar la sección
-  function initSection() {
-    const section = document.getElementById('section-{{ section.id }}');
-    if (!section) return;
-    
-    // Mostrar contenido real
-    const loadedContents = section.querySelectorAll('.loaded-content');
-    loadedContents.forEach(content => {
-      content.style.display = '';
-    });
-    
-    // Ocultar skeletons
-    section.classList.remove('section-loading');
-    section.classList.add('section-loaded');
-    
-    // Inicializar el carrusel
-    const carousel = section.querySelector('[data-js-carousel]');
-    if (carousel && typeof $.fn.slick === 'function') {
-      $(carousel).slick({
-        infinite: carousel.dataset.infinite === 'true',
-        arrows: carousel.dataset.arrows === 'true',
-        dots: carousel.dataset.bullets === 'true',
-        autoplay: carousel.dataset.autoplay === 'true',
-        autoplaySpeed: parseInt(carousel.dataset.speed) || 3000,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        responsive: [
-          {
-            breakpoint: 1024,
-            settings: {
-              slidesToShow: 2
-            }
-          },
-          {
-            breakpoint: 767,
-            settings: {
-              slidesToShow: 1,
-              arrows: false,
-              dots: true
-            }
-          }
-        ]
-      });
-    }
+@media screen and (max-width: 767px) {
+  .two-column-carousel-banner .carousel-column {
+    margin-bottom: 20px;
   }
   
-  // Inicializar cuando las imágenes estén cargadas
-  const images = document.querySelectorAll('#section-{{ section.id }} img');
-  if (images.length > 0) {
-    let loadedImages = 0;
-    
-    images.forEach(img => {
-      if (img.complete) {
-        loadedImages++;
-      } else {
-        img.addEventListener('load', () => {
-          loadedImages++;
-          if (loadedImages === images.length) {
-            initSection();
-          }
-        });
-      }
-    });
-    
-    // Si todas las imágenes ya estaban cargadas
-    if (loadedImages === images.length) {
-      initSection();
-    }
-  } else {
-    // Si no hay imágenes, inicializar después de un tiempo
-    setTimeout(initSection, 1000);
+  .two-column-carousel-banner .carousel-half-width .slick-slide {
+    width: 100% !important;
+    margin: 0;
   }
-});
-</script>
+  
+  .two-column-carousel-banner .carousel-half-width .slick-list {
+    margin: 0;
+  }
+}
+</style>
