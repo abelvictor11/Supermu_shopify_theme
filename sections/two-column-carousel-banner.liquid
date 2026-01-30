@@ -248,20 +248,34 @@
     flex-wrap: nowrap !important;
 }
 
-.two-column-carousel-banner .carousel__item {
+.two-column-carousel-banner .carousel__item,
+.two-column-carousel-banner .carousel__item.col-auto {
     padding: 0 10px;
     min-width: 50% !important;
     max-width: 50% !important;
     flex: 0 0 50% !important;
+    width: 50% !important;
+}
+
+/* Product card sizing inside this section */
+.two-column-carousel-banner .product-collection {
+    max-width: 100% !important;
+    width: 100% !important;
 }
 
 /* Slick overrides for half-width carousel */
 .two-column-carousel-banner .slick-slide {
     width: 50% !important;
+    min-width: 50% !important;
+    max-width: 50% !important;
 }
 
 .two-column-carousel-banner .slick-track {
     display: flex !important;
+}
+
+.two-column-carousel-banner .slick-list {
+    overflow: hidden !important;
 }
 
 .two-column-carousel-banner .grid-item-banner_large {
