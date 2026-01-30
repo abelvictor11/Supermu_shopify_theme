@@ -159,18 +159,29 @@
         return;
       }
       
-      var containerWidth = slickList.offsetWidth;
       var isMobile = window.innerWidth <= 767;
-      var slidesVisible = isMobile ? 1 : 2;
-      var slideWidth = Math.floor(containerWidth / slidesVisible) - (isMobile ? 0 : 10);
       
-      slides.forEach(function(slide) {
-        slide.style.width = slideWidth + 'px';
-        slide.style.minWidth = slideWidth + 'px';
-        slide.style.maxWidth = slideWidth + 'px';
-      });
-      
-      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px', '(mobile:', isMobile, ')');
+      // Only fix widths on desktop - mobile uses default Slick behavior
+      if (!isMobile) {
+        var containerWidth = slickList.offsetWidth;
+        var slideWidth = Math.floor(containerWidth / 2) - 10;
+        
+        slides.forEach(function(slide) {
+          slide.style.width = slideWidth + 'px';
+          slide.style.minWidth = slideWidth + 'px';
+          slide.style.maxWidth = slideWidth + 'px';
+        });
+        
+        console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
+      } else {
+        // Reset inline styles on mobile
+        slides.forEach(function(slide) {
+          slide.style.width = '';
+          slide.style.minWidth = '';
+          slide.style.maxWidth = '';
+        });
+        console.log('[two-column-carousel] Mobile: using default Slick behavior');
+      }
       
       // Setup navigation buttons
       setupNavButtons(section);
@@ -439,18 +450,30 @@
     order: 2;
   }
   
-  .two-column-carousel-banner .carousel-half-width .slick-slide {
+  /* CRITICAL: Override Slick inline styles on mobile */
+  .two-column-carousel-banner .carousel-half-width .slick-list {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0;
+    overflow: hidden !important;
   }
   
-  .two-column-carousel-banner .carousel-half-width .slick-list {
-    margin: 0;
+  .two-column-carousel-banner .carousel-half-width .slick-track {
+    width: auto !important;
+    transform: none !important;
+    display: flex !important;
   }
   
-  /* Mobile: card fills slide width with padding */
+  .two-column-carousel-banner .carousel-half-width .slick-slide {
+    width: 100vw !important;
+    max-width: calc(100vw - 30px) !important;
+    min-width: auto !important;
+    margin: 0 !important;
+    float: none !important;
+  }
+  
   .two-column-carousel-banner .carousel__item {
+    width: 100% !important;
     padding: 0 15px !important;
   }
   
@@ -473,6 +496,12 @@
   
   .two-column-carousel-banner .slick-slide {
     height: auto !important;
+  }
+  
+  .two-column-carousel-banner .carousel__products,
+  .two-column-carousel-banner .carousel__slick {
+    width: 100% !important;
+    max-width: 100% !important;
   }
   
   .two-column-carousel-banner .slick-track {
