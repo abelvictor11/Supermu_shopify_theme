@@ -245,10 +245,23 @@
 
 .two-column-carousel-banner .carousel__slick {
     margin: 0 -10px;
+    flex-wrap: nowrap !important;
 }
 
 .two-column-carousel-banner .carousel__item {
     padding: 0 10px;
+    min-width: 50% !important;
+    max-width: 50% !important;
+    flex: 0 0 50% !important;
+}
+
+/* Slick overrides for half-width carousel */
+.two-column-carousel-banner .slick-slide {
+    width: 50% !important;
+}
+
+.two-column-carousel-banner .slick-track {
+    display: flex !important;
 }
 
 .two-column-carousel-banner .grid-item-banner_large {
