@@ -59,7 +59,7 @@
         {%- for variant in product.variants -%}
             {%- if variant.compare_at_price > variant.price -%}
                 {%- assign price_save = variant.compare_at_price | minus: variant.price -%}
-                {%- assign price_save_procent = variant.price | times: 100 | divided_by: variant.compare_at_price | minus: 100 | times: -1 -%}
+                {%- assign price_save_procent = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price -%}
                 {% if is_first != true %},{% endif %}{"id":"{{ variant.id }}","details":"{{ 'products.product.price_sale_details_html' | t: price: '[[ price ]]', procent: price_save_procent }}", "price": "{{ price_save }}"}
                 {%- assign is_first = false -%}
             {%- endif -%}

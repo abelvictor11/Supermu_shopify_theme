@@ -2981,7 +2981,7 @@
               $label[!sale ? 'addClass' : 'removeClass']('d-none-important');
   
               if(sale) {
-                  var percent = Math.ceil(100 - data.update_variant.price * 100 / data.update_variant.compare_at_price);
+                  var percent = Math.floor(100 - data.update_variant.price * 100 / data.update_variant.compare_at_price);
   
                   html += theme.strings.label.sale;
                   html = Shopify.addValueToString(html, {
