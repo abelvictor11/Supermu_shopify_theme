@@ -5,7 +5,7 @@
     "enabled": true,
     "visibility": { "by": "tags", "values": ["personalizable", "regalo"] },
     "select": { "label": "Categoría", "required": true, "options": ["Cumpleaños","Aniversario","Felicitación"], "placeholder": "Seleccione una opción" },
-    "text": { "label": "Notas", "placeholder": "Instrucciones para el pedido...", "required": false, "maxlength": 200 }
+    "text": { "label": "Notas", "placeholder": "Instrucciones para el pedido...", "required": false, "maxlength": 200, "enabled": true }
   }
 
   Expected context:
@@ -57,6 +57,8 @@
 {%- if _txt and _txt.maxlength -%}
   {%- assign _txt_maxlen = _txt.maxlength | plus: 0 -%}
 {%- endif -%}
+{%- assign _txt_enabled = true -%}
+{%- if _txt and _txt.enabled == false -%}{%- assign _txt_enabled = false -%}{%- endif -%}
 
 {%- if _enabled and _visible -%}
   {%- comment -%} 
@@ -136,11 +138,13 @@
       {%- endif -%}
     {%- endif -%}
 
-    {%- unless _hide_selector -%}
-      {%- assign _txt_id = 'pdp-text-' | append: section.id -%}
-      <label for="{{ _txt_id }}" class="mb-6">{{ _txt_label }}</label>
-      <textarea id="{{ _txt_id }}" name="properties[{{ _txt_label }}]" form="{{ product_form_id }}" placeholder="{{ _txt_placeholder }}" maxlength="{{ _txt_maxlen }}" class="mb-0"{% if _txt_required %} required{% endif %}></textarea>
-    {%- endunless -%}
+    {%- if _txt_enabled -%}
+      {%- unless _hide_selector -%}
+        {%- assign _txt_id = 'pdp-text-' | append: section.id -%}
+        <label for="{{ _txt_id }}" class="mb-6">{{ _txt_label }}</label>
+        <textarea id="{{ _txt_id }}" name="properties[{{ _txt_label }}]" form="{{ product_form_id }}" placeholder="{{ _txt_placeholder }}" maxlength="{{ _txt_maxlen }}" class="mb-0"{% if _txt_required %} required{% endif %}></textarea>
+      {%- endunless -%}
+    {%- endif -%}
   </div>
 
   {%- if _sel_type == 'icon_grid' -%}

@@ -148,10 +148,11 @@
       var section = document.getElementById('section-' + sectionId);
       if (!section) return;
       
+      var $slick = jQueryTheme(section).find('[data-js-carousel-slick]');
       var slickList = section.querySelector('.slick-list');
       var slides = section.querySelectorAll('.slick-slide');
       
-      if (!slickList || slides.length === 0) {
+      if (!slickList || slides.length === 0 || !$slick.length) {
         attempts++;
         if (attempts < maxAttempts) {
           setTimeout(fixSlideWidths, 200);
@@ -159,9 +160,13 @@
         return;
       }
       
-      // Calculate correct width based on container (50% of each = 2 slides visible)
+      var isMobile = window.innerWidth <= 767;
       var containerWidth = slickList.offsetWidth;
-      var slideWidth = Math.floor(containerWidth / 2) - 10; // 2 slides with gap
+      
+      // Calculate slide width based on viewport
+      var slidesVisible = isMobile ? 1 : 2;
+      var gap = isMobile ? 20 : 10;
+      var slideWidth = Math.floor(containerWidth / slidesVisible) - gap;
       
       slides.forEach(function(slide) {
         slide.style.width = slideWidth + 'px';
@@ -169,7 +174,12 @@
         slide.style.maxWidth = slideWidth + 'px';
       });
       
-      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
+      // Refresh Slick to recalculate positions
+      try {
+        $slick.slick('setPosition');
+      } catch(e) {}
+      
+      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px', '(mobile:', isMobile, ')');
       
       // Setup navigation buttons
       setupNavButtons(section);
@@ -416,19 +426,48 @@
   margin-bottom: 15px;
 }
 
-/* Responsive */
+/* Responsive - Mobile: full width, 1 card visible */
 @media screen and (max-width: 767px) {
+  .two-column-carousel-banner .row {
+    flex-direction: column;
+  }
+  
+  .two-column-carousel-banner .carousel-column,
+  .two-column-carousel-banner .banner-column {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  
   .two-column-carousel-banner .carousel-column {
     margin-bottom: 20px;
+    order: 1;
   }
   
-  .two-column-carousel-banner .carousel-half-width .slick-slide {
-    width: 100% !important;
-    margin: 0;
+  .two-column-carousel-banner .banner-column {
+    order: 2;
   }
   
+  /* Mobile: Let Slick work normally, just constrain containers */
   .two-column-carousel-banner .carousel-half-width .slick-list {
-    margin: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  .two-column-carousel-banner .carousel__item {
+    padding: 0 10px !important;
+  }
+  
+  .two-column-carousel-banner .product-collection {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .two-column-carousel-banner .product-collection__media img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
   }
 }
 </style>
