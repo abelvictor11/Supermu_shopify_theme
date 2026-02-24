@@ -194,7 +194,7 @@
                         {%- if compare_at_price > price -%}
                           {%- assign price_save = compare_at_price | minus: price -%}
                           {%- assign price_save_money = price_save | money -%}
-                          {%- assign price_save_procent = price | times: 100 | divided_by: compare_at_price | minus: 100 | times: -1 -%}
+                          {%- assign price_save_procent = compare_at_price | minus: price | times: 100 | divided_by: compare_at_price -%}
                           {{ 'products.product.price_sale_details_html' | t: price: price_save_money, procent: price_save_procent }}
                         {%- endif -%}
                       </p>
