@@ -69,7 +69,7 @@ Edita `assets/store-selector.css`:
 
 /* Color del botón "Seleccionar" */
 .btn-select-store {
-  background: #dd0a0a; /* Cambiar aquí */
+  background: #FF0203; /* Cambiar aquí */
 }
 ```
 
