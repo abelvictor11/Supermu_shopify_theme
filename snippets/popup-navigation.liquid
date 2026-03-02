@@ -74,12 +74,18 @@
     <div class="popup-navigation__menu d-lg-none{% if settings.search_show %} pt-25{% endif %} pb-25 px-10" data-js-menu-mobile>
         <div class="container" data-js-position-mobile="menu"></div>
       <br>
-      <a href="https://supernet.supermu.com/clientes/registro.php" target="_blank" class="header__icon-link d-flex align-items-center registro" title="Registro">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22 0-2 4-3.1 6-3.1s6 1.1 6 3.1c-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
-    </svg>
-    <span class="ml-2">Registro</span>
-</a>
+      {%- assign registro_show = section.settings.show_registro_link -%}
+      {%- if registro_show -%}
+        {%- assign registro_url = section.settings.registro_url | default: '#' -%}
+        {%- assign registro_tooltip = section.settings.registro_tooltip | default: 'Registro' -%}
+        <a href="{{ registro_url }}" class="header__icon-link d-flex align-items-center registro" title="{{ registro_tooltip }}"{% if section.settings.registro_open_new_tab %} target="_blank" rel="noopener"{% endif %}>
+          <svg width="24" height="24" viewBox="0 0 409.6 409.6" xmlns="http://www.w3.org/2000/svg">
+            <path style="fill:#8F09CE;" d="M312.19,409.6H97.41c-11.242,0-23.667-5.755-33.106-11.53c-17.415-10.655-27.685-28.836-29.282-49.167c-2.017-25.672,0.966-50.99,7.103-75.921c3.696-15.017,9.634-28.473,17.993-41.172c13.441-20.421,35.115-32.204,59.496-33.409c5.407-0.267,10.401,0.231,15.085,3.227l19.395,12.406c6.004,3.84,11.995,6.575,18.619,9.206c28.284,11.236,58.084,6.649,83.287-9.445l19.106-12.2c4.652-2.97,9.553-3.445,14.873-3.194c24.647,1.16,46.43,13.128,59.913,33.851c8.305,12.765,14.177,26.223,17.846,41.229c6.077,24.85,8.919,50.162,6.973,75.629c-1.567,20.508-12.292,38.067-29.102,49.084C335.195,405.02,323.912,407.6,312.19,409.6z"/>
+            <path style="fill:#8F09CE;" d="M273.672,167.03c-19.846,20.851-45.956,31.451-74.393,30.637c-24.646-0.705-47.02-10.086-64.819-27.063c-19.883-18.965-30.725-43.957-30.636-71.603c0.087-27.152,10.602-51.767,30.091-70.541c16.567-15.959,37.136-25.657,60.319-27.372c29.009-2.145,55.14,7.039,76.147,27.108c20.418,19.506,31.047,45.464,30.324,73.705C300.075,126.535,290.884,148.947,273.672,167.03z"/>
+          </svg>
+          <span class="ml-2">{{ registro_tooltip }}</span>
+        </a>
+      {%- endif -%}
     </div>
     <div class="popup-navigation__currency d-lg-none px-10 mt-25" data-js-position-mobile="currencies"></div>
     <div class="popup-navigation__currency d-lg-none px-10 mt-25" data-js-position-mobile="languages"></div>
