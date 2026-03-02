@@ -1183,10 +1183,11 @@
                 {%- assign registro_url = section.settings.registro_url | default: '#' -%}
                 {%- assign registro_label = section.settings.registro_label | default: 'Registro' -%}
                 <div class="ml-25 ml-lg-15">
-                    <a href="{{ registro_url }}" class="header__btn-registro d-flex align-items-center position-relative text-nowrap"{% if section.settings.registro_open_new_tab %} target="_blank" rel="noopener"{% endif %}
+                    {%- assign registro_tooltip = section.settings.registro_tooltip | default: 'Registro' -%}
+                    <a href="{{ registro_url }}" class="header__btn-registro d-flex align-items-center position-relative text-nowrap" title="{{ registro_tooltip }}"{% if section.settings.registro_open_new_tab %} target="_blank" rel="noopener"{% endif %}
                         {%- if settings.tooltips_enable and header_enable_tooltips %}
                             data-js-tooltip
-                            data-tippy-content="{{ registro_label }}"
+                            data-tippy-content="{{ registro_tooltip }}"
                             data-tippy-placement="bottom"
                             data-tippy-distance="6"
                         {%- endif -%}
@@ -1207,10 +1208,11 @@
                 {%- assign user_url = section.settings.user_url | default: '/account' -%}
                 {%- assign user_label = section.settings.user_label | default: 'Mi Cuenta' -%}
                 <div class="ml-25 ml-lg-15">
-                    <a href="{{ user_url }}" class="header__btn-user d-flex align-items-center position-relative text-nowrap"
+                    {%- assign user_tooltip = section.settings.user_tooltip | default: 'Mi Cuenta' -%}
+                    <a href="{{ user_url }}" class="header__btn-user d-flex align-items-center position-relative text-nowrap" title="{{ user_tooltip }}"
                         {%- if settings.tooltips_enable and header_enable_tooltips %}
                             data-js-tooltip
-                            data-tippy-content="{{ user_label }}"
+                            data-tippy-content="{{ user_tooltip }}"
                             data-tippy-placement="bottom"
                             data-tippy-distance="6"
                         {%- endif -%}
@@ -2447,6 +2449,13 @@
             "default": true
         },
         {
+            "type": "text",
+            "id": "registro_tooltip",
+            "label": "Tooltip del icono de Registro",
+            "default": "Registro",
+            "info": "Texto informativo que aparece al pasar el mouse sobre el icono"
+        },
+        {
             "type": "checkbox",
             "id": "show_user_link",
             "label": "Mostrar link de Mi Cuenta (User)",
@@ -2468,6 +2477,13 @@
             "id": "user_show_text",
             "label": "Mostrar texto junto al icono de Mi Cuenta",
             "default": true
+        },
+        {
+            "type": "text",
+            "id": "user_tooltip",
+            "label": "Tooltip del icono de Mi Cuenta",
+            "default": "Mi Cuenta",
+            "info": "Texto informativo que aparece al pasar el mouse sobre el icono"
         }
     ],
     "blocks": [
