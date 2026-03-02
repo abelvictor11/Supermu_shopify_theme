@@ -1197,7 +1197,7 @@
                                 <path style="fill:#8F09CE;" d="M273.672,167.03c-19.846,20.851-45.956,31.451-74.393,30.637c-24.646-0.705-47.02-10.086-64.819-27.063c-19.883-18.965-30.725-43.957-30.636-71.603c0.087-27.152,10.602-51.767,30.091-70.541c16.567-15.959,37.136-25.657,60.319-27.372c29.009-2.145,55.14,7.039,76.147,27.108c20.418,19.506,31.047,45.464,30.324,73.705C300.075,126.535,290.884,148.947,273.672,167.03z"/>
                             </svg>
                         </i>
-                        {%- if section.settings.registro_show_text -%}<span class="d-none d-lg-inline ml-5">{{ registro_label }}</span>{%- endif -%}
+                        {%- if section.settings.registro_show_text -%}<span class="d-none d-lg-inline-block ml-5" style="line-height:1.2">{{ registro_label }}</span>{%- endif -%}
                     </a>
                 </div>
             {%- endif -%}
@@ -2424,9 +2424,9 @@
             "default": false
         },
         {
-            "type": "text",
+            "type": "html",
             "id": "registro_label",
-            "label": "Texto del link de Registro",
+            "label": "Texto del link de Registro (soporta <br> para salto de línea)",
             "default": "Registro"
         },
         {
