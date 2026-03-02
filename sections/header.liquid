@@ -1197,7 +1197,7 @@
                                 <path style="fill:#8F09CE;" d="M273.672,167.03c-19.846,20.851-45.956,31.451-74.393,30.637c-24.646-0.705-47.02-10.086-64.819-27.063c-19.883-18.965-30.725-43.957-30.636-71.603c0.087-27.152,10.602-51.767,30.091-70.541c16.567-15.959,37.136-25.657,60.319-27.372c29.009-2.145,55.14,7.039,76.147,27.108c20.418,19.506,31.047,45.464,30.324,73.705C300.075,126.535,290.884,148.947,273.672,167.03z"/>
                             </svg>
                         </i>
-                        <span class="d-none d-lg-inline ml-5">{{ registro_label }}</span>
+                        {%- if section.settings.registro_show_text -%}<span class="d-none d-lg-inline ml-5">{{ registro_label }}</span>{%- endif -%}
                     </a>
                 </div>
             {%- endif -%}
@@ -1220,7 +1220,7 @@
                                 <path style="fill:#FFC107;" d="M305.413,39.211l54.603,136.123l150.294,12.723c27.112,2.295,37.656,36.418,16.565,53.608l-115.695,94.3l33.994,141.763c7.59,31.651-28.152,55.766-54.66,36.879l-113.788-81.074l-120.705,76.674c-24.732,15.71-55.975-6.798-48.905-35.232l35.156-141.39L28.899,244.725c-22.494-17.631-11.811-53.694,16.657-56.228l147.881-13.162L246.389,39.5C256.838,12.694,294.702,12.51,305.413,39.211z"/>
                             </svg>
                         </i>
-                        <span class="d-none d-lg-inline ml-5">{{ user_label }}</span>
+                        {%- if section.settings.user_show_text -%}<span class="d-none d-lg-inline ml-5">{{ user_label }}</span>{%- endif -%}
                     </a>
                 </div>
             {%- endif -%}
@@ -2442,6 +2442,12 @@
         },
         {
             "type": "checkbox",
+            "id": "registro_show_text",
+            "label": "Mostrar texto junto al icono de Registro",
+            "default": true
+        },
+        {
+            "type": "checkbox",
             "id": "show_user_link",
             "label": "Mostrar link de Mi Cuenta (User)",
             "default": true
@@ -2456,6 +2462,12 @@
             "type": "url",
             "id": "user_url",
             "label": "URL del link de Mi Cuenta (dejar vacío para /account)"
+        },
+        {
+            "type": "checkbox",
+            "id": "user_show_text",
+            "label": "Mostrar texto junto al icono de Mi Cuenta",
+            "default": true
         }
     ],
     "blocks": [
