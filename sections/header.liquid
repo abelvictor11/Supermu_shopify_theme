@@ -1178,6 +1178,52 @@
                 </div>
             {%- endif -%}
         {%- endcapture -%}
+        {%- capture btn_registro_html -%}
+            {%- if section.settings.show_registro_link -%}
+                {%- assign registro_url = section.settings.registro_url | default: '#' -%}
+                {%- assign registro_label = section.settings.registro_label | default: 'Registro' -%}
+                <div class="ml-25 ml-lg-15">
+                    <a href="{{ registro_url }}" class="header__btn-registro d-flex align-items-center position-relative text-nowrap"{% if section.settings.registro_open_new_tab %} target="_blank" rel="noopener"{% endif %}
+                        {%- if settings.tooltips_enable and header_enable_tooltips %}
+                            data-js-tooltip
+                            data-tippy-content="{{ registro_label }}"
+                            data-tippy-placement="bottom"
+                            data-tippy-distance="6"
+                        {%- endif -%}
+                    >
+                        <i>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                            </svg>
+                        </i>
+                        <span class="d-none d-lg-inline ml-5">{{ registro_label }}</span>
+                    </a>
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture btn_user_html -%}
+            {%- if section.settings.show_user_link -%}
+                {%- assign user_url = section.settings.user_url | default: '/account' -%}
+                {%- assign user_label = section.settings.user_label | default: 'Mi Cuenta' -%}
+                <div class="ml-25 ml-lg-15">
+                    <a href="{{ user_url }}" class="header__btn-user d-flex align-items-center position-relative text-nowrap"
+                        {%- if settings.tooltips_enable and header_enable_tooltips %}
+                            data-js-tooltip
+                            data-tippy-content="{{ user_label }}"
+                            data-tippy-placement="bottom"
+                            data-tippy-distance="6"
+                        {%- endif -%}
+                    >
+                        <i>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
+                            </svg>
+                        </i>
+                        <span class="d-none d-lg-inline ml-5">{{ user_label }}</span>
+                    </a>
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
         {%- capture currencies_html -%}
             {%- if settings.show_multiple_currencies -%}
                 {%- assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK,IQD' | split: ',' -%}
@@ -1428,6 +1474,8 @@
                                 {%- endif -%}
                             </div>
                             <div class="header__actions d-flex align-items-center">
+                                {{ btn_registro_html }}
+                                {{ btn_user_html }}
                                 {{ btn_account_html }}
                                 {{ btn_wishlist_html }}
                                 {{ btn_compare_html }}
@@ -1457,6 +1505,8 @@
                         <div class="header__sidebar d-flex align-items-center ml-auto">
                             {{ btn_search_html }}
                             {{ services_html }}
+                            {{ btn_registro_html }}
+                            {{ btn_user_html }}
                             {{ btn_account_html }}
                             {{ btn_wishlist_html }}
                             {{ btn_compare_html }}
@@ -1488,6 +1538,8 @@
                         <div class="header__sidebar d-flex align-items-center ml-auto">
                             {{ btn_search_html }}
                             {{ services_html }}
+                            {{ btn_registro_html }}
+                            {{ btn_user_html }}
                             {{ btn_account_html }}
                             {{ btn_wishlist_html }}
                             {{ btn_compare_html }}
@@ -1510,6 +1562,8 @@
                         <div class="header__sidebar d-flex align-items-center pr-lg-{{ header_menu_container_paddings_horizontal }} ml-auto">
                             {{ btn_search_html }}
                             {{ services_html }}
+                            {{ btn_registro_html }}
+                            {{ btn_user_html }}
                             {{ btn_account_html }}
                             {{ btn_wishlist_html }}
                             {{ btn_compare_html }}
@@ -1639,6 +1693,8 @@
                             </div>
                             <div class="header__sidebar d-flex align-items-center ml-auto">
                                 {{ services_html }}
+                                {{ btn_registro_html }}
+                                {{ btn_user_html }}
                                 {{ btn_account_html }}
                                 {{ btn_wishlist_html }}
                                 {{ btn_compare_html }}
@@ -1821,26 +1877,18 @@
                             <div class="header__sidebar d-none d-lg-flex align-items-center ml-auto">
 
 
-<a href="https://supernet.supermu.com/clientes/registro.php" target="_blank" class="header__icon-link d-flex align-items-center registro" title="Registro">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22 0-2 4-3.1 6-3.1s6 1.1 6 3.1c-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
-    </svg>
-    <span class="ml-2">Registro</span>
-</a>
-
-
-
-
 
 
 
 
 
                               
-                   {{ services_html }}
+                                {{ services_html }}
+                                {{ btn_registro_html }}
+                                {{ btn_user_html }}
                                 {{ btn_account_html }}
-             {{ btn_wishlist_html }}
-             {{ btn_compare_html }}
+                                {{ btn_wishlist_html }}
+                                {{ btn_compare_html }}
                                 {{ btn_cart_html }}
                             </div>
           <div class="header__sidebar d-flex d-lg-none align-items-center">
@@ -1984,6 +2032,8 @@
                                 </div>
                                 <div class="header__sidebar d-flex align-items-center ml-lg-20">
                                     {{ services_html }}
+                                    {{ btn_registro_html }}
+                                    {{ btn_user_html }}
                                     {{ btn_account_html }}
                                     {{ btn_wishlist_html }}
                                     {{ btn_compare_html }}
@@ -2360,6 +2410,50 @@
         {
             "type": "paragraph",
             "content": "t:sections.header.settings.paragraph__4.content"
+        },
+        {
+            "type": "header",
+            "content": "Icon links personalizados"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_registro_link",
+            "label": "Mostrar link de Registro",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "registro_label",
+            "label": "Texto del link de Registro",
+            "default": "Registro"
+        },
+        {
+            "type": "url",
+            "id": "registro_url",
+            "label": "URL del link de Registro"
+        },
+        {
+            "type": "checkbox",
+            "id": "registro_open_new_tab",
+            "label": "Abrir Registro en nueva pestaña",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_user_link",
+            "label": "Mostrar link de Mi Cuenta (User)",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "user_label",
+            "label": "Texto del link de Mi Cuenta",
+            "default": "Mi Cuenta"
+        },
+        {
+            "type": "url",
+            "id": "user_url",
+            "label": "URL del link de Mi Cuenta (dejar vacío para /account)"
         }
     ],
     "blocks": [
