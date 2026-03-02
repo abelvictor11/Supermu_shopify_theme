@@ -1608,3 +1608,34 @@ media="(min-width: 1025px)" {
         color: #6e0202 !important;
     }
 }
+
+/* ========== FIX: Buscador se ajusta aunque no haya selector de tienda ========== */
+@media (min-width: 1025px) {
+  /* El contenedor flex del buscador + acciones siempre ocupa el espacio restante */
+  .header__logo-wrapper ~ .d-flex {
+    flex: 1 1 auto;
+  }
+
+  /* Buscador expandible dentro del contenedor flex */
+  .header__logo-wrapper ~ .d-flex .header__search-form {
+    flex: 1 1 auto !important;
+    max-width: 100% !important;
+    min-width: 200px;
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Input del buscador ocupa todo el ancho disponible */
+  .header__logo-wrapper ~ .d-flex .header__search-form input[type="search"],
+  .header__logo-wrapper ~ .d-flex .header__search-form .header__search-input {
+    width: 100%;
+  }
+
+  /* Acciones del header no se encogen */
+  .header__logo-wrapper ~ .d-flex .header__actions {
+    flex-shrink: 0;
+  }
+}
