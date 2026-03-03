@@ -6594,7 +6594,7 @@ html.css-full-loaded body.theme-css-animate .input-boolean input:checked + span 
   min-width: 260px;
 }
 .header--type-5 .header__search-form, .header--type-6 .header__search-form {
-  width: 48%;
+  width: 40%;
   left: 50%;
   margin-left: -24%;
 }
