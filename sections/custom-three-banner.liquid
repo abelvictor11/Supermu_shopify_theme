@@ -182,6 +182,12 @@
     gap: 0;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    touch-action: pan-x;
+    cursor: grab;
+  }
+
+  .three-banner-grid:active {
+    cursor: grabbing;
   }
 
   .three-banner-grid::-webkit-scrollbar {
@@ -194,6 +200,10 @@
     scroll-snap-align: start;
     border-radius: 10px;
     padding-top: 65%;
+    -webkit-user-drag: none;
+    user-select: none;
+    background-color: #fff;
+    background-size: contain !important;
   }
 
   .three-banner-dots {
