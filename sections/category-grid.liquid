@@ -15,7 +15,7 @@
       {% endfor %}
     </div>
     
-    <div class="category-grid desktop-grid">
+    <div class="category-grid desktop-grid" data-items="{{ section.blocks.size | at_most: 10 }}">
       {% for block in section.blocks limit: 10 %}
         <div class="category-item">
           <a href="{% if block.settings.category_url != blank %}{{ block.settings.category_url }}{% else %}{{ block.settings.category_collection.url }}{% endif %}" class="category-link">
@@ -196,9 +196,38 @@ document.addEventListener('DOMContentLoaded', function() {
   .desktop-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(2, 1fr);
     gap: 20px;
     padding: 20px;
+  }
+  
+  /* Dynamic rows based on item count */
+  .desktop-grid:has(.category-item:nth-child(1):last-child) {
+    grid-template-rows: repeat(1, 1fr);
+  }
+  
+  .desktop-grid:has(.category-item:nth-child(6):last-child),
+  .desktop-grid:has(.category-item:nth-child(7):last-child),
+  .desktop-grid:has(.category-item:nth-child(8):last-child),
+  .desktop-grid:has(.category-item:nth-child(9):last-child),
+  .desktop-grid:has(.category-item:nth-child(10):last-child) {
+    grid-template-rows: repeat(2, 1fr);
+  }
+  
+  /* Fallback for browsers without :has() support */
+  .desktop-grid[data-items="1"],
+  .desktop-grid[data-items="2"],
+  .desktop-grid[data-items="3"],
+  .desktop-grid[data-items="4"],
+  .desktop-grid[data-items="5"] {
+    grid-template-rows: repeat(1, 1fr);
+  }
+  
+  .desktop-grid[data-items="6"],
+  .desktop-grid[data-items="7"],
+  .desktop-grid[data-items="8"],
+  .desktop-grid[data-items="9"],
+  .desktop-grid[data-items="10"] {
+    grid-template-rows: repeat(2, 1fr);
   }
 }
 
