@@ -1,0 +1,304 @@
+{% comment %}
+  Category Ticker Section
+  Continuous infinite scrolling ticker with category items.
+  Desktop: ~5 items visible | Mobile: ~2 items visible
+  Pauses on hover, resumes on mouse leave.
+{% endcomment %}
+
+<section class="category-ticker-section" data-section-id="{{ section.id }}">
+  {%- if section.settings.section_title != blank -%}
+    <h2 class="category-ticker-title">{{ section.settings.section_title }}</h2>
+  {%- endif -%}
+  <div class="category-ticker-wrapper">
+    <div class="category-ticker-track" id="ticker-track-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="ticker-item" {{ block.shopify_attributes }}>
+          <a href="{% if block.settings.category_url != blank %}{{ block.settings.category_url }}{% else %}{{ block.settings.category_collection.url }}{% endif %}" class="ticker-link">
+            <div class="ticker-image">
+              {%- if block.settings.category_image != blank -%}
+                <img
+                  src="{{ block.settings.category_image | image_url: width: 400 }}"
+                  alt="{{ block.settings.category_name }}"
+                  loading="lazy"
+                  width="400"
+                  height="400"
+                >
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.category_name != blank -%}
+              <p class="ticker-name">{{ block.settings.category_name }}</p>
+            {%- endif -%}
+          </a>
+        </div>
+      {% endfor %}
+      {%- comment -%} Duplicate items for seamless loop {%- endcomment -%}
+      {% for block in section.blocks %}
+        <div class="ticker-item ticker-clone" aria-hidden="true">
+          <a href="{% if block.settings.category_url != blank %}{{ block.settings.category_url }}{% else %}{{ block.settings.category_collection.url }}{% endif %}" class="ticker-link" tabindex="-1">
+            <div class="ticker-image">
+              {%- if block.settings.category_image != blank -%}
+                <img
+                  src="{{ block.settings.category_image | image_url: width: 400 }}"
+                  alt="{{ block.settings.category_name }}"
+                  loading="lazy"
+                  width="400"
+                  height="400"
+                >
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.category_name != blank -%}
+              <p class="ticker-name">{{ block.settings.category_name }}</p>
+            {%- endif -%}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Category Ticker",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Título de la Sección"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Velocidad de animación (segundos)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 25,
+      "unit": "s"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Dirección",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pausar al pasar el mouse",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_names",
+      "label": "Mostrar nombres",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "label": "Tamaño de imagen (px)",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "default": 120,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espacio entre items (px)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "image_style",
+      "label": "Estilo de imagen",
+      "options": [
+        { "value": "circle", "label": "Circular" },
+        { "value": "rounded", "label": "Redondeado" },
+        { "value": "square", "label": "Cuadrado" }
+      ],
+      "default": "circle"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Categoría",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "category_image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "category_name",
+          "label": "Nombre",
+          "default": "Categoría"
+        },
+        {
+          "type": "url",
+          "id": "category_url",
+          "label": "URL Personalizada"
+        },
+        {
+          "type": "collection",
+          "id": "category_collection",
+          "label": "Colección"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Ticker",
+      "category": "Custom",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.category-ticker-section {
+  padding: 15px 0;
+  max-width: 1770px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.category-ticker-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+.category-ticker-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.category-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: {{ section.settings.gap }}px;
+  width: max-content;
+  animation: tickerScroll {{ section.settings.speed }}s linear infinite;
+  {%- if section.settings.direction == 'right' -%}
+    animation-direction: reverse;
+  {%- endif -%}
+}
+
+{%- if section.settings.pause_on_hover -%}
+.category-ticker-wrapper:hover .category-ticker-track {
+  animation-play-state: paused;
+}
+{%- endif -%}
+
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-item {
+  flex-shrink: 0;
+}
+
+.ticker-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.ticker-link:hover {
+  transform: translateY(-4px);
+}
+
+.ticker-image {
+  width: {{ section.settings.image_size }}px;
+  height: {{ section.settings.image_size }}px;
+  overflow: hidden;
+  {%- case section.settings.image_style -%}
+    {%- when 'circle' -%}
+      border-radius: 50%;
+    {%- when 'rounded' -%}
+      border-radius: 12px;
+    {%- when 'square' -%}
+      border-radius: 0;
+  {%- endcase -%}
+}
+
+.ticker-image img,
+.ticker-image svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ticker-name {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  {%- unless section.settings.show_names -%}
+    display: none;
+  {%- endunless -%}
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .ticker-image {
+    width: {{ section.settings.image_size | times: 0.7 | round }}px;
+    height: {{ section.settings.image_size | times: 0.7 | round }}px;
+  }
+
+  .category-ticker-track {
+    gap: {{ section.settings.gap | times: 0.6 | round }}px;
+  }
+
+  .ticker-name {
+    font-size: 11px;
+  }
+
+  .category-ticker-title {
+    font-size: 18px;
+  }
+}
+</style>
