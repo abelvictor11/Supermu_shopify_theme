@@ -32,6 +32,20 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
 
+  <!-- Cart Limits: expone metafield como variable global JS -->
+  <script>
+    window.SupermuCartLimits = null;
+    {%- assign _cl_meta = shop.metafields.custom.cart_limits -%}
+    {%- if _cl_meta == blank -%}{%- assign _cl_meta = shop.metafields.custom.cart_item_max_quantity -%}{%- endif -%}
+    {%- if _cl_meta != blank -%}
+      {%- assign _cl_val = _cl_meta.value -%}
+      {%- if _cl_val.enabled == blank and _cl_val.max_per_line == blank -%}
+        {%- assign _cl_val = _cl_meta.value | parse_json -%}
+      {%- endif -%}
+      window.SupermuCartLimits = {{ _cl_val | json }};
+    {%- endif -%}
+  </script>
+
   <!-- Carousel Manager -->
   <script src="{{ 'carousel-manager.js' | asset_url }}" defer></script>
   

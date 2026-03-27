@@ -5,10 +5,11 @@
     {%- assign max_quantity = 3 -%}  
 {%- endif %}
 
-{%- comment -%}--- CART LIMITS: lee metafield custom.cart_limits ---{%- endcomment -%}
+{%- comment -%}--- CART LIMITS: prueba cart_limits (staging) o cart_item_max_quantity (producción) ---{%- endcomment -%}
 {%- assign cart_limits_enabled = false -%}
 {%- assign cart_item_max = 0 -%}
 {%- assign _cl_meta = shop.metafields.custom.cart_limits -%}
+{%- if _cl_meta == blank -%}{%- assign _cl_meta = shop.metafields.custom.cart_item_max_quantity -%}{%- endif -%}
 {%- assign _cl = nil -%}
 
 {%- if _cl_meta != blank -%}
