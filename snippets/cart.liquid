@@ -45,8 +45,17 @@
                   {%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
 
                   {%- for item in cart.items -%}
+                    {%- assign item_cart_max = cart_item_max -%}
+                    {%- if cart_limits_enabled and cart_limits.tag_limits != blank -%}
+                      {%- for _tag_rule in cart_limits.tag_limits -%}
+                        {%- if item.product.tags contains _tag_rule.tag -%}
+                          {%- assign item_cart_max = _tag_rule.max_per_line | plus: 0 -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    {%- endif -%}
                     {%- assign display_quantity = item.quantity -%}
-                    {%- if cart_limits_enabled and display_quantity > cart_item_max -%}{%- assign display_quantity = cart_item_max -%}{%- endif -%}
+                    {%- if cart_limits_enabled and display_quantity > item_cart_max -%}{%- assign display_quantity = item_cart_max -%}{%- endif -%}
 
                     {%- assign has_compare_price = false -%}
                     {% if item.variant.compare_at_price > item.variant.price %}
@@ -126,9 +135,9 @@
                                   value="{{ display_quantity }}"
                                   class="form-control quantity-input"
                                   min="1"
-                                  {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %}
+                                  {% if cart_limits_enabled %}max="{{ item_cart_max }}"{% endif %}
                                   onkeydown="return event.keyCode === 8 || event.keyCode === 46 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)"
-                                  oninput="{% if cart_limits_enabled %}this.value = Math.max(1, Math.min({{ cart_item_max }}, this.value));{% else %}this.value = Math.max(1, this.value);{% endif %} updateCartItem(this)"
+                                  oninput="{% if cart_limits_enabled %}this.value = Math.max(1, Math.min({{ item_cart_max }}, this.value));{% else %}this.value = Math.max(1, this.value);{% endif %} updateCartItem(this)"
                                   data-line="{{ forloop.index }}"
                                   data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
                               >
