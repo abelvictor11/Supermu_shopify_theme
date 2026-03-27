@@ -367,7 +367,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 console.log('[Instant Cart] Showing quantity controls');
                 // Actualizar el input a 1
                 quantityInput.value = 1;
-                
+
+                // Debug: mostrar el max del input para verificar que el Liquid lo seteó
+                const _dbgMax = quantityInput.getAttribute('max');
+                console.log('[Instant Cart] input max=', _dbgMax !== null ? _dbgMax : 'NO SETEADO (ilimitado)');
+
                 // Mostrar los controles de cantidad
                 quantityWrapper.style.display = 'flex';
                 quantityWrapper.classList.add('active');
