@@ -185,8 +185,11 @@ window.addEventListener('DOMContentLoaded', function() {
 // Funcionalidad para el botón "Agregar" en las cards de productos
 (function() {
     'use strict';
-    
+
     console.log('[Instant Cart] Script loaded');
+
+    // Debounce map: evita múltiples llamadas simultáneas por clicks rápidos en +/-
+    const _pendingUpdates = {};
     
     // Función para agregar/actualizar producto en el carrito
     async function updateCart(variantId, quantity, accionesContainer) {
@@ -385,9 +388,13 @@ window.addEventListener('DOMContentLoaded', function() {
             const quantityInput = quantityWrapper?.querySelector('input[type="number"]');
             
             if (!variantId || !quantityInput) return;
-            
-            // Esperar un momento para que el input se actualice
-            setTimeout(async () => {
+
+            // Debounce: cancelar llamada anterior si el usuario sigue clickeando
+            if (_pendingUpdates[variantId]) clearTimeout(_pendingUpdates[variantId]);
+
+            _pendingUpdates[variantId] = setTimeout(async () => {
+                delete _pendingUpdates[variantId];
+
                 let newQuantity = parseInt(quantityInput.value) || 0;
                 const maxAttr = parseInt(quantityInput.getAttribute('max'));
                 if (!isNaN(maxAttr) && newQuantity > maxAttr) {
@@ -409,7 +416,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     // Actualizar cantidad en el carrito
                     await changeCartQuantity(variantId, newQuantity, accionesContainer);
                 }
-            }, 100);
+            }, 300);
         }
     }, true);
     
@@ -491,8 +498,10 @@ window.addEventListener('DOMContentLoaded', function() {
     });
     
     // Observar cambios en el DOM
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    if (document.body) {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
 })();

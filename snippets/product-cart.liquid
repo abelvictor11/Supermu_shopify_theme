@@ -3,7 +3,7 @@
 {%- assign image_size = '100x' -%}
 {%- assign cart_limits_enabled = false -%}
 {%- assign cart_item_max = 0 -%}
-{%- assign cart_limits_meta = shop.metafields.custom.cart_item_max_quantity -%}
+{%- assign cart_limits_meta = shop.metafields.custom.cart_limits -%}
 {%- if cart_limits_meta != blank -%}
   {%- assign cart_limits = cart_limits_meta.value -%}
   {%- if cart_limits.enabled == blank -%}
