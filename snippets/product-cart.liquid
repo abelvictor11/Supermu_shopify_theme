@@ -31,6 +31,16 @@
     {%- endunless -%}
   {%- endfor -%}
 {%- endif -%}
+{%- if item.variant.inventory_policy == 'deny' and item.variant.inventory_quantity > 0 -%}
+  {%- if cart_limits_enabled -%}
+    {%- if item.variant.inventory_quantity < cart_item_max -%}
+      {%- assign cart_item_max = item.variant.inventory_quantity -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- assign cart_item_max = item.variant.inventory_quantity -%}
+    {%- assign cart_limits_enabled = true -%}
+  {%- endif -%}
+{%- endif -%}
 <div class="product-cart mb-20" data-js-product data-product-variant-id="{{ id }}" data-product-cart-line="{{ forloop.index }}">
   <div class="d-flex flex-row align-items-center">
     <div class="product-cart__image mr-15">

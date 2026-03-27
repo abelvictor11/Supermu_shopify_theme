@@ -35,6 +35,17 @@
     {%- endunless -%}
   {%- endfor -%}
 {%- endif -%}
+{%- assign _inv_variant = product.selected_or_first_available_variant -%}
+{%- if _inv_variant.inventory_policy == 'deny' and _inv_variant.inventory_quantity > 0 -%}
+  {%- if cart_limits_enabled -%}
+    {%- if _inv_variant.inventory_quantity < cart_item_max -%}
+      {%- assign cart_item_max = _inv_variant.inventory_quantity -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- assign cart_item_max = _inv_variant.inventory_quantity -%}
+    {%- assign cart_limits_enabled = true -%}
+  {%- endif -%}
+{%- endif -%}
 
 {%- assign quantity_type = quantity_type | default: 1 -%}
 {%- case quantity_type -%}

@@ -388,14 +388,19 @@ window.addEventListener('DOMContentLoaded', function() {
             
             // Esperar un momento para que el input se actualice
             setTimeout(async () => {
-                const newQuantity = parseInt(quantityInput.value) || 0;
-                
+                let newQuantity = parseInt(quantityInput.value) || 0;
+                const maxAttr = parseInt(quantityInput.getAttribute('max'));
+                if (!isNaN(maxAttr) && newQuantity > maxAttr) {
+                    newQuantity = maxAttr;
+                    quantityInput.value = maxAttr;
+                }
+
                 if (newQuantity === 0) {
                     // Si la cantidad es 0, remover del carrito y ocultar controles
                     await changeCartQuantity(variantId, 0, accionesContainer);
                     quantityWrapper.style.display = 'none';
                     quantityWrapper.classList.remove('active');
-                    
+
                     const btnAgregar = accionesContainer.querySelector('[data-action="add-to-cart-instant"]');
                     if (btnAgregar) {
                         btnAgregar.style.display = 'flex';
@@ -415,10 +420,15 @@ window.addEventListener('DOMContentLoaded', function() {
             if (!accionesContainer) return;
             
             const variantId = accionesContainer.getAttribute('data-variant-id');
-            const newQuantity = parseInt(e.target.value) || 0;
-            
+            let newQuantity = parseInt(e.target.value) || 0;
+            const maxAttr = parseInt(e.target.getAttribute('max'));
+            if (!isNaN(maxAttr) && newQuantity > maxAttr) {
+                newQuantity = maxAttr;
+                e.target.value = maxAttr;
+            }
+
             if (!variantId) return;
-            
+
             if (newQuantity === 0) {
                 // Si la cantidad es 0, remover del carrito y ocultar controles
                 await changeCartQuantity(variantId, 0, accionesContainer);
