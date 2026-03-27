@@ -8,7 +8,6 @@
 {%- assign cart_limits_enabled = false -%}
 {%- assign cart_item_max = 0 -%}
 {%- assign cart_limits_meta = shop.metafields.custom.cart_item_max_quantity -%}
-<!-- cl-debug: blank={{ cart_limits_meta == blank }}, type={{ cart_limits_meta.type }}, value={{ cart_limits_meta.value }}, raw={{ cart_limits_meta }} -->
 {%- if cart_limits_meta != blank -%}
   {%- assign cart_limits = cart_limits_meta.value -%}
   {%- if cart_limits.enabled == blank -%}
