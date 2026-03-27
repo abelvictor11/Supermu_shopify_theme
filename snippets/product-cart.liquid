@@ -15,6 +15,14 @@
   {%- endif -%}
 {%- endif -%}
 {%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
+{%- if cart_limits_enabled and cart_limits.tag_limits != blank -%}
+  {%- for _tag_rule in cart_limits.tag_limits -%}
+    {%- if item.product.tags contains _tag_rule.tag -%}
+      {%- assign cart_item_max = _tag_rule.max_per_line | plus: 0 -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
 <div class="product-cart mb-20" data-js-product data-product-variant-id="{{ id }}" data-product-cart-line="{{ forloop.index }}">
   <div class="d-flex flex-row align-items-center">
     <div class="product-cart__image mr-15">
