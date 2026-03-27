@@ -3,26 +3,32 @@
 {%- assign image_size = '100x' -%}
 {%- assign cart_limits_enabled = false -%}
 {%- assign cart_item_max = 0 -%}
-{%- assign cart_limits_meta = shop.metafields.custom.cart_limits -%}
-{%- if cart_limits_meta != blank -%}
-  {%- assign cart_limits = cart_limits_meta.value -%}
-  {%- if cart_limits.enabled == blank -%}
-    {%- assign cart_limits = cart_limits_meta.value | parse_json -%}
+{%- assign _cl_meta = shop.metafields.custom.cart_limits -%}
+{%- assign _cl = nil -%}
+{%- if _cl_meta != blank -%}
+  {%- assign _cl = _cl_meta.value -%}
+  {%- if _cl.enabled == blank and _cl.max_per_line == blank -%}
+    {%- assign _cl = _cl_meta.value | parse_json -%}
   {%- endif -%}
-  {%- assign _cl_enabled = cart_limits.enabled | downcase | strip -%}
-  {%- if _cl_enabled == "true" -%}
-    {%- assign cart_item_max = cart_limits.max_per_line | plus: 0 -%}
+  {%- if _cl.enabled == true -%}
+    {%- assign cart_item_max = _cl.max_per_line | plus: 0 -%}
     {%- assign cart_limits_enabled = true -%}
+  {%- elsif _cl.enabled != blank -%}
+    {%- assign _cl_enabled_str = _cl.enabled | downcase | strip -%}
+    {%- if _cl_enabled_str == "true" -%}
+      {%- assign cart_item_max = _cl.max_per_line | plus: 0 -%}
+      {%- assign cart_limits_enabled = true -%}
+    {%- endif -%}
   {%- endif -%}
 {%- endif -%}
 {%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
-{%- if cart_limits_enabled and cart_limits.tag_limits != blank -%}
+{%- if cart_limits_enabled and _cl.tag_limits != blank -%}
   {%- assign _found_tag_limit = false -%}
-  {%- for _tag_rule in cart_limits.tag_limits -%}
+  {%- for _tag_rule in _cl.tag_limits -%}
     {%- unless _found_tag_limit -%}
-      {%- assign _rule_tag_lower = _tag_rule.tag | downcase -%}
+      {%- assign _rule_tag_lower = _tag_rule.tag | downcase | strip -%}
       {%- for _ptag in item.product.tags -%}
-        {%- assign _ptag_lower = _ptag | downcase -%}
+        {%- assign _ptag_lower = _ptag | downcase | strip -%}
         {%- if _ptag_lower == _rule_tag_lower -%}
           {%- assign cart_item_max = _tag_rule.max_per_line | plus: 0 -%}
           {%- assign _found_tag_limit = true -%}

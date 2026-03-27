@@ -5,37 +5,51 @@
     {%- assign max_quantity = 3 -%}  
 {%- endif %}
 
+{%- comment -%}--- CART LIMITS: lee metafield custom.cart_limits ---{%- endcomment -%}
 {%- assign cart_limits_enabled = false -%}
 {%- assign cart_item_max = 0 -%}
-{%- assign cart_limits_meta = shop.metafields.custom.cart_limits -%}
-{%- if cart_limits_meta != blank -%}
-  {%- assign cart_limits = cart_limits_meta.value -%}
-  {%- if cart_limits.enabled == blank -%}
-    {%- assign cart_limits = cart_limits_meta.value | parse_json -%}
+{%- assign _cl_meta = shop.metafields.custom.cart_limits -%}
+{%- assign _cl = nil -%}
+
+{%- if _cl_meta != blank -%}
+  {%- comment -%}Paso 1: obtener el valor — JSON metafield devuelve hash, text devuelve string{%- endcomment -%}
+  {%- assign _cl = _cl_meta.value -%}
+
+  {%- comment -%}Paso 2: si el hash no tiene las claves esperadas es un string → parse_json{%- endcomment -%}
+  {%- if _cl.enabled == blank and _cl.max_per_line == blank -%}
+    {%- assign _cl = _cl_meta.value | parse_json -%}
   {%- endif -%}
-  {%- assign _cl_enabled = cart_limits.enabled | downcase | strip -%}
-  {%- if _cl_enabled == "true" -%}
-    {%- assign cart_item_max = cart_limits.max_per_line | plus: 0 -%}
+
+  {%- comment -%}Paso 3: enabled puede ser booleano true o string "true"{%- endcomment -%}
+  {%- if _cl.enabled == true -%}
+    {%- assign cart_item_max = _cl.max_per_line | plus: 0 -%}
     {%- assign cart_limits_enabled = true -%}
+  {%- elsif _cl.enabled != blank -%}
+    {%- assign _cl_enabled_str = _cl.enabled | downcase | strip -%}
+    {%- if _cl_enabled_str == "true" -%}
+      {%- assign cart_item_max = _cl.max_per_line | plus: 0 -%}
+      {%- assign cart_limits_enabled = true -%}
+    {%- endif -%}
   {%- endif -%}
 {%- endif -%}
+
 {%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
-{%- if cart_limits_enabled and cart_limits.tag_limits != blank -%}
-  {%- assign _found_tag_limit = false -%}
-  {%- for _tag_rule in cart_limits.tag_limits -%}
-    {%- unless _found_tag_limit -%}
-      {%- assign _rule_tag_lower = _tag_rule.tag | downcase -%}
-      {%- for _ptag in product.tags -%}
-        {%- assign _ptag_lower = _ptag | downcase -%}
-        {%- if _ptag_lower == _rule_tag_lower -%}
-          {%- assign cart_item_max = _tag_rule.max_per_line | plus: 0 -%}
-          {%- assign _found_tag_limit = true -%}
-          {%- break -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endunless -%}
+
+{%- comment -%}Límites por tag del producto{%- endcomment -%}
+{%- if cart_limits_enabled and _cl.tag_limits != blank -%}
+  {%- for _tag_rule in _cl.tag_limits -%}
+    {%- assign _rule_tag_lower = _tag_rule.tag | downcase | strip -%}
+    {%- for _ptag in product.tags -%}
+      {%- assign _ptag_lower = _ptag | downcase | strip -%}
+      {%- if _ptag_lower == _rule_tag_lower -%}
+        {%- assign cart_item_max = _tag_rule.max_per_line | plus: 0 -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
   {%- endfor -%}
 {%- endif -%}
+
+{%- comment -%}Cap por stock disponible{%- endcomment -%}
 {%- assign _inv_variant = product.selected_or_first_available_variant -%}
 {%- if _inv_variant.inventory_policy == 'deny' and _inv_variant.inventory_quantity > 0 -%}
   {%- if cart_limits_enabled -%}
@@ -47,6 +61,7 @@
     {%- assign cart_limits_enabled = true -%}
   {%- endif -%}
 {%- endif -%}
+<!-- cl-debug product={{ product.id }} meta_blank={{ _cl_meta | default: "BLANK" }} enabled={{ _cl.enabled }} max={{ cart_item_max }} limited={{ cart_limits_enabled }} -->
 
 {%- assign quantity_type = quantity_type | default: 1 -%}
 {%- case quantity_type -%}
