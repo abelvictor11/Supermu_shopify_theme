@@ -47,11 +47,19 @@
                   {%- for item in cart.items -%}
                     {%- assign item_cart_max = cart_item_max -%}
                     {%- if cart_limits_enabled and cart_limits.tag_limits != blank -%}
+                      {%- assign _found_tag_limit = false -%}
                       {%- for _tag_rule in cart_limits.tag_limits -%}
-                        {%- if item.product.tags contains _tag_rule.tag -%}
-                          {%- assign item_cart_max = _tag_rule.max_per_line | plus: 0 -%}
-                          {%- break -%}
-                        {%- endif -%}
+                        {%- unless _found_tag_limit -%}
+                          {%- assign _rule_tag_lower = _tag_rule.tag | downcase -%}
+                          {%- for _ptag in item.product.tags -%}
+                            {%- assign _ptag_lower = _ptag | downcase -%}
+                            {%- if _ptag_lower == _rule_tag_lower -%}
+                              {%- assign item_cart_max = _tag_rule.max_per_line | plus: 0 -%}
+                              {%- assign _found_tag_limit = true -%}
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                        {%- endunless -%}
                       {%- endfor -%}
                     {%- endif -%}
                     {%- assign display_quantity = item.quantity -%}
