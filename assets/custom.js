@@ -190,6 +190,65 @@ window.addEventListener('DOMContentLoaded', function() {
 
     // Debounce map: evita múltiples llamadas simultáneas por clicks rápidos en +/-
     const _pendingUpdates = {};
+
+    /**
+     * Obtiene el límite de cantidad para un producto dado sus tags.
+     * Lee de window.SupermuCartLimits (expuesto por theme.liquid desde el metafield).
+     * Devuelve 0 si no hay límite configurado.
+     */
+    function getCartLimitForTags(productTags) {
+        var cfg = window.SupermuCartLimits;
+        if (!cfg) return 0;
+
+        var enabled = cfg.enabled;
+        if (enabled !== true && String(enabled).toLowerCase() !== 'true') return 0;
+
+        var globalMax = parseInt(cfg.max_per_line) || 0;
+
+        // Buscar límite por tag
+        if (Array.isArray(cfg.tag_limits) && Array.isArray(productTags)) {
+            for (var i = 0; i < cfg.tag_limits.length; i++) {
+                var rule = cfg.tag_limits[i];
+                var ruleTag = (rule.tag || '').toLowerCase().trim();
+                for (var j = 0; j < productTags.length; j++) {
+                    if (productTags[j].toLowerCase().trim() === ruleTag) {
+                        return parseInt(rule.max_per_line) || globalMax;
+                    }
+                }
+            }
+        }
+        return globalMax;
+    }
+
+    /**
+     * Aplica el límite de carrito al atributo max del input y lo visibiliza en consola.
+     * productTags: array de strings (tags del producto).
+     * stockMax: límite de stock actual del input (puede ser null).
+     */
+    function applyCartLimit(quantityInput, productTags, stockMax) {
+        var cfgMax = getCartLimitForTags(productTags);
+        var finalMax = 0;
+
+        if (cfgMax > 0 && stockMax > 0) {
+            finalMax = Math.min(cfgMax, stockMax);
+        } else if (cfgMax > 0) {
+            finalMax = cfgMax;
+        } else if (stockMax > 0) {
+            finalMax = stockMax;
+        }
+
+        if (finalMax > 0) {
+            quantityInput.setAttribute('max', finalMax);
+            quantityInput.setAttribute('oninput',
+                'this.value = Math.min(' + finalMax + ', Math.max(1, this.value))');
+            if (parseInt(quantityInput.value) > finalMax) {
+                quantityInput.value = finalMax;
+            }
+        }
+        console.log('[Instant Cart] input max=', finalMax || 'NO SETEADO',
+            '| cfgMax=', cfgMax, '| stockMax=', stockMax,
+            '| SupermuCartLimits=', window.SupermuCartLimits ? 'OK' : 'NULL');
+    }
     
     // Función para agregar/actualizar producto en el carrito
     async function updateCart(variantId, quantity, accionesContainer) {
