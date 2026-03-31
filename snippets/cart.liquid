@@ -157,7 +157,9 @@
                                   min="1"
                                   {% if _item_limits_enabled %}max="{{ item_cart_max }}"{% endif %}
                                   onkeydown="return event.keyCode === 8 || event.keyCode === 46 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)"
-                                  oninput="{% if _item_limits_enabled %}this.value = Math.max(1, Math.min({{ item_cart_max }}, this.value));{% else %}this.value = Math.max(1, this.value);{% endif %} updateCartItem(this)"
+                                  onfocus="this.select()"
+                                  oninput="{% if _item_limits_enabled %}if(this.value!==''){this.value=Math.max(1,Math.min({{ item_cart_max }},this.value));updateCartItem(this)}{% else %}if(this.value!==''){this.value=Math.max(1,this.value);updateCartItem(this)}{% endif %}"
+                                  onblur="{% if _item_limits_enabled %}if(!this.value||+this.value<1)this.value=1;else this.value=Math.min({{ item_cart_max }},+this.value);{% else %}if(!this.value||+this.value<1)this.value=1;{% endif %}updateCartItem(this)"
                                   data-line="{{ forloop.index }}"
                                   data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
                               >
