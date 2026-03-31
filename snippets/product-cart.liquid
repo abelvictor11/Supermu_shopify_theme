@@ -107,7 +107,7 @@
       {%- if settings.cart_popup_show_quantity_input -%}
         <div class="product-cart__sidebar-quantity input-quantity input-quantity--type-05 d-none d-lg-flex js-product-quantity mt-10">
           <div class="d-flex flex-center border cursor-pointer" data-control="-"><i>{% render 'icon-theme-189' %}</i></div>
-          <input type="number" class="product-cart__input-quantity mx-10 mb-0 text-center js-input-quantity-cart" name="updates[]" value="{{ quantity }}" min="0" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(0, this.value)){% else %}this.value = Math.max(0, this.value){% endif %}">
+          <input type="number" class="product-cart__input-quantity mx-10 mb-0 text-center js-input-quantity-cart" name="updates[]" value="{{ quantity }}" min="0" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} onfocus="this.select()" oninput="{% if cart_limits_enabled %}if(this.value!=='')this.value=Math.min({{ cart_item_max }},Math.max(0,this.value));{% else %}if(this.value!=='')this.value=Math.max(0,this.value);{% endif %}" onblur="{% if cart_limits_enabled %}if(this.value===''||+this.value<0)this.value=0;else this.value=Math.min({{ cart_item_max }},+this.value);{% else %}if(this.value===''||+this.value<0)this.value=0;{% endif %}">
           <div class="d-flex flex-center border cursor-pointer" data-control="+"><i>{% render 'icon-theme-188' %}</i></div>
         </div>
       {%- endif -%}
@@ -120,7 +120,7 @@
     {%- if settings.cart_popup_show_quantity_input -%}
       <div class="input-quantity input-quantity--type-05 d-flex js-product-quantity">
         <div class="d-flex flex-center border cursor-pointer" data-control="-"><i>{% render 'icon-theme-189' %}</i></div>
-        <input type="number" class="product-cart__input-quantity mx-10 mb-0 text-center js-input-quantity-cart" name="updates[]" value="{{ quantity }}" min="0" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} oninput="{% if cart_limits_enabled %}this.value = Math.min({{ cart_item_max }}, Math.max(0, this.value)){% else %}this.value = Math.max(0, this.value){% endif %}">
+        <input type="number" class="product-cart__input-quantity mx-10 mb-0 text-center js-input-quantity-cart" name="updates[]" value="{{ quantity }}" min="0" {% if cart_limits_enabled %}max="{{ cart_item_max }}"{% endif %} onfocus="this.select()" oninput="{% if cart_limits_enabled %}if(this.value!=='')this.value=Math.min({{ cart_item_max }},Math.max(0,this.value));{% else %}if(this.value!=='')this.value=Math.max(0,this.value);{% endif %}" onblur="{% if cart_limits_enabled %}if(this.value===''||+this.value<0)this.value=0;else this.value=Math.min({{ cart_item_max }},+this.value);{% else %}if(this.value===''||+this.value<0)this.value=0;{% endif %}">
         <div class="d-flex flex-center border cursor-pointer" data-control="+"><i>{% render 'icon-theme-188' %}</i></div>
       </div>
     {%- endif -%}
