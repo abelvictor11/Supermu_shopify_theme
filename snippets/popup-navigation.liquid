@@ -72,7 +72,13 @@
       
     </div>
     <div class="popup-navigation__menu d-lg-none{% if settings.search_show %} pt-25{% endif %} pb-25 px-10" data-js-menu-mobile>
-        <div class="container" data-js-position-mobile="menu"></div>
+        {%- if section.settings.menu_mobile != blank -%}
+            <div class="container">
+                {% include 'header-get-menu' with menu_handle: section.settings.menu_mobile, use_position: false, is_main_menu: true %}
+            </div>
+        {%- else -%}
+            <div class="container" data-js-position-mobile="menu"></div>
+        {%- endif -%}
       <br>
       {%- assign registro_show = section.settings.show_registro_link -%}
       {%- if registro_show -%}
