@@ -1,8 +1,10 @@
-{%- if section.settings.menu != blank -%}
-    <nav class="menu {% if is_main_menu %}menu--main{% else %}menu--secondary{% endif %} js-menu js-position" data-js-position-name="menu">
+{%- if menu_handle != blank or section.settings.menu != blank -%}
+    {%- assign current_menu_handle = menu_handle | default: section.settings.menu -%}
+    {%- assign current_menu = linklists[current_menu_handle] -%}
+    <nav class="menu {% if is_main_menu %}menu--main{% else %}menu--secondary{% endif %} js-menu{% if use_position != false %} js-position{% endif %}"{% if use_position != false %} data-js-position-name="menu"{% endif %}>
         <div class="menu__panel{% if header_menu_list_on_a_par %} menu__panel--on-a-par{% endif %} menu__list menu__level-01 d-flex flex-column flex-lg-row flex-lg-wrap{% if centered %} justify-content-lg-center{% endif %}">
             <div class="menu__curtain d-none position-lg-absolute"></div>
-            {%- assign menu = linklists[section.settings.menu] -%}
+            {%- assign menu = current_menu -%}
             {%- assign megamenu_index = 0 -%}
             {%- for link in menu.links -%}
                 {%- capture childrens -%}
