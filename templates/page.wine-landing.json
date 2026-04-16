@@ -1,0 +1,191 @@
+{
+  "sections": {
+    "wine_hero": {
+      "type": "wine-landing-hero",
+      "settings": {
+        "badge": "Supermu Vinos",
+        "title": "El Arte del Vino",
+        "subtitle": "Descubre nuestra seleccion curada de vinos del mundo. Desde tintos con caracter hasta blancos refrescantes y espumosos para celebrar.",
+        "cta_text": "Explorar Vinos",
+        "bg_color": "#1a0a0a",
+        "accent_color": "#c9a96e",
+        "overlay_opacity": 40
+      }
+    },
+    "wine_types": {
+      "type": "wine-landing-types",
+      "blocks": {
+        "tinto": {
+          "type": "wine_type",
+          "settings": {
+            "tag": "Tinto",
+            "name": "Vino Tinto",
+            "description": "Elaborado a partir de uvas tintas con maceracion del jugo junto con los hollejos. Rico en taninos, con cuerpo y complejidad.",
+            "maridaje": "Carnes rojas, quesos curados, pastas",
+            "card_color": "#8b1a2b"
+          }
+        },
+        "blanco": {
+          "type": "wine_type",
+          "settings": {
+            "tag": "Blanco",
+            "name": "Vino Blanco",
+            "description": "Producido sin contacto con la piel de la uva. Color amarillo palido a dorado, perfil fresco, ligero y acido. Se consume frio.",
+            "maridaje": "Pescados, mariscos, quesos suaves",
+            "card_color": "#c9a96e"
+          }
+        },
+        "rosado": {
+          "type": "wine_type",
+          "settings": {
+            "tag": "Rosado",
+            "name": "Vino Rosado",
+            "description": "Uvas tintas con contacto breve con hollejos. Fresco, ligero y afrutado. Ideal para consumirse joven, servido a 8-12 grados.",
+            "maridaje": "Comida mediterranea, mariscos, ensaladas",
+            "card_color": "#d4729a"
+          }
+        },
+        "espumoso": {
+          "type": "wine_type",
+          "settings": {
+            "tag": "Espumoso",
+            "name": "Espumosos, Cava y Champan",
+            "description": "Vinos con gas carbonico de segunda fermentacion. Burbujas finas y sabores complejos. Incluye Cava espaniol y Champan frances.",
+            "maridaje": "Aperitivos, mariscos, postres",
+            "card_color": "#a68b5b"
+          }
+        },
+        "dulce": {
+          "type": "wine_type",
+          "settings": {
+            "tag": "Dulce",
+            "name": "Blanco Dulce",
+            "description": "Con mas de 45 gramos de azucar por litro. Perfecto para acompaniar postres o disfrutar solo como cierre de una comida especial.",
+            "maridaje": "Postres, foie gras, quesos azules",
+            "card_color": "#d4a843"
+          }
+        }
+      },
+      "block_order": ["tinto", "blanco", "rosado", "espumoso", "dulce"],
+      "settings": {
+        "label": "Nuestra Seleccion",
+        "heading": "Tipos de Vino",
+        "intro": "Cada tipo de vino tiene su propio caracter, historia y momento ideal para disfrutarlo.",
+        "bg_color": "#faf8f5",
+        "accent_color": "#8b1a2b"
+      }
+    },
+    "wine_crianza": {
+      "type": "wine-landing-crianza",
+      "blocks": {
+        "joven": {
+          "type": "level",
+          "settings": {
+            "icon": "grape",
+            "years": "0-12 meses",
+            "name": "Joven",
+            "description": "Vino del anio que destaca por su frescura y frutosidad. Sin paso por barrica."
+          }
+        },
+        "crianza": {
+          "type": "level",
+          "settings": {
+            "icon": "barrel",
+            "years": "24 meses",
+            "name": "Crianza",
+            "description": "Envejecimiento en barrica de roble. El vino evoluciona adquiriendo cualidades positivas y complejidad."
+          }
+        },
+        "reserva": {
+          "type": "level",
+          "settings": {
+            "icon": "bottle",
+            "years": "36 meses",
+            "name": "Reserva",
+            "description": "Minimo 12 meses en barrica de roble. Mayor complejidad, estructura y elegancia."
+          }
+        },
+        "gran_reserva": {
+          "type": "level",
+          "settings": {
+            "icon": "glass",
+            "years": "60 meses",
+            "name": "Gran Reserva",
+            "description": "5 anios de crianza total con 18-24 meses en barrica. Solo de aniadas excelentes."
+          }
+        }
+      },
+      "block_order": ["joven", "crianza", "reserva", "gran_reserva"],
+      "settings": {
+        "label": "Proceso de Envejecimiento",
+        "heading": "Niveles de Crianza",
+        "bg_color": "#1a0a0a",
+        "accent_color": "#c9a96e"
+      }
+    },
+    "wine_products_1": {
+      "type": "carousel-products",
+      "settings": {
+        "title": "Vinos Tintos Destacados",
+        "collection": "vinos-tintos"
+      }
+    },
+    "wine_cta": {
+      "type": "wine-landing-cta",
+      "settings": {
+        "heading": "Encuentra tu vino perfecto",
+        "text": "Explora nuestra seleccion completa y deja que cada copa cuente una historia.",
+        "btn1_text": "Ver Todos los Vinos",
+        "btn2_text": "Ofertas Especiales",
+        "bg_color": "#2d0a1a",
+        "accent_color": "#c9a96e"
+      }
+    },
+    "wine_products_2": {
+      "type": "carousel-products",
+      "settings": {
+        "title": "Vinos Blancos y Rosados",
+        "collection": "vinos-blancos"
+      }
+    },
+    "wine_dictionary": {
+      "type": "wine-landing-dictionary",
+      "blocks": {
+        "t1": { "type": "term", "settings": { "term": "Acerbo", "definition": "Se dice del vino que es a la vez aspero, duro y acido." } },
+        "t2": { "type": "term", "settings": { "term": "Afinado", "definition": "Vino delicado y aromatico que recuerda el sabor y olor del fruto. Caracteristica de vinos jovenes que desaparece con el tiempo." } },
+        "t3": { "type": "term", "settings": { "term": "Amable", "definition": "Vino muy afrutado con buen equilibrio, pudiendo resultar algo abocado y muy agradable en la cata." } },
+        "t4": { "type": "term", "settings": { "term": "Amontillado", "definition": "Vino generoso de color ambar, aroma punzante y avellanado, suave y lleno al paladar, con 18 grados." } },
+        "t5": { "type": "term", "settings": { "term": "Complejo", "definition": "Vino que ofrece una amplia gama de sensaciones, armonia y equilibrio." } },
+        "t6": { "type": "term", "settings": { "term": "Cuerpo", "definition": "Caracteristica ligada al grado alcoholico y extracto seco. Un vino con cuerpo es estructurado." } },
+        "t7": { "type": "term", "settings": { "term": "Equilibrado", "definition": "Vino con conjunto armonioso de caracteres, sin que ninguno sobresalga sobre los demas." } },
+        "t8": { "type": "term", "settings": { "term": "Herbaceo", "definition": "Aroma vegetal provocado por falta de maduracion de las uvas o ruptura del raspon en la prensa." } },
+        "t9": { "type": "term", "settings": { "term": "Hollejo", "definition": "Piel de la uva que contiene taninos. Dan caracter al vino y permiten su conservacion." } },
+        "t10": { "type": "term", "settings": { "term": "Joven", "definition": "Vino del anio que destaca por su frescura y frutosidad." } },
+        "t11": { "type": "term", "settings": { "term": "Mosto", "definition": "Zumo de uva sin fermentar: agua (80%), azucar (17%), vitaminas y minerales." } },
+        "t12": { "type": "term", "settings": { "term": "Seco", "definition": "Vino sin restos de azucar." } },
+        "t13": { "type": "term", "settings": { "term": "Semi seco", "definition": "Vino que contiene de 14 a 30 gramos por litro de azucar." } },
+        "t14": { "type": "term", "settings": { "term": "Tanico", "definition": "Vino que muestra en boca la astringencia de sus taninos." } },
+        "t15": { "type": "term", "settings": { "term": "Varietal", "definition": "Vino elaborado a partir de una unica variedad de uva." } },
+        "t16": { "type": "term", "settings": { "term": "Moscatel", "definition": "Variedad de uva con aromas y sabor muy caracteristicos." } }
+      },
+      "block_order": ["t1","t2","t3","t4","t5","t6","t7","t8","t9","t10","t11","t12","t13","t14","t15","t16"],
+      "settings": {
+        "label": "Aprende Sobre Vinos",
+        "heading": "Diccionario del Vino",
+        "intro": "Domina el vocabulario del vino y sorprende en tu proxima cata.",
+        "show_search": true,
+        "bg_color": "#ffffff",
+        "accent_color": "#8b1a2b"
+      }
+    }
+  },
+  "order": [
+    "wine_hero",
+    "wine_types",
+    "wine_crianza",
+    "wine_products_1",
+    "wine_cta",
+    "wine_products_2",
+    "wine_dictionary"
+  ]
+}
