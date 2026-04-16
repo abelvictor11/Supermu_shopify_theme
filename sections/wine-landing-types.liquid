@@ -1,197 +1,189 @@
 {%- style -%}
-  .wine-types {
-    padding: 80px 0;
-    background: {{ section.settings.bg_color | default: '#faf8f5' }};
+  .wt-cards {
+    padding: {{ section.settings.padding_top | default: 60 }}px 0 {{ section.settings.padding_bottom | default: 60 }}px;
+    background: {{ section.settings.bg_color | default: '#1a0a0a' }};
   }
-  .wine-types__header {
+  .wt-cards__header {
     text-align: center;
     max-width: 700px;
     margin: 0 auto 50px;
     padding: 0 20px;
   }
-  .wine-types__label {
+  .wt-cards__label {
     font-size: 12px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: {{ section.settings.accent_color | default: '#8b1a2b' }};
+    color: {{ section.settings.accent_color | default: '#c9a96e' }};
     margin-bottom: 12px;
   }
-  .wine-types__heading {
+  .wt-cards__heading {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 38px;
     font-weight: 400;
-    color: #1a0a0a;
+    color: #fff;
     margin: 0 0 12px;
   }
-  .wine-types__intro {
+  .wt-cards__intro {
     font-size: 16px;
     line-height: 1.7;
-    color: #6b5e5e;
+    color: rgba(255,255,255,0.6);
   }
-  .wine-types__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+  .wt-cards__list {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-  }
-  .wine-card {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
+    gap: 40px;
   }
-  .wine-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  .wt-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    min-height: 480px;
   }
-  .wine-card__image {
-    position: relative;
-    height: 220px;
+  .wt-card--reverse .wt-card__content { order: -1; }
+  .wt-card__photo {
+    border-radius: 16px;
     overflow: hidden;
+    position: relative;
   }
-  .wine-card__image img {
+  .wt-card__photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    display: block;
+    transition: transform 0.5s ease;
   }
-  .wine-card:hover .wine-card__image img {
-    transform: scale(1.05);
+  .wt-card:hover .wt-card__photo img {
+    transform: scale(1.03);
   }
-  .wine-card__color-bar {
-    height: 4px;
-    background: var(--wine-card-color, #8b1a2b);
-  }
-  .wine-card__body {
-    padding: 24px;
-    flex: 1;
+  .wt-card__content {
+    border-radius: 16px;
+    padding: 40px 36px;
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
   }
-  .wine-card__tag {
+  .wt-card__badge {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+    font-weight: 600;
+  }
+  .wt-card__title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0 0 16px;
+  }
+  .wt-card__desc {
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+    max-width: 380px;
+  }
+  .wt-card__icon {
+    position: absolute;
+    bottom: 24px;
+    right: 28px;
+    width: 120px;
+    height: 120px;
+    opacity: 0.85;
+  }
+  .wt-card__icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .wt-card__cta {
     display: inline-block;
-    font-size: 10px;
+    margin-top: auto;
+    padding: 12px 28px;
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--wine-card-color, #8b1a2b);
-    background: color-mix(in srgb, var(--wine-card-color, #8b1a2b) 10%, transparent);
-    padding: 4px 12px;
-    border-radius: 20px;
-    margin-bottom: 12px;
+    text-decoration: none;
+    border: 2px solid currentColor;
+    border-radius: 4px;
+    transition: background 0.3s, color 0.3s;
     width: fit-content;
   }
-  .wine-card__name {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: #1a0a0a;
-    margin: 0 0 10px;
+  .wt-card__cta:hover {
+    background: currentColor;
   }
-  .wine-card__desc {
-    font-size: 14px;
-    line-height: 1.65;
-    color: #6b5e5e;
-    flex: 1;
-  }
-  .wine-card__maridaje {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #f0ece8;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .wine-card__maridaje svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    margin-top: 2px;
-    stroke: var(--wine-card-color, #8b1a2b);
-  }
-  .wine-card__maridaje span {
-    font-size: 13px;
-    color: #8a7d7d;
-    line-height: 1.5;
-  }
-  .wine-card__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 16px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--wine-card-color, #8b1a2b);
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    transition: gap 0.2s ease;
-  }
-  .wine-card__link:hover { gap: 10px; }
-  .wine-card__link svg {
-    width: 14px;
-    height: 14px;
-    stroke: currentColor;
-  }
-  @media (max-width: 991px) {
-    .wine-types__grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 600px) {
-    .wine-types { padding: 50px 0; }
-    .wine-types__heading { font-size: 28px; }
-    .wine-types__grid {
+  @media (max-width: 767px) {
+    .wt-cards { padding: 40px 0; }
+    .wt-cards__heading { font-size: 28px; }
+    .wt-card {
       grid-template-columns: 1fr;
-      gap: 16px;
+      min-height: auto;
+    }
+    .wt-card__photo {
+      height: 280px;
+    }
+    .wt-card--reverse .wt-card__content { order: 0; }
+    .wt-card__content {
+      padding: 30px 24px;
+      min-height: 360px;
+    }
+    .wt-card__title { font-size: 28px; }
+    .wt-card__icon {
+      width: 90px;
+      height: 90px;
     }
   }
 {%- endstyle -%}
 
-<section class="wine-types">
-  <div class="wine-types__header">
-    {%- if section.settings.label != blank -%}
-      <p class="wine-types__label">{{ section.settings.label }}</p>
-    {%- endif -%}
-    {%- if section.settings.heading != blank -%}
-      <h2 class="wine-types__heading">{{ section.settings.heading }}</h2>
-    {%- endif -%}
-    {%- if section.settings.intro != blank -%}
-      <p class="wine-types__intro">{{ section.settings.intro }}</p>
-    {%- endif -%}
-  </div>
+<section class="wt-cards">
+  {%- if section.settings.label != blank or section.settings.heading != blank or section.settings.intro != blank -%}
+    <div class="wt-cards__header">
+      {%- if section.settings.label != blank -%}
+        <p class="wt-cards__label">{{ section.settings.label }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="wt-cards__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <p class="wt-cards__intro">{{ section.settings.intro }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
 
-  <div class="wine-types__grid">
+  <div class="wt-cards__list">
     {%- for block in section.blocks -%}
-      <div class="wine-card" style="--wine-card-color: {{ block.settings.card_color | default: '#8b1a2b' }}" {{ block.shopify_attributes }}>
-        {%- if block.settings.image != blank -%}
-          <div class="wine-card__image">
-            {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(max-width: 600px) 100vw, (max-width: 991px) 50vw, 33vw' }}
-          </div>
-        {%- endif -%}
-        <div class="wine-card__color-bar"></div>
-        <div class="wine-card__body">
-          {%- if block.settings.tag != blank -%}
-            <span class="wine-card__tag">{{ block.settings.tag }}</span>
+      {%- assign card_bg = block.settings.card_bg_color | default: '#4a0e1e' -%}
+      {%- assign text_color = block.settings.text_color | default: '#ffffff' -%}
+      {%- assign title_color = block.settings.title_color | default: '#e8522a' -%}
+      <div class="wt-card{% if block.settings.image_position == 'left' %} wt-card--reverse{% endif %}" {{ block.shopify_attributes }}>
+        <div class="wt-card__photo">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(max-width: 767px) 100vw, 50vw' }}
+          {%- else -%}
+            <div style="width:100%;height:100%;background:#333"></div>
           {%- endif -%}
-          {%- if block.settings.name != blank -%}
-            <h3 class="wine-card__name">{{ block.settings.name }}</h3>
+        </div>
+        <div class="wt-card__content" style="background:{{ card_bg }};color:{{ text_color }}">
+          {%- if block.settings.badge != blank -%}
+            <p class="wt-card__badge" style="color:{{ text_color }}">{{ block.settings.badge }}</p>
+          {%- endif -%}
+          {%- if block.settings.title != blank -%}
+            <h3 class="wt-card__title" style="color:{{ title_color }}">{{ block.settings.title }}</h3>
           {%- endif -%}
           {%- if block.settings.description != blank -%}
-            <p class="wine-card__desc">{{ block.settings.description }}</p>
+            <p class="wt-card__desc" style="color:{{ text_color }};opacity:0.85">{{ block.settings.description }}</p>
           {%- endif -%}
-          {%- if block.settings.maridaje != blank -%}
-            <div class="wine-card__maridaje">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>
-              <span><strong>Maridaje:</strong> {{ block.settings.maridaje }}</span>
+          {%- if block.settings.cta_text != blank -%}
+            <a href="{{ block.settings.cta_url }}" class="wt-card__cta" style="color:{{ title_color }};border-color:{{ title_color }}">{{ block.settings.cta_text }}</a>
+          {%- endif -%}
+          {%- if block.settings.icon_image != blank -%}
+            <div class="wt-card__icon">
+              {{ block.settings.icon_image | image_url: width: 240 | image_tag: loading: 'lazy' }}
             </div>
-          {%- endif -%}
-          {%- if block.settings.link_url != blank -%}
-            <a href="{{ block.settings.link_url }}" class="wine-card__link">
-              {{ block.settings.link_text | default: 'Ver coleccion' }}
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
           {%- endif -%}
         </div>
       </div>
@@ -219,20 +211,39 @@
     {
       "type": "textarea",
       "id": "intro",
-      "label": "Texto introductorio",
-      "default": "Cada tipo de vino tiene su propio caracter, historia y momento ideal para disfrutarlo."
+      "label": "Texto introductorio"
     },
     {
       "type": "color",
       "id": "bg_color",
-      "label": "Color de fondo",
-      "default": "#faf8f5"
+      "label": "Color de fondo seccion",
+      "default": "#1a0a0a"
     },
     {
       "type": "color",
       "id": "accent_color",
       "label": "Color de acento",
-      "default": "#8b1a2b"
+      "default": "#c9a96e"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "default": 60,
+      "unit": "px"
     }
   ],
   "blocks": [
@@ -241,20 +252,38 @@
       "name": "Tipo de vino",
       "settings": [
         {
+          "type": "header",
+          "content": "Imagen"
+        },
+        {
           "type": "image_picker",
           "id": "image",
-          "label": "Imagen"
+          "label": "Foto de la columna"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Posicion de la imagen",
+          "options": [
+            { "value": "right", "label": "Derecha (contenido izq)" },
+            { "value": "left", "label": "Izquierda (contenido der)" }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "header",
+          "content": "Contenido"
         },
         {
           "type": "text",
-          "id": "tag",
-          "label": "Etiqueta",
-          "default": "Tinto"
+          "id": "badge",
+          "label": "Badge",
+          "default": "TINTO"
         },
         {
           "type": "text",
-          "id": "name",
-          "label": "Nombre",
+          "id": "title",
+          "label": "Titulo",
           "default": "Vino Tinto"
         },
         {
@@ -264,26 +293,42 @@
         },
         {
           "type": "text",
-          "id": "maridaje",
-          "label": "Maridaje",
-          "info": "Ej: Carnes rojas, quesos curados"
-        },
-        {
-          "type": "color",
-          "id": "card_color",
-          "label": "Color de la tarjeta",
-          "default": "#8b1a2b"
+          "id": "cta_text",
+          "label": "Texto del boton",
+          "default": "VER VINOS TINTO"
         },
         {
           "type": "url",
-          "id": "link_url",
-          "label": "URL del enlace"
+          "id": "cta_url",
+          "label": "URL del boton"
         },
         {
-          "type": "text",
-          "id": "link_text",
-          "label": "Texto del enlace",
-          "default": "Ver coleccion"
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icono / Ilustracion",
+          "info": "Imagen decorativa en la esquina inferior derecha"
+        },
+        {
+          "type": "header",
+          "content": "Colores"
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "Color de fondo de la card",
+          "default": "#4a0e1e"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Color del texto",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Color del titulo y boton",
+          "default": "#e8522a"
         }
       ]
     }
@@ -295,41 +340,53 @@
         {
           "type": "wine_type",
           "settings": {
-            "tag": "Tinto",
-            "name": "Vino Tinto",
-            "description": "Elaborado a partir de uvas tintas, con maceración del jugo junto con los hollejos. Rico en taninos, con cuerpo y complejidad.",
-            "maridaje": "Carnes rojas, quesos curados, pastas con salsa",
-            "card_color": "#8b1a2b"
+            "badge": "TINTO",
+            "title": "Vino Tinto",
+            "description": "Elaborado a partir de uvas tintas con maceracion del jugo junto con los hollejos. Rico en taninos, con cuerpo y complejidad.",
+            "cta_text": "VER VINOS TINTO",
+            "image_position": "left",
+            "card_bg_color": "#4a0e1e",
+            "text_color": "#ffffff",
+            "title_color": "#e8522a"
           }
         },
         {
           "type": "wine_type",
           "settings": {
-            "tag": "Blanco",
-            "name": "Vino Blanco",
-            "description": "Producido sin contacto con la piel de la uva. Color amarillo palido a dorado, perfil fresco, ligero y acido.",
-            "maridaje": "Pescados, mariscos, quesos suaves",
-            "card_color": "#c9a96e"
+            "badge": "BLANCO",
+            "title": "Vino Blanco",
+            "description": "Producido sin contacto con la piel de la uva. Color amarillo palido a dorado, perfil fresco, ligero y acido. Se consume frio.",
+            "cta_text": "VER VINOS BLANCO",
+            "image_position": "right",
+            "card_bg_color": "#f5d5d5",
+            "text_color": "#1a0a0a",
+            "title_color": "#e8522a"
           }
         },
         {
           "type": "wine_type",
           "settings": {
-            "tag": "Rosado",
-            "name": "Vino Rosado",
-            "description": "Uvas tintas con contacto breve con hollejos. Fresco, ligero y afrutado, ideal para consumirse joven.",
-            "maridaje": "Comida mediterranea, mariscos, ensaladas",
-            "card_color": "#d4729a"
+            "badge": "ROSADO",
+            "title": "Vino Rosado",
+            "description": "Uvas tintas con contacto breve con hollejos. Fresco, ligero y afrutado, ideal para consumirse joven. Servir a 8-12 grados.",
+            "cta_text": "VER VINOS ROSADO",
+            "image_position": "left",
+            "card_bg_color": "#d4729a",
+            "text_color": "#ffffff",
+            "title_color": "#fff0f5"
           }
         },
         {
           "type": "wine_type",
           "settings": {
-            "tag": "Espumoso",
-            "name": "Champan y Cava",
+            "badge": "ESPUMOSO",
+            "title": "Champan y Cava",
             "description": "Vinos con gas carbonico de segunda fermentacion. Burbujas finas y sabores complejos para celebrar cada momento.",
-            "maridaje": "Aperitivos, mariscos, postres",
-            "card_color": "#a68b5b"
+            "cta_text": "VER ESPUMOSOS",
+            "image_position": "right",
+            "card_bg_color": "#2a1810",
+            "text_color": "#ffffff",
+            "title_color": "#c9a96e"
           }
         }
       ]
