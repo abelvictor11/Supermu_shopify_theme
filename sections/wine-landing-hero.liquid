@@ -1,0 +1,191 @@
+{%- style -%}
+  .wine-hero {
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: {{ section.settings.bg_color | default: '#1a0a0a' }};
+  }
+  .wine-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .wine-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+  .wine-hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 60px 20px;
+    max-width: 800px;
+  }
+  .wine-hero__badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color | default: '#c9a96e' }};
+    border: 1px solid {{ section.settings.accent_color | default: '#c9a96e' }};
+    padding: 6px 20px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+  }
+  .wine-hero__title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0 0 16px;
+  }
+  .wine-hero__subtitle {
+    font-size: 18px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.8);
+    margin: 0 0 32px;
+    font-weight: 300;
+  }
+  .wine-hero__cta {
+    display: inline-block;
+    padding: 14px 40px;
+    background: {{ section.settings.accent_color | default: '#c9a96e' }};
+    color: #1a0a0a;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  .wine-hero__cta:hover {
+    background: #fff;
+    color: #1a0a0a;
+  }
+  .wine-hero__scroll {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    animation: wineHeroBounce 2s infinite;
+  }
+  .wine-hero__scroll svg {
+    width: 24px;
+    height: 24px;
+    stroke: {{ section.settings.accent_color | default: '#c9a96e' }};
+  }
+  @keyframes wineHeroBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+  @media (max-width: 767px) {
+    .wine-hero { min-height: 420px; }
+    .wine-hero__title { font-size: 32px; }
+    .wine-hero__subtitle { font-size: 15px; }
+  }
+{%- endstyle -%}
+
+<section class="wine-hero">
+  <div class="wine-hero__bg">
+    {%- if section.settings.hero_image != blank -%}
+      {{ section.settings.hero_image | image_url: width: 1920 | image_tag: loading: 'eager', sizes: '100vw' }}
+    {%- else -%}
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d0a0a 0%,#4a1528 50%,#1a0a2e 100%)"></div>
+    {%- endif -%}
+  </div>
+  <div class="wine-hero__content">
+    {%- if section.settings.badge != blank -%}
+      <span class="wine-hero__badge">{{ section.settings.badge }}</span>
+    {%- endif -%}
+    {%- if section.settings.title != blank -%}
+      <h1 class="wine-hero__title">{{ section.settings.title }}</h1>
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
+      <p class="wine-hero__subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+    {%- if section.settings.cta_text != blank -%}
+      <a href="{{ section.settings.cta_url }}" class="wine-hero__cta">{{ section.settings.cta_text }}</a>
+    {%- endif -%}
+  </div>
+  <div class="wine-hero__scroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Wine Landing - Hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Imagen de fondo"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge superior",
+      "default": "Supermu Vinos"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titulo",
+      "default": "El Arte del Vino"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitulo",
+      "default": "Descubre nuestra seleccion curada de vinos del mundo. Desde tintos con caracter hasta blancos refrescantes."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texto del boton",
+      "default": "Explorar Vinos"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "URL del boton"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#1a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad de imagen",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wine Landing - Hero"
+    }
+  ]
+}
+{% endschema %}
