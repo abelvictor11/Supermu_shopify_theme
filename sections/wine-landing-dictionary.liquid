@@ -1,0 +1,242 @@
+{%- style -%}
+  .wine-dict {
+    padding: 80px 0;
+    background: {{ section.settings.bg_color | default: '#fff' }};
+  }
+  .wine-dict__inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .wine-dict__header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .wine-dict__label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color | default: '#8b1a2b' }};
+    margin-bottom: 12px;
+  }
+  .wine-dict__heading {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 38px;
+    font-weight: 400;
+    color: #1a0a0a;
+    margin: 0 0 12px;
+  }
+  .wine-dict__intro {
+    font-size: 16px;
+    color: #6b5e5e;
+    line-height: 1.6;
+  }
+  .wine-dict__search {
+    max-width: 500px;
+    margin: 0 auto 40px;
+    position: relative;
+  }
+  .wine-dict__search input {
+    width: 100%;
+    padding: 14px 20px 14px 48px;
+    border: 2px solid #e8e2dc;
+    border-radius: 50px;
+    font-size: 15px;
+    background: #faf8f5;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+  }
+  .wine-dict__search input:focus {
+    border-color: {{ section.settings.accent_color | default: '#8b1a2b' }};
+  }
+  .wine-dict__search svg {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    stroke: #a09890;
+  }
+  .wine-dict__columns {
+    column-count: 2;
+    column-gap: 40px;
+  }
+  .wine-dict__item {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    padding: 20px 24px;
+    background: #faf8f5;
+    border-radius: 10px;
+    border-left: 3px solid {{ section.settings.accent_color | default: '#8b1a2b' }};
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .wine-dict__item.is-hidden {
+    display: none;
+  }
+  .wine-dict__term {
+    font-family: 'Georgia', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #1a0a0a;
+    margin: 0 0 6px;
+  }
+  .wine-dict__def {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #6b5e5e;
+    margin: 0;
+  }
+  .wine-dict__empty {
+    text-align: center;
+    padding: 40px;
+    color: #a09890;
+    font-size: 16px;
+    display: none;
+  }
+  .wine-dict__empty.is-visible {
+    display: block;
+  }
+  @media (max-width: 767px) {
+    .wine-dict { padding: 50px 0; }
+    .wine-dict__heading { font-size: 28px; }
+    .wine-dict__columns { column-count: 1; }
+  }
+{%- endstyle -%}
+
+<section class="wine-dict" id="wine-dictionary-{{ section.id }}">
+  <div class="wine-dict__inner">
+    <div class="wine-dict__header">
+      {%- if section.settings.label != blank -%}
+        <p class="wine-dict__label">{{ section.settings.label }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="wine-dict__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <p class="wine-dict__intro">{{ section.settings.intro }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_search -%}
+      <div class="wine-dict__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Buscar termino..." data-wine-dict-search="{{ section.id }}">
+      </div>
+    {%- endif -%}
+
+    <div class="wine-dict__columns" data-wine-dict-list="{{ section.id }}">
+      {%- for block in section.blocks -%}
+        <div class="wine-dict__item" data-wine-term="{{ block.settings.term | downcase }}" {{ block.shopify_attributes }}>
+          <h3 class="wine-dict__term">{{ block.settings.term }}</h3>
+          <p class="wine-dict__def">{{ block.settings.definition }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+    <p class="wine-dict__empty" data-wine-dict-empty="{{ section.id }}">No se encontraron terminos.</p>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var sid = '{{ section.id }}';
+    var input = document.querySelector('[data-wine-dict-search="' + sid + '"]');
+    if (!input) return;
+    var items = document.querySelectorAll('[data-wine-dict-list="' + sid + '"] .wine-dict__item');
+    var empty = document.querySelector('[data-wine-dict-empty="' + sid + '"]');
+    input.addEventListener('input', function() {
+      var q = this.value.toLowerCase().trim();
+      var visible = 0;
+      items.forEach(function(item) {
+        var term = item.getAttribute('data-wine-term') || '';
+        var match = !q || term.indexOf(q) !== -1;
+        item.classList.toggle('is-hidden', !match);
+        if (match) visible++;
+      });
+      if (empty) empty.classList.toggle('is-visible', visible === 0);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Wine Landing - Diccionario",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Etiqueta",
+      "default": "Aprende Sobre Vinos"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titulo",
+      "default": "Diccionario del Vino"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Texto introductorio",
+      "default": "Domina el vocabulario del vino y sorprende en tu proxima cata."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Mostrar buscador",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento",
+      "default": "#8b1a2b"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "term",
+      "name": "Termino",
+      "settings": [
+        {
+          "type": "text",
+          "id": "term",
+          "label": "Termino"
+        },
+        {
+          "type": "textarea",
+          "id": "definition",
+          "label": "Definicion"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wine Landing - Diccionario",
+      "blocks": [
+        { "type": "term", "settings": { "term": "Acerbo", "definition": "Se dice del vino que es a la vez aspero, duro y acido." } },
+        { "type": "term", "settings": { "term": "Afinado", "definition": "Vino delicado y aromatico que recuerda el sabor y el olor del fruto. Caracteristica de vinos jovenes." } },
+        { "type": "term", "settings": { "term": "Amontillado", "definition": "Vino generoso de color ambar, aroma punzante y avellanado, suave y lleno al paladar, con 18 grados." } },
+        { "type": "term", "settings": { "term": "Complejo", "definition": "Vino que ofrece una amplia gama de sensaciones, armonia y equilibrio." } },
+        { "type": "term", "settings": { "term": "Cuerpo", "definition": "Caracteristica ligada al grado alcoholico y extracto seco. Un vino con cuerpo es estructurado, con fuerza y vinosidad." } },
+        { "type": "term", "settings": { "term": "Equilibrado", "definition": "Vino que presenta un conjunto armonioso de caracteres, sin que ninguno sobresalga sobre los demas." } },
+        { "type": "term", "settings": { "term": "Hollejo", "definition": "Piel de la uva que contiene taninos. Estos dan caracter al vino y permiten su conservacion." } },
+        { "type": "term", "settings": { "term": "Joven", "definition": "Vino del anio que destaca por su frescura y frutosidad." } },
+        { "type": "term", "settings": { "term": "Mosto", "definition": "Zumo de uva sin fermentar, compuesto por agua (80%), azucar (17%), vitaminas y minerales." } },
+        { "type": "term", "settings": { "term": "Seco", "definition": "Vino sin restos de azucar." } },
+        { "type": "term", "settings": { "term": "Tanico", "definition": "Vino que muestra en boca la astringencia de sus taninos." } },
+        { "type": "term", "settings": { "term": "Varietal", "definition": "Vino elaborado a partir de una unica variedad de uva." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
