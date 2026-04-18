@@ -5,7 +5,8 @@
   Usage: {% render 'product-badges', product: product %}
 {%- endcomment -%}
 
-{%- assign badges = product.metafields.custom.badges.value -%}
+{%- assign badges_meta = product.metafields.custom.badges -%}
+{%- assign badges = badges_meta.value -%}
 {%- if badges != blank -%}
   <div class="product-badges">
     {%- for badge in badges limit: 2 -%}
@@ -21,5 +22,12 @@
   </div>
 {%- endif -%}
 {%- if request.design_mode -%}
-  <div style="font-size:10px;color:#999;margin-top:2px">[badges: {{ product.metafields.custom.badges | size }}]</div>
+  <div style="font-size:10px;color:#aaa;background:#222;padding:4px 8px;margin-top:4px;border-radius:3px;position:relative;z-index:10">
+    meta_type={{ badges_meta.type }}
+    | meta_val={{ badges_meta }}
+    | size={{ badges | size }}
+    {%- for b in badges limit: 2 -%}
+      | b{{ forloop.index }}={{ b }} / text={{ b.text }} / text.v={{ b.text.value }} / system.handle={{ b.system.handle }} / display_name={{ b.system.display_name }}
+    {%- endfor -%}
+  </div>
 {%- endif -%}
