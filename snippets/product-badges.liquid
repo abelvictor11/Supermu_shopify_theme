@@ -1,0 +1,25 @@
+{%- comment -%}
+  Renders product badges from metaobject references.
+  Expects: product metafield custom.badges (list of metaobject references)
+  Each metaobject has fields: text (single_line_text), bg_color (single_line_text), text_color (single_line_text)
+  Usage: {% render 'product-badges', product: product %}
+{%- endcomment -%}
+
+{%- assign badges = product.metafields.custom.badges.value -%}
+{%- if badges != blank -%}
+  <div class="product-badges">
+    {%- for badge in badges limit: 2 -%}
+      {%- assign badge_text = badge.text.value | default: badge.text | default: '' -%}
+      {%- assign badge_bg = badge.bg_color.value | default: badge.bg_color | default: '#1a0a0a' -%}
+      {%- assign badge_color = badge.text_color.value | default: badge.text_color | default: '#ffffff' -%}
+      {%- if badge_text != blank -%}
+        <span class="product-badge" style="background:{{ badge_bg }};color:{{ badge_color }}">
+          {{ badge_text }}
+        </span>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+{%- if request.design_mode -%}
+  <div style="font-size:10px;color:#999;margin-top:2px">[badges: {{ product.metafields.custom.badges | size }}]</div>
+{%- endif -%}

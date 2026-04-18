@@ -1640,3 +1640,23 @@ media="(min-width: 1025px)" {
     margin-left: 10px;
   }
 }
+
+/* ========== Product Badges (metaobject) ========== */
+.product-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  position: relative;
+  z-index: 2;
+}
+.product-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
