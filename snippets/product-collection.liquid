@@ -133,6 +133,9 @@
                         {%- endif -%}
                     </div>
                 {%- endif -%}
+                <div class="product-image__overlay-badges position-absolute d-flex align-items-end bottom-0 left-0 px-10 pb-10" style="pointer-events:none">
+                    {% render 'product-badges', product: product %}
+                </div>
             </div>
             <div class="product-collection__content d-flex flex-column align-items-start mt-15">
                 {%- case settings.product_collection_more_info_type -%}
