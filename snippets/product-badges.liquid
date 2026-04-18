@@ -6,10 +6,26 @@
 {%- endcomment -%}
 
 {%- assign badges_meta = product.metafields.custom.badges -%}
-{%- assign badges = badges_meta.value -%}
-{%- if badges != blank -%}
+{%- if badges_meta != blank -%}
+  {%- assign is_list = false -%}
+  {%- if badges_meta.type == 'list.metaobject_reference' -%}
+    {%- assign is_list = true -%}
+  {%- endif -%}
+
   <div class="product-badges">
-    {%- for badge in badges limit: 2 -%}
+    {%- if is_list -%}
+      {%- for badge in badges_meta.value limit: 2 -%}
+        {%- assign badge_text = badge.text.value | default: badge.text | default: '' -%}
+        {%- assign badge_bg = badge.bg_color.value | default: badge.bg_color | default: '#1a0a0a' -%}
+        {%- assign badge_color = badge.text_color.value | default: badge.text_color | default: '#ffffff' -%}
+        {%- if badge_text != blank -%}
+          <span class="product-badge" style="background:{{ badge_bg }};color:{{ badge_color }}">
+            {{ badge_text }}
+          </span>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- assign badge = badges_meta.value -%}
       {%- assign badge_text = badge.text.value | default: badge.text | default: '' -%}
       {%- assign badge_bg = badge.bg_color.value | default: badge.bg_color | default: '#1a0a0a' -%}
       {%- assign badge_color = badge.text_color.value | default: badge.text_color | default: '#ffffff' -%}
@@ -18,16 +34,6 @@
           {{ badge_text }}
         </span>
       {%- endif -%}
-    {%- endfor -%}
-  </div>
-{%- endif -%}
-{%- if request.design_mode -%}
-  <div style="font-size:10px;color:#aaa;background:#222;padding:4px 8px;margin-top:4px;border-radius:3px;position:relative;z-index:10">
-    meta_type={{ badges_meta.type }}
-    | meta_val={{ badges_meta }}
-    | size={{ badges | size }}
-    {%- for b in badges limit: 2 -%}
-      | b{{ forloop.index }}={{ b }} / text={{ b.text }} / text.v={{ b.text.value }} / system.handle={{ b.system.handle }} / display_name={{ b.system.display_name }}
-    {%- endfor -%}
+    {%- endif -%}
   </div>
 {%- endif -%}
