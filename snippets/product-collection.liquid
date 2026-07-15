@@ -60,8 +60,20 @@
 {%- assign img_hover_url = hover_image | img_url: '1x1', format: image_format | replace: '_1x1.', '_{width}x.' -%}
 {%- assign product_form_id = 'quick-add-' | append: section.id | append: product.id -%}
 
+{%- comment -%} Inventario por Location: lista de sedes donde el producto está disponible (Recogida local) {%- endcomment -%}
+{%- assign available_locations = '' -%}
+{%- for variant in product.variants -%}
+    {%- for availability in variant.store_availabilities -%}
+        {%- if availability.available -%}
+            {%- assign loc_token = ',' | append: availability.location.id | append: ',' -%}
+            {%- unless available_locations contains loc_token -%}
+                {%- assign available_locations = available_locations | append: availability.location.id | append: ',' -%}
+            {%- endunless -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endfor -%}
 
-<product-item class="product-collection{% if settings.product_collection_centered_info %} product-collection--centered{% endif %} d-block"{% include 'product-get-attributes' %} data-qv-check-change>
+<product-item class="product-collection{% if settings.product_collection_centered_info %} product-collection--centered{% endif %} d-block"{% include 'product-get-attributes' %} data-available-locations="{{ available_locations }}" data-qv-check-change>
     <div class="product-collection__wrapper">
         <div class="d-flex flex-column">
             <div class="product-collection__image product-image product-image--hover-{{ settings.product_hover_animation_type }} position-relative w-100 js-product-images-navigation js-product-images-hovered-end{% if settings.product_replace_images_hover %} js-product-images-hover{% endif %}"{% if settings.product_replace_images_hover and hover_image != blank %} data-js-product-image-hover="{{ img_hover_url }}" data-js-product-image-hover-id="{{ hover_image.id }}"{% endif %}>

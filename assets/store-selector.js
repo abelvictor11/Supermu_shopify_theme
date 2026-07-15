@@ -8,6 +8,8 @@ class WalmartStoreSelector {
     this.STORAGE_KEY = 'walmart_selected_store';
     this.DELIVERY_MODE_KEY = 'walmart_delivery_mode';
     this.DROPDOWN_CLOSED_KEY = 'walmart_dropdown_closed';
+    this.BARRIO_KEY = 'walmart_selected_barrio';
+    this.LOCATION_KEY = 'walmart_selected_location';
     this.COOKIE_EXPIRY_DAYS = 30; // Cookie expira en 30 días
     
     // Elementos del DOM
@@ -21,6 +23,9 @@ class WalmartStoreSelector {
     this.selectedStore = null;
     this.deliveryMode = 'retiro'; // envio, retiro, entrega
     this.userLocation = null;
+    this.barrioIndex = []; // [{ barrio, store }]
+    this.selectedBarrio = null;
+    this.selectedLocationId = null;
     
     this.init();
   }
@@ -28,6 +33,9 @@ class WalmartStoreSelector {
   async init() {
     // Cargar tiendas
     await this.loadStores();
+
+    // Construir índice de barrios
+    this.buildBarrioIndex();
     
     // Cargar datos guardados
     this.loadSavedData();
@@ -37,6 +45,10 @@ class WalmartStoreSelector {
     
     // Eventos
     this.attachEventListeners();
+
+    // Aplicar filtro de inventario por location (Fase 2)
+    this.applyLocationFilter();
+    this.observeProductGrid();
     
     // Si no hay tienda seleccionada Y el usuario no ha cerrado el dropdown manualmente, mostrar después de 1.5 seg
     const dropdownClosedByUser = this.getCookie(this.DROPDOWN_CLOSED_KEY);
@@ -45,6 +57,17 @@ class WalmartStoreSelector {
         this.showDropdown();
       }, 1500);
     }
+  }
+
+  buildBarrioIndex() {
+    this.barrioIndex = [];
+    this.stores.forEach(store => {
+      (store.barrios || []).forEach(barrio => {
+        if (barrio) {
+          this.barrioIndex.push({ barrio: barrio, store: store });
+        }
+      });
+    });
   }
 
   async loadStores() {
@@ -63,6 +86,10 @@ class WalmartStoreSelector {
       
       this.stores = Array.from(storeCards).map((card, index) => {
         const logo = card.querySelector('.header-logo-card img');
+        const barrios = (card.dataset.barrios || '')
+          .split(/[\n,]+/)
+          .map(b => b.trim())
+          .filter(Boolean);
         return {
           id: index.toString(),
           name: card.querySelector('.store-card__name')?.textContent.trim() || '',
@@ -72,6 +99,8 @@ class WalmartStoreSelector {
           latitude: parseFloat(card.dataset.lat) || 0,
           longitude: parseFloat(card.dataset.lng) || 0,
           logo: logo ? logo.src : '',
+          locationId: (card.dataset.locationId || '').trim(),
+          barrios: barrios,
           featured: card.classList.contains('store-card--featured')
         };
       }).filter(store => store.name && store.latitude && store.longitude);
@@ -91,6 +120,8 @@ class WalmartStoreSelector {
     try {
       const savedStore = localStorage.getItem(this.STORAGE_KEY);
       const savedMode = localStorage.getItem(this.DELIVERY_MODE_KEY);
+      const savedBarrio = localStorage.getItem(this.BARRIO_KEY);
+      const savedLocation = localStorage.getItem(this.LOCATION_KEY);
       
       if (savedStore) {
         this.selectedStore = JSON.parse(savedStore);
@@ -98,6 +129,14 @@ class WalmartStoreSelector {
       
       if (savedMode) {
         this.deliveryMode = savedMode;
+      }
+
+      if (savedBarrio) {
+        this.selectedBarrio = savedBarrio;
+      }
+
+      if (savedLocation) {
+        this.selectedLocationId = savedLocation;
       }
     } catch (e) {
       console.error('Error cargando datos guardados:', e);
@@ -110,6 +149,13 @@ class WalmartStoreSelector {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.selectedStore));
       }
       localStorage.setItem(this.DELIVERY_MODE_KEY, this.deliveryMode);
+
+      if (this.selectedBarrio) {
+        localStorage.setItem(this.BARRIO_KEY, this.selectedBarrio);
+      }
+      if (this.selectedLocationId) {
+        localStorage.setItem(this.LOCATION_KEY, this.selectedLocationId);
+      }
     } catch (e) {
       console.error('Error guardando datos:', e);
     }
@@ -119,6 +165,13 @@ class WalmartStoreSelector {
     // Botón del header
     if (this.headerBtn) {
       this.headerBtn.addEventListener('click', () => this.toggleDropdown());
+    }
+
+    // Búsqueda de barrio
+    const barrioInput = document.getElementById('walmart-barrio-input');
+    if (barrioInput) {
+      barrioInput.addEventListener('input', (e) => this.renderBarrioResults(e.target.value));
+      barrioInput.addEventListener('focus', (e) => this.renderBarrioResults(e.target.value));
     }
 
     // Cerrar dropdown
@@ -314,11 +367,115 @@ class WalmartStoreSelector {
     const textEl = document.getElementById('walmart-header-store-text');
     if (!textEl) return;
 
-    if (this.selectedStore) {
+    if (this.selectedBarrio && this.selectedStore) {
+      textEl.textContent = `${this.selectedBarrio} • ${this.selectedStore.name}`;
+    } else if (this.selectedStore) {
       textEl.textContent = `${this.selectedStore.name} • ${this.selectedStore.zone || ''}`;
     } else {
       textEl.textContent = 'Selecciona una tienda';
     }
+  }
+
+  // ===== BARRIOS =====
+  renderBarrioResults(term) {
+    const list = document.getElementById('walmart-barrio-results');
+    if (!list) return;
+
+    const q = (term || '').toLowerCase().trim();
+    let matches = this.barrioIndex;
+    if (q) {
+      matches = this.barrioIndex.filter(item => item.barrio.toLowerCase().includes(q));
+    }
+    matches = matches.slice(0, 8);
+
+    if (matches.length === 0) {
+      list.innerHTML = this.barrioIndex.length === 0
+        ? '<li class="walmart-barrio-empty">No hay barrios configurados</li>'
+        : '<li class="walmart-barrio-empty">Sin coincidencias</li>';
+      list.style.display = 'block';
+      return;
+    }
+
+    list.innerHTML = matches.map(item => `
+      <li class="walmart-barrio-item" role="option"
+          data-barrio="${item.barrio.replace(/"/g, '&quot;')}"
+          data-store-id="${item.store.id}">
+        <span class="walmart-barrio-item-name">${item.barrio}</span>
+        <span class="walmart-barrio-item-store">${item.store.name}</span>
+      </li>
+    `).join('');
+    list.style.display = 'block';
+
+    list.querySelectorAll('.walmart-barrio-item').forEach(el => {
+      el.addEventListener('click', () => {
+        this.selectBarrio(el.dataset.barrio, el.dataset.storeId);
+      });
+    });
+  }
+
+  selectBarrio(barrio, storeId) {
+    const store = this.stores.find(s => s.id === storeId);
+    if (!store) return;
+
+    this.selectedBarrio = barrio;
+    this.selectedStore = store;
+    this.selectedLocationId = store.locationId || '';
+    this.saveData();
+
+    // UI
+    const input = document.getElementById('walmart-barrio-input');
+    if (input) input.value = barrio;
+    const list = document.getElementById('walmart-barrio-results');
+    if (list) list.style.display = 'none';
+
+    this.updateHeaderButton();
+    this.showSuggestedStore(store);
+    this.applyLocationFilter();
+    this.hideDropdown();
+
+    window.dispatchEvent(new CustomEvent('storeSelected', {
+      detail: { store: store, barrio: barrio, locationId: this.selectedLocationId }
+    }));
+  }
+
+  // ===== FILTRO DE INVENTARIO POR LOCATION (Fase 2) =====
+  applyLocationFilter() {
+    const locId = this.selectedLocationId;
+    const items = document.querySelectorAll('product-item[data-available-locations], [data-available-locations].product-collection');
+
+    items.forEach(item => {
+      // Sin location seleccionada: mostrar todo
+      if (!locId) {
+        item.classList.remove('is-unavailable-at-store');
+        return;
+      }
+      const raw = item.getAttribute('data-available-locations') || '';
+      const locs = raw.split(',').map(s => s.trim()).filter(Boolean);
+      // Si el producto no declara locations, no lo filtramos (fallback seguro)
+      if (locs.length === 0) {
+        item.classList.remove('is-unavailable-at-store');
+        return;
+      }
+      if (locs.indexOf(locId) === -1) {
+        item.classList.add('is-unavailable-at-store');
+      } else {
+        item.classList.remove('is-unavailable-at-store');
+      }
+    });
+  }
+
+  observeProductGrid() {
+    // Re-aplicar el filtro cuando se cargan productos por AJAX (filtros, paginación infinita)
+    let scheduled = false;
+    const observer = new MutationObserver(() => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        this.applyLocationFilter();
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   showSuggestedStore(store) {
