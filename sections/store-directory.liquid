@@ -159,6 +159,8 @@
                          data-zone="{{ block.settings.zone }}" 
                          data-lat="{{ block.settings.latitude }}" 
                          data-lng="{{ block.settings.longitude }}"
+                         data-location-id="{{ block.settings.location_id }}"
+                         data-barrios="{{ block.settings.barrios | escape }}"
                          {{ block.shopify_attributes }}>
                         <div class="store-card__header">
                             <div class="header-logo-card">
@@ -239,6 +241,18 @@
           "type": "image_picker",
           "id": "logo",
           "label": "Logo de la tienda"
+        },
+        {
+          "type": "text",
+          "id": "location_id",
+          "label": "ID de Location (Shopify)",
+          "info": "ID numérico de la Location de Shopify asignada a esta tienda. Settings > Locations > (abrir location) > el número al final de la URL."
+        },
+        {
+          "type": "textarea",
+          "id": "barrios",
+          "label": "Barrios / Áreas de cobertura",
+          "info": "Un barrio por línea o separados por coma. Al elegir uno se carga el inventario de la Location de esta tienda."
         },
         {
           "type": "text",
