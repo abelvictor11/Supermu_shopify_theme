@@ -71,48 +71,88 @@ class WalmartStoreSelector {
   }
 
   async loadStores() {
-    try {
-      const url = window.STORE_DIRECTORY_URL || '/pages/store-directory';
-      console.log('Cargando tiendas desde:', url);
-      
-      const response = await fetch(url);
-      const html = await response.text();
-      
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const storeCards = doc.querySelectorAll('.store-card');
-      
-      console.log('Tiendas encontradas:', storeCards.length);
-      
-      this.stores = Array.from(storeCards).map((card, index) => {
-        const logo = card.querySelector('.header-logo-card img');
-        const barrios = (card.dataset.barrios || '')
-          .split(/[\n,]+/)
-          .map(b => b.trim())
-          .filter(Boolean);
-        return {
-          id: index.toString(),
-          name: card.querySelector('.store-card__name')?.textContent.trim() || '',
-          zone: card.dataset.zone || '',
-          address: card.querySelector('.store-card__address')?.textContent.trim().replace(/^\s*\n\s*/g, '').replace(/\s+/g, ' ') || '',
-          phone: card.querySelector('.store-card__phone')?.textContent.trim() || '',
-          latitude: parseFloat(card.dataset.lat) || 0,
-          longitude: parseFloat(card.dataset.lng) || 0,
-          logo: logo ? logo.src : '',
-          locationId: (card.dataset.locationId || '').trim(),
-          barrios: barrios,
-          featured: card.classList.contains('store-card--featured')
-        };
-      }).filter(store => store.name && store.latitude && store.longitude);
-      
-      console.log('Tiendas procesadas:', this.stores.length);
-      
-      if (this.stores.length > 0) {
-        this.renderStoresInModal();
+    // Handles candidatos: el configurado + fallbacks comunes
+    const configured = window.STORE_DIRECTORY_URL || '/pages/store-directory';
+    const candidates = [configured, '/pages/store-directory', '/pages/tiendas', '/pages/nuestras-tiendas']
+      .filter((v, i, arr) => v && arr.indexOf(v) === i);
+
+    for (const url of candidates) {
+      try {
+        console.log('[StoreSelector] Cargando tiendas desde:', url);
+        const response = await fetch(url, { headers: { 'X-Requested-With': 'fetch' } });
+
+        if (!response.ok) {
+          console.warn('[StoreSelector] Respuesta no OK', response.status, 'para', url);
+          continue;
+        }
+
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+
+        // Detectar página de contraseña / redirección
+        if (doc.querySelector('form[action="/password"], .password-page, #password')) {
+          console.warn('[StoreSelector] La URL', url, 'devolvió la página de contraseña. Revisa el acceso de la tienda.');
+          continue;
+        }
+
+        const storeCards = doc.querySelectorAll('.store-card');
+        console.log('[StoreSelector] Store cards encontradas en', url, ':', storeCards.length);
+
+        if (storeCards.length === 0) {
+          continue;
+        }
+
+        this.stores = this.parseStoreCards(storeCards);
+        console.log('[StoreSelector] Tiendas procesadas:', this.stores.length, this.stores);
+
+        if (this.stores.length > 0) {
+          window.STORE_DIRECTORY_URL = url; // recordar el handle que funcionó
+          this.renderStoresInModal();
+          return;
+        }
+      } catch (error) {
+        console.error('[StoreSelector] Error cargando tiendas desde', url, error);
       }
-    } catch (error) {
-      console.error('Error cargando tiendas:', error);
-      this.stores = [];
+    }
+
+    // Ninguna URL funcionó
+    this.stores = [];
+    console.error('[StoreSelector] No se pudieron cargar tiendas desde ninguna URL:', candidates,
+      '\nAjusta window.STORE_DIRECTORY_URL en snippets/store-selector.liquid al handle real de tu página de tiendas.');
+    this.renderStoresError();
+  }
+
+  parseStoreCards(storeCards) {
+    return Array.from(storeCards).map((card, index) => {
+      const logo = card.querySelector('.header-logo-card img');
+      const barrios = (card.dataset.barrios || '')
+        .split(/[\n,]+/)
+        .map(b => b.trim())
+        .filter(Boolean);
+      return {
+        id: index.toString(),
+        name: card.querySelector('.store-card__name')?.textContent.trim() || '',
+        zone: card.dataset.zone || '',
+        address: card.querySelector('.store-card__address')?.textContent.trim().replace(/^\s*\n\s*/g, '').replace(/\s+/g, ' ') || '',
+        phone: card.querySelector('.store-card__phone')?.textContent.trim() || '',
+        latitude: parseFloat(card.dataset.lat) || 0,
+        longitude: parseFloat(card.dataset.lng) || 0,
+        logo: logo ? logo.src : '',
+        locationId: (card.dataset.locationId || '').trim(),
+        barrios: barrios,
+        featured: card.classList.contains('store-card--featured')
+      };
+    }).filter(store => store.name && store.latitude && store.longitude);
+  }
+
+  renderStoresError() {
+    const container = document.getElementById('walmart-modal-stores');
+    if (container) {
+      container.innerHTML = '<div class="walmart-no-results">No pudimos cargar las tiendas. Revisa la conexión o el enlace de la página de tiendas.</div>';
+    }
+    const list = document.getElementById('walmart-barrio-results');
+    if (list) {
+      list.innerHTML = '<li class="walmart-barrio-empty">No se pudieron cargar los barrios</li>';
     }
   }
 
