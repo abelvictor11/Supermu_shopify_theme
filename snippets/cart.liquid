@@ -47,7 +47,8 @@
 
                   {%- for item in cart.items -%}
                     {%- assign is_plastic_bag = false -%}
-                    {%- if settings.plastic_bag_fee_enabled and settings.plastic_bag_product != blank and item.variant.id == settings.plastic_bag_product.selected_or_first_available_variant.id -%}
+                    {%- assign plastic_bag_handle = settings.plastic_bag_product_handle | default: 'bolsa-plastica' -%}
+                    {%- if settings.plastic_bag_fee_enabled and item.product.handle == plastic_bag_handle -%}
                       {%- assign is_plastic_bag = true -%}
                     {%- endif -%}
                     {%- assign item_cart_max = cart_item_max -%}

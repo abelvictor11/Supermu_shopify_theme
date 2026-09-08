@@ -69,7 +69,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {% include 'store-selector' %}
 <script src="{{ 'store-selector.js' | asset_url }}" defer></script>
 
-{%- if settings.plastic_bag_fee_enabled and settings.plastic_bag_product != blank -%}
+{%- assign plastic_bag_handle = settings.plastic_bag_product_handle | default: 'bolsa-plastica' -%}
+{%- if settings.plastic_bag_fee_enabled and all_products[plastic_bag_handle] != empty -%}
   <script src="{{ 'plastic-bag-cart.js' | asset_url }}" defer></script>
   <script src="{{ 'plastic-bag-sync.js' | asset_url }}" defer></script>
 {%- endif -%}
