@@ -28,9 +28,9 @@
   // a que `theme.cart` y el módulo puro existan antes de sincronizar.
   function whenCartReady(cb, triesLeft) {
     triesLeft = triesLeft == null ? 120 : triesLeft;
-    var cartReady = window.theme && theme.cart &&
-      typeof theme.cart.updateData === 'function' &&
-      typeof theme.cart.updateCart === 'function';
+    var cartReady = window.theme && theme.Cart &&
+      typeof theme.Cart.updateData === 'function' &&
+      typeof theme.Cart.updateCart === 'function';
     if (cartReady && window.PlasticBagCart) {
       cb();
     } else if (triesLeft > 0) {
@@ -50,16 +50,16 @@
 
     function applyAction(action) {
       if (action.op === 'add') {
-        return theme.cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
+        return theme.Cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
       }
       if (action.op === 'update' || action.op === 'remove') {
-        return theme.cart.changeItemById(cfg.variantId, action.quantity);
+        return theme.Cart.changeItemById(cfg.variantId, action.quantity);
       }
       if (action.op === 'reset') {
         // Caso raro (líneas duplicadas): limpiar y volver a fijar.
-        return theme.cart.changeItemById(cfg.variantId, 0).then(function () {
+        return theme.Cart.changeItemById(cfg.variantId, 0).then(function () {
           if (action.quantity > 0) {
-            return theme.cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
+            return theme.Cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
           }
         });
       }
@@ -70,13 +70,13 @@
       if (busy) { queued = true; return; }
       busy = true;
 
-      return Promise.resolve(theme.cart.updateData())
+      return Promise.resolve(theme.Cart.updateData())
         .then(function () {
-          var items = (theme.cart.currentData && theme.cart.currentData.items) || [];
+          var items = (theme.Cart.currentData && theme.Cart.currentData.items) || [];
           var action = Bag.getSyncAction(items, cfg);
           if (action.op === 'none') return null;
           return applyAction(action).then(function () {
-            return theme.cart.updateCart();
+            return theme.Cart.updateCart();
           });
         })
         .catch(function (error) {
