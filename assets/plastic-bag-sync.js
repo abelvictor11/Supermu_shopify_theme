@@ -48,16 +48,20 @@
     var busy = false;
     var queued = false;
 
+    // IMPORTANTE: /cart/change.js exige el id como STRING de dígitos (o line key);
+    // un id numérico devuelve 400 y el cambio falla en silencio. add.js sí acepta número.
+    var variantIdStr = String(cfg.variantId);
+
     function applyAction(action) {
       if (action.op === 'add') {
         return theme.Cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
       }
       if (action.op === 'update' || action.op === 'remove') {
-        return theme.Cart.changeItemById(cfg.variantId, action.quantity);
+        return theme.Cart.changeItemById(variantIdStr, action.quantity);
       }
       if (action.op === 'reset') {
         // Caso raro (líneas duplicadas): limpiar y volver a fijar.
-        return theme.Cart.changeItemById(cfg.variantId, 0).then(function () {
+        return theme.Cart.changeItemById(variantIdStr, 0).then(function () {
           if (action.quantity > 0) {
             return theme.Cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
           }
@@ -66,11 +70,23 @@
       return Promise.resolve();
     }
 
+    function cartReady() {
+      return window.theme && theme.Cart &&
+        typeof theme.Cart.updateData === 'function' &&
+        typeof theme.Cart.updateCart === 'function';
+    }
+
     function reconcile() {
-      if (busy) { queued = true; return; }
+      if (busy) { queued = true; return Promise.resolve(); }
+      // theme.Cart se instancia tarde (module loader async); si aún no está,
+      // salir sin marcar busy para no quedar bloqueados.
+      if (!cartReady()) { return Promise.resolve(); }
       busy = true;
 
-      return Promise.resolve(theme.Cart.updateData())
+      // Envolver updateData() en la cadena para que un throw síncrono se
+      // convierta en promesa rechazada y busy siempre se libere.
+      return Promise.resolve()
+        .then(function () { return theme.Cart.updateData(); })
         .then(function () {
           var items = (theme.Cart.currentData && theme.Cart.currentData.items) || [];
           var action = Bag.getSyncAction(items, cfg);
