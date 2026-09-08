@@ -77,6 +77,12 @@
           if (action.op === 'none') return null;
           return applyAction(action).then(function () {
             return theme.Cart.updateCart();
+          }).then(function () {
+            // La página de carrito corrige su subtotal con este helper propio;
+            // tras un re-render Ajax hay que re-aplicarlo (no se re-ejecuta solo).
+            if (typeof window.updateCartSubtotal === 'function') {
+              try { window.updateCartSubtotal(); } catch (e) {}
+            }
           });
         })
         .catch(function (error) {
