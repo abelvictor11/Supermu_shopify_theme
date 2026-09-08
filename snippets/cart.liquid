@@ -46,6 +46,10 @@
                   {%- if cart_limits_enabled and cart_item_max < 1 -%}{%- assign cart_item_max = 3 -%}{%- endif -%}
 
                   {%- for item in cart.items -%}
+                    {%- assign is_plastic_bag = false -%}
+                    {%- if settings.plastic_bag_fee_enabled and settings.plastic_bag_product != blank and item.variant.id == settings.plastic_bag_product.selected_or_first_available_variant.id -%}
+                      {%- assign is_plastic_bag = true -%}
+                    {%- endif -%}
                     {%- assign item_cart_max = cart_item_max -%}
                     {%- assign _item_limits_enabled = cart_limits_enabled -%}
                     {%- if cart_limits_enabled and cart_limits.tag_limits != blank -%}
@@ -90,9 +94,13 @@
                     <div class="py-20 border-bottom" data-line="{{ forloop.index }}">
                       <div class="row align-items-center">
                         <div class="col-sm-5 col-lg-4 col-xl-6 d-flex align-items-center">
+                          {%- unless is_plastic_bag -%}
                           <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="mr-20">
                             <i>{% render 'icon-theme-165' %}</i>
                           </a>
+                          {%- else -%}
+                          <span class="mr-20" aria-hidden="true" style="width:24px;display:inline-block"></span>
+                          {%- endunless -%}
                           <div class="cart__image mr-20">
                             {% if item.image %}
                               <a href="{{ item.url }}">
@@ -100,12 +108,19 @@
                               </a>
                             {% endif %}
                           </div>
+                          {%- if is_plastic_bag -%}
+                          <div>
+                            <strong>{{ settings.plastic_bag_label | default: 'Bolsa plástica obligatoria' }}</strong>
+                            <p class="mb-0 text-muted" style="font-size:.85em">{{ settings.plastic_bag_help | default: '1 bolsa por cada $40.000 o fracción' }}</p>
+                          </div>
+                          {%- else -%}
                           <div>
                             <a href="{{ item.url }}">{{ item.product.title }}</a>
                             {%- unless item.product.has_only_default_variant -%}
                               <p class="mb-0">{{ item.variant.title }}</p>
                             {%- endunless -%}
                           </div>
+                          {%- endif -%}
                           {%- if item.properties and item.properties.size > 0 -%}
                             <div class="mt-5">
                               {%- for property in item.properties -%}
@@ -149,6 +164,19 @@
                               {% endif %}
                             </div>
                             <div class="col-sm-4">
+                              {%- if is_plastic_bag -%}
+                              <input
+                                  type="number"
+                                  value="{{ display_quantity }}"
+                                  class="form-control quantity-input"
+                                  data-line="{{ forloop.index }}"
+                                  data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
+                                  readonly
+                                  tabindex="-1"
+                                  aria-label="Cantidad de bolsas (automática, no editable)"
+                                  style="background:#f1f1f1;color:#777;pointer-events:none;cursor:not-allowed"
+                              >
+                              {%- else -%}
                               <input
                                   type="number"
                                   name="updates[]"
@@ -163,6 +191,7 @@
                                   data-line="{{ forloop.index }}"
                                   data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
                               >
+                              {%- endif -%}
                             </div>
                             <div class="col-sm-4 text-right" data-line-total="{{ forloop.index }}">
                              <strong> {{ item.final_line_price | money }}</strong>
