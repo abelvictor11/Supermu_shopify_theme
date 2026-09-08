@@ -354,13 +354,17 @@ class WalmartStoreSelector {
     if (!store) return;
 
     this.selectedStore = store;
+    this.selectedLocationId = store.locationId || '';
     this.saveData();
     this.updateHeaderButton();
     this.showSuggestedStore(store);
+    this.applyLocationFilter();
     this.closeStoreModal();
 
     // Disparar evento
-    window.dispatchEvent(new CustomEvent('storeSelected', { detail: store }));
+    window.dispatchEvent(new CustomEvent('storeSelected', {
+      detail: { store: store, barrio: this.selectedBarrio, locationId: this.selectedLocationId }
+    }));
   }
 
   updateHeaderButton() {
