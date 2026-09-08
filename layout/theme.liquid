@@ -69,6 +69,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {% include 'store-selector' %}
 <script src="{{ 'store-selector.js' | asset_url }}" defer></script>
 
+{%- if settings.plastic_bag_fee_enabled and settings.plastic_bag_product != blank -%}
+  <script src="{{ 'plastic-bag-cart.js' | asset_url }}" defer></script>
+  <script src="{{ 'plastic-bag-sync.js' | asset_url }}" defer></script>
+{%- endif -%}
+
 <main id="MainContent">
   <div class="menu-overlay"></div>  
   {%- if request.page_type == 'page' or request.page_type == 'product' or request.page_type == 'cart' or request.page_type == 'list-collections' or request.page_type == 'article' or request.page_type == 'blog' -%}

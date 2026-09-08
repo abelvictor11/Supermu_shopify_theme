@@ -215,6 +215,16 @@
                 cart_url: {{ routes.cart_url | json }},
                 predictive_search_url: '{{ routes.predictive_search_url }}'
             },
+            {%- assign plastic_bag_variant = settings.plastic_bag_product.selected_or_first_available_variant -%}
+            plasticBag: {
+                enabled: {{ settings.plastic_bag_fee_enabled | default: false | json }},
+                productId: {{ settings.plastic_bag_product.id | default: 0 | json }},
+                variantId: {{ plastic_bag_variant.id | default: 0 | json }},
+                unitPrice: {{ plastic_bag_variant.price | default: 0 | json }},
+                blockSize: {{ settings.plastic_bag_block_size | default: 40000 | times: 100 | json }},
+                label: {{ settings.plastic_bag_label | default: 'Bolsa plástica obligatoria' | json }},
+                help: {{ settings.plastic_bag_help | default: '1 bolsa por cada $40.000 o fracción' | json }}
+            },
             animations: {
                 css: {
                     duration: {{ animation_css_duration | json }}
