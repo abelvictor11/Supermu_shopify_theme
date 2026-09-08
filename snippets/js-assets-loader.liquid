@@ -215,10 +215,12 @@
                 cart_url: {{ routes.cart_url | json }},
                 predictive_search_url: '{{ routes.predictive_search_url }}'
             },
-            {%- assign plastic_bag_variant = settings.plastic_bag_product.selected_or_first_available_variant -%}
+            {%- assign plastic_bag_handle = settings.plastic_bag_product_handle | default: 'bolsa-plastica' -%}
+            {%- assign plastic_bag_product = all_products[plastic_bag_handle] -%}
+            {%- assign plastic_bag_variant = plastic_bag_product.selected_or_first_available_variant -%}
             plasticBag: {
-                enabled: {{ settings.plastic_bag_fee_enabled | default: false | json }},
-                productId: {{ settings.plastic_bag_product.id | default: 0 | json }},
+                enabled: {{ settings.plastic_bag_fee_enabled | json }},
+                productId: {{ plastic_bag_product.id | default: 0 | json }},
                 variantId: {{ plastic_bag_variant.id | default: 0 | json }},
                 unitPrice: {{ plastic_bag_variant.price | default: 0 | json }},
                 blockSize: {{ settings.plastic_bag_block_size | default: 40000 | times: 100 | json }},
