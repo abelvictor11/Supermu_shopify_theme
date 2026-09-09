@@ -1,0 +1,17 @@
+{%- comment -%}
+  Imprime la cantidad de unidades de MERCANCÍA en el carrito, excluyendo la
+  bolsa plástica obligatoria. Si la función está desactivada, imprime cart.item_count.
+  Uso: {% render 'cart-merchandise-count' %}
+{%- endcomment -%}
+{%- if settings.plastic_bag_fee_enabled -%}
+  {%- assign _bag_handle = settings.plastic_bag_product_handle | default: 'bolsa-plastica' -%}
+  {%- assign _mc = 0 -%}
+  {%- for _it in cart.items -%}
+    {%- unless _it.product.handle == _bag_handle -%}
+      {%- assign _mc = _mc | plus: _it.quantity -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {{- _mc -}}
+{%- else -%}
+  {{- cart.item_count -}}
+{%- endif -%}
