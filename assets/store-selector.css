@@ -947,3 +947,37 @@ product-item.is-unavailable-at-store .btn-add-to-cart {
   border: 1px solid #ef4444;
   color: #991b1b;
 }
+
+/* ========== UBICACIÓN SELECCIONADA / HINT (modo geolocalización) ========== */
+.walmart-geo-hint {
+  margin: 12px 0 6px;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+.walmart-selected-location {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+.walmart-selected-location__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #dd0a0a;
+}
+.walmart-selected-location__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #6b7280;
+  font-weight: 700;
+}
+.walmart-selected-location__value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #041e42;
+  line-height: 1.3;
+}

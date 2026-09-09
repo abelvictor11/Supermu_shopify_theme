@@ -367,16 +367,48 @@ class WalmartStoreSelector {
     }));
   }
 
+  getCoverageZone() {
+    try {
+      const raw = localStorage.getItem('walmart_coverage');
+      if (raw) { const c = JSON.parse(raw); return c && c.zone ? c.zone : null; }
+    } catch (e) {}
+    return null;
+  }
+
   updateHeaderButton() {
     const textEl = document.getElementById('walmart-header-store-text');
-    if (!textEl) return;
+    if (textEl) {
+      const zone = this.getCoverageZone();
+      if (this.selectedBarrio && this.selectedStore) {
+        textEl.textContent = `${this.selectedBarrio} • ${this.selectedStore.name}`;
+      } else if (this.selectedStore) {
+        const suffix = zone || this.selectedStore.zone || '';
+        textEl.textContent = suffix ? `${this.selectedStore.name} • ${suffix}` : this.selectedStore.name;
+      } else {
+        textEl.textContent = 'Selecciona una tienda';
+      }
+    }
+    this.updateSelectedLocationDisplay();
+  }
 
-    if (this.selectedBarrio && this.selectedStore) {
-      textEl.textContent = `${this.selectedBarrio} • ${this.selectedStore.name}`;
-    } else if (this.selectedStore) {
-      textEl.textContent = `${this.selectedStore.name} • ${this.selectedStore.zone || ''}`;
+  // Muestra barrio/zona/tienda dentro del bloque del selector.
+  updateSelectedLocationDisplay() {
+    const box = document.getElementById('walmart-selected-location');
+    const val = document.getElementById('walmart-selected-location-value');
+    const hint = document.getElementById('walmart-geo-hint');
+    if (!box || !val) return;
+    const zone = this.getCoverageZone();
+    const parts = [];
+    if (this.selectedBarrio) parts.push(this.selectedBarrio);
+    if (zone) parts.push(zone);
+    if (this.selectedStore) parts.push(`Tienda: ${this.selectedStore.name}`);
+    if (parts.length) {
+      val.textContent = parts.join(' • ');
+      box.style.display = 'block';
+      if (hint) hint.style.display = 'none';
     } else {
-      textEl.textContent = 'Selecciona una tienda';
+      box.style.display = 'none';
+      if (hint) hint.style.display = 'block';
     }
   }
 
