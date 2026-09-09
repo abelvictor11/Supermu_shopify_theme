@@ -98,4 +98,59 @@
 .popup-cart .coverage-alert__note {
   font-size: 0.75em;
 }
+
+/* Estados dinámicos según la verificación por geolocalización */
+.coverage-alert.is-covered {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #10b981;
+  border-left-color: #10b981;
+}
+.coverage-alert.is-covered .coverage-alert__title { color: #065f46; }
+.coverage-alert.is-covered .coverage-alert__text { color: #064e3b; }
+.coverage-alert.is-out {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: #ef4444;
+  border-left-color: #ef4444;
+}
+.coverage-alert.is-out .coverage-alert__title { color: #991b1b; }
+.coverage-alert.is-out .coverage-alert__text { color: #7f1d1d; }
 </style>
+
+<script>
+(function () {
+  function applyCoverage() {
+    var raw;
+    try { raw = localStorage.getItem('walmart_coverage'); } catch (e) { return; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (!data || data.covered === null || typeof data.covered === 'undefined') return;
+
+    document.querySelectorAll('.coverage-alert').forEach(function (el) {
+      var icon = el.querySelector('.coverage-alert__icon');
+      var title = el.querySelector('.coverage-alert__title');
+      var text = el.querySelector('.coverage-alert__text');
+      var note = el.querySelector('.coverage-alert__note');
+      if (data.covered === true) {
+        el.classList.add('is-covered');
+        el.classList.remove('is-out');
+        if (icon) icon.textContent = '✅';
+        if (title) title.textContent = '¡Estás dentro de cobertura!';
+        if (text) text.innerHTML = 'Tu ubicación está dentro de nuestra zona de cobertura' +
+          (data.zone ? ' (<strong>' + data.zone + '</strong>)' : '') + '. Puedes continuar con tu pedido.';
+        if (note) note.style.display = 'none';
+      } else {
+        el.classList.add('is-out');
+        el.classList.remove('is-covered');
+        if (icon) icon.textContent = '⚠️';
+        if (title) title.textContent = 'Fuera de zona de cobertura';
+        if (text) text.innerHTML = 'Tu ubicación quedó <strong>fuera</strong> de nuestra zona de cobertura. Verifica tu dirección antes de pagar.';
+        if (note) note.style.display = '';
+      }
+    });
+  }
+  if (document.readyState !== 'loading') applyCoverage();
+  else document.addEventListener('DOMContentLoaded', applyCoverage);
+  window.addEventListener('coverageChecked', applyCoverage);
+})();
+</script>
