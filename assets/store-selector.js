@@ -494,6 +494,69 @@ class WalmartStoreSelector {
     }
   }
 
+  // ===== COBERTURA (punto-en-polígono con las zonas del KML) =====
+  checkCoverage(location) {
+    const fc = window.SUPERMU_COVERAGE;
+    if (!fc || !window.CoverageCheck || !location) return { covered: null, zone: null };
+    const zone = window.CoverageCheck.findZone(location.longitude, location.latitude, fc);
+    return { covered: zone !== null, zone: zone };
+  }
+
+  persistCoverage(cov, location) {
+    try {
+      localStorage.setItem('walmart_coverage', JSON.stringify({
+        covered: cov.covered,
+        zone: cov.zone,
+        latitude: location ? location.latitude : null,
+        longitude: location ? location.longitude : null,
+        ts: Date.now()
+      }));
+    } catch (e) {}
+    // Avisar a otros scripts (p. ej. la alerta del carrito).
+    window.dispatchEvent(new CustomEvent('coverageChecked', { detail: cov }));
+  }
+
+  // Selección de tienda centralizada (reusada por barrio y geolocalización):
+  // fija tienda + location, persiste, actualiza header y filtra inventario.
+  applyStoreSelection(store, barrio) {
+    if (!store) return;
+    this.selectedStore = store;
+    this.selectedLocationId = store.locationId || '';
+    if (barrio) this.selectedBarrio = barrio;
+    this.saveData();
+    this.updateHeaderButton();
+    this.showSuggestedStore(store);
+    this.applyLocationFilter();
+    window.dispatchEvent(new CustomEvent('storeSelected', {
+      detail: { store: store, barrio: this.selectedBarrio, locationId: this.selectedLocationId }
+    }));
+  }
+
+  showCoverageResult(covered, zone, store) {
+    if (!this.dropdown) return;
+    let el = document.getElementById('walmart-coverage-banner');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'walmart-coverage-banner';
+      const suggested = document.getElementById('walmart-suggested-store');
+      if (suggested && suggested.parentNode) {
+        suggested.parentNode.insertBefore(el, suggested);
+      } else {
+        const content = this.dropdown.querySelector('.walmart-dropdown-content');
+        if (content) content.appendChild(el);
+      }
+    }
+    if (covered) {
+      el.className = 'walmart-coverage-banner is-covered';
+      el.innerHTML = '✓ Estás dentro de cobertura' + (zone ? ' · ' + zone : '') +
+        (store ? '. Tienda: <strong>' + store.name + '</strong>' : '');
+    } else {
+      el.className = 'walmart-coverage-banner is-out';
+      el.innerHTML = '✗ Tu ubicación está fuera de nuestra zona de cobertura.';
+    }
+    el.style.display = 'block';
+  }
+
   requestGeolocation() {
     if (!navigator.geolocation) {
       alert('Tu navegador no soporta geolocalización');
@@ -512,10 +575,16 @@ class WalmartStoreSelector {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-        
+
+        const cov = this.checkCoverage(this.userLocation);
+        this.persistCoverage(cov, this.userLocation);
         const nearest = this.findNearestStore(this.userLocation);
-        if (nearest) {
-          this.showSuggestedStore(nearest.store);
+
+        if (cov.covered === false) {
+          this.showCoverageResult(false, cov.zone, null);
+        } else if (nearest) {
+          this.applyStoreSelection(nearest.store);
+          this.showCoverageResult(cov.covered === true, cov.zone, nearest.store);
         }
 
         if (btn) {
@@ -554,11 +623,18 @@ class WalmartStoreSelector {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-        
+
+        const cov = this.checkCoverage(this.userLocation);
+        this.persistCoverage(cov, this.userLocation);
         const nearest = this.findNearestStore(this.userLocation);
-        if (nearest) {
-          this.showGeoStatus(`Tienda más cercana: ${nearest.store.name} (${nearest.distance.toFixed(1)} km)`, 'success');
+
+        if (cov.covered === false) {
+          this.showGeoStatus('Tu ubicación está fuera de nuestra zona de cobertura.', 'error');
+        } else if (nearest) {
+          this.applyStoreSelection(nearest.store);
           this.sortStoresByDistance();
+          const zoneTxt = cov.zone ? ` · ${cov.zone}` : '';
+          this.showGeoStatus(`✓ En cobertura${zoneTxt}. Tienda: ${nearest.store.name} (${nearest.distance.toFixed(1)} km)`, 'success');
         } else {
           this.showGeoStatus('No encontramos tiendas cercanas', 'error');
         }

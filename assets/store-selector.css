@@ -927,3 +927,23 @@ product-item.is-unavailable-at-store .btn-add-to-cart {
   pointer-events: none;
   opacity: 0.5;
 }
+
+/* ========== BANNER DE COBERTURA (geolocalización) ========== */
+.walmart-coverage-banner {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.walmart-coverage-banner.is-covered {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+}
+.walmart-coverage-banner.is-out {
+  background: #fef2f2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+}
