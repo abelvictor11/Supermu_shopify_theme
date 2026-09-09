@@ -1172,8 +1172,9 @@
                     <a href="/cart" class="header__btn-cart position-relative d-flex align-items-center text-nowrap js-popup-button" data-js-popup-button="cart"{% if need_sticky_sidebar %} data-js-sticky-replace-element="cart"{% endif %}>
                         {% capture cart_icon_name %}{{ settings.cart_icon | default: 'icon-theme-109' }}{% endcapture %}
                         <i class="mr-lg-7">{% include cart_icon_name %}</i>
-                        <span class="d-none d-lg-inline mt-lg-4" data-js-cart-count-desktop="{{ cart.item_count }}">{{ 'layout.header.cart_count' | t: count: cart.item_count }}</span>
-                        <span class="header__counter d-lg-none" data-js-cart-count-mobile="{{ cart.item_count }}">{{ cart.item_count }}</span>
+                        {%- capture _hdr_merch_str %}{% render 'cart-merchandise-count' %}{% endcapture -%}{%- assign _hdr_merch = _hdr_merch_str | plus: 0 -%}
+                        <span class="d-none d-lg-inline mt-lg-4" data-js-cart-count-desktop="{{ _hdr_merch }}">{{ 'layout.header.cart_count' | t: count: _hdr_merch }}</span>
+                        <span class="header__counter d-lg-none" data-js-cart-count-mobile="{{ _hdr_merch }}">{{ _hdr_merch }}</span>
                     </a>
                 </div>
             {%- endif -%}

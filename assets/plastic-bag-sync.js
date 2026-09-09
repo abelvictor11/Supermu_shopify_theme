@@ -106,18 +106,43 @@
         })
         .then(function () {
           busy = false;
+          updateCounters();
           if (queued) { queued = false; reconcile(); }
         });
+    }
+
+    // El contador del header no debe incluir la bolsa. El tema lo pone en
+    // item_count (con bolsa) en cada update Ajax; aquí lo corregimos.
+    function updateCounters() {
+      if (!theme.Cart || !theme.Cart.currentData) return;
+      var items = theme.Cart.currentData.items || [];
+      var count = Bag.getMerchandiseCount(items, cfg);
+      var deskText = (window.theme && theme.strings && theme.strings.header &&
+        theme.strings.header.cart_count_desktop)
+        ? theme.strings.header.cart_count_desktop.replace('{{ count }}', count)
+        : String(count);
+      document.querySelectorAll('[data-js-cart-count-desktop]').forEach(function (el) {
+        el.setAttribute('data-js-cart-count-desktop', count);
+        el.innerHTML = deskText;
+      });
+      document.querySelectorAll('[data-js-cart-count-mobile]').forEach(function (el) {
+        el.setAttribute('data-js-cart-count-mobile', count);
+        el.textContent = String(count);
+      });
     }
 
     var schedule = (window.theme && typeof theme.debounce === 'function')
       ? theme.debounce(reconcile, 200)
       : function () { setTimeout(reconcile, 200); };
 
+    // Corregir el contador también justo después de los eventos del tema
+    // (su handler lo pone con bolsa antes de que corra reconcile).
+    var scheduleCounter = function () { setTimeout(updateCounters, 250); };
+
     // Cambios de carrito hechos por el tema:
-    document.addEventListener('cart:updated', schedule);       // grid instant-cart (custom.js)
-    document.addEventListener('theme:cart::added', schedule);  // add del carrito (theme.js)
-    document.addEventListener('theme:cart::removed', schedule); // remove del carrito (theme.js)
+    document.addEventListener('cart:updated', function () { schedule(); scheduleCounter(); });
+    document.addEventListener('theme:cart::added', function () { schedule(); scheduleCounter(); });
+    document.addEventListener('theme:cart::removed', function () { schedule(); scheduleCounter(); });
 
     // Sincronización inicial: carrito que ya tenía productos sin bolsa, o cuya
     // cantidad quedó desfasada respecto a la fórmula.
