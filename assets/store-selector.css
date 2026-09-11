@@ -4,8 +4,8 @@
 
 /* ========== VARIABLES ========== */
 :root {
-  --walmart-blue: #dd0a0a;
-  --walmart-blue-dark: #b00808;
+  --walmart-blue: #de0101; /* rojo de marca Supermu */
+  --walmart-blue-dark: #b30000;
   --walmart-yellow: #ffc220;
   --walmart-dark: #041e42;
   --walmart-gray: #46474a;
@@ -19,18 +19,18 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: var(--walmart-dark);
+  background: var(--walmart-blue);
   color: white;
   border: none;
   border-radius: 24px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'Bogle', Arial, sans-serif;
+  font-family: inherit;
   max-width: 280px;
 }
 
 .walmart-store-btn:hover {
-  background: #002d5c;
+  background: var(--walmart-blue-dark);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
@@ -993,3 +993,12 @@ product-item.is-unavailable-at-store .btn-add-to-cart {
   content: ""; flex: 1; height: 1px; background: #e5e7eb;
 }
 .walmart-barrio-or span { padding: 0 10px; }
+
+/* Quitar bullets sueltos de la lista de barrios (reset robusto) */
+#walmart-barrio-results,
+#walmart-barrio-results li,
+.walmart-barrio-results,
+.walmart-barrio-results li { list-style: none !important; }
+#walmart-barrio-results { margin: 4px 0 0; padding: 4px; }
+.walmart-barrio-item { list-style: none !important; }
+.walmart-barrio-item::marker { content: none; }
