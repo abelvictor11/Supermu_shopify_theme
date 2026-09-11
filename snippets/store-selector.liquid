@@ -26,6 +26,7 @@
     </div>
 
     <!-- Tres opciones: Envío, Retiro, Entrega -->
+    {%- if settings.store_selector_show_delivery_modes -%}
     <div class="walmart-options-grid">
       <div class="walmart-option" data-option="envio">
         <div class="walmart-option-icon">
@@ -64,6 +65,7 @@
         <span>Entrega</span>
       </div>
     </div>
+    {%- endif -%}
 
     <!-- Ubicación / zona / tienda seleccionada -->
     <div class="walmart-selected-location" id="walmart-selected-location" style="display: none;">
@@ -119,9 +121,11 @@
     </button>
 
     <!-- Link para ver todas las tiendas -->
+    {%- if settings.store_selector_show_all_stores_link -%}
     <button class="walmart-link-stores" onclick="window.storeSelector.openStoreModal()">
       Ver todas las tiendas disponibles
     </button>
+    {%- endif -%}
   </div>
 </div>
 
