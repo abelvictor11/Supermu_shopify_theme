@@ -424,8 +424,8 @@ class WalmartStoreSelector {
 
     if (matches.length === 0) {
       list.innerHTML = this.barrioIndex.length === 0
-        ? '<li class="walmart-barrio-empty">No se pudo cargar la lista de barrios</li>'
-        : '<li class="walmart-barrio-empty">No encontramos ese barrio en cobertura</li>';
+        ? '<div class="walmart-barrio-empty">No se pudo cargar la lista de barrios</div>'
+        : '<div class="walmart-barrio-empty">No encontramos ese barrio en cobertura</div>';
       list.style.display = 'block';
       return;
     }
@@ -434,11 +434,11 @@ class WalmartStoreSelector {
       const zoneShort = (item.zone || '').replace('Cobertura ', '');
       const sub = [item.muni, zoneShort].filter(Boolean).join(' · ');
       return `
-      <li class="walmart-barrio-item" role="option"
+      <div class="walmart-barrio-item" role="option"
           data-barrio="${item.barrio.replace(/"/g, '&quot;')}">
         <span class="walmart-barrio-item-name">${item.barrio}</span>
         <span class="walmart-barrio-item-store">${sub}</span>
-      </li>`;
+      </div>`;
     }).join('');
     list.style.display = 'block';
 
