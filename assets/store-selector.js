@@ -60,14 +60,12 @@ class WalmartStoreSelector {
   }
 
   buildBarrioIndex() {
-    this.barrioIndex = [];
-    this.stores.forEach(store => {
-      (store.barrios || []).forEach(barrio => {
-        if (barrio) {
-          this.barrioIndex.push({ barrio: barrio, store: store });
-        }
-      });
-    });
+    // Barrios del área de cobertura (window.SUPERMU_BARRIOS), cada uno con su
+    // zona y coordenada. La tienda se resuelve por cercanía al seleccionar.
+    const data = window.SUPERMU_BARRIOS || [];
+    this.barrioIndex = data
+      .filter(b => b && b.name)
+      .map(b => ({ barrio: b.name, zone: b.zone, lat: b.lat, lng: b.lng }));
   }
 
   async loadStores() {
@@ -426,52 +424,56 @@ class WalmartStoreSelector {
 
     if (matches.length === 0) {
       list.innerHTML = this.barrioIndex.length === 0
-        ? '<li class="walmart-barrio-empty">No hay barrios configurados</li>'
-        : '<li class="walmart-barrio-empty">Sin coincidencias</li>';
+        ? '<li class="walmart-barrio-empty">No se pudo cargar la lista de barrios</li>'
+        : '<li class="walmart-barrio-empty">No encontramos ese barrio en cobertura</li>';
       list.style.display = 'block';
       return;
     }
 
     list.innerHTML = matches.map(item => `
       <li class="walmart-barrio-item" role="option"
-          data-barrio="${item.barrio.replace(/"/g, '&quot;')}"
-          data-store-id="${item.store.id}">
+          data-barrio="${item.barrio.replace(/"/g, '&quot;')}">
         <span class="walmart-barrio-item-name">${item.barrio}</span>
-        <span class="walmart-barrio-item-store">${item.store.name}</span>
+        <span class="walmart-barrio-item-store">${(item.zone || '').replace('Cobertura ', '')}</span>
       </li>
     `).join('');
     list.style.display = 'block';
 
     list.querySelectorAll('.walmart-barrio-item').forEach(el => {
       el.addEventListener('click', () => {
-        this.selectBarrio(el.dataset.barrio, el.dataset.storeId);
+        this.selectBarrio(el.dataset.barrio);
       });
     });
   }
 
-  selectBarrio(barrio, storeId) {
-    const store = this.stores.find(s => s.id === storeId);
-    if (!store) return;
+  // Selección por barrio (fallback sin GPS): usa la coordenada del barrio para
+  // marcar cobertura y elegir la tienda más cercana (misma lógica que geoloc.).
+  selectBarrio(barrioName) {
+    const b = this.barrioIndex.find(x => x.barrio === barrioName);
+    if (!b) return;
 
-    this.selectedBarrio = barrio;
-    this.selectedStore = store;
-    this.selectedLocationId = store.locationId || '';
-    this.saveData();
+    const loc = { latitude: b.lat, longitude: b.lng };
+    this.userLocation = loc;
+    this.selectedBarrio = b.barrio;
+
+    // Cobertura: el barrio ya está dentro de una zona (por eso está en la lista).
+    const cov = { covered: true, zone: b.zone };
+    this.persistCoverage(cov, loc);
+
+    const nearest = this.findNearestStore(loc);
+    if (nearest) {
+      this.applyStoreSelection(nearest.store, b.barrio);
+    } else {
+      this.updateHeaderButton();
+    }
 
     // UI
     const input = document.getElementById('walmart-barrio-input');
-    if (input) input.value = barrio;
+    if (input) input.value = b.barrio;
     const list = document.getElementById('walmart-barrio-results');
     if (list) list.style.display = 'none';
 
-    this.updateHeaderButton();
-    this.showSuggestedStore(store);
-    this.applyLocationFilter();
     this.hideDropdown();
-
-    window.dispatchEvent(new CustomEvent('storeSelected', {
-      detail: { store: store, barrio: barrio, locationId: this.selectedLocationId }
-    }));
   }
 
   // ===== FILTRO DE INVENTARIO POR LOCATION (Fase 2) =====
