@@ -150,6 +150,8 @@ class WalmartStoreSelector {
 
       if (this.selectedBarrio) {
         localStorage.setItem(this.BARRIO_KEY, this.selectedBarrio);
+      } else {
+        localStorage.removeItem(this.BARRIO_KEY);
       }
       if (this.selectedLocationId) {
         localStorage.setItem(this.LOCATION_KEY, this.selectedLocationId);
