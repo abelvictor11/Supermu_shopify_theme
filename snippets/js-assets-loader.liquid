@@ -224,6 +224,7 @@
                 variantId: {{ plastic_bag_variant.id | default: 0 | json }},
                 unitPrice: {{ plastic_bag_variant.price | default: 0 | json }},
                 blockSize: {{ settings.plastic_bag_block_size | default: 40000 | times: 100 | json }},
+                unitsPerBag: {{ settings.plastic_bag_units_per_bag | default: 4 | json }},
                 label: {{ settings.plastic_bag_label | default: 'Bolsa plástica obligatoria' | json }},
                 help: {{ settings.plastic_bag_help | default: '1 bolsa por cada $40.000 o fracción' | json }}
             },
