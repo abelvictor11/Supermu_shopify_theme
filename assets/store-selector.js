@@ -65,7 +65,7 @@ class WalmartStoreSelector {
     const data = window.SUPERMU_BARRIOS || [];
     this.barrioIndex = data
       .filter(b => b && b.name)
-      .map(b => ({ barrio: b.name, zone: b.zone, lat: b.lat, lng: b.lng }));
+      .map(b => ({ barrio: b.name, muni: b.muni || '', zone: b.zone, lat: b.lat, lng: b.lng }));
   }
 
   async loadStores() {
@@ -150,6 +150,8 @@ class WalmartStoreSelector {
 
       if (this.selectedBarrio) {
         localStorage.setItem(this.BARRIO_KEY, this.selectedBarrio);
+      } else {
+        localStorage.removeItem(this.BARRIO_KEY);
       }
       if (this.selectedLocationId) {
         localStorage.setItem(this.LOCATION_KEY, this.selectedLocationId);
@@ -424,19 +426,22 @@ class WalmartStoreSelector {
 
     if (matches.length === 0) {
       list.innerHTML = this.barrioIndex.length === 0
-        ? '<li class="walmart-barrio-empty">No se pudo cargar la lista de barrios</li>'
-        : '<li class="walmart-barrio-empty">No encontramos ese barrio en cobertura</li>';
+        ? '<div class="walmart-barrio-empty">No se pudo cargar la lista de barrios</div>'
+        : '<div class="walmart-barrio-empty">No encontramos ese barrio en cobertura</div>';
       list.style.display = 'block';
       return;
     }
 
-    list.innerHTML = matches.map(item => `
-      <li class="walmart-barrio-item" role="option"
+    list.innerHTML = matches.map(item => {
+      const zoneShort = (item.zone || '').replace('Cobertura ', '');
+      const sub = [item.muni, zoneShort].filter(Boolean).join(' · ');
+      return `
+      <div class="walmart-barrio-item" role="option"
           data-barrio="${item.barrio.replace(/"/g, '&quot;')}">
         <span class="walmart-barrio-item-name">${item.barrio}</span>
-        <span class="walmart-barrio-item-store">${(item.zone || '').replace('Cobertura ', '')}</span>
-      </li>
-    `).join('');
+        <span class="walmart-barrio-item-store">${sub}</span>
+      </div>`;
+    }).join('');
     list.style.display = 'block';
 
     list.querySelectorAll('.walmart-barrio-item').forEach(el => {
@@ -556,7 +561,9 @@ class WalmartStoreSelector {
     if (!store) return;
     this.selectedStore = store;
     this.selectedLocationId = store.locationId || '';
-    if (barrio) this.selectedBarrio = barrio;
+    // Si viene sin barrio (p. ej. geolocalización), limpiar el barrio previo
+    // para no mostrar un barrio de otra zona con la tienda nueva.
+    this.selectedBarrio = barrio || null;
     this.saveData();
     this.updateHeaderButton();
     this.showSuggestedStore(store);
