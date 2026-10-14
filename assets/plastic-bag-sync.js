@@ -52,19 +52,47 @@
     // un id numérico devuelve 400 y el cambio falla en silencio. add.js sí acepta número.
     var variantIdStr = String(cfg.variantId);
 
-    function applyAction(action) {
+    function request(path, payload) {
+      return fetch(theme.Cart.rootURL + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (response) {
+        if (!response.ok) return response.text().then(function (message) {
+          throw new Error('Shopify HTTP ' + response.status + ': ' + message);
+        });
+        return response.json();
+      });
+    }
+
+    function readCart() {
+      return fetch(theme.Cart.rootURL + '.js', { cache: 'no-store' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Cart HTTP ' + response.status);
+          return response.json();
+        }).then(function (data) {
+          theme.Cart.setCurrentData(data);
+          return data;
+        });
+    }
+
+    function applyAction(action, items) {
       if (action.op === 'add') {
-        return theme.Cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
+        return request('/add.js', { items: [{ id: variantIdStr, quantity: action.quantity }] });
       }
+      var lines = items.filter(function (item) { return Bag.isBagItem(item, cfg); });
       if (action.op === 'update' || action.op === 'remove') {
-        return theme.Cart.changeItemById(variantIdStr, action.quantity);
+        return request('/change.js', { id: lines[0].key || variantIdStr, quantity: action.quantity });
       }
       if (action.op === 'reset') {
-        // Caso raro (líneas duplicadas): limpiar y volver a fijar.
-        return theme.Cart.changeItemById(variantIdStr, 0).then(function () {
-          if (action.quantity > 0) {
-            return theme.Cart.addItems([{ id: cfg.variantId, quantity: action.quantity }]);
-          }
+        return lines.reduce(function (previous, line) {
+          return previous.then(function () {
+            return request('/change.js', { id: line.key || variantIdStr, quantity: 0 });
+          });
+        }, Promise.resolve()).then(function () {
+          return action.quantity > 0
+            ? request('/add.js', { items: [{ id: variantIdStr, quantity: action.quantity }] })
+            : null;
         });
       }
       return Promise.resolve();
@@ -78,26 +106,27 @@
 
     function reconcile() {
       if (busy) { queued = true; return Promise.resolve(); }
-      // theme.Cart se instancia tarde (module loader async); si aún no está,
-      // salir sin marcar busy para no quedar bloqueados.
-      if (!cartReady()) { return Promise.resolve(); }
+      if (!cartReady()) return Promise.resolve();
       busy = true;
-
-      // Envolver updateData() en la cadena para que un throw síncrono se
-      // convierta en promesa rechazada y busy siempre se libere.
-      return Promise.resolve()
-        .then(function () { return theme.Cart.updateData(); })
-        .then(function () {
-          var items = (theme.Cart.currentData && theme.Cart.currentData.items) || [];
+      var changed = false;
+      function ensureCorrect(retries) {
+        return readCart().then(function (cart) {
+          var items = cart.items || [];
           var action = Bag.getSyncAction(items, cfg);
-          if (action.op === 'none') return null;
-          return applyAction(action).then(function () {
-            return theme.Cart.updateCart();
-          }).then(function () {
-            // La página de carrito corrige su subtotal con este helper propio;
-            // tras un re-render Ajax hay que re-aplicarlo (no se re-ejecuta solo).
+          if (action.op === 'none') return;
+          if (retries === 0) throw new Error('Bolsa desajustada después de tres intentos');
+          changed = true;
+          return applyAction(action, items).then(function () {
+            return ensureCorrect(retries - 1);
+          });
+        });
+      }
+      return ensureCorrect(3)
+        .then(function () {
+          if (!changed) return;
+          return theme.Cart.updateCart().then(function () {
             if (typeof window.updateCartSubtotal === 'function') {
-              try { window.updateCartSubtotal(); } catch (e) {}
+              try { window.updateCartSubtotal(); } catch (error) {}
             }
           });
         })
@@ -107,7 +136,7 @@
         .then(function () {
           busy = false;
           updateCounters();
-          if (queued) { queued = false; reconcile(); }
+          if (queued) { queued = false; return reconcile(); }
         });
     }
 
@@ -143,6 +172,7 @@
     document.addEventListener('cart:updated', function () { schedule(); scheduleCounter(); });
     document.addEventListener('theme:cart::added', function () { schedule(); scheduleCounter(); });
     document.addEventListener('theme:cart::removed', function () { schedule(); scheduleCounter(); });
+    document.addEventListener('theme:cart::quantity-changed', function () { schedule(); scheduleCounter(); });
 
     // Sincronización inicial: carrito que ya tenía productos sin bolsa, o cuya
     // cantidad quedó desfasada respecto a la fórmula.
