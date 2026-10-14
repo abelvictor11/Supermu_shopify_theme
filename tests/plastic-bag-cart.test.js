@@ -119,3 +119,17 @@ test('sync: función desactivada => none (nunca muta)', () => {
     { op: 'none', quantity: 0 }
   );
 });
+
+test('6 productos grandes y 2 bolsas existentes: actualiza a 15', () => {
+  const items = Array.from({ length: 6 }, (_, i) => line(i + 1, i + 10, 1, 10000000));
+  items.push(line(99, 999, 2, 40000));
+  assert.deepEqual(Bag.getSyncAction(items, config), { op: 'update', quantity: 15 });
+});
+test('16 productos grandes y 15 bolsas existentes: actualiza a 40', () => {
+  const items = Array.from({ length: 16 }, (_, i) => line(i + 1, i + 10, 1, 10000000));
+  items.push(line(99, 999, 15, 300000));
+  assert.deepEqual(Bag.getSyncAction(items, config), { op: 'update', quantity: 40 });
+});
+test('al disminuir la mercancía se reducen las bolsas', () => {
+  assert.deepEqual(Bag.getSyncAction([line(1, 10, 1, 4000000), line(99, 999, 40, 800000)], config), { op: 'update', quantity: 1 });
+});

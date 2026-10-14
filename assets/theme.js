@@ -3498,6 +3498,7 @@
                       .then(() => {
                           _.updateCart().then(() => {
                               _.enableButton($btns);
+                              document.dispatchEvent(new CustomEvent('theme:cart::quantity-changed'));
                           });
                       });
               }
@@ -3534,8 +3535,8 @@
   
               _.changeItemByLine(line, quantity)
                   .then(() => {
-                      _.updateCart();
-                  });
+                      return _.updateCart();
+                  }).then(() => { document.dispatchEvent(new CustomEvent('theme:cart::quantity-changed')); });
           }, 700));
       }
   
