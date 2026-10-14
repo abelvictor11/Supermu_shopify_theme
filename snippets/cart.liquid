@@ -80,7 +80,7 @@
                       {%- endif -%}
                     {%- endif -%}
                     {%- assign display_quantity = item.quantity -%}
-                    {%- if _item_limits_enabled and display_quantity > item_cart_max -%}{%- assign display_quantity = item_cart_max -%}{%- endif -%}
+                    {%- if is_plastic_bag == false and _item_limits_enabled and display_quantity > item_cart_max -%}{%- assign display_quantity = item_cart_max -%}{%- endif -%}
 
                     {%- assign has_compare_price = false -%}
                     {% if item.variant.compare_at_price > item.variant.price %}
@@ -168,8 +168,9 @@
                               {%- if is_plastic_bag -%}
                               <input
                                   type="number"
-                                  value="{{ display_quantity }}"
+                                  value="{{ item.quantity }}"
                                   class="form-control quantity-input"
+                                  data-plastic-bag="true"
                                   data-line="{{ forloop.index }}"
                                   data-price="{{ item.variant.price | money_without_currency | remove: '.' }}"
                                   readonly
@@ -272,7 +273,7 @@ function updateCartItem(input) {
     const lineIndex = input.dataset.line;
     const price = parseFloat(input.dataset.price);
     const raw = parseInt(input.value);
-    const quantity = CART_LIMITS_ENABLED ? Math.min(CART_ITEM_MAX, raw) : raw;
+    const quantity = CART_LIMITS_ENABLED && input.dataset.plasticBag !== 'true' ? Math.min(CART_ITEM_MAX, raw) : raw;
     const lineTotal = price * quantity;
 
     const lineTotalElement = document.querySelector(`[data-line-total="${lineIndex}"]`);
@@ -288,7 +289,7 @@ function updateCartSubtotal() {
     document.querySelectorAll('.quantity-input').forEach(input => {
         const price = parseFloat(input.dataset.price);
         const raw = parseInt(input.value);
-        const quantity = CART_LIMITS_ENABLED ? Math.min(CART_ITEM_MAX, raw) : raw;
+        const quantity = CART_LIMITS_ENABLED && input.dataset.plasticBag !== 'true' ? Math.min(CART_ITEM_MAX, raw) : raw;
         subtotal += price * quantity;
     });
 
@@ -337,7 +338,7 @@ function updateCartOnSubmit(event) {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.quantity-input').forEach(input => {
-        if (CART_LIMITS_ENABLED && input.value > CART_ITEM_MAX) input.value = CART_ITEM_MAX;
+        if (CART_LIMITS_ENABLED && input.dataset.plasticBag !== 'true' && input.value > CART_ITEM_MAX) input.value = CART_ITEM_MAX;
     });
     updateCartSubtotal();
 });
