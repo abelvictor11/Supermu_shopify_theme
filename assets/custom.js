@@ -521,6 +521,66 @@ window.addEventListener('DOMContentLoaded', function() {
     }, true);
 })();
 
+// Corrección de descuentos diarios con caché de Shopify CDN.
+// Shopify puede servir HTML cacheado con 'now' | date: '%w' del día anterior.
+// Este IIFE corre client-side en cada carga (nunca cacheado) y corrige las etiquetas.
+(function() {
+  'use strict';
+  var DAILY_RULES = {
+    '1': [{tags:['MASCOTAS'], pct:20}],
+    '2': [{tags:['CARNES','CARNE','CERDO'], pct:10}, {tags:['POLLO'], pct:20}],
+    '3': [{tags:['FRUVER'], pct:25}],
+    '4': [{tags:['PESCADO','MARISCOS','PESCADOS Y MARISCOS','CARNES BLANCAS PESCADO'], pct:20}],
+    '5': [{tags:['CARNES','CARNE','CERDO'], pct:10}, {tags:['FRUVER'], pct:25}],
+    '6': [{tags:['VINO','VINOS'], pct:30}]
+  };
+
+  function fmtCOP(cents) {
+    var n = Math.round(cents / 100);
+    return '$' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function getPctForTags(tagsStr, day) {
+    var tags = tagsStr ? tagsStr.split('|||') : [];
+    var groups = DAILY_RULES[day] || [];
+    for (var i = 0; i < groups.length; i++) {
+      var g = groups[i];
+      for (var j = 0; j < g.tags.length; j++) {
+        if (tags.indexOf(g.tags[j]) !== -1) return g.pct;
+      }
+    }
+    return 0;
+  }
+
+  function correctDailyDiscounts() {
+    var today = new Date().getDay().toString();
+    document.querySelectorAll('.js-ddc').forEach(function(anchor) {
+      if (anchor.dataset.weekday === today) return;
+      var price = parseInt(anchor.dataset.price, 10) || 0;
+      var pct = getPctForTags(anchor.dataset.tags, today);
+      var old = anchor.querySelector('.daily-discount-tag');
+      if (old) old.remove();
+      if (pct > 0 && price > 0) {
+        var disc = Math.round(price * pct / 100);
+        anchor.insertAdjacentHTML('beforeend',
+          '<div class="daily-discount-tag compact-discount-label">' +
+          '<span class="discount-percent-label">Ahora -' + pct + '%</span>' +
+          '<span class="discount-price-original">' + fmtCOP(price) + '</span>' +
+          '<span class="discount-price-final">' + fmtCOP(price - disc) + '</span>' +
+          '</div>'
+        );
+      }
+      anchor.dataset.weekday = today;
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', correctDailyDiscounts);
+  } else {
+    correctDailyDiscounts();
+  }
+})();
+
 // Ocultar precio original cuando hay label de descuento (fallback para navegadores sin :has())
 (function() {
     'use strict';
