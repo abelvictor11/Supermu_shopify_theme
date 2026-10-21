@@ -55,7 +55,7 @@
     function request(path, payload) {
       return fetch(theme.Cart.rootURL + path, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Plastic-Bag-Sync': '1' },
         body: JSON.stringify(payload)
       }).then(function (response) {
         if (!response.ok) return response.text().then(function (message) {
@@ -173,6 +173,25 @@
     document.addEventListener('theme:cart::added', function () { schedule(); scheduleCounter(); });
     document.addEventListener('theme:cart::removed', function () { schedule(); scheduleCounter(); });
     document.addEventListener('theme:cart::quantity-changed', function () { schedule(); scheduleCounter(); });
+
+    // Respaldo: no todos los caminos que mutan el carrito disparan los eventos
+    // de arriba (apps, scripts, rutas del tema), y la bolsa quedaba desfasada
+    // hasta recargar. Reaccionamos a cualquier mutación exitosa vía fetch,
+    // excepto las nuestras (marcadas con X-Plastic-Bag-Sync).
+    var CART_MUTATION = /\/cart\/(add|change|update|clear)(\.js)?(\?|$)/;
+    var nativeFetch = window.fetch;
+    window.fetch = function (input, init) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      var headers = (init && init.headers) || {};
+      var own = typeof headers.get === 'function' ? headers.get('X-Plastic-Bag-Sync') : headers['X-Plastic-Bag-Sync'];
+      var promise = nativeFetch.apply(this, arguments);
+      if (!own && CART_MUTATION.test(url)) {
+        promise.then(function (response) {
+          if (response.ok) { schedule(); scheduleCounter(); }
+        }, function () {});
+      }
+      return promise;
+    };
 
     // Sincronización inicial: carrito que ya tenía productos sin bolsa, o cuya
     // cantidad quedó desfasada respecto a la fórmula.
