@@ -77,7 +77,15 @@
     if (subtotal <= 0) return 0;
     var block = Number(config.blockSize) || 0;
     if (block <= 0) return 0;
-    return Math.ceil(subtotal / block);
+    // Bolsas por valor: un bloque iniciado de `block`.
+    var byValue = Math.ceil(subtotal / block);
+    // Tope por capacidad real: ~1 bolsa por cada `unitsPerBag` unidades de
+    // mercancía. Evita que 1 producto caro pida muchas bolsas.
+    var unitsPerBag = Number(config.unitsPerBag) || 4;
+    var units = getMerchandiseCount(items, config);
+    var byUnits = Math.ceil(units / unitsPerBag);
+    // La cantidad final es la MENOR de ambas (deben cumplirse a la vez).
+    return Math.min(byValue, byUnits);
   }
 
   // Estado observado de la(s) línea(s) de bolsa vs. lo esperado.
