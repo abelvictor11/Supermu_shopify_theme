@@ -1,10 +1,19 @@
-{%- comment -%}
-  Sidebar Menu Icon - Renderiza icono según el handle/título del link
-  Uso: {% render 'sidebar-menu-icon', link: link %}
-{%- endcomment -%}
+{% doc %}
+  Renderiza el icono de un enlace del menú lateral.
 
-{%- assign link_handle = link.handle | downcase -%}
+  @param {link} link - Enlace de navegación cuyo icono se debe mostrar.
+{% enddoc %}
+
+{%- assign link_handle = link.handle | handleize -%}
 {%- assign link_title = link.title | downcase -%}
+{%- assign custom_icon_handle = settings.sidebar_menu_custom_icon_handle | handleize -%}
+{%- assign use_custom_icon = false -%}
+
+{%- if settings.sidebar_menu_custom_icon_enabled -%}
+  {%- if settings.sidebar_menu_custom_icon_image != blank and link_handle == custom_icon_handle -%}
+    {%- assign use_custom_icon = true -%}
+  {%- endif -%}
+{%- endif -%}
 
 {%- comment -%} Mapeo de iconos por categoría de supermercado {%- endcomment -%}
 
@@ -78,8 +87,17 @@
     {%- endif -%}
 {%- endcase -%}
 
-<span class="sidebar-menu__icon">
-{%- case icon -%}
+<span class="sidebar-menu__icon"{% if use_custom_icon %} aria-hidden="true"{% endif %}>
+{%- if use_custom_icon -%}
+  <img
+    class="sidebar-menu__custom-icon"
+    src="{{ settings.sidebar_menu_custom_icon_image | image_url: width: 48 }}"
+    alt=""
+    width="24"
+    height="24"
+  >
+{%- else -%}
+  {%- case icon -%}
   {%- when 'cleaning' -%}
     {%- comment -%} Spray bottle / cleaning {%- endcomment -%}
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -211,5 +229,6 @@
       <line x1="3" y1="6" x2="21" y2="6"/>
       <path d="M16 10a4 4 0 0 1-8 0"/>
     </svg>
-{%- endcase -%}
+  {%- endcase -%}
+{%- endif -%}
 </span>
