@@ -91,7 +91,7 @@
 {%- if use_custom_icon -%}
   <img
     class="sidebar-menu__custom-icon"
-    src="{{ settings.sidebar_menu_custom_icon_image.src | escape }}"
+    src="{{ settings.sidebar_menu_custom_icon_image | image_url: width: 48 }}"
     alt=""
     width="24"
     height="24"
