@@ -7,6 +7,7 @@ const root = path.resolve(__dirname, '..');
 const carouselSection = fs.readFileSync(path.join(root, 'sections/carousel-products.liquid'), 'utf8');
 const carouselScript = fs.readFileSync(path.join(root, 'assets/section.carousel-products.js'), 'utf8');
 const responsiveImage = fs.readFileSync(path.join(root, 'snippets/rimage.liquid'), 'utf8');
+const productCollection = fs.readFileSync(path.join(root, 'snippets/product-collection.liquid'), 'utf8');
 
 test('product carousel renders only for a populated collection outside the theme editor', () => {
   assert.match(carouselSection, /assign\s+primary_collection\s*=\s*collections\[primary_block\.settings\.collection\]/);
@@ -18,7 +19,10 @@ test('product carousel renders only for a populated collection outside the theme
 
 test('product carousel images reserve intrinsic responsive geometry', () => {
   assert.doesNotMatch(carouselSection, /<img\s+class="product-image"/);
-  assert.match(carouselSection, /render\s+'product-collection'/);
+  assert.match(productCollection, /\{%\s*include\s+/);
+  assert.match(carouselSection, /include\s+'product-collection'\s*,\s*url_without_collection:\s*true/);
+  assert.doesNotMatch(carouselSection, /include\s+'product-collection'\s+with\s+url_without_collection/);
+  assert.doesNotMatch(carouselSection, /render\s+'product-collection'/);
   assert.match(responsiveImage, /padding-top:\{\{\s*1\s*\|\s*divided_by:\s*aspect_ratio/);
   assert.match(responsiveImage, /if\s+image\s*==\s*blank/);
   assert.match(responsiveImage, /assign\s+custom_src\s*=\s*'data:image\/png;base64/);
@@ -58,7 +62,6 @@ test('carousel motion respects reduced-motion preferences', () => {
 
 test('carousel container markup is statically parseable by Theme Check', () => {
   assert.doesNotMatch(carouselSection, /<div\{%\s*render\s+'layout-get-container-class'/);
-  assert.doesNotMatch(carouselSection, /include\s+'product-collection'\s+with\s+url_without_collection/);
   assert.match(carouselSection, /section\.settings\.container\s*==\s*'boxed'/);
   assert.match(carouselSection, /container-fluid/);
   assert.match(carouselSection, /"value":\s*"6"[\s\S]*?"label":\s*"6 items in the row"/);

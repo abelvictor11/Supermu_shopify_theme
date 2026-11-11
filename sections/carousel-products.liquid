@@ -75,7 +75,7 @@
                                             {%- endif -%}
                                             <div class="carousel__item col-auto"{% if get_carousel_products_async_ajax_loading %} data-carousel-product-preload data-handle="{{ product.handle }}"{% endif %}>
                                                 {%- if get_carousel_products_async_ajax_loading == false -%}
-                                                    {% render 'product-collection', product: product, url_without_collection: true %}
+                                                    {% include 'product-collection', url_without_collection: true %}
                                                 {%- endif -%}
                                             </div>
                                         {%- endfor -%}
