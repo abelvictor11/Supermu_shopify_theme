@@ -3,13 +3,20 @@
   Uses the theme's carousel-products component with CSS overrides for half-width
 {% endcomment %}
 
+{%- assign selected_collection = collections[section.settings.collection] -%}
+{%- assign section_has_content = false -%}
+{%- if selected_collection != blank and selected_collection.products_count > 0 and section.settings.banner_image != blank -%}
+  {%- assign section_has_content = true -%}
+{%- endif -%}
+
+{%- if section_has_content or request.design_mode -%}
 <div class="two-column-carousel-banner" id="section-{{ section.id }}">
   <div class="container-fluid">
     <div class="row align-items-stretch">
       {%- if section.settings.column_order == 'carousel_first' -%}
         <!-- Columna del Carrusel (50%) -->
         <div class="col-md-6 col-12 carousel-column">
-          {%- if section.settings.collection != blank -%}
+          {%- if selected_collection != blank and selected_collection.products_count > 0 -%}
             <carousel-products class="d-block carousel-half-width" data-section-id="{{ section.id }}" data-section-type="carousel-products">
               <div class="carousel carousel-products position-relative">
                 <div class="carousel__head row mb-25">
@@ -31,10 +38,10 @@
                     {%- endif -%}
                     <div class="carousel__products w-100">
                       <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="2" data-async-ajax-loading="false">
-                        {%- for product in collections[section.settings.collection].products limit: 6 -%}
+                        {%- for product in selected_collection.products limit: 6 -%}
                           <div class="carousel__item col-auto">
                             {%- assign disable_lazyload = false -%}
-                            {% include 'product-collection' with url_without_collection: true %}
+                            {% include 'product-collection', url_without_collection: true %}
                           </div>
                         {%- endfor -%}
                       </div>
@@ -46,7 +53,7 @@
                 </div>
               </div>
             </carousel-products>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="no-collection-message">
               <p>Selecciona una colección en la configuración de la sección.</p>
             </div>
@@ -62,7 +69,7 @@
                    class="banner-image"
                    loading="lazy">
             </a>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="banner-placeholder">
               <p>Selecciona una imagen de banner.</p>
             </div>
@@ -78,7 +85,7 @@
                    class="banner-image"
                    loading="lazy">
             </a>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="banner-placeholder">
               <p>Selecciona una imagen de banner.</p>
             </div>
@@ -87,7 +94,7 @@
         
         <!-- Carrusel segundo -->
         <div class="col-md-6 col-12 carousel-column">
-          {%- if section.settings.collection != blank -%}
+          {%- if selected_collection != blank and selected_collection.products_count > 0 -%}
             <carousel-products class="d-block carousel-half-width" data-section-id="{{ section.id }}-alt" data-section-type="carousel-products">
               <div class="carousel carousel-products position-relative">
                 <div class="carousel__head row mb-25">
@@ -109,10 +116,10 @@
                     {%- endif -%}
                     <div class="carousel__products w-100">
                       <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="2" data-async-ajax-loading="false">
-                        {%- for product in collections[section.settings.collection].products limit: 6 -%}
+                        {%- for product in selected_collection.products limit: 6 -%}
                           <div class="carousel__item col-auto">
                             {%- assign disable_lazyload = false -%}
-                            {% include 'product-collection' with url_without_collection: true %}
+                            {% include 'product-collection', url_without_collection: true %}
                           </div>
                         {%- endfor -%}
                       </div>
@@ -124,7 +131,7 @@
                 </div>
               </div>
             </carousel-products>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="no-collection-message">
               <p>Selecciona una colección en la configuración de la sección.</p>
             </div>
@@ -211,6 +218,7 @@
     });
   })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {

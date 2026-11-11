@@ -8,6 +8,8 @@ const carouselSection = fs.readFileSync(path.join(root, 'sections/carousel-produ
 const carouselScript = fs.readFileSync(path.join(root, 'assets/section.carousel-products.js'), 'utf8');
 const responsiveImage = fs.readFileSync(path.join(root, 'snippets/rimage.liquid'), 'utf8');
 const productCollection = fs.readFileSync(path.join(root, 'snippets/product-collection.liquid'), 'utf8');
+const twoColumnSection = fs.readFileSync(path.join(root, 'sections/two-column-carousel-banner.liquid'), 'utf8');
+const homepageTemplate = JSON.parse(fs.readFileSync(path.join(root, 'templates/index.json'), 'utf8'));
 
 test('product carousel renders only for a populated collection outside the theme editor', () => {
   assert.match(carouselSection, /assign\s+primary_collection\s*=\s*collections\[primary_block\.settings\.collection\]/);
@@ -84,4 +86,24 @@ test('carousel autoplay follows reduced-motion preference', () => {
   assert.match(carouselScript, /autoplay:\s*this\.settings\.autoplay\s*&&\s*!prefersReducedMotion/);
   assert.match(carouselScript, /slickPause/);
   assert.match(carouselScript, /removeEventListener\('change'/);
+});
+
+test('two-column merchandising renders only when collection and banner are complete', () => {
+  assert.match(twoColumnSection, /assign\s+selected_collection\s*=\s*collections\[section\.settings\.collection\]/);
+  assert.match(twoColumnSection, /selected_collection\.products_count\s*>\s*0/);
+  assert.match(twoColumnSection, /section\.settings\.banner_image\s*!=\s*blank/);
+  assert.match(twoColumnSection, /if\s+section_has_content\s+or\s+request\.design_mode/);
+  assert.match(twoColumnSection, /if\s+request\.design_mode[\s\S]*no-collection-message/);
+  assert.match(twoColumnSection, /include\s+'product-collection'\s*,\s*url_without_collection:\s*true/);
+  assert.doesNotMatch(twoColumnSection, /include\s+'product-collection'\s+with\s+url_without_collection/);
+});
+
+test('Pescados title is owned by its carousel and disappears with an empty collection', () => {
+  const titleSection = homepageTemplate.sections.custom_title_section_6TYHnr;
+  const productsSection = homepageTemplate.sections.carousel_products_dxQTg3;
+  const collectionBlock = productsSection.blocks[productsSection.block_order[0]];
+
+  assert.equal(titleSection.disabled, true);
+  assert.equal(productsSection.settings.show_title, true);
+  assert.equal(collectionBlock.settings.title, 'Ofertas Pescados y mariscos');
 });
