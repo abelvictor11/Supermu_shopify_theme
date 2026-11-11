@@ -229,69 +229,6 @@
         theme.AssetsLoader.require('scripts', 'carousel_products');
         theme.AssetsLoader.require('scripts', 'skeleton-loader');
         
-        (function($) {
-            const sectionId = '{{ section.id }}';
-            const carouselSection = document.querySelector('[data-section-id="' + sectionId + '"]');
-            if (!carouselSection) return;
-
-            const scrollbar = carouselSection.querySelector('[data-carousel-scrollbar]');
-            const scrollbarDrag = carouselSection.querySelector('[data-carousel-scrollbar-drag]');
-            const carouselSlick = carouselSection.querySelector('[data-js-carousel-slick]');
-            if (!scrollbar || !scrollbarDrag || !carouselSlick) return;
-
-            const $carousel = $(carouselSlick);
-
-            function updateScrollbar(slick, currentSlide) {
-                if (!slick) return;
-
-                const slideCount = slick.slideCount;
-                const slidesToShow = slick.options.slidesToShow;
-                const maxSlide = Math.max(0, slideCount - slidesToShow);
-                const activeSlide = Math.min(Math.max(currentSlide || 0, 0), maxSlide);
-                const dragWidth = slideCount > 0 ? Math.min(100, (slidesToShow / slideCount) * 100) : 100;
-                const dragLeft = maxSlide > 0 ? (activeSlide / maxSlide) * (100 - dragWidth) : 0;
-
-                scrollbarDrag.style.width = dragWidth + '%';
-                scrollbarDrag.style.left = dragLeft + '%';
-            }
-
-            function updateFromInstance() {
-                if (!$carousel.hasClass('slick-initialized')) return;
-                const slick = $carousel.slick('getSlick');
-                updateScrollbar(slick, slick.currentSlide);
-            }
-
-            $carousel.on('init.homepageScrollbar setPosition.homepageScrollbar afterChange.homepageScrollbar', function(event, slick, currentSlide) {
-                window.requestAnimationFrame(function() {
-                    updateScrollbar(slick, currentSlide);
-                });
-            });
-
-            $carousel.on('beforeChange.homepageScrollbar', function(event, slick, currentSlide, nextSlide) {
-                updateScrollbar(slick, nextSlide);
-            });
-
-            function handleScrollbarClick(event) {
-                if (!$carousel.hasClass('slick-initialized')) return;
-                const slick = $carousel.slick('getSlick');
-                const rect = scrollbar.getBoundingClientRect();
-                const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
-                const maxSlide = Math.max(0, slick.slideCount - slick.options.slidesToShow);
-                $carousel.slick('slickGoTo', Math.round(ratio * maxSlide));
-            }
-
-            function cleanup(event) {
-                if (event && event.detail && event.detail.sectionId !== sectionId) return;
-                $carousel.off('.homepageScrollbar');
-                scrollbar.removeEventListener('click', handleScrollbarClick);
-                window.removeEventListener('resize', updateFromInstance);
-                document.removeEventListener('shopify:section:unload', cleanup);
-            }
-
-            scrollbar.addEventListener('click', handleScrollbarClick);
-            window.addEventListener('resize', updateFromInstance, { passive: true });
-            document.addEventListener('shopify:section:unload', cleanup);
-        })(jQueryTheme);
     </script>
     {%- endif -%}
 {%- endif -%}

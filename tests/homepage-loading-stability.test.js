@@ -43,12 +43,16 @@ test('product carousel keeps a stable height across slides', () => {
 
 test('carousel scrollbar updates from Slick events without permanent polling', () => {
   assert.doesNotMatch(carouselSection, /setInterval\s*\(/);
-  assert.match(carouselSection, /\.homepageScrollbar/);
-  assert.match(carouselSection, /init\.homepageScrollbar/);
-  assert.match(carouselSection, /setPosition\.homepageScrollbar/);
-  assert.match(carouselSection, /beforeChange\.homepageScrollbar/);
-  assert.match(carouselSection, /afterChange\.homepageScrollbar/);
-  assert.match(carouselSection, /shopify:section:unload/);
+  assert.doesNotMatch(carouselSection, /\}\)\(jQueryTheme\)/);
+  assert.doesNotMatch(carouselSection, /\.homepageScrollbar/);
+  assert.match(carouselScript, /initScrollbar\(\)/);
+  assert.match(carouselScript, /updateScrollbar\(slick,\s*currentSlide\)/);
+  assert.match(carouselScript, /destroyScrollbar\(\)/);
+  assert.match(carouselScript, /init\.homepageScrollbar/);
+  assert.match(carouselScript, /setPosition\.homepageScrollbar/);
+  assert.match(carouselScript, /beforeChange\.homepageScrollbar/);
+  assert.match(carouselScript, /afterChange\.homepageScrollbar/);
+  assert.match(carouselScript, /\.off\('\.homepageScrollbar'\)/);
 });
 
 test('empty storefront carousel emits no onboarding placeholder', () => {
