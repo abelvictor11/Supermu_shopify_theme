@@ -24,7 +24,8 @@ test('custom icon is selected by normalized handle and keeps the SVG fallback', 
   assert.match(iconSnippet, /sidebar_menu_custom_icon_enabled/);
   assert.match(iconSnippet, /sidebar_menu_custom_icon_image\s*!=\s*blank/);
   assert.match(iconSnippet, /sidebar_menu_custom_icon_handle\s*\|\s*handleize/);
-  assert.match(iconSnippet, /link\.handle\s*\|\s*handleize/);
+  assert.match(iconSnippet, /link\.object\.handle/);
+  assert.match(iconSnippet, /link\.title\s*\|\s*handleize/);
   assert.match(iconSnippet, /sidebar-menu__custom-icon/);
   assert.match(iconSnippet, /aria-hidden=["']true["']/);
   assert.match(iconSnippet, /sidebar_menu_custom_icon_image\s*\|\s*image_url:\s*width:\s*48/);
