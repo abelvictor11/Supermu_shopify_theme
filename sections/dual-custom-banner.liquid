@@ -6,93 +6,128 @@
 <section class="custom-grid-banners {% unless section.blocks.size > 0 %}section-loading{% endunless %}" id="section-{{ section.id }}">
    <div class="grid-container grid-container-dual">
       {%- for block in section.blocks -%}
-      {% case block.type %}
-      {%- when 'banner_large' -%}
-      <div class="grid-item grid-item-banner_large">
-        <!-- Skeleton para banner grande -->
-        <div class="skeleton-loader skeleton-banner-large" {% if block.settings.image_1 != blank %}style="display: none;"{% endif %}></div>
-        
-        <div class="swiper-container large-banner-swiper loaded-content" style="{% if block.settings.image_1 == blank %}display: none;{% else %}display: block;{% endif %}">
-          <div class="swiper-wrapper">
-            {%- for i in (1..10) -%}
-              {%- assign slide_enabled = 'slide_' | append: i | append: '_enabled' -%}
-              {%- assign image_key = 'image_' | append: i -%}
-              {%- assign title_key = 'title_' | append: i -%}
-              {%- assign subtitle_key = 'subtitle_' | append: i -%}
-              {%- assign cta_key = 'cta_text_' | append: i -%}
-              {%- assign link_key = 'link_' | append: i -%}
-              
-              {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
-                {%- assign mobile_image_key = 'image_mobile_' | append: i -%}
-                {%- assign mobile_image = block.settings[mobile_image_key] -%}
-                <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
-                  <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
-                    style="background: {{ block.settings.bg_color }};" 
-                    data-bg-desktop="{{ block.settings[image_key] | image_url: width: 1400 }}"
-                    data-bg-mobile="{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ block.settings[image_key] | image_url: width: 800 }}{% endif %}">
-                    <div class="grid-content">
-                      <p>{{ block.settings[subtitle_key] }}</p>
-                      <h2>{{ block.settings[title_key] }}</h2>
-                      {%- if block.settings[cta_key] != blank -%}
-                        <div class="cta-button">
-                          {{ block.settings[cta_key] }}
-                        </div>
-                      {%- endif -%}
-                    </div>
-                  </a>
-                </div>
-              {%- endif -%}
-            {%- endfor -%}
-          </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
-      </div>
+        {%- if block.type == 'banner_large' -%}
+          {%- assign banner_size = 'large' -%}
+          {%- assign banner_width = 1400 -%}
+        {%- elsif block.type == 'banner_small' -%}
+          {%- assign banner_size = 'small' -%}
+          {%- assign banner_width = 600 -%}
+        {%- else -%}
+          {%- continue -%}
+        {%- endif -%}
 
-      {%- when 'banner_small' -%}
-      <div class="grid-item grid-item-banner_small">
-        <!-- Skeleton para banner pequeño -->
-        <div class="skeleton-loader skeleton-banner-small" {% if block.settings.image_1 != blank %}style="display: none;"{% endif %}></div>
-        
-        <div class="swiper-container small-banner-swiper loaded-content" style="{% if block.settings.image_1 == blank %}display: none;{% else %}display: block;{% endif %}">
-          <div class="swiper-wrapper">
-            {%- for i in (1..10) -%}
-              {%- assign slide_enabled = 'slide_' | append: i | append: '_enabled' -%}
-              {%- assign image_key = 'image_' | append: i -%}
-              {%- assign title_key = 'title_' | append: i -%}
-              {%- assign subtitle_key = 'subtitle_' | append: i -%}
-              {%- assign cta_key = 'cta_text_' | append: i -%}
-              {%- assign link_key = 'link_' | append: i -%}
-              
-              {%- if block.settings[slide_enabled] and block.settings[image_key] != blank -%}
-                {%- assign mobile_image_key = 'image_mobile_' | append: i -%}
-                {%- assign mobile_image = block.settings[mobile_image_key] -%}
-                <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
-                  <a href="{{ block.settings[link_key] | default: '#' }}" class="slide-content"
-                    style="background: {{ block.settings.bg_color }};" 
-                    data-bg-desktop="{{ block.settings[image_key] | image_url: width: 600 }}"
-                    data-bg-mobile="{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ block.settings[image_key] | image_url: width: 800 }}{% endif %}">
-                    <div class="grid-content">
-                      <p>{{ block.settings[subtitle_key] }}</p>
-                      <h2>{{ block.settings[title_key] }}</h2>
-                      {%- if block.settings[cta_key] != blank -%}
-                        <div class="cta-button">
-                          {{ block.settings[cta_key] }}
-                        </div>
-                      {%- endif -%}
-                    </div>
-                  </a>
-                </div>
-              {%- endif -%}
-            {%- endfor -%}
+        <div class="grid-item grid-item-banner_{{ banner_size }}">
+          <div class="skeleton-loader skeleton-banner-{{ banner_size }}" {% if block.settings.image_1 != blank %}style="display: none;"{% endif %}></div>
+
+          <div class="swiper-container {{ banner_size }}-banner-swiper loaded-content" style="{% if block.settings.image_1 == blank %}display: none;{% else %}display: block;{% endif %}">
+            <div class="swiper-wrapper">
+              {%- for i in (1..10) -%}
+                {%- case i -%}
+                  {%- when 1 -%}
+                    {%- assign slide_enabled = block.settings.slide_1_enabled -%}
+                    {%- assign slide_image = block.settings.image_1 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_1 -%}
+                    {%- assign slide_title = block.settings.title_1 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_1 -%}
+                    {%- assign slide_cta = block.settings.cta_text_1 -%}
+                    {%- assign slide_link = block.settings.link_1 -%}
+                  {%- when 2 -%}
+                    {%- assign slide_enabled = block.settings.slide_2_enabled -%}
+                    {%- assign slide_image = block.settings.image_2 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_2 -%}
+                    {%- assign slide_title = block.settings.title_2 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_2 -%}
+                    {%- assign slide_cta = block.settings.cta_text_2 -%}
+                    {%- assign slide_link = block.settings.link_2 -%}
+                  {%- when 3 -%}
+                    {%- assign slide_enabled = block.settings.slide_3_enabled -%}
+                    {%- assign slide_image = block.settings.image_3 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_3 -%}
+                    {%- assign slide_title = block.settings.title_3 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_3 -%}
+                    {%- assign slide_cta = block.settings.cta_text_3 -%}
+                    {%- assign slide_link = block.settings.link_3 -%}
+                  {%- when 4 -%}
+                    {%- assign slide_enabled = block.settings.slide_4_enabled -%}
+                    {%- assign slide_image = block.settings.image_4 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_4 -%}
+                    {%- assign slide_title = block.settings.title_4 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_4 -%}
+                    {%- assign slide_cta = block.settings.cta_text_4 -%}
+                    {%- assign slide_link = block.settings.link_4 -%}
+                  {%- when 5 -%}
+                    {%- assign slide_enabled = block.settings.slide_5_enabled -%}
+                    {%- assign slide_image = block.settings.image_5 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_5 -%}
+                    {%- assign slide_title = block.settings.title_5 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_5 -%}
+                    {%- assign slide_cta = block.settings.cta_text_5 -%}
+                    {%- assign slide_link = block.settings.link_5 -%}
+                  {%- when 6 -%}
+                    {%- assign slide_enabled = block.settings.slide_6_enabled -%}
+                    {%- assign slide_image = block.settings.image_6 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_6 -%}
+                    {%- assign slide_title = block.settings.title_6 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_6 -%}
+                    {%- assign slide_cta = block.settings.cta_text_6 -%}
+                    {%- assign slide_link = block.settings.link_6 -%}
+                  {%- when 7 -%}
+                    {%- assign slide_enabled = block.settings.slide_7_enabled -%}
+                    {%- assign slide_image = block.settings.image_7 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_7 -%}
+                    {%- assign slide_title = block.settings.title_7 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_7 -%}
+                    {%- assign slide_cta = block.settings.cta_text_7 -%}
+                    {%- assign slide_link = block.settings.link_7 -%}
+                  {%- when 8 -%}
+                    {%- assign slide_enabled = block.settings.slide_8_enabled -%}
+                    {%- assign slide_image = block.settings.image_8 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_8 -%}
+                    {%- assign slide_title = block.settings.title_8 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_8 -%}
+                    {%- assign slide_cta = block.settings.cta_text_8 -%}
+                    {%- assign slide_link = block.settings.link_8 -%}
+                  {%- when 9 -%}
+                    {%- assign slide_enabled = block.settings.slide_9_enabled -%}
+                    {%- assign slide_image = block.settings.image_9 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_9 -%}
+                    {%- assign slide_title = block.settings.title_9 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_9 -%}
+                    {%- assign slide_cta = block.settings.cta_text_9 -%}
+                    {%- assign slide_link = block.settings.link_9 -%}
+                  {%- when 10 -%}
+                    {%- assign slide_enabled = block.settings.slide_10_enabled -%}
+                    {%- assign slide_image = block.settings.image_10 -%}
+                    {%- assign mobile_image = block.settings.image_mobile_10 -%}
+                    {%- assign slide_title = block.settings.title_10 -%}
+                    {%- assign slide_subtitle = block.settings.subtitle_10 -%}
+                    {%- assign slide_cta = block.settings.cta_text_10 -%}
+                    {%- assign slide_link = block.settings.link_10 -%}
+                {%- endcase -%}
+
+                {%- if slide_enabled and slide_image != blank -%}
+                  <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
+                    <a href="{{ slide_link | default: '#' }}" class="slide-content"
+                      style="background: {{ block.settings.bg_color }};"
+                      data-bg-desktop="{{ slide_image | image_url: width: banner_width }}"
+                      data-bg-mobile="{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ slide_image | image_url: width: 800 }}{% endif %}">
+                      <div class="grid-content">
+                        <p>{{ slide_subtitle }}</p>
+                        <h2>{{ slide_title }}</h2>
+                        {%- if slide_cta != blank -%}
+                          <div class="cta-button">{{ slide_cta }}</div>
+                        {%- endif -%}
+                      </div>
+                    </a>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
           </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
         </div>
-      </div>
-      {%- endcase -%}
       {%- endfor -%}
    </div>
 </section>

@@ -9,6 +9,7 @@ const carouselScript = fs.readFileSync(path.join(root, 'assets/section.carousel-
 const responsiveImage = fs.readFileSync(path.join(root, 'snippets/rimage.liquid'), 'utf8');
 const productCollection = fs.readFileSync(path.join(root, 'snippets/product-collection.liquid'), 'utf8');
 const twoColumnSection = fs.readFileSync(path.join(root, 'sections/two-column-carousel-banner.liquid'), 'utf8');
+const dualBannerSection = fs.readFileSync(path.join(root, 'sections/dual-custom-banner.liquid'), 'utf8');
 const homepageTemplate = JSON.parse(fs.readFileSync(path.join(root, 'templates/index.json'), 'utf8'));
 
 test('product carousel renders only for a populated collection outside the theme editor', () => {
@@ -118,4 +119,11 @@ test('two-column merchandising expands to full width on mobile without stretchin
   assert.match(twoColumnSection, /@media\s+screen\s+and\s+\(max-width:\s*767px\)[\s\S]*\.carousel-column[^{]*\{[^}]*max-width:\s*100%\s*!important/s);
   assert.match(twoColumnSection, /@media\s+screen\s+and\s+\(max-width:\s*767px\)[\s\S]*\.banner-column[^{]*\{[^}]*flex:\s*0\s+0\s+100%/s);
   assert.match(twoColumnSection, /\.banner-image\s*\{[^}]*height:\s*auto/s);
+});
+
+test('dual banner resolves configured slides through direct Shopify setting access', () => {
+  assert.doesNotMatch(dualBannerSection, /block\.settings\[(?:slide_enabled|image_key|mobile_image_key|title_key|subtitle_key|cta_key|link_key)\]/);
+  assert.match(dualBannerSection, /when\s+1[\s\S]*block\.settings\.slide_1_enabled/);
+  assert.match(dualBannerSection, /when\s+10[\s\S]*block\.settings\.image_10/);
+  assert.match(dualBannerSection, /if\s+slide_enabled\s+and\s+slide_image\s*!=\s*blank/);
 });
