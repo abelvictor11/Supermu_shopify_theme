@@ -75,21 +75,7 @@
                                             {%- endif -%}
                                             <div class="carousel__item col-auto"{% if get_carousel_products_async_ajax_loading %} data-carousel-product-preload data-handle="{{ product.handle }}"{% endif %}>
                                                 {%- if get_carousel_products_async_ajax_loading == false -%}
-                                                    <div class="product-image-container">
-                                                        <div class="skeleton-product-image skeleton-loader"></div>
-                                                        <div class="product-image-wrapper">
-                                                            <img class="product-image"
-                                                                 src="{{ product.featured_image | image_url: width: 480 }}"
-                                                                 srcset="{{ product.featured_image | image_url: width: 240 }} 240w, {{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 480 }} 480w, {{ product.featured_image | image_url: width: 720 }} 720w"
-                                                                 sizes="(max-width: 479px) 88vw, (max-width: 767px) 44vw, (max-width: 1279px) 30vw, 20vw"
-                                                                 width="{{ product.featured_image.width }}"
-                                                                 height="{{ product.featured_image.height }}"
-                                                                 alt="{{ product.featured_image.alt | default: product.title | escape }}"
-                                                                 loading="lazy"
-                                                                 decoding="async">
-                                                        </div>
-                                                        {% render 'product-collection', product: product, url_without_collection: true %}
-                                                    </div>
+                                                    {% render 'product-collection', product: product, url_without_collection: true %}
                                                 {%- endif -%}
                                             </div>
                                         {%- endfor -%}

@@ -6,6 +6,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const carouselSection = fs.readFileSync(path.join(root, 'sections/carousel-products.liquid'), 'utf8');
 const carouselScript = fs.readFileSync(path.join(root, 'assets/section.carousel-products.js'), 'utf8');
+const responsiveImage = fs.readFileSync(path.join(root, 'snippets/rimage.liquid'), 'utf8');
 
 test('product carousel renders only for a populated collection outside the theme editor', () => {
   assert.match(carouselSection, /assign\s+primary_collection\s*=\s*collections\[primary_block\.settings\.collection\]/);
@@ -16,11 +17,11 @@ test('product carousel renders only for a populated collection outside the theme
 });
 
 test('product carousel images reserve intrinsic responsive geometry', () => {
-  assert.match(carouselSection, /src="\{\{\s*product\.featured_image\s*\|\s*image_url:\s*width:\s*480\s*\}\}"/);
-  assert.match(carouselSection, /srcset="/);
-  assert.match(carouselSection, /width="\{\{\s*product\.featured_image\.width\s*\}\}"/);
-  assert.match(carouselSection, /height="\{\{\s*product\.featured_image\.height\s*\}\}"/);
-  assert.match(carouselSection, /sizes="/);
+  assert.doesNotMatch(carouselSection, /<img\s+class="product-image"/);
+  assert.match(carouselSection, /render\s+'product-collection'/);
+  assert.match(responsiveImage, /padding-top:\{\{\s*1\s*\|\s*divided_by:\s*aspect_ratio/);
+  assert.match(responsiveImage, /if\s+image\s*==\s*blank/);
+  assert.match(responsiveImage, /assign\s+custom_src\s*=\s*'data:image\/png;base64/);
 });
 
 test('product carousel initializes before entering the viewport and only loads once', () => {
@@ -61,4 +62,19 @@ test('carousel container markup is statically parseable by Theme Check', () => {
   assert.match(carouselSection, /section\.settings\.container\s*==\s*'boxed'/);
   assert.match(carouselSection, /container-fluid/);
   assert.match(carouselSection, /"value":\s*"6"[\s\S]*?"label":\s*"6 items in the row"/);
+});
+
+test('carousel teardown is safe before loading and only removes instance handlers', () => {
+  assert.match(carouselScript, /if\s*\(this\.\$control\)\s*\{\s*this\.\$control\.off\(\)/s);
+  assert.match(carouselScript, /if\s*\(this\.xhr\)\s*\{\s*this\.xhr\.abort\(\)/s);
+  assert.match(carouselScript, /this\.resizeNamespace\s*=/);
+  assert.match(carouselScript, /\$window\.off\('theme\.resize'\s*\+\s*this\.resizeNamespace\)/);
+  assert.doesNotMatch(carouselScript, /unbind\('theme\.resize\.carousel-products'\)/);
+});
+
+test('carousel autoplay follows reduced-motion preference', () => {
+  assert.match(carouselScript, /matchMedia\('\(prefers-reduced-motion:\s*reduce\)'\)/);
+  assert.match(carouselScript, /autoplay:\s*this\.settings\.autoplay\s*&&\s*!prefersReducedMotion/);
+  assert.match(carouselScript, /slickPause/);
+  assert.match(carouselScript, /removeEventListener\('change'/);
 });
