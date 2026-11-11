@@ -1,4 +1,13 @@
 {%- if section.blocks.size > 0 -%}
+    {%- assign primary_block = section.blocks.first -%}
+    {%- assign primary_collection = collections[primary_block.settings.collection] -%}
+    {%- assign carousel_has_content = false -%}
+    {%- if primary_collection != blank and primary_collection.products_count > 0 -%}
+        {%- assign carousel_has_content = true -%}
+    {%- elsif request.design_mode -%}
+        {%- assign carousel_has_content = true -%}
+    {%- endif -%}
+    {%- if carousel_has_content -%}
     {% include 'global-variables' %}
     {%- assign get_carousel_products_async_ajax_loading = carousel_products_async_ajax_loading -%}
     {%- if request.design_mode -%}
@@ -60,7 +69,7 @@
                                         {%- assign max_count = limit | plus: 1 -%}
                                     {%- endif -%}
                                     <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="{{ max_count }}" data-products-pre-row="{{ section.settings.size_of_columns }}" data-async-ajax-loading="{{ get_carousel_products_async_ajax_loading }}">
-                                        {%- for product in collections[block.settings.collection].products limit: max_count -%}
+                                        {%- for product in primary_collection.products limit: max_count -%}
                                             {%- if first_product == blank -%}
                                                 {%- assign first_product = product -%}
                                             {%- endif -%}
@@ -70,10 +79,15 @@
                                                         <div class="skeleton-product-image skeleton-loader"></div>
                                                         <div class="product-image-wrapper">
                                                             {%- assign disable_lazyload = carousel_products_image_lazyload_disable -%}
-                                                            <img class="product-image" 
-                                                                 data-src="{{ product.featured_image | img_url: 'master' }}" 
-                                                                 alt="{{ product.featured_image.alt | escape }}"
-                                                                 loading="lazy">
+                                                            <img class="product-image"
+                                                                 src="{{ product.featured_image | image_url: width: 480 }}"
+                                                                 srcset="{{ product.featured_image | image_url: width: 240 }} 240w, {{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 480 }} 480w, {{ product.featured_image | image_url: width: 720 }} 720w"
+                                                                 sizes="(max-width: 479px) 88vw, (max-width: 767px) 44vw, (max-width: 1279px) 30vw, 20vw"
+                                                                 width="{{ product.featured_image.width }}"
+                                                                 height="{{ product.featured_image.height }}"
+                                                                 alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                                                                 loading="lazy"
+                                                                 decoding="async">
                                                         </div>
                                                         {% include 'product-collection' with url_without_collection: true %}
                                                     </div>
@@ -461,6 +475,7 @@
     </script>
 {%- else -%}
     {% render 'no-blocks' %}
+    {%- endif -%}
 {%- endif -%}
 
 {% schema %}
