@@ -9,15 +9,36 @@
             this.settings = {
                 arrows: true
             };
-            
-            setTimeout(() => {
-                theme.AssetsLoader.onScrollOrUserAction(this, () => {
-                    this.load();
+
+            this.isLoaded = false;
+            this.intersectionObserver = null;
+        }
+
+        connectedCallback() {
+            if('IntersectionObserver' in window) {
+                this.intersectionObserver = new IntersectionObserver((entries) => {
+                    if(entries.some((entry) => entry.isIntersecting)) {
+                        this.intersectionObserver.disconnect();
+                        this.load();
+                    }
+                }, {
+                    rootMargin: '600px 0px'
                 });
-            }, 0);
+
+                this.intersectionObserver.observe(this);
+            } else {
+                this.load();
+            }
         }
 
         load() {
+            if(this.isLoaded) return;
+
+            this.isLoaded = true;
+            if(this.intersectionObserver) {
+                this.intersectionObserver.disconnect();
+            }
+
             this.$container = $(this);
 
             var _ = this,
@@ -187,7 +208,7 @@
                 nextArrow: this.$next,
                 dots: this.settings.bullets,
                 dotsClass: 'slick-dots d-flex flex-wrap flex-center list-unstyled pt-7',
-                adaptiveHeight: true,
+                adaptiveHeight: false,
                 autoplay: this.settings.autoplay,
                 autoplaySpeed: this.settings.speed,
                 infinite: this.settings.infinite,
@@ -343,6 +364,11 @@
         }
 
         disconnectedCallback() {
+            if(this.intersectionObserver) {
+                this.intersectionObserver.disconnect();
+                this.intersectionObserver = null;
+            }
+
             if(this.$slick) {
                 this.$slick.slick('destroy').off();
                 this.$slick = null;
