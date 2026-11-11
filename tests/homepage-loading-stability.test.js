@@ -35,3 +35,22 @@ test('product carousel keeps a stable height across slides', () => {
   assert.match(carouselScript, /adaptiveHeight:\s*false/);
   assert.doesNotMatch(carouselScript, /adaptiveHeight:\s*true/);
 });
+
+test('carousel scrollbar updates from Slick events without permanent polling', () => {
+  assert.doesNotMatch(carouselSection, /setInterval\s*\(/);
+  assert.match(carouselSection, /\.homepageScrollbar/);
+  assert.match(carouselSection, /init\.homepageScrollbar/);
+  assert.match(carouselSection, /setPosition\.homepageScrollbar/);
+  assert.match(carouselSection, /beforeChange\.homepageScrollbar/);
+  assert.match(carouselSection, /afterChange\.homepageScrollbar/);
+  assert.match(carouselSection, /shopify:section:unload/);
+});
+
+test('empty storefront carousel emits no onboarding placeholder', () => {
+  assert.doesNotMatch(carouselSection, /\{%-?\s*else\s*-?%\}\s*\{%\s*render\s+'no-blocks'\s*%\}\s*\{%-?\s*endif/s);
+});
+
+test('carousel motion respects reduced-motion preferences', () => {
+  assert.match(carouselSection, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(carouselSection, /transition:\s*none\s*!important/);
+});
