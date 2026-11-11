@@ -17,7 +17,7 @@
     {%- assign get_carousel_products_async_ajax_loading = false -%}
     <carousel-products class="d-block" data-section-id="{{ section.id }}" data-section-type="carousel-products" id="carusel">
         <div class="{% if template.name == 'collection' or template.name == 'search' %} pb-70 pb-lg-95{% endif %}">
-            <div{% render 'layout-get-container-class', fullwidth_need_paddings: true %}>
+            <div class="{% if section.settings.container == 'boxed' %}container{% else %}container-fluid{% endif %}" data-fullwidth-need-paddings="true">
                 <div class="carousel{% if section.settings.arrows %} carousel--arrows{% endif %}{% if section.settings.container == 'fullwidth' %} carousel--fullwidth{% endif %} carousel-products position-relative"{% if get_carousel_products_async_ajax_loading == true %} data-carousel-ajax{% endif %}>
                     <div class="carousel__head{% unless section.settings.show_title %} d-none{% endunless %} row justify-content-center mb-25"{% if section.blocks.size > 1 %} data-carousel-control{% endif %}>
                         {%- if get_carousel_products_async_ajax_loading == true -%}
@@ -78,7 +78,6 @@
                                                     <div class="product-image-container">
                                                         <div class="skeleton-product-image skeleton-loader"></div>
                                                         <div class="product-image-wrapper">
-                                                            {%- assign disable_lazyload = carousel_products_image_lazyload_disable -%}
                                                             <img class="product-image"
                                                                  src="{{ product.featured_image | image_url: width: 480 }}"
                                                                  srcset="{{ product.featured_image | image_url: width: 240 }} 240w, {{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 480 }} 480w, {{ product.featured_image | image_url: width: 720 }} 720w"
@@ -89,7 +88,7 @@
                                                                  loading="lazy"
                                                                  decoding="async">
                                                         </div>
-                                                        {% include 'product-collection' with url_without_collection: true %}
+                                                        {% render 'product-collection', product: product, url_without_collection: true %}
                                                     </div>
                                                 {%- endif -%}
                                             </div>
@@ -361,7 +360,7 @@
                 },
                 {
                     "value": "6",
-                    "label": "t:sections.product_carousel.settings.size_of_columns.option__6.label"
+                    "label": "6 items in the row"
                 }
             ]
         },

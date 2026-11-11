@@ -54,3 +54,11 @@ test('carousel motion respects reduced-motion preferences', () => {
   assert.match(carouselSection, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
   assert.match(carouselSection, /transition:\s*none\s*!important/);
 });
+
+test('carousel container markup is statically parseable by Theme Check', () => {
+  assert.doesNotMatch(carouselSection, /<div\{%\s*render\s+'layout-get-container-class'/);
+  assert.doesNotMatch(carouselSection, /include\s+'product-collection'\s+with\s+url_without_collection/);
+  assert.match(carouselSection, /section\.settings\.container\s*==\s*'boxed'/);
+  assert.match(carouselSection, /container-fluid/);
+  assert.match(carouselSection, /"value":\s*"6"[\s\S]*?"label":\s*"6 items in the row"/);
+});
