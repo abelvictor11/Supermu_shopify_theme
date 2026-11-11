@@ -3,13 +3,20 @@
   Uses the theme's carousel-products component with CSS overrides for half-width
 {% endcomment %}
 
+{%- assign selected_collection = collections[section.settings.collection] -%}
+{%- assign section_has_content = false -%}
+{%- if selected_collection != blank and selected_collection.products_count > 0 and section.settings.banner_image != blank -%}
+  {%- assign section_has_content = true -%}
+{%- endif -%}
+
+{%- if section_has_content or request.design_mode -%}
 <div class="two-column-carousel-banner" id="section-{{ section.id }}">
   <div class="container-fluid">
     <div class="row align-items-stretch">
       {%- if section.settings.column_order == 'carousel_first' -%}
         <!-- Columna del Carrusel (50%) -->
         <div class="col-md-6 col-12 carousel-column">
-          {%- if section.settings.collection != blank -%}
+          {%- if selected_collection != blank and selected_collection.products_count > 0 -%}
             <carousel-products class="d-block carousel-half-width" data-section-id="{{ section.id }}" data-section-type="carousel-products">
               <div class="carousel carousel-products position-relative">
                 <div class="carousel__head row mb-25">
@@ -31,10 +38,10 @@
                     {%- endif -%}
                     <div class="carousel__products w-100">
                       <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="2" data-async-ajax-loading="false">
-                        {%- for product in collections[section.settings.collection].products limit: 6 -%}
+                        {%- for product in selected_collection.products limit: 6 -%}
                           <div class="carousel__item col-auto">
                             {%- assign disable_lazyload = false -%}
-                            {% include 'product-collection' with url_without_collection: true %}
+                            {% include 'product-collection', url_without_collection: true %}
                           </div>
                         {%- endfor -%}
                       </div>
@@ -46,7 +53,7 @@
                 </div>
               </div>
             </carousel-products>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="no-collection-message">
               <p>Selecciona una colección en la configuración de la sección.</p>
             </div>
@@ -57,12 +64,17 @@
         <div class="col-md-6 col-12 banner-column">
           {%- if section.settings.banner_image != blank -%}
             <a href="{{ section.settings.banner_link | default: '#' }}" class="banner-link">
-              <img src="{{ section.settings.banner_image | img_url: 'master' }}" 
-                   alt="{{ section.settings.banner_title | escape }}"
-                   class="banner-image"
-                   loading="lazy">
+              {{ section.settings.banner_image
+                | image_url: width: 1600
+                | image_tag:
+                  widths: '480, 720, 960, 1200, 1600',
+                  sizes: '(min-width: 768px) 50vw, 100vw',
+                  class: 'banner-image',
+                  loading: 'lazy',
+                  alt: section.settings.banner_title
+              }}
             </a>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="banner-placeholder">
               <p>Selecciona una imagen de banner.</p>
             </div>
@@ -73,12 +85,17 @@
         <div class="col-md-6 col-12 banner-column">
           {%- if section.settings.banner_image != blank -%}
             <a href="{{ section.settings.banner_link | default: '#' }}" class="banner-link">
-              <img src="{{ section.settings.banner_image | img_url: 'master' }}" 
-                   alt="{{ section.settings.banner_title | escape }}"
-                   class="banner-image"
-                   loading="lazy">
+              {{ section.settings.banner_image
+                | image_url: width: 1600
+                | image_tag:
+                  widths: '480, 720, 960, 1200, 1600',
+                  sizes: '(min-width: 768px) 50vw, 100vw',
+                  class: 'banner-image',
+                  loading: 'lazy',
+                  alt: section.settings.banner_title
+              }}
             </a>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="banner-placeholder">
               <p>Selecciona una imagen de banner.</p>
             </div>
@@ -87,7 +104,7 @@
         
         <!-- Carrusel segundo -->
         <div class="col-md-6 col-12 carousel-column">
-          {%- if section.settings.collection != blank -%}
+          {%- if selected_collection != blank and selected_collection.products_count > 0 -%}
             <carousel-products class="d-block carousel-half-width" data-section-id="{{ section.id }}-alt" data-section-type="carousel-products">
               <div class="carousel carousel-products position-relative">
                 <div class="carousel__head row mb-25">
@@ -109,10 +126,10 @@
                     {%- endif -%}
                     <div class="carousel__products w-100">
                       <div class="carousel__slick row flex-nowrap" data-js-carousel-slick data-carousel-items data-max-count="6" data-products-pre-row="2" data-async-ajax-loading="false">
-                        {%- for product in collections[section.settings.collection].products limit: 6 -%}
+                        {%- for product in selected_collection.products limit: 6 -%}
                           <div class="carousel__item col-auto">
                             {%- assign disable_lazyload = false -%}
-                            {% include 'product-collection' with url_without_collection: true %}
+                            {% include 'product-collection', url_without_collection: true %}
                           </div>
                         {%- endfor -%}
                       </div>
@@ -124,7 +141,7 @@
                 </div>
               </div>
             </carousel-products>
-          {%- else -%}
+          {%- elsif request.design_mode -%}
             <div class="no-collection-message">
               <p>Selecciona una colección en la configuración de la sección.</p>
             </div>
@@ -137,80 +154,8 @@
 
 <script>
   theme.AssetsLoader.require('scripts', 'carousel_products');
-  
-  // Fix slide widths after Slick initializes
-  (function() {
-    var sectionId = '{{ section.id }}';
-    var maxAttempts = 20;
-    var attempts = 0;
-    
-    function fixSlideWidths() {
-      var section = document.getElementById('section-' + sectionId);
-      if (!section) return;
-      
-      var slickList = section.querySelector('.slick-list');
-      var slides = section.querySelectorAll('.slick-slide');
-      
-      if (!slickList || slides.length === 0) {
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(fixSlideWidths, 200);
-        }
-        return;
-      }
-      
-      // Calculate correct width based on container (50% of each = 2 slides visible)
-      var containerWidth = slickList.offsetWidth;
-      var slideWidth = Math.floor(containerWidth / 2) - 10; // 2 slides with gap
-      
-      slides.forEach(function(slide) {
-        slide.style.width = slideWidth + 'px';
-        slide.style.minWidth = slideWidth + 'px';
-        slide.style.maxWidth = slideWidth + 'px';
-      });
-      
-      console.log('[two-column-carousel] Fixed slide widths to:', slideWidth + 'px');
-      
-      // Setup navigation buttons
-      setupNavButtons(section);
-    }
-    
-    function setupNavButtons(section) {
-      var $slick = jQueryTheme(section).find('[data-js-carousel-slick]');
-      var prevBtn = section.querySelector('[data-js-carousel-prev]');
-      var nextBtn = section.querySelector('[data-js-carousel-next]');
-      
-      if (!$slick.length || (!prevBtn && !nextBtn)) return;
-      
-      // Remove existing listeners and add new ones
-      if (prevBtn) {
-        prevBtn.onclick = function(e) {
-          e.preventDefault();
-          $slick.slick('slickPrev');
-        };
-      }
-      
-      if (nextBtn) {
-        nextBtn.onclick = function(e) {
-          e.preventDefault();
-          $slick.slick('slickNext');
-        };
-      }
-      
-      console.log('[two-column-carousel] Navigation buttons connected');
-    }
-    
-    // Run after Slick initializes
-    setTimeout(fixSlideWidths, 500);
-    setTimeout(fixSlideWidths, 1000);
-    setTimeout(fixSlideWidths, 2000);
-    
-    // Also fix on window resize
-    window.addEventListener('resize', function() {
-      setTimeout(fixSlideWidths, 100);
-    });
-  })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -315,7 +260,6 @@
   padding: 0 15px;
 }
 
-/* CRITICAL: Contain carousel within its column */
 .two-column-carousel-banner .carousel-column {
   overflow: hidden !important;
   max-width: 50% !important;
@@ -350,12 +294,12 @@
 /* Banner styling */
 .two-column-carousel-banner .banner-link {
   display: block;
-  height: 100%;
 }
 
 .two-column-carousel-banner .banner-image {
   width: 100%;
-  height: 100%;
+  height: auto;
+  display: block;
   object-fit: contain;
   border-radius: 10px;
 }
@@ -366,20 +310,10 @@
   border-radius: 10px;
   padding: 40px;
   text-align: center;
-  height: 100%;
+  min-height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* === CRITICAL: Force carousel to show only 2 products === */
-.two-column-carousel-banner .carousel-half-width .slick-slide {
-  width: calc(50% - 10px) !important;
-  margin: 0 5px;
-}
-
-.two-column-carousel-banner .carousel-half-width .slick-list {
-  margin: 0 -5px;
 }
 
 .two-column-carousel-banner .carousel-half-width .slick-track {
@@ -418,17 +352,11 @@
 
 /* Responsive */
 @media screen and (max-width: 767px) {
-  .two-column-carousel-banner .carousel-column {
+  .two-column-carousel-banner .carousel-column,
+  .two-column-carousel-banner .banner-column {
+    flex: 0 0 100%;
+    max-width: 100% !important;
     margin-bottom: 20px;
-  }
-  
-  .two-column-carousel-banner .carousel-half-width .slick-slide {
-    width: 100% !important;
-    margin: 0;
-  }
-  
-  .two-column-carousel-banner .carousel-half-width .slick-list {
-    margin: 0;
   }
 }
 </style>
