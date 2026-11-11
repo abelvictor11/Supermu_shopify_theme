@@ -4,14 +4,24 @@
   @param {link} link - Enlace de navegación cuyo icono se debe mostrar.
 {% enddoc %}
 
+{%- assign link_object_handle = link.object.handle | handleize -%}
 {%- assign link_handle = link.handle | handleize -%}
+{%- assign link_title_handle = link.title | handleize -%}
 {%- assign link_title = link.title | downcase -%}
 {%- assign custom_icon_handle = settings.sidebar_menu_custom_icon_handle | handleize -%}
 {%- assign use_custom_icon = false -%}
 
+{%- if link_object_handle != blank -%}
+  {%- assign link_handle = link_object_handle -%}
+{%- elsif link_handle == blank -%}
+  {%- assign link_handle = link_title_handle -%}
+{%- endif -%}
+
 {%- if settings.sidebar_menu_custom_icon_enabled -%}
-  {%- if settings.sidebar_menu_custom_icon_image != blank and link_handle == custom_icon_handle -%}
-    {%- assign use_custom_icon = true -%}
+  {%- if settings.sidebar_menu_custom_icon_image != blank -%}
+    {%- if link_handle == custom_icon_handle or link_title_handle == custom_icon_handle -%}
+      {%- assign use_custom_icon = true -%}
+    {%- endif -%}
   {%- endif -%}
 {%- endif -%}
 
