@@ -51,4 +51,3 @@ Move the product-carousel scrollbar logic from repeated section-level scripts in
 - Shopify Theme Check on modified Liquid.
 - Rendered staging audit at desktop and mobile breakpoints.
 - Console must contain no carousel-owned `jQueryTheme is not defined` errors.
-

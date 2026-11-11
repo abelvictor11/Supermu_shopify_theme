@@ -78,4 +78,3 @@
 - [ ] **Step 4: Run** full Node suite, JavaScript syntax check, `git diff --check`, and Shopify Theme Check.
 - [ ] **Step 5: Audit** desktop/mobile staging after deployment; expect no carousel-owned console errors, orphan titles, or configuration placeholders.
 - [ ] **Step 6: Commit** with message `fix: stabilize homepage responsive sections`.
-
