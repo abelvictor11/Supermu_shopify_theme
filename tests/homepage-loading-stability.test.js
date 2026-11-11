@@ -107,3 +107,15 @@ test('Pescados title is owned by its carousel and disappears with an empty colle
   assert.equal(productsSection.settings.show_title, true);
   assert.equal(collectionBlock.settings.title, 'Ofertas Pescados y mariscos');
 });
+
+test('two-column carousel delegates sizing and navigation to Slick', () => {
+  assert.doesNotMatch(twoColumnSection, /fixSlideWidths/);
+  assert.doesNotMatch(twoColumnSection, /jQueryTheme\(section\)/);
+  assert.doesNotMatch(twoColumnSection, /\.carousel-half-width\s+\.slick-slide\s*\{[^}]*width:/s);
+});
+
+test('two-column merchandising expands to full width on mobile without stretching banners', () => {
+  assert.match(twoColumnSection, /@media\s+screen\s+and\s+\(max-width:\s*767px\)[\s\S]*\.carousel-column[^{]*\{[^}]*max-width:\s*100%\s*!important/s);
+  assert.match(twoColumnSection, /@media\s+screen\s+and\s+\(max-width:\s*767px\)[\s\S]*\.banner-column[^{]*\{[^}]*flex:\s*0\s+0\s+100%/s);
+  assert.match(twoColumnSection, /\.banner-image\s*\{[^}]*height:\s*auto/s);
+});
