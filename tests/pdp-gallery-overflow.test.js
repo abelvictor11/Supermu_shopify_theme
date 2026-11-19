@@ -62,3 +62,9 @@ test('PDP arrow inset does not change homepage arrow positions', () => {
     assert.equal(w.getComputedStyle(w.document.querySelector('.carousel__next')).right, '-30px');
   } finally { w.close(); }
 });
+
+test('mobile PDP benefit tiles use a shrinkable single column instead of three min-content columns', () => {
+  const rule = custom.match(/@media\s*\(max-width:\s*767px\)\s*\{\s*\.template-product \.product-page-info__icon-with-text--style-tile\s*\{([^}]*)\}/);
+  assert.ok(rule, 'mobile tile override must be scoped to the PDP');
+  assert.match(rule[1], /grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+});
