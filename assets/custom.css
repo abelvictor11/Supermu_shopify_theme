@@ -546,6 +546,11 @@ tabs-element.tabs.product-tabs.d-block.tabs--init {
 .product-page-info__icon-with-text--style-tile {
         column-gap: 10px;
 }
+@media (max-width: 767px) {
+  .template-product .product-page-info__icon-with-text--style-tile {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .card-info p {
     font-size: .75rem;
       line-height: .9rem;
