@@ -1,0 +1,6 @@
+{
+  "name": "supermu-theme-checks",
+  "private": true,
+  "scripts": { "test": "node --test tests/*.test.js", "preview:advent": "node tests/helpers/advent-preview.js" },
+  "devDependencies": { "jsdom": "^26.1.0", "liquidjs": "^10.21.0" }
+}
