@@ -49,7 +49,7 @@
       {% if section.settings.closing_image != blank %}
         {{ section.settings.closing_image | image_url: width: 1500 | image_tag: widths: '600, 960, 1500', sizes: '(min-width: 800px) 60vw, 100vw', loading: 'lazy', alt: 'Buñuelos navideños para compartir en familia' }}
       {% else %}
-        <img src="{{ 'advent-bunuelos.jpg' | asset_url }}" width="1500" height="843" alt="Buñuelos navideños para compartir en familia" loading="lazy">
+        <img src="{{ 'advent-bunuelos.jpg' | asset_url }}" width="1500" height="844" alt="Buñuelos navideños para compartir en familia" loading="lazy">
       {% endif %}
     </div>
     <div class="advent__closing-copy">
@@ -64,7 +64,7 @@
   <dialog class="advent__dialog" aria-labelledby="AdventOffer-{{ section.id }}" aria-describedby="AdventTerms-{{ section.id }}" data-advent-dialog>
     <button class="advent__close" type="button" data-advent-close aria-label="Cerrar oferta" autofocus>×</button>
     <p class="advent__offer-date" data-advent-offer-date></p>
-    <img class="advent__offer-image" data-advent-offer-image width="600" height="400" alt="" hidden>
+    <div class="advent__offer-image" data-advent-offer-image hidden></div>
     <h2 id="AdventOffer-{{ section.id }}" data-advent-offer-title></h2>
     <p class="advent__discount" data-advent-offer-discount></p>
     <p id="AdventTerms-{{ section.id }}" class="advent__offer-terms" data-advent-offer-terms></p>
