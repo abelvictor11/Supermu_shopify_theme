@@ -93,6 +93,17 @@ test('click after expiration cannot navigate even before the next timer tick',as
     assert.equal(el.querySelector('dialog').open,false);
   } finally {dom.window.close();}
 });
+test('middle-click after expiration is cancelled and removes the expired destination',async()=>{
+  const {dom,w,el,setTime}=await mounted({offers:[readyOffer]});
+  try {
+    el.querySelector('button[data-advent-day]').click();setTime('2026-11-26T05:00:00Z');
+    const event=new w.MouseEvent('auxclick',{button:1,bubbles:true,cancelable:true});
+    el.querySelector('[data-advent-offer-link]').dispatchEvent(event);
+    assert.equal(event.defaultPrevented,true);
+    assert.equal(el.querySelector('[data-advent-offer-link]').hasAttribute('href'),false);
+    assert.equal(el.querySelector('dialog').open,false);
+  }finally{dom.window.close();}
+});
 test('public preview cannot unlock future dates; editor preview can and reports incomplete entries',async()=>{
   for(const designMode of [false,true]) {
     const {dom,el}=await mounted({designMode,previewDate:'2026-11-23',offers:[{...readyOffer,date:'2026-11-23'},{...readyOffer,date:'broken'}]});

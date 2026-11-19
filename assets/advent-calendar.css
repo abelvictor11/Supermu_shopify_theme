@@ -41,7 +41,7 @@
 .advent .advent__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; padding: 14px 24px; background: var(--advent-paper); color: var(--advent-ink); border: 0; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 650; cursor: pointer; transition: background-color .2s, color .2s; }
 .advent .advent__cta:hover { background: var(--advent-gold); color: var(--advent-ink); }
 .advent .advent__cta:active { background: #e8b971; }
-.advent__cta span { font-size: 23px; line-height: 1; }
+.advent__cta svg { flex-shrink: 0; }
 .advent__hero .advent__cta { margin-top: 30px; }
 .advent .advent__hero-note { margin-top: 18px; font-size: 13px; }
 .advent__hero-image { width: 100%; height: 590px; min-width: 0; }

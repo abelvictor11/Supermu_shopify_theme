@@ -5,6 +5,15 @@
   if (!api) return; // Keep the informative Liquid fallback when an asset fails.
   const dateFormat = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'long', timeZone: 'UTC' });
   const formatDay = date => dateFormat.format(new Date(date + 'T12:00:00Z'));
+  function icon(kind) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('width', '20'); svg.setAttribute('height', '20');
+    svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '1.5');
+    svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round'); svg.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', kind === 'arrow' ? 'M6 18 18 6M6 6h12v12' : kind === 'ended' ? 'M5 12h14' : 'M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5zM12 14v3');
+    svg.append(path); return svg;
+  }
   class AdventCalendar extends HTMLElement {
     connectedCallback() {
       if (this.running) return;
@@ -19,12 +28,16 @@
       this.running = true;
       this.onClick = event => this.handleClick(event);
       this.onVisibility = () => this.refresh();
+      this.onAuxClick = event => {
+        if (event.button === 1 && event.target.closest('[data-advent-offer-link]')) this.handleClick(event);
+      };
       this.onClose = () => {
         this.openDate = null;
         this.link.removeAttribute('href');
         if (this.opener && this.opener.isConnected) this.opener.focus({ preventScroll: true });
       };
       this.addEventListener('click', this.onClick);
+      this.addEventListener('auxclick', this.onAuxClick);
       this.dialog.addEventListener('close', this.onClose);
       document.addEventListener('visibilitychange', this.onVisibility);
       this.lastSignature = null;
@@ -87,7 +100,7 @@
         const date = document.createElement('time'); date.dateTime = day.date; date.className = 'advent__door-date'; date.textContent = formatDay(day.date);
         const number = document.createElement('span'); number.className = 'advent__door-number'; number.textContent = String(day.number).padStart(2, '0'); number.setAttribute('aria-hidden', 'true');
         const state = document.createElement('span'); state.className = 'advent__door-state'; state.textContent = label;
-        const mark = document.createElement('span'); mark.className = 'advent__door-mark'; mark.textContent = actionable ? '↗' : day.state === 'expired' ? '—' : '+'; mark.setAttribute('aria-hidden', 'true');
+        const mark = document.createElement('span'); mark.className = 'advent__door-mark'; mark.append(icon(actionable ? 'arrow' : day.state === 'expired' ? 'ended' : 'locked')); mark.setAttribute('aria-hidden', 'true');
         door.append(date, number, state, mark); fragment.append(door);
       }
       this.grid.replaceChildren(fragment);
@@ -132,6 +145,7 @@
       window.clearInterval(this.interval);
       window.clearTimeout(this.midnight);
       this.removeEventListener('click', this.onClick);
+      this.removeEventListener('auxclick', this.onAuxClick);
       this.dialog.removeEventListener('close', this.onClose);
       document.removeEventListener('visibilitychange', this.onVisibility);
       this.running = false;
