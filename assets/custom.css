@@ -746,6 +746,13 @@ background: linear-gradient(90deg, rgba(255,255,255,0.1909357492997199) 100%), r
 .carousel__next{
   right: -30px !important;
 }
+/* Align PDP related-product arrows with their in-slider click targets. */
+.template-product carousel-products .carousel__prev {
+  left: 0 !important;
+}
+.template-product carousel-products .carousel__next {
+  right: 0 !important;
+}
 .header__line--colorize-1 .header__btn-services:hover, .header__line--colorize-1 .header__btn-account:hover, .header__line--colorize-1 .header__btn-wishlist:hover, .header__line--colorize-1 .header__btn-compare:hover, .header__line--colorize-1 .header__btn-currency:hover, .header__line--colorize-1 .header__btn-language:hover, .header__line--colorize-1 .header__btn-cart:hover {
         color: #dd0a0a!important;
     }

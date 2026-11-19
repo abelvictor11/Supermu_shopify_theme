@@ -8,7 +8,8 @@ const custom = fs.readFileSync(path.join(root, 'assets/custom.css'), 'utf8');
 // Isolate the actual overrides: jsdom rejects unrelated legacy CSS later in the file.
 const overrides = custom.match(/(?:\.carousel__slick|\.slick-slider)\s+\.slick-(?:list|slide)(?::not\([^)]*\))?\s*\{[^}]*\}/g);
 assert.equal(overrides.length, 4, 'all list/slide overrides must be exercised');
-const styles = [fs.readFileSync(path.join(root, 'assets/plugin.slick.css'), 'utf8'), overrides.join('\n')];
+const arrows = custom.match(/(?:\.template-product carousel-products )?\.carousel__(?:prev|next)\s*\{[^}]*\}/g);
+const styles = [fs.readFileSync(path.join(root, 'assets/plugin.slick.css'), 'utf8'), [...overrides, ...arrows].join('\n')];
 
 function fixture() {
   return new JSDOM(`${styles.map(css => `<style>${css}</style>`).join('')}
@@ -16,7 +17,7 @@ function fixture() {
       <div class="product-gallery__main_slider slick-slider"><div class="slick-list"><div class="slick-track" style="width:1170px"><div class="slick-slide"></div></div></div></div>
       <div class="product-gallery__thumbnail_slider slick-slider"><div class="slick-list"><div class="slick-track" style="width:1170px"><div class="slick-slide"></div></div></div></div>
     </div>
-    <carousel-products><div class="carousel__slick slick-slider"><div class="slick-list"><div class="slick-track"><div class="slick-slide"></div></div></div></div></carousel-products>`);
+    <carousel-products><div class="carousel__prev"></div><div class="carousel__next"></div><div class="carousel__slick slick-slider"><div class="slick-list"><div class="slick-track"><div class="slick-slide"></div></div></div></div></carousel-products>`);
 }
 
 for (const gallery of ['main', 'thumbnail']) {
@@ -41,5 +42,23 @@ test('product carousels retain their intentional peek and gutters', () => {
     assert.equal(w.getComputedStyle(list).overflow, 'visible');
     assert.equal(w.getComputedStyle(list).marginLeft, '-10px');
     assert.equal(w.getComputedStyle(list.querySelector('.slick-slide')).paddingLeft, '10px');
+  } finally { w.close(); }
+});
+
+test('PDP related-product arrows stay inside the slider instead of extending thirty pixels', () => {
+  const dom = fixture(), w = dom.window;
+  try {
+    w.document.body.className = 'template-product';
+    assert.equal(w.getComputedStyle(w.document.querySelector('.carousel__prev')).left, '0px');
+    assert.equal(w.getComputedStyle(w.document.querySelector('.carousel__next')).right, '0px');
+  } finally { w.close(); }
+});
+
+test('PDP arrow inset does not change homepage arrow positions', () => {
+  const dom = fixture(), w = dom.window;
+  try {
+    w.document.body.className = 'template-index';
+    assert.equal(w.getComputedStyle(w.document.querySelector('.carousel__prev')).left, '-30px');
+    assert.equal(w.getComputedStyle(w.document.querySelector('.carousel__next')).right, '-30px');
   } finally { w.close(); }
 });
