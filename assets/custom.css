@@ -94,22 +94,22 @@ img{
     }
 }
 
-/* Indicador visual de que se puede deslizar */
-.slick-slider .slick-list {
+/* Product-card peek only; PDP galleries must retain Slick's clipped viewport. */
+.carousel__slick .slick-list {
     overflow: visible;
     margin: 0 -10px;
 }
 
-.slick-slider .slick-slide {
+.carousel__slick .slick-slide {
     padding: 0 10px;
 }
 
 /* Animación suave al cambiar slides */
-.slick-slider .slick-slide {
+.carousel__slick .slick-slide {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.slick-slider .slick-slide:not(.slick-active) {
+.carousel__slick .slick-slide:not(.slick-active) {
     opacity: 0.7;
 }
 
