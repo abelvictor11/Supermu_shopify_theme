@@ -1,257 +1,153 @@
-// carousel-manager.js
+// One owner per carousel, including Theme Editor and back/forward-cache restores.
+(function() {
+    'use strict';
+    if (window.CarouselManager) return;
 
-if (typeof window.CarouselManager === 'undefined') {
     class CarouselManager {
-      constructor() {
-        this.swiperInstances = new Map();
-        this.initAttempts = 0;
-        this.maxAttempts = 10;
-        this.retryInterval = 500;
-        this.initialized = false;
-      }
-  
-      init() {
-        if (typeof Swiper === 'undefined') {
-          this.initAttempts++;
-          if (this.initAttempts < this.maxAttempts) {
-            console.log(`Waiting for Swiper to load... Attempt ${this.initAttempts}`);
-            setTimeout(() => this.init(), this.retryInterval);
-          } else {
-            console.error('Failed to load Swiper after multiple attempts');
-          }
-          return;
+        constructor() {
+            this.swiperInstances = new Map();
+            this.retryTimer = null;
+            this.initAttempts = 0;
+            this.suspended = false;
+            this.motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
         }
-  
-        this.initializeCategoryCarousels();
-        this.initializeDualBanners();
-      }
-  
-      destroyInstance(instanceId) {
-        const instance = this.swiperInstances.get(instanceId);
-        if (instance && typeof instance.destroy === 'function') {
-          instance.destroy();
-          this.swiperInstances.delete(instanceId);
-        }
-      }
-  
-      initializeCategoryCarousels() {
-        document.querySelectorAll('.category-carousel-section').forEach(section => {
-          const sectionId = section.getAttribute('data-section-id');
-          const swiperEl = document.getElementById(`category-swiper-${sectionId}`);
-          if (!swiperEl) return;
-  
-          const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
-  
-          const calculateSlidesPerView = (windowWidth) => {
-            if (windowWidth < 480) return Math.min(3, totalSlides);
-            if (windowWidth < 768) return Math.min(4, totalSlides);
-            if (windowWidth < 1024) return Math.min(8, totalSlides);
-            return Math.min(12, totalSlides);
-          };
-  
-          const slidesPerView = calculateSlidesPerView(window.innerWidth);
-          const shouldLoop = totalSlides > slidesPerView;
-  
-          // Validación para asegurar que haya suficientes slides para el loop
-          if (totalSlides < 2) {
-            config.loop = false;
-            config.autoplay = false;
-          }
-  
-          const swiper = new Swiper(`#category-swiper-${sectionId}`, {
-            slidesPerView: slidesPerView,
-            spaceBetween: 20,
-            loop: shouldLoop,
-            initialSlide: 0,
-            autoplay: shouldLoop ? {
-              delay: 3000,
-              disableOnInteraction: false
-            } : false,
-            navigation: {
-              nextEl: `#category-swiper-next-${sectionId}`,
-              prevEl: `#category-swiper-prev-${sectionId}`
-            },
-            observer: true,
-            observeParents: true,
-            breakpoints: {
-              320: {
-                slidesPerView: Math.min(3, totalSlides),
-                spaceBetween: 10
-              },
-              480: {
-                slidesPerView: Math.min(4, totalSlides),
-                spaceBetween: 15
-              },
-              768: {
-                slidesPerView: Math.min(8, totalSlides),
-                spaceBetween: 15
-              },
-              1024: {
-                slidesPerView: Math.min(12, totalSlides),
-                spaceBetween: 20
-              }
-            },
-            on: {
-              init: function () {
-                const skeleton = section.querySelector('.category-skeleton');
-                if (skeleton) {
-                  skeleton.style.display = 'none';
+
+        init(root = document) {
+            if (this.suspended) return;
+            if (typeof Swiper === 'undefined') {
+                if (!this.retryTimer && this.initAttempts++ < 10) {
+                    this.retryTimer = setTimeout(() => {
+                        this.retryTimer = null;
+                        this.init();
+                    }, 500);
                 }
-                swiperEl.style.visibility = 'visible';
-                console.log('Swiper initialized with realIndex:', this.realIndex);
-              }
+                return; // CSS keeps banner images visible even if the library fails.
             }
-          });
-  
-          this.swiperInstances.set(`category-${sectionId}`, swiper);
-        });
-      }
-  
-      initializeDualBanners() {
-        document.querySelectorAll('.custom-grid-banners').forEach(section => {
-          const sectionId = section.id.replace('section-', '');
-          
-          // Destruir instancias existentes antes de crear nuevas
-          const largeBannerEl = document.getElementById(`large-banner-swiper-${sectionId}`);
-          const smallBannerEl = document.getElementById(`small-banner-swiper-${sectionId}`);
+            if (this.retryTimer) clearTimeout(this.retryTimer);
+            this.retryTimer = null;
+            this.initAttempts = 0;
+            this.prune();
+            this.initializeCategoryCarousels(root);
+            this.initializeDualBanners(root);
+        }
 
-          // Destruir instancias existentes antes de crear nuevas
-          this.destroyInstance(`large-banner-${sectionId}`);
-          this.destroyInstance(`small-banner-${sectionId}`);
+        elements(root, selector) {
+            return [...(root.matches && root.matches(selector) ? [root] : []), ...root.querySelectorAll(selector)];
+        }
 
-          if (largeBannerEl) {
-            const totalSlides = largeBannerEl.querySelectorAll('.swiper-slide').length;
-            console.log(`Large Banner [${section.id}] slide count: ${totalSlides}`);
+        mount(element, options, moving) {
+            if (this.swiperInstances.has(element)) return;
+            // Adopt a previously initialized element; never overwrite a live owner.
+            const swiper = element.swiper && !element.swiper.destroyed ? element.swiper : new Swiper(element, options);
+            this.swiperInstances.set(element, { swiper, moving });
+            this.updateMotion();
+        }
 
-            const largeBannerSwiper = new Swiper(largeBannerEl, {
-              init: true,
-              initialSlide: 0,
-              effect: 'fade',
-              fadeEffect: {
-                crossFade: true
-              },
-              speed: 1000,
-              loop: totalSlides > 1,
-              loopAdditionalSlides: 1,
-              slidesPerView: 1,
-              observer: true,
-              observeParents: true,
-              watchSlidesProgress: true,
-              autoplay: totalSlides > 1 ? {
-                delay: 5000,
-                disableOnInteraction: false,
-                waitForTransition: true
-              } : false,
-              navigation: {
-                nextEl: `#large-banner-next-${sectionId}`,
-                prevEl: `#large-banner-prev-${sectionId}`
-              },
-              pagination: {
-                el: `#large-banner-pagination-${sectionId}`,
-                clickable: true,
-                type: 'bullets'
-              },
-              on: {
-                init: function() {
-                  const skeleton = this.el.previousElementSibling;
-                  if (skeleton && skeleton.classList.contains('skeleton-loader')) {
-                    skeleton.style.display = 'none';
-                  }
-                  this.el.classList.add('swiper-initialized');
-                  this.update();
-                },
-                slideChange: function() {
-                  const currentSlide = this.slides[this.activeIndex];
-                  if (currentSlide) {
-                    currentSlide.classList.add('loaded');
-                    const nextSlide = this.slides[this.activeIndex + 1];
-                    if (nextSlide) nextSlide.classList.add('loaded');
-                  }
-                }
-              }
+        initializeDualBanners(root = document) {
+            this.elements(root, '.custom-grid-banners').forEach(section => {
+                section.querySelectorAll('.large-banner-swiper, .small-banner-swiper').forEach(element => {
+                    const count = element.querySelectorAll('.swiper-slide:not(.swiper-slide-duplicate)').length;
+                    if (!count) return;
+                    element.style.display = 'block'; // A configured slide need not be image_1.
+                    const moving = count > 1 && section.dataset.bannerAutoplay === 'true';
+                    this.mount(element, {
+                        slidesPerView: 1,
+                        effect: 'fade',
+                        fadeEffect: { crossFade: true },
+                        speed: 800,
+                        loop: count > 1,
+                        watchOverflow: true,
+                        autoplay: moving ? {
+                            enabled: !this.motionQuery?.matches,
+                            delay: Number(section.dataset.bannerSpeed) || 5000,
+                            disableOnInteraction: false,
+                            // Swiper 8 mouseleave resumes even after autoplay.stop().
+                            // Keep reduced-motion/visibility as the only resume authority.
+                            pauseOnMouseEnter: false
+                        } : false,
+                        navigation: section.dataset.bannerArrows === 'true' ? {
+                            nextEl: element.querySelector('.swiper-button-next'),
+                            prevEl: element.querySelector('.swiper-button-prev')
+                        } : false,
+                        pagination: section.dataset.bannerBullets === 'true' ? {
+                            el: element.querySelector('.swiper-pagination'),
+                            clickable: true
+                        } : false
+                    }, moving);
+                    section.querySelectorAll('.skeleton-loader').forEach(node => { node.style.display = 'none'; });
+                });
             });
+        }
 
-            // Inicializar manualmente después de la configuración
-            largeBannerSwiper.init();
-            this.swiperInstances.set(`large-banner-${sectionId}`, largeBannerSwiper);
-          }
-
-          if (smallBannerEl) {
-            const totalSlides = smallBannerEl.querySelectorAll('.swiper-slide').length;
-            console.log(`Small Banner [${section.id}] slide count: ${totalSlides}`);
-
-            const smallBannerSwiper = new Swiper(smallBannerEl, {
-              init: true,
-              initialSlide: 0,
-              effect: 'fade',
-              fadeEffect: {
-                crossFade: true
-              },
-              speed: 1000,
-              loop: totalSlides > 1,
-              loopAdditionalSlides: 1,
-              slidesPerView: 1,
-              observer: true,
-              observeParents: true,
-              watchSlidesProgress: true,
-              autoplay: totalSlides > 1 ? {
-                delay: 5000,
-                disableOnInteraction: false,
-                waitForTransition: true
-              } : false,
-              navigation: {
-                nextEl: `#small-banner-next-${sectionId}`,
-                prevEl: `#small-banner-prev-${sectionId}`
-              },
-              pagination: {
-                el: `#small-banner-pagination-${sectionId}`,
-                clickable: true,
-                type: 'bullets'
-              },
-              on: {
-                init: function() {
-                  const skeleton = this.el.previousElementSibling;
-                  if (skeleton && skeleton.classList.contains('skeleton-loader')) {
-                    skeleton.style.display = 'none';
-                  }
-                  this.el.classList.add('swiper-initialized');
-                  this.update();
-                },
-                slideChange: function() {
-                  const currentSlide = this.slides[this.activeIndex];
-                  if (currentSlide) {
-                    currentSlide.classList.add('loaded');
-                    const nextSlide = this.slides[this.activeIndex + 1];
-                    if (nextSlide) nextSlide.classList.add('loaded');
-                  }
-                }
-              }
+        initializeCategoryCarousels(root = document) {
+            this.elements(root, '.category-carousel-section').forEach(section => {
+                const element = section.querySelector('[id^="category-swiper-"]');
+                if (!element) return;
+                const count = element.querySelectorAll('.swiper-slide:not(.swiper-slide-duplicate)').length;
+                if (!count) return;
+                const perView = width => Math.min(count, width < 480 ? 3 : width < 768 ? 4 : width < 1024 ? 8 : 12);
+                const moving = count > perView(window.innerWidth);
+                this.mount(element, {
+                    slidesPerView: perView(window.innerWidth),
+                    spaceBetween: 20,
+                    loop: moving,
+                    autoplay: moving ? { enabled: !this.motionQuery?.matches, delay: 3000, disableOnInteraction: false } : false,
+                    navigation: {
+                        nextEl: section.querySelector('[id^="category-swiper-next-"]'),
+                        prevEl: section.querySelector('[id^="category-swiper-prev-"]')
+                    },
+                    breakpoints: {
+                        320: { slidesPerView: Math.min(3, count), spaceBetween: 10 },
+                        480: { slidesPerView: Math.min(4, count), spaceBetween: 15 },
+                        768: { slidesPerView: Math.min(8, count), spaceBetween: 15 },
+                        1024: { slidesPerView: Math.min(12, count), spaceBetween: 20 }
+                    }
+                }, moving);
+                element.style.visibility = 'visible';
+                section.querySelectorAll('.category-skeleton').forEach(node => { node.style.display = 'none'; });
             });
+        }
 
-            // Inicializar manualmente después de la configuración
-            smallBannerSwiper.init();
-            this.swiperInstances.set(`small-banner-${sectionId}`, smallBannerSwiper);
-          }
+        updateMotion() {
+            this.swiperInstances.forEach(({ swiper, moving }) => {
+                if (!swiper.autoplay || swiper.destroyed) return;
+                if (this.suspended || document.hidden || this.motionQuery?.matches || !moving) swiper.autoplay.stop();
+                else swiper.autoplay.start();
+            });
+        }
 
+        prune() {
+            this.swiperInstances.forEach((entry, element) => {
+                if (!element.isConnected) this.destroyInstance(element);
+            });
+        }
 
-        });
-      }
-  
-      destroy() {
-        this.swiperInstances.forEach(swiper => {
-          if (swiper && typeof swiper.destroy === 'function') {
-            swiper.destroy();
-          }
-        });
-        this.swiperInstances.clear();
-      }
+        destroyInstance(element) {
+            const entry = this.swiperInstances.get(element);
+            if (entry && !entry.swiper.destroyed) entry.swiper.destroy(true, true);
+            this.swiperInstances.delete(element);
+        }
+
+        destroy(root) {
+            if (this.retryTimer) clearTimeout(this.retryTimer);
+            this.retryTimer = null;
+            this.swiperInstances.forEach((entry, element) => {
+                if (!root || root === element || root.contains(element)) this.destroyInstance(element);
+            });
+        }
     }
-  
+
     window.CarouselManager = CarouselManager;
-  
-    document.addEventListener('DOMContentLoaded', () => {
-      window.carouselManager = new CarouselManager();
-      window.carouselManager.init();
-    });
-  }
+    const manager = window.carouselManager = new CarouselManager();
+    const onMotion = () => manager.updateMotion();
+    if (manager.motionQuery?.addEventListener) manager.motionQuery.addEventListener('change', onMotion);
+    else if (manager.motionQuery?.addListener) manager.motionQuery.addListener(onMotion);
+    document.addEventListener('visibilitychange', onMotion);
+    document.addEventListener('shopify:section:load', event => manager.init(event.target));
+    document.addEventListener('shopify:section:unload', event => manager.destroy(event.target));
+    window.addEventListener('pagehide', () => { manager.suspended = true; manager.destroy(); });
+    window.addEventListener('pageshow', () => { manager.suspended = false; manager.init(); });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => manager.init(), { once: true });
+    else manager.init();
+})();
   
