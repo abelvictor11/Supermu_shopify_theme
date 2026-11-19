@@ -68,3 +68,10 @@ test('mobile PDP benefit tiles use a shrinkable single column instead of three m
   assert.ok(rule, 'mobile tile override must be scoped to the PDP');
   assert.match(rule[1], /grid-template-columns:\s*minmax\(0,\s*1fr\)/);
 });
+
+test('PDP related title wraps within its flex row on narrow screens', () => {
+  const rule = custom.match(/\.template-product carousel-products \.carousel__title\s*\{([^}]*)\}/);
+  assert.ok(rule, 'related title must have a scoped width constraint');
+  assert.match(rule[1], /max-width:\s*100%/);
+  assert.match(rule[1], /min-width:\s*0/);
+});
