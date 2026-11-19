@@ -1,0 +1,85 @@
+# Configurar el calendario de Navidad
+
+## Qué incluye
+
+Una plantilla `page.advent-calendar` y la sección **Calendario de Navidad**. No cambia el homepage, el carrito ni el checkout. Las fotografías de campaña optimizadas están incluidas; se pueden reemplazar desde el editor.
+
+## Activar en staging después del merge
+
+1. Confirmar que Shopify sincronizó el tema conectado a `staging` y que existe la plantilla `advent-calendar`.
+2. En Páginas, crear o elegir la página de la campaña y asignar la plantilla `advent-calendar`. El código del PR no crea páginas ni cambia su visibilidad automáticamente.
+3. Abrir esa página en el editor del tema. Revisar la sección **Calendario de Navidad**.
+4. Verificar las fechas iniciales: **2026-11-23** y **2026-12-07**, ambos días incluidos. Se admiten entre 1 y 31 días.
+5. Completar las promociones y probar antes de añadir un enlace a la campaña en el menú o el homepage.
+
+## Fechas editables
+
+- Usar siempre `AAAA-MM-DD` (por ejemplo, `2026-11-25`).
+- El inicio y fin globales determinan las puertas visibles. Los títulos no contienen un número fijo de días.
+- Cada bloque tiene su propio **Día de la promoción**, con vigencia de 00:00 a 23:59:59, hora de Colombia (`America/Bogota`).
+- Cambiar el rango global **no desplaza** las fechas de los bloques existentes. Ajustarlas manualmente.
+- No repetir fechas. Una fecha duplicada bloquea la oferta ambigua y muestra una advertencia en el editor.
+- Las fechas inválidas o fuera de campaña también generan advertencias; un rango inválido no activa ofertas.
+
+## Completar y publicar una promoción
+
+Los diez bloques precargados están **desactivados por seguridad editorial**: faltan destinos y condiciones aprobadas. El orden y fechas son una propuesta inicial editable, no un calendario comercial inalterable.
+
+Cada bloque necesita:
+
+1. Fecha concreta.
+2. Marca o título.
+3. Descuento confirmado.
+4. Colección o enlace alternativo. El enlace tiene prioridad si se completan ambos.
+5. Condiciones comerciales aprobadas.
+6. Casilla **Publicar promoción** activada.
+
+La imagen del bloque es opcional. Se admiten destinos locales (`/collections/...`) o HTTPS; no se permiten enlaces ejecutables.
+
+Si falta cualquiera de los campos obligatorios, el día actual aparece como **Sin oferta publicada**, sin botón de compra. No se sustituyen descuentos o condiciones con textos ficticios.
+
+| Fecha propuesta | Marca | Descuento recibido |
+| --- | --- | --- |
+| 23 noviembre | Aromáticas Hindú | Pendiente |
+| 24 noviembre | La Constancia | Pendiente |
+| 25 noviembre | Ranchera | 20% |
+| 26 noviembre | Aguardiente Antioqueño | 30% |
+| 27 noviembre | Pietrán | 20% |
+| 28 noviembre | Colcafé y Chocolates Corona | 20% |
+| 29 noviembre | Zenú | 20% |
+| 30 noviembre | Saltín Noel–Ducales | Pendiente |
+| 1 diciembre | Galletas Navideñas Noel | 10% |
+| 2 diciembre | Juan Valdez | Pendiente |
+| 3–7 diciembre | Sin promoción asignada | Pendiente |
+
+Agregar las cinco ofertas faltantes con **Agregar bloque → Promoción diaria**. No es necesario modificar código.
+
+## Prueba desde el editor
+
+El campo **Fecha de prueba (solo editor)** permite simular un día. Vacío usa la fecha actual. El valor no se envía a la configuración pública de la sección y una URL pública no habilita promociones futuras.
+
+Pruebas recomendadas: 22 noviembre, 23 noviembre, 30 noviembre, 1 diciembre, 7 diciembre y 8 diciembre. Para abrir una puerta durante la prueba, completar y habilitar su bloque. Revisar móvil, teclado, cierre con Escape y retorno del foco.
+
+Una puerta activa abre el detalle; las futuras no son botones y las pasadas indican que la oferta finalizó. Al cambiar de día, la página recalcula estados y retira el enlace de un detalle que haya vencido.
+
+## Los descuentos reales se configuran en Shopify
+
+Esta landing **no modifica precios ni aplica descuentos**. Crear/programar cada promoción real en Shopify para los productos, porcentaje y vigencia aprobados. Comprobar la zona horaria configurada en la tienda al programarlos; debe coincidir con el día de campaña de Colombia.
+
+La disponibilidad visual usa el reloj del navegador y no es una barrera de seguridad. La restricción de precio, la vigencia real y las reglas de checkout las controla Shopify. Cambiar la fecha de una puerta no reprograma un descuento del Admin.
+
+Para aguardiente, agregar únicamente las condiciones y restricciones aprobadas por la tienda; no se incluyen textos legales inventados.
+
+## Verificación técnica
+
+Instalar dependencias de desarrollo con `npm ci` y ejecutar `npm test`. No se agregan dependencias de runtime al storefront.
+
+`npm run preview:advent` sirve una vista local en `http://127.0.0.1:4179`. La ruta `/?scenario=active` existe **solo en ese servidor local** y muestra una promoción sintética para probar el diálogo; no forma parte del tema desplegado.
+
+Las pruebas de Liquidjs y DOM no sustituyen la prueba en Shopify: el helper simula filtros de imágenes y URLs de assets. La vista local tampoco carga el header y footer completos de Shella. Tras sincronizar staging, comprobar la plantilla en el editor y una vista previa real antes de publicar.
+
+## Procedencia de imágenes
+
+- `advent-christmas-tree.jpg`: copia web de `124/arbol_navideno_supermu_300dpi.tif` aportada por el usuario.
+- `advent-bunuelos.jpg`: copia web de `124/bunuelos_fondo_rojo_300dpi.tif` aportada por el usuario.
+- Los originales se conservan en el ZIP; no se suben TIFF de impresión al tema. Procedencia embebida también en los JPEG.

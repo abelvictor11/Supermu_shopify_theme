@@ -1,0 +1,139 @@
+{{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'advent-calendar-state.js' | asset_url }}" defer></script>
+<script src="{{ 'advent-calendar.js' | asset_url }}" defer></script>
+
+<advent-calendar class="advent" id="Advent-{{ section.id }}">
+  <header class="advent__hero">
+    <div class="advent__hero-copy">
+      <h1>{{ section.settings.heading | escape }} <span>{{ section.settings.heading_accent | escape }}</span></h1>
+      <p class="advent__intro">{{ section.settings.intro | escape }}</p>
+      <a class="advent__cta" href="#AdventDoors-{{ section.id }}">Descubrir el calendario <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+      <p class="advent__hero-note">Una sorpresa cada día. Un motivo más para compartir.</p>
+    </div>
+    <div class="advent__hero-image">
+      {% if section.settings.hero_image != blank %}
+        {{ section.settings.hero_image | image_url: width: 1200 | image_tag: widths: '480, 720, 960, 1200', sizes: '(min-width: 800px) 45vw, 85vw', loading: 'eager', fetchpriority: 'high', alt: 'Árbol navideño hecho con alimentos para compartir' }}
+      {% else %}
+        <img src="{{ 'advent-christmas-tree.jpg' | asset_url }}" width="934" height="1400" alt="Árbol navideño hecho con alimentos para compartir" fetchpriority="high" loading="eager">
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="advent__ribbon">
+    <span>Navidad para compartir</span>
+    <span data-advent-range>{{ section.settings.start_date | escape }} — {{ section.settings.end_date | escape }}</span>
+    <span>Hora de Colombia</span>
+  </div>
+
+  <section class="advent__calendar" id="AdventDoors-{{ section.id }}" aria-labelledby="AdventTitle-{{ section.id }}">
+    <div class="advent__calendar-head">
+      <h2 id="AdventTitle-{{ section.id }}">{{ section.settings.calendar_heading | escape }}</h2>
+      <p>Cada puerta tiene su fecha.<br>Las ofertas duran solo un día.</p>
+    </div>
+    <p class="advent__status" data-advent-status role="status">El calendario está disponible del {{ section.settings.start_date | escape }} al {{ section.settings.end_date | escape }}. Activa JavaScript para consultar las puertas de cada día.</p>
+    <div class="advent__grid" data-advent-grid hidden></div>
+    {% if request.design_mode %}
+      <aside class="advent__editor" data-advent-editor aria-label="Revisión de campaña">
+        <strong>Configuración de campaña</strong>
+        <p data-advent-issues></p>
+        {% for block in section.blocks %}
+          <div {{ block.shopify_attributes }}>{{ block.settings.date | escape }} · {{ block.settings.title | escape }}{% unless block.settings.enabled %} · Borrador{% endunless %}</div>
+        {% endfor %}
+      </aside>
+    {% endif %}
+    <p class="advent__timezone">Las puertas se abren a las 00:00 y las ofertas vencen a las 23:59, hora de Colombia.</p>
+  </section>
+
+  <section class="advent__closing" aria-labelledby="AdventClosing-{{ section.id }}">
+    <div class="advent__closing-image">
+      {% if section.settings.closing_image != blank %}
+        {{ section.settings.closing_image | image_url: width: 1500 | image_tag: widths: '600, 960, 1500', sizes: '(min-width: 800px) 60vw, 100vw', loading: 'lazy', alt: 'Buñuelos navideños para compartir en familia' }}
+      {% else %}
+        <img src="{{ 'advent-bunuelos.jpg' | asset_url }}" width="1500" height="844" alt="Buñuelos navideños para compartir en familia" loading="lazy">
+      {% endif %}
+    </div>
+    <div class="advent__closing-copy">
+      <h2 id="AdventClosing-{{ section.id }}">{{ section.settings.closing_heading | escape }}</h2>
+      <p>{{ section.settings.closing_text | escape }}</p>
+    </div>
+  </section>
+  {% if section.settings.campaign_terms != blank %}
+    <footer class="advent__terms"><h2>Condiciones de la campaña</h2><p>{{ section.settings.campaign_terms | escape | newline_to_br }}</p></footer>
+  {% endif %}
+
+  <dialog class="advent__dialog" aria-labelledby="AdventOffer-{{ section.id }}" aria-describedby="AdventTerms-{{ section.id }}" data-advent-dialog>
+    <button class="advent__close" type="button" data-advent-close aria-label="Cerrar oferta" autofocus><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+    <p class="advent__offer-date" data-advent-offer-date></p>
+    <div class="advent__offer-image" data-advent-offer-image hidden></div>
+    <h2 id="AdventOffer-{{ section.id }}" data-advent-offer-title></h2>
+    <p class="advent__discount" data-advent-offer-discount></p>
+    <p id="AdventTerms-{{ section.id }}" class="advent__offer-terms" data-advent-offer-terms></p>
+    <a class="advent__cta" data-advent-offer-link>Ver productos de la oferta <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+  </dialog>
+
+  {% capture advent_config %}
+  {
+    "start": {{ section.settings.start_date | json }},
+    "end": {{ section.settings.end_date | json }},
+    "designMode": {% if request.design_mode %}true{% else %}false{% endif %},
+    "previewDate": {% if request.design_mode %}{{ section.settings.preview_date | default: '' | json }}{% else %}""{% endif %},
+    "offers": [
+      {% for block in section.blocks %}
+        {% assign offer_url = block.settings.url | default: block.settings.collection.url | default: '' %}
+        {% assign offer_image = '' %}
+        {% if block.settings.image != blank %}{% assign offer_image = block.settings.image | image_url: width: 900 %}{% endif %}
+        {
+          "id": {{ block.id | json }},
+          "enabled": {{ block.settings.enabled | json }},
+          "date": {{ block.settings.date | default: '' | json }},
+          "title": {{ block.settings.title | default: '' | json }},
+          "discount": {{ block.settings.discount | default: '' | json }},
+          "url": {{ offer_url | json }},
+          "image": {{ offer_image | json }},
+          "terms": {{ block.settings.terms | default: '' | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  }
+  {% endcapture %}
+  <div hidden data-advent-config="{{ advent_config | escape }}"></div>
+</advent-calendar>
+
+{% schema %}
+{
+  "name": "Calendario de Navidad",
+  "tag": "section",
+  "max_blocks": 31,
+  "enabled_on": { "templates": ["page"] },
+  "settings": [
+    { "type": "header", "content": "Fechas de campaña" },
+    { "type": "text", "id": "start_date", "label": "Fecha de inicio", "default": "2026-11-23", "info": "AAAA-MM-DD. Hora de Colombia. Hasta 31 días, ambos extremos incluidos." },
+    { "type": "text", "id": "end_date", "label": "Fecha de fin", "default": "2026-12-07", "info": "AAAA-MM-DD. No cambia automáticamente las fechas de las promociones." },
+    { "type": "text", "id": "preview_date", "label": "Fecha de prueba (solo editor)", "info": "AAAA-MM-DD. Vacío usa la fecha actual. No afecta a los visitantes." },
+    { "type": "header", "content": "Contenido y fotografías" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "El sabor de la" },
+    { "type": "text", "id": "heading_accent", "label": "Palabra destacada", "default": "Navidad" },
+    { "type": "textarea", "id": "intro", "label": "Introducción", "default": "Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad." },
+    { "type": "image_picker", "id": "hero_image", "label": "Fotografía principal", "info": "Vacío usa el árbol gastronómico de campaña incluido en el tema." },
+    { "type": "text", "id": "calendar_heading", "label": "Título del calendario", "default": "Lo mejor está por abrirse." },
+    { "type": "image_picker", "id": "closing_image", "label": "Fotografía de cierre", "info": "Vacío usa la fotografía de buñuelos incluida en el tema." },
+    { "type": "text", "id": "closing_heading", "label": "Título de cierre", "default": "La mejor parte es compartir." },
+    { "type": "textarea", "id": "closing_text", "label": "Texto de cierre", "default": "En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad." },
+    { "type": "textarea", "id": "campaign_terms", "label": "Condiciones aprobadas de campaña", "info": "Agrega las condiciones comerciales aprobadas. No se crean descuentos desde esta sección." }
+  ],
+  "blocks": [{
+    "type": "offer", "name": "Promoción diaria",
+    "settings": [
+      { "type": "checkbox", "id": "enabled", "label": "Publicar promoción", "default": false, "info": "Solo se activa con fecha, marca, descuento, destino y condiciones completos. Programa el descuento real en Shopify." },
+      { "type": "text", "id": "date", "label": "Día de la promoción", "info": "AAAA-MM-DD. Dura un solo día, hora de Colombia; no repetir fechas." },
+      { "type": "text", "id": "title", "label": "Marca o título" },
+      { "type": "text", "id": "discount", "label": "Descuento confirmado", "info": "Por ejemplo: 20%. Dejar vacío si está pendiente de aprobación." },
+      { "type": "image_picker", "id": "image", "label": "Imagen de la promoción" },
+      { "type": "collection", "id": "collection", "label": "Colección de productos" },
+      { "type": "url", "id": "url", "label": "Enlace alternativo", "info": "Si se completa, tiene prioridad sobre la colección." },
+      { "type": "textarea", "id": "terms", "label": "Condiciones de la promoción", "info": "Referencias participantes, restricciones y condiciones aprobadas para ese día." }
+    ]
+  }],
+  "presets": [{ "name": "Calendario de Navidad" }]
+}
+{% endschema %}

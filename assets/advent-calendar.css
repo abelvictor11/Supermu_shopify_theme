@@ -1,0 +1,164 @@
+@font-face {
+  font-family: "Advent Dry";
+  src: url("Dry.woff") format("woff");
+  font-display: swap;
+}
+.advent {
+  --advent-red: #ed080b;
+  --advent-wine: #501526;
+  --advent-deep: #36111d;
+  --advent-paper: #fff5ef;
+  --advent-gold: #f7cf90;
+  --advent-ink: #451021;
+  display: block;
+  color: var(--advent-paper);
+  background: var(--advent-wine);
+  font-family: "Work Sans", sans-serif;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  scrollbar-color: var(--advent-gold) var(--advent-wine);
+}
+.advent *, .advent *::before, .advent *::after { box-sizing: border-box; }
+.advent [hidden] { display: none !important; }
+.advent ::selection { background: var(--advent-gold); color: var(--advent-ink); }
+.advent :is(h1, h2, p) { margin: 0; color: inherit; }
+.advent :is(button, a) { -webkit-tap-highlight-color: transparent; }
+.advent button { font: inherit; }
+.advent :is(button, a):focus-visible { outline: 3px solid var(--advent-gold); outline-offset: 5px; }
+.advent__hero {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  align-items: center;
+  background: var(--advent-red);
+  padding: 30px max(28px, calc((100vw - 1280px) / 2));
+  min-height: 650px;
+  overflow: hidden;
+}
+.advent__hero-copy { position: relative; z-index: 1; padding: 36px 0; }
+.advent .advent__hero h1 { font-size: clamp(44px, 5.2vw, 76px); line-height: 1.03; font-weight: 700; letter-spacing: -.04em; max-width: 10ch; text-wrap: balance; }
+.advent__hero h1 span { font-family: "Advent Dry", "Work Sans", sans-serif; font-size: 1.35em; font-weight: 400; color: var(--advent-gold); display: block; margin-top: 14px; letter-spacing: 0; }
+.advent .advent__intro { max-width: 40ch; font-size: 18px; line-height: 1.65; margin-top: 30px; }
+.advent .advent__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; padding: 14px 24px; background: var(--advent-paper); color: var(--advent-ink); border: 0; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 650; cursor: pointer; transition: background-color .2s, color .2s; }
+.advent .advent__cta:hover { background: var(--advent-gold); color: var(--advent-ink); }
+.advent .advent__cta:active { background: #e8b971; }
+.advent__cta svg { flex-shrink: 0; }
+.advent__hero .advent__cta { margin-top: 30px; }
+.advent .advent__hero-note { margin-top: 18px; font-size: 13px; }
+.advent__hero-image { width: 100%; height: 590px; min-width: 0; }
+.advent__hero-image img { width: 100%; height: 100%; display: block; object-fit: contain; }
+.advent__ribbon { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding: 20px max(28px, calc((100vw - 1280px) / 2)); background: var(--advent-paper); color: var(--advent-ink); font-size: 14px; }
+.advent__ribbon span:first-child { font-weight: 700; }
+.advent__calendar { padding: 84px max(28px, calc((100vw - 1280px) / 2)) 60px; scroll-margin-top: 100px; }
+.advent__calendar-head { display: flex; justify-content: space-between; align-items: end; gap: 28px; }
+.advent .advent__calendar h2 { font-size: clamp(32px, 3vw, 44px); max-width: 16ch; letter-spacing: -.03em; line-height: 1.14; font-weight: 650; text-wrap: balance; }
+.advent__calendar-head > p { color: #f2d1d4; font-size: 15px; }
+.advent .advent__status { font-size: 15px; margin-top: 30px; color: var(--advent-gold); min-height: 2em; max-width: 70ch; }
+.advent__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
+.advent__door {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 228px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  text-align: left;
+  border: 1px solid #a86872;
+  border-radius: 14px;
+  background: #661c32;
+  color: var(--advent-paper);
+  font-variant-numeric: tabular-nums;
+}
+.advent__door::before { content: ""; position: absolute; inset: 8px; border: 1px dashed #9c5d68; border-radius: 9px; pointer-events: none; z-index: -1; }
+.advent__door:nth-child(4n+2) { background: #f3d6c6; color: var(--advent-ink); border-color: #f3d6c6; }
+.advent__door:nth-child(4n+3) { background: #a52237; }
+.advent__door:nth-child(4n+4) { background: #3d4840; }
+.advent__door-date { font-size: 12px; font-weight: 500; }
+.advent__door-number { font-size: clamp(44px, 5vw, 72px); font-weight: 650; line-height: 1.2; letter-spacing: -.04em; }
+.advent__door-state { font-size: 12px; font-weight: 500; padding-right: 24px; }
+.advent__door-mark { position: absolute; right: 20px; bottom: 18px; font-size: 24px; line-height: 1; }
+.advent .advent__door--active { background: var(--advent-gold); color: var(--advent-ink); border-color: var(--advent-gold); cursor: pointer; transition: background-color .2s, transform .25s ease-out; }
+.advent .advent__door--active:hover { background: #ffe1b1; transform: translateY(-4px); }
+.advent .advent__door--active:active { transform: translateY(-1px); }
+.advent .advent__door--expired { background: var(--advent-deep); border-color: #87515d; color: #e2bcc1; }
+.advent .advent__door--pending { background: var(--advent-gold); color: var(--advent-ink); border-color: var(--advent-gold); }
+.advent__door[aria-current="date"] .advent__door-date::after { content: " · HOY"; font-weight: 700; }
+.advent .advent__timezone { margin-top: 28px; font-size: 12px; color: #f2d1d4; }
+.advent__editor { margin-top: 30px; padding: 24px; background: var(--advent-paper); color: var(--advent-ink); border-radius: 12px; font-size: 14px; }
+.advent__editor p { margin: 12px 0; }
+.advent__editor div { padding: 4px 0; }
+.advent__closing { display: grid; grid-template-columns: 1.4fr 1fr; background: var(--advent-red); align-items: center; }
+.advent__closing-image { min-width: 0; }
+.advent__closing-image img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.advent__closing-copy { padding: 48px; }
+.advent .advent__closing h2 { font-size: clamp(28px, 3vw, 42px); line-height: 1.15; letter-spacing: -.03em; max-width: 13ch; }
+.advent__closing p { margin-top: 20px; max-width: 33ch; font-size: 16px; }
+.advent__terms { padding: 40px max(28px, calc((100vw - 1280px) / 2)); font-size: 13px; }
+.advent .advent__terms h2 { font-size: 18px; margin-bottom: 12px; }
+.advent__terms p { max-width: 75ch; white-space: normal; }
+.advent__dialog { position: fixed; inset: 0; width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 48px); margin: auto; padding: 52px 36px 36px; border: 0; border-radius: 16px; color: var(--advent-ink); background: var(--advent-paper); box-shadow: 0 24px 80px #24071366; overflow-y: auto; scrollbar-color: #a56854 var(--advent-paper); }
+.advent__dialog::backdrop { background: #250d1bd9; }
+.advent__dialog[open] { animation: advent-open .3s ease-out both; }
+.advent .advent__close { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; background: transparent; border: 0; color: var(--advent-ink); cursor: pointer; font-size: 28px; border-radius: 6px; }
+.advent .advent__close:hover { background: #efd1c2; }
+.advent .advent__dialog :is(button, a):focus-visible { outline-color: var(--advent-wine); }
+.advent .advent__offer-date { font-size: 14px; margin-bottom: 20px; }
+.advent .advent__dialog h2 { font-size: 32px; line-height: 1.15; letter-spacing: -.03em; }
+.advent .advent__discount { font-size: 72px; line-height: 1.2; color: #a51d30; font-weight: 700; margin: 12px 0; }
+.advent__offer-terms { white-space: pre-line; font-size: 15px; margin-bottom: 28px !important; }
+.advent__offer-image { margin-bottom: 20px; }
+.advent__offer-image img { display: block; width: 100%; height: auto; max-height: 240px; object-fit: contain; }
+.advent .advent__dialog .advent__cta { background: var(--advent-wine); color: var(--advent-paper); width: 100%; }
+.advent .advent__dialog .advent__cta:hover { background: #7c233b; }
+@keyframes advent-open { from { transform: perspective(900px) rotateY(-8deg) translateY(12px); } to { transform: perspective(900px) rotateY(0) translateY(0); } }
+@media (max-width: 1050px) {
+  .advent__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .advent__hero { min-height: 560px; }
+  .advent__hero-image { height: 500px; }
+}
+@media (max-width: 799px) {
+  .advent__hero { grid-template-columns: 1fr 1fr; padding: 16px 22px 28px; min-height: 0; column-gap: 8px; }
+  .advent__hero-copy { padding: 24px 0; }
+  .advent .advent__hero h1 { font-size: clamp(34px, 6.5vw, 52px); letter-spacing: -.03em; }
+  .advent .advent__intro { font-size: 15px; margin-top: 24px; }
+  .advent__hero-image { height: 440px; }
+  .advent__hero .advent__cta { padding: 12px 16px; font-size: 14px; gap: 16px; }
+  .advent .advent__hero-note { font-size: 11px; }
+  .advent__ribbon { padding: 18px 22px; font-size: 12px; }
+  .advent__ribbon span:last-child { display: none; }
+  .advent__calendar { padding: 52px 22px 40px; }
+  .advent__calendar-head { display: block; }
+  .advent__calendar-head > p { margin-top: 18px; }
+  .advent__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .advent__door { min-height: 204px; padding: 18px; }
+  .advent__door-number { font-size: 62px; }
+  .advent__closing { grid-template-columns: 1fr; }
+  .advent__closing-copy { padding: 10px 28px 42px; }
+  .advent .advent__closing h2 { max-width: 18ch; font-size: 34px; }
+}
+@media (max-width: 479px) {
+  .advent__hero { position: relative; display: block; }
+  .advent__hero-copy { max-width: 100%; padding-bottom: 0; }
+  .advent .advent__hero h1 { max-width: 9ch; font-size: 46px; }
+  .advent .advent__intro { max-width: 30ch; }
+  .advent__hero-image { height: 290px; margin-top: 8px; }
+  .advent__hero .advent__cta { width: 100%; }
+  .advent .advent__hero-note { text-align: center; }
+  .advent__ribbon { justify-content: center; text-align: center; }
+  .advent__door { min-height: 190px; padding: 16px; }
+  .advent__door-number { font-size: 54px; }
+  .advent__door-date, .advent__door-state { font-size: 11px; }
+  .advent__dialog { padding: 52px 24px 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .advent .advent__dialog[open] { animation: none; }
+  .advent .advent__door--active { transition: background-color .2s; }
+  .advent .advent__door--active:hover { transform: none; }
+}
+@media (forced-colors: active) {
+  .advent { scrollbar-color: auto; }
+  .advent__door { border: 1px solid ButtonText; }
+  .advent__door::before { display: none; }
+}
