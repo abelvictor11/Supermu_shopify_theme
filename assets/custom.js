@@ -155,32 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-window.addEventListener('DOMContentLoaded', function() {
-    const swiperElements = document.querySelectorAll('.small-banner-swiper');
-    swiperElements.forEach(function(element) {
-        new Swiper(element, {
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
-            },
-            observer: true,
-            observeParents: true
-        });
-    });
-});
 
 // Funcionalidad para el botón "Agregar" en las cards de productos
 (function() {
