@@ -39,6 +39,8 @@ No se enviaron datos ni se compraron productos durante las pruebas. El servidor 
 
 El revisor examinó código y cuatro capturas. Detectó navegación auxiliar sin revalidación de vencimiento e iconos basados en glifos. Ambos se corrigieron; la regresión funcional se observó fallar antes del ajuste y pasar después. La revisión de correcciones devolvió **ship**, limitada a esos dos hallazgos. No quedan hallazgos menores aplazados.
 
+La documentación visual se completó directamente tras cerrar un agente de documentación que no entregó resultado. `DESIGN.md` y `.impeccable/design.json` registran únicamente la landing; no constituyen un rediseño del tema global. La revisión funcional y visual sí fue independiente.
+
 ## Decisiones registradas
 
 - Reutilizar el worktree aislado del host con una rama nueva desde staging, sin merge ni publicación; no se crea otro checkout.
