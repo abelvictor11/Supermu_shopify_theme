@@ -550,6 +550,11 @@ tabs-element.tabs.product-tabs.d-block.tabs--init {
   .template-product .product-page-info__icon-with-text--style-tile {
     grid-template-columns: minmax(0, 1fr);
   }
+  .template-product carousel-products .carousel__title {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
 }
 .card-info p {
     font-size: .75rem;
