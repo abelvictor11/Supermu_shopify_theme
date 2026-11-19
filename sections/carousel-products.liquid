@@ -40,7 +40,7 @@
                              data-autoplay="{{ section.settings.autoplay }}"
                              data-speed="{{ section.settings.speed | times: 1000 }}"
                              data-count="5"
-                             data-infinite="{{ section.settings.infinite }}"
+                             data-infinite="{% if template.name == 'index' %}false{% else %}{{ section.settings.infinite }}{% endif %}"
                              data-arrows="{{ section.settings.arrows }}"
                              data-bullets="{{ section.settings.bullets }}">
                             {%- if get_carousel_products_async_ajax_loading == true -%}
@@ -64,6 +64,9 @@
                             <div class="carousel__products w-100">
                                 {%- for block in section.blocks limit: 1 -%}
                                     {%- assign max_count = section.settings.max_count  -%}
+                                    {%- if template.name == 'index' -%}
+                                        {%- assign max_count = max_count | at_most: 12 -%}
+                                    {%- endif -%}
                                     {%- assign limit = section.settings.size_of_columns | abs | at_most: max_count | plus: 1 -%}
                                     {%- if is_design_mode -%}
                                         {%- assign max_count = limit | plus: 1 -%}
@@ -104,6 +107,9 @@
                             </div>
                         {%- endif -%}
                     </div>
+                    {%- if template.name == 'index' and primary_collection.products_count > max_count -%}
+                        <a class="btn btn--secondary mt-15" href="{{ primary_collection.url }}">Ver todos los productos</a>
+                    {%- endif -%}
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@
   This section displays two banners side by side with configurable widths (70% and 30%)
 {%- endcomment -%}
 
-<section class="custom-grid-banners {% unless section.blocks.size > 0 %}section-loading{% endunless %}" id="section-{{ section.id }}">
+<section class="custom-grid-banners {% unless section.blocks.size > 0 %}section-loading{% endunless %}" id="section-{{ section.id }}" data-banner-autoplay="{{ section.settings.autoplay }}" data-banner-speed="{{ section.settings.speed | times: 1000 }}" data-banner-arrows="{{ section.settings.arrows }}" data-banner-bullets="{{ section.settings.bullets }}">
    <div class="grid-container grid-container-dual">
       {%- for block in section.blocks -%}
         {%- if block.type == 'banner_large' -%}
@@ -108,7 +108,7 @@
                 {%- if slide_enabled and slide_image != blank -%}
                   <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index }}">
                     <a href="{{ slide_link | default: '#' }}" class="slide-content"
-                      style="background: {{ block.settings.bg_color }};"
+                      style="background-color: {{ block.settings.bg_color }}; --banner-desktop: url('{{ slide_image | image_url: width: banner_width }}'); --banner-mobile: url('{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ slide_image | image_url: width: 800 }}{% endif %}');"
                       data-bg-desktop="{{ slide_image | image_url: width: banner_width }}"
                       data-bg-mobile="{% if mobile_image != blank %}{{ mobile_image | image_url: width: 800 }}{% else %}{{ slide_image | image_url: width: 800 }}{% endif %}">
                       <div class="grid-content">
@@ -673,221 +673,8 @@
 }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const section = document.getElementById('section-{{ section.id }}');
-    if (!section) return;
-
-    // Cargar imágenes responsive según el tamaño de pantalla
-    const loadResponsiveImages = () => {
-        const isMobile = window.innerWidth <= 768;
-        
-        // Cargar primera imagen de cada swiper inmediatamente
-        const largeBannerSlides = section.querySelectorAll('.large-banner-swiper .swiper-slide');
-        const smallBannerSlides = section.querySelectorAll('.small-banner-swiper .swiper-slide');
-        
-        // Cargar primera imagen del banner grande
-        largeBannerSlides.forEach((slide, index) => {
-            const slideContent = slide.querySelector('.slide-content');
-            if (slideContent) {
-                const bgDesktop = slideContent.getAttribute('data-bg-desktop');
-                const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                // Si es mobile y hay imagen mobile, usar mobile, sino usar desktop
-                const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
-                
-                // Cargar primera imagen inmediatamente
-                if (index === 0) {
-                    slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                }
-            }
-        });
-        
-        // Cargar primera imagen del banner pequeño
-        smallBannerSlides.forEach((slide, index) => {
-            const slideContent = slide.querySelector('.slide-content');
-            if (slideContent) {
-                const bgDesktop = slideContent.getAttribute('data-bg-desktop');
-                const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                // Si es mobile y hay imagen mobile, usar mobile, sino usar desktop
-                const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
-                
-                // Cargar primera imagen inmediatamente
-                if (index === 0) {
-                    slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                }
-            }
-        });
-        
-        // Ocultar skeletons después de cargar primeras imágenes
-        setTimeout(() => {
-            section.querySelectorAll('.skeleton-loader').forEach(skeleton => {
-                skeleton.style.display = 'none';
-            });
-            section.querySelectorAll('.swiper-container').forEach(container => {
-                container.style.display = 'block';
-            });
-        }, 100);
-        
-        // Precargar el resto de imágenes en background después de 500ms
-        setTimeout(() => {
-            largeBannerSlides.forEach((slide, index) => {
-                if (index > 0) {
-                    const slideContent = slide.querySelector('.slide-content');
-                    if (slideContent) {
-                        const bgDesktop = slideContent.getAttribute('data-bg-desktop');
-                        const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                        const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
-                        slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                    }
-                }
-            });
-            
-            smallBannerSlides.forEach((slide, index) => {
-                if (index > 0) {
-                    const slideContent = slide.querySelector('.slide-content');
-                    if (slideContent) {
-                        const bgDesktop = slideContent.getAttribute('data-bg-desktop');
-                        const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                        const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
-                        slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                    }
-                }
-            });
-        }, 500);
-        
-        initSwipers();
-    };
-
-    const initSwipers = () => {
-        const largeBannerSwiper = new Swiper('.large-banner-swiper', {
-            init: false,
-            loop: true,
-            loopAdditionalSlides: 2,
-            preloadImages: false,
-            watchSlidesProgress: true,
-            watchSlidesVisibility: true,
-            speed: 800,
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
-            },
-            // Configuración táctil mejorada
-            touchRatio: 1,
-            touchAngle: 45,
-            grabCursor: true,
-            simulateTouch: true,
-            allowTouchMove: true,
-            touchStartPreventDefault: false,
-            touchMoveStopPropagation: false,
-            // Resistencia al deslizar en los bordes
-            resistance: true,
-            resistanceRatio: 0.85,
-            // Umbral de deslizamiento
-            threshold: 10,
-            // Soporte para gestos
-            passiveListeners: true,
-            autoplay: {% if section.settings.autoplay %}{
-                delay: {{ section.settings.speed | times: 1000 }},
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true
-            }{% else %}false{% endif %},
-            pagination: {% if section.settings.bullets %}{
-                el: '.large-banner-swiper .swiper-pagination',
-                clickable: true,
-                dynamicBullets: true,
-                dynamicMainBullets: 3
-            }{% else %}false{% endif %},
-            navigation: {% if section.settings.arrows %}{
-                nextEl: '.large-banner-swiper .swiper-button-next',
-                prevEl: '.large-banner-swiper .swiper-button-prev'
-            }{% else %}false{% endif %},
-            on: {
-                init: function() {
-                    this.update();
-                },
-                imagesReady: function() {
-                    this.update();
-                    this.updateSlides();
-                }
-            }
-        });
-
-        const smallBannerSwiper = new Swiper('.small-banner-swiper', {
-            init: false,
-            loop: true,
-            loopAdditionalSlides: 2,
-            preloadImages: false,
-            watchSlidesProgress: true,
-            watchSlidesVisibility: true,
-            speed: 800,
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
-            },
-            // Configuración táctil mejorada
-            touchRatio: 1,
-            touchAngle: 45,
-            grabCursor: true,
-            simulateTouch: true,
-            allowTouchMove: true,
-            touchStartPreventDefault: false,
-            touchMoveStopPropagation: false,
-            // Resistencia al deslizar en los bordes
-            resistance: true,
-            resistanceRatio: 0.85,
-            // Umbral de deslizamiento
-            threshold: 10,
-            // Soporte para gestos
-            passiveListeners: true,
-            autoplay: {% if section.settings.autoplay %}{
-                delay: {{ section.settings.speed | times: 1000 }},
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true
-            }{% else %}false{% endif %},
-            pagination: {% if section.settings.bullets %}{
-                el: '.small-banner-swiper .swiper-pagination',
-                clickable: true,
-                dynamicBullets: true,
-                dynamicMainBullets: 3
-            }{% else %}false{% endif %},
-            navigation: {% if section.settings.arrows %}{
-                nextEl: '.small-banner-swiper .swiper-button-next',
-                prevEl: '.small-banner-swiper .swiper-button-prev'
-            }{% else %}false{% endif %},
-            on: {
-                init: function() {
-                    this.update();
-                },
-                imagesReady: function() {
-                    this.update();
-                    this.updateSlides();
-                }
-            }
-        });
-
-        // Inicializar los swipers
-        largeBannerSwiper.init();
-        smallBannerSwiper.init();
-    };
-
-    // Cargar imágenes responsive inmediatamente
-    loadResponsiveImages();
-    
-    // Recargar imágenes si cambia el tamaño de pantalla
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            const isMobile = window.innerWidth <= 768;
-            section.querySelectorAll('.slide-content').forEach(slideContent => {
-                const bgDesktop = slideContent.getAttribute('data-bg-desktop');
-                const bgMobile = slideContent.getAttribute('data-bg-mobile');
-                const bgUrl = isMobile ? (bgMobile || bgDesktop) : bgDesktop;
-                if (slideContent.style.backgroundImage) {
-                    slideContent.style.backgroundImage = `url('${bgUrl}')`;
-                }
-            });
-        }, 250);
-    });
-});
-</script>
+<style>
+  .custom-grid-banners .slide-content { background-image: var(--banner-desktop); }
+  @media (max-width: 768px) { .custom-grid-banners .slide-content { background-image: var(--banner-mobile, var(--banner-desktop)); } }
+  @media (prefers-reduced-motion: reduce) { .custom-grid-banners .swiper-wrapper { transition-duration: 0ms !important; } }
+</style>

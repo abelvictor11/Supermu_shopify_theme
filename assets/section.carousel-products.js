@@ -19,6 +19,7 @@
             this.$scrollbar = null;
             this.$scrollbarDrag = null;
             this.handleScrollbarClick = null;
+            this.scrollbarFrame = null;
         }
 
         connectedCallback() {
@@ -316,8 +317,10 @@
             if(!this.$scrollbar.length || !this.$scrollbarDrag.length) return;
 
             this.$slick.on('init.homepageScrollbar setPosition.homepageScrollbar afterChange.homepageScrollbar', function(event, slick, currentSlide) {
-                window.requestAnimationFrame(function() {
-                    _.updateScrollbar(slick, currentSlide);
+                if(_.scrollbarFrame !== null) window.cancelAnimationFrame(_.scrollbarFrame);
+                _.scrollbarFrame = window.requestAnimationFrame(function() {
+                    _.scrollbarFrame = null;
+                    if(_.isConnected) _.updateScrollbar(slick, currentSlide);
                 });
             });
 
@@ -345,7 +348,7 @@
             var slideCount = slick.slideCount,
                 slidesToShow = slick.options.slidesToShow,
                 maxSlide = Math.max(0, slideCount - slidesToShow),
-                activeSlide = Math.min(Math.max(currentSlide || 0, 0), maxSlide),
+                activeSlide = Math.min(Math.max(typeof currentSlide === 'number' ? currentSlide : slick.currentSlide || 0, 0), maxSlide),
                 dragWidth = slideCount > 0 ? Math.min(100, (slidesToShow / slideCount) * 100) : 100,
                 dragLeft = maxSlide > 0 ? (activeSlide / maxSlide) * (100 - dragWidth) : 0;
 
@@ -356,6 +359,8 @@
         }
 
         destroyScrollbar() {
+            if(this.scrollbarFrame !== null) window.cancelAnimationFrame(this.scrollbarFrame);
+            this.scrollbarFrame = null;
             if(this.$slick) {
                 this.$slick.off('.homepageScrollbar');
             }
