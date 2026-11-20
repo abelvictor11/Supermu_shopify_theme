@@ -2,21 +2,192 @@
   "sections": {
     "calendar": {
       "type": "advent-calendar",
-      "settings": { "start_date": "2026-11-23", "end_date": "2026-12-07" },
       "blocks": {
-        "hindu": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-23", "title": "Aromáticas Hindú", "discount": "" } },
-        "constancia": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-24", "title": "La Constancia", "discount": "" } },
-        "ranchera": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-25", "title": "Ranchera", "discount": "20%" } },
-        "aguardiente": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-26", "title": "Aguardiente Antioqueño", "discount": "30%" } },
-        "pietran": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-27", "title": "Pietrán", "discount": "20%" } },
-        "colcafe": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-28", "title": "Colcafé y Chocolates Corona", "discount": "20%" } },
-        "zenu": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-29", "title": "Zenú", "discount": "20%" } },
-        "saltin": { "type": "offer", "settings": { "enabled": false, "date": "2026-11-30", "title": "Saltín Noel–Ducales", "discount": "" } },
-        "noel": { "type": "offer", "settings": { "enabled": false, "date": "2026-12-01", "title": "Galletas Navideñas Noel", "discount": "10%" } },
-        "juanvaldez": { "type": "offer", "settings": { "enabled": false, "date": "2026-12-02", "title": "Juan Valdez", "discount": "" } }
+        "hindu": {
+          "type": "offer",
+          "settings": {
+            "enabled": true,
+            "date": "2026-11-19",
+            "title": "Aromáticas Hindú",
+            "discount": "",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "constancia": {
+          "type": "offer",
+          "settings": {
+            "enabled": true,
+            "date": "2026-11-20",
+            "title": "La Constancia",
+            "discount": "20%",
+            "cover_fit": "cover",
+            "collection": "aseo",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "ranchera": {
+          "type": "offer",
+          "settings": {
+            "enabled": true,
+            "date": "2026-11-25",
+            "title": "Ranchera",
+            "discount": "20%",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "aguardiente": {
+          "type": "offer",
+          "settings": {
+            "enabled": true,
+            "date": "2026-11-26",
+            "title": "Aguardiente Antioqueño",
+            "discount": "30%",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "pietran": {
+          "type": "offer",
+          "settings": {
+            "enabled": true,
+            "date": "2026-11-27",
+            "title": "Pietrán",
+            "discount": "20%",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "colcafe": {
+          "type": "offer",
+          "settings": {
+            "enabled": false,
+            "date": "2026-11-28",
+            "title": "Colcafé y Chocolates Corona",
+            "discount": "20%",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "zenu": {
+          "type": "offer",
+          "settings": {
+            "enabled": false,
+            "date": "2026-11-29",
+            "title": "Zenú",
+            "discount": "20%",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "saltin": {
+          "type": "offer",
+          "settings": {
+            "enabled": false,
+            "date": "2026-11-30",
+            "title": "Saltín Noel–Ducales",
+            "discount": "",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "noel": {
+          "type": "offer",
+          "settings": {
+            "enabled": false,
+            "date": "2026-12-01",
+            "title": "Galletas Navideñas Noel",
+            "discount": "10%",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        },
+        "juanvaldez": {
+          "type": "offer",
+          "settings": {
+            "enabled": false,
+            "date": "2026-12-02",
+            "title": "Juan Valdez",
+            "discount": "",
+            "cover_fit": "cover",
+            "collection": "",
+            "url": "",
+            "terms": ""
+          }
+        }
       },
-      "block_order": ["hindu", "constancia", "ranchera", "aguardiente", "pietran", "colcafe", "zenu", "saltin", "noel", "juanvaldez"]
+      "block_order": [
+        "hindu",
+        "constancia",
+        "ranchera",
+        "aguardiente",
+        "pietran",
+        "colcafe",
+        "zenu",
+        "saltin",
+        "noel",
+        "juanvaldez"
+      ],
+      "settings": {
+        "start_date": "2026-11-19",
+        "end_date": "2026-12-07",
+        "preview_date": "2026-11-18",
+        "heading": "El sabor de la",
+        "heading_accent": "Navidad",
+        "intro": "Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad.",
+        "calendar_heading": "Lo mejor está por abrirse.",
+        "closing_heading": "La mejor parte es compartir.",
+        "closing_text": "En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad.",
+        "campaign_terms": "",
+        "separate_sections": true,
+        "anchor_id": "AdventCalendar-calendar"
+      }
+    },
+    "calendar_hero": {
+      "type": "advent-hero",
+      "settings": {
+        "heading": "El sabor de la",
+        "heading_accent": "Navidad",
+        "intro": "Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad.",
+        "calendar_anchor": "AdventCalendar-calendar"
+      }
+    },
+    "calendar_heading": {
+      "type": "advent-heading",
+      "settings": {
+        "calendar_heading": "Lo mejor está por abrirse."
+      }
+    },
+    "calendar_closing": {
+      "type": "advent-closing",
+      "settings": {
+        "closing_heading": "La mejor parte es compartir.",
+        "closing_text": "En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."
+      }
     }
   },
-  "order": ["calendar"]
+  "order": [
+    "calendar_hero",
+    "calendar_heading",
+    "calendar",
+    "calendar_closing"
+  ]
 }

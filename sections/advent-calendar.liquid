@@ -1,8 +1,9 @@
-{{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'advent-calendar-state.js' | asset_url }}" defer></script>
-<script src="{{ 'advent-calendar.js' | asset_url }}" defer></script>
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+  {% render 'advent-assets', force: true %}
+{% endunless %}
 
-<advent-calendar class="advent" id="Advent-{{ section.id }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
+<advent-calendar class="advent{% if section.settings.separate_sections %} advent--separate{% endif %}" id="Advent-{{ section.id }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
+  {% unless section.settings.separate_sections %}
   <header class="advent__hero">
     <div class="advent__hero-copy">
       <h1>{{ section.settings.heading | escape }} <span>{{ section.settings.heading_accent | escape }}</span></h1>
@@ -18,18 +19,24 @@
       {% endif %}
     </div>
   </header>
+  {% endunless %}
 
+  {% if section.settings.show_range %}
   <div class="advent__ribbon">
     <span>Navidad para compartir</span>
     <span data-advent-range>{{ section.settings.start_date | escape }} - {{ section.settings.end_date | escape }}</span>
     <span>Hora de Colombia</span>
   </div>
+  {% endif %}
 
-  <section class="advent__calendar" id="AdventDoors-{{ section.id }}" aria-labelledby="AdventTitle-{{ section.id }}">
+  <section class="advent__calendar" id="AdventDoors-{{ section.id }}" {% if section.settings.separate_sections %}aria-label="Ofertas del calendario"{% else %}aria-labelledby="AdventTitle-{{ section.id }}"{% endif %}>
+    <span id="{{ section.settings.anchor_id | default: 'AdventCalendar' | escape }}" class="advent__anchor" aria-hidden="true"></span>
+    {% unless section.settings.separate_sections %}
     <div class="advent__calendar-head">
       <h2 id="AdventTitle-{{ section.id }}">{{ section.settings.calendar_heading | escape }}</h2>
       <p>Cada puerta tiene su fecha.<br>Las ofertas duran solo un día.</p>
     </div>
+    {% endunless %}
     <p class="advent__status" data-advent-status role="status">El calendario está disponible del {{ section.settings.start_date | escape }} al {{ section.settings.end_date | escape }}. Activa JavaScript para consultar las puertas de cada día.</p>
     <div class="advent__grid" data-advent-grid hidden></div>
     {% if request.design_mode %}
@@ -41,9 +48,10 @@
         {% endfor %}
       </aside>
     {% endif %}
-    <p class="advent__timezone">Las puertas se abren a las 00:00 y las ofertas vencen a las 23:59, hora de Colombia.</p>
+    {% if section.settings.show_timezone %}<p class="advent__timezone">Las puertas se abren a las 00:00 y las ofertas vencen a las 23:59, hora de Colombia.</p>{% endif %}
   </section>
 
+  {% unless section.settings.separate_sections %}
   <section class="advent__closing" aria-labelledby="AdventClosing-{{ section.id }}">
     <div class="advent__closing-image">
       {% if section.settings.closing_image != blank %}
@@ -57,6 +65,7 @@
       <p>{{ section.settings.closing_text | escape }}</p>
     </div>
   </section>
+  {% endunless %}
   {% if section.settings.campaign_terms != blank %}
     <footer class="advent__terms"><h2>Condiciones de la campaña</h2><p>{{ section.settings.campaign_terms | escape | newline_to_br }}</p></footer>
   {% endif %}
@@ -105,24 +114,28 @@
 
 {% schema %}
 {
-  "name": "Calendario de Navidad",
+  "name": "Adviento: calendario",
   "tag": "section",
   "max_blocks": 31,
   "enabled_on": { "templates": ["page"] },
   "settings": [
+    { "type": "checkbox", "id": "separate_sections", "label": "Usar módulos independientes", "default": false, "info": "Activado: banner superior, título y banner inferior se editan en sus propias secciones. Se conservan los valores integrados para compatibilidad; no actives ambos diseños a la vez." },
+    { "type": "text", "id": "anchor_id", "label": "ID de ancla del calendario", "default": "AdventCalendar", "info": "Debe coincidir con el destino del botón del banner superior. Usa un ID único, sin espacios." },
+    { "type": "checkbox", "id": "show_range", "label": "Mostrar franja de fechas", "default": true },
+    { "type": "checkbox", "id": "show_timezone", "label": "Mostrar nota de vigencia", "default": true },
     { "type": "header", "content": "Fechas de campaña" },
     { "type": "text", "id": "start_date", "label": "Fecha de inicio", "default": "2026-11-23", "info": "AAAA-MM-DD. Hora de Colombia. Hasta 31 días, ambos extremos incluidos." },
     { "type": "text", "id": "end_date", "label": "Fecha de fin", "default": "2026-12-07", "info": "AAAA-MM-DD. No cambia automáticamente las fechas de las promociones." },
     { "type": "text", "id": "preview_date", "label": "Fecha de prueba (solo editor)", "info": "AAAA-MM-DD. Vacío usa la fecha actual. No afecta a los visitantes." },
-    { "type": "header", "content": "Contenido y fotografías" },
-    { "type": "text", "id": "heading", "label": "Título", "default": "El sabor de la" },
-    { "type": "text", "id": "heading_accent", "label": "Palabra destacada", "default": "Navidad" },
-    { "type": "textarea", "id": "intro", "label": "Introducción", "default": "Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad." },
-    { "type": "image_picker", "id": "hero_image", "label": "Fotografía principal", "info": "Vacío usa el árbol gastronómico de campaña incluido en el tema." },
-    { "type": "text", "id": "calendar_heading", "label": "Título del calendario", "default": "Lo mejor está por abrirse." },
-    { "type": "image_picker", "id": "closing_image", "label": "Fotografía de cierre", "info": "Vacío usa la fotografía de buñuelos incluida en el tema." },
-    { "type": "text", "id": "closing_heading", "label": "Título de cierre", "default": "La mejor parte es compartir." },
-    { "type": "textarea", "id": "closing_text", "label": "Texto de cierre", "default": "En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad." },
+    { "type": "header", "content": "Contenido integrado anterior", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "El sabor de la", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "heading_accent", "label": "Palabra destacada", "default": "Navidad", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "textarea", "id": "intro", "label": "Introducción", "default": "Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "image_picker", "id": "hero_image", "label": "Fotografía principal", "info": "Vacío usa el árbol gastronómico de campaña incluido en el tema.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "calendar_heading", "label": "Título del calendario", "default": "Lo mejor está por abrirse.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "image_picker", "id": "closing_image", "label": "Fotografía de cierre", "info": "Vacío usa la fotografía de buñuelos incluida en el tema.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "closing_heading", "label": "Título de cierre", "default": "La mejor parte es compartir.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "textarea", "id": "closing_text", "label": "Texto de cierre", "default": "En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad.", "visible_if": "{{ section.settings.separate_sections == false }}" },
     { "type": "textarea", "id": "campaign_terms", "label": "Condiciones aprobadas de campaña", "info": "Agrega las condiciones comerciales aprobadas. No se crean descuentos desde esta sección." }
   ],
   "blocks": [{
@@ -140,6 +153,6 @@
       { "type": "textarea", "id": "terms", "label": "Condiciones de la promoción (opcional)", "info": "Agrega referencias participantes y restricciones aprobadas si corresponde. Vacío no bloquea la apertura ni muestra un espacio vacío." }
     ]
   }],
-  "presets": [{ "name": "Calendario de Navidad" }]
+  "presets": [{ "name": "Adviento: calendario", "settings": { "separate_sections": true } }]
 }
 {% endschema %}

@@ -1,0 +1,41 @@
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+{{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
+{% endunless %}
+{% if section.settings.show_image or section.settings.show_title or section.settings.show_description %}
+<div class="advent">
+  <section class="advent__closing{% unless section.settings.show_image %} advent__closing--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description %} advent__closing--image-only{% endunless %}" aria-label="Navidad para compartir">
+    {% if section.settings.show_image %}
+      <div class="advent__closing-image">
+        {% if section.settings.closing_image != blank %}
+          {{ section.settings.closing_image | image_url: width: 1500 | image_tag: widths: '600, 960, 1500', sizes: '(min-width: 800px) 60vw, 100vw', loading: 'lazy', alt: section.settings.image_alt }}
+        {% else %}
+          <img src="{{ 'advent-bunuelos.jpg' | asset_url }}" width="1500" height="844" alt="{{ section.settings.image_alt | escape }}" loading="lazy">
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if section.settings.show_title or section.settings.show_description %}
+      <div class="advent__closing-copy">
+        {% if section.settings.show_title and section.settings.closing_heading != blank %}<h2>{{ section.settings.closing_heading | escape }}</h2>{% endif %}
+        {% if section.settings.show_description and section.settings.closing_text != blank %}<p>{{ section.settings.closing_text | escape }}</p>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endif %}
+{% schema %}
+{
+  "name":"Adviento: banner inferior",
+  "tag":"section",
+  "enabled_on":{"templates":["page"]},
+  "settings":[
+    {"type":"checkbox","id":"show_image","label":"Mostrar imagen","default":true},
+    {"type":"image_picker","id":"closing_image","label":"Imagen","info":"Vacío usa la fotografía de buñuelos incluida."},
+    {"type":"text","id":"image_alt","label":"Texto alternativo","default":"Buñuelos navideños para compartir en familia"},
+    {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
+    {"type":"text","id":"closing_heading","label":"Título","default":"La mejor parte es compartir."},
+    {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
+    {"type":"textarea","id":"closing_text","label":"Descripción","default":"En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."}
+  ],
+  "presets":[{"name":"Adviento: banner inferior"}]
+}
+{% endschema %}
