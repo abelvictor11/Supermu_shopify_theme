@@ -6,6 +6,14 @@
   const dateFormat = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'long', timeZone: 'UTC' });
   const formatDay = date => dateFormat.format(new Date(date + 'T12:00:00Z'));
   const shortDateFormat = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  function festiveArt(url, number) {
+    const art = document.createElement('span');
+    art.className = 'advent__door-art'; art.setAttribute('aria-hidden', 'true');
+    art.style.backgroundImage = `url("${url}")`;
+    const index = (number - 1) % 15;
+    art.style.backgroundPosition = `${index % 5 * 25}% ${Math.floor(index / 5) * 50}%`;
+    return art;
+  }
   function icon(kind) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('width', '20'); svg.setAttribute('height', '20');
@@ -121,7 +129,7 @@
       };
       this.status.textContent = messages[this.model.phase];
       if (this.model.valid) {
-        this.querySelector('[data-advent-range]').textContent = `${formatDay(this.config.start)} — ${formatDay(this.config.end)} de ${this.config.end.slice(0, 4)}`;
+        this.querySelector('[data-advent-range]').textContent = `${formatDay(this.config.start)} - ${formatDay(this.config.end)} de ${this.config.end.slice(0, 4)}`;
       }
       const issues = this.querySelector('[data-advent-issues]');
       if (issues && this.config.designMode === true) {
@@ -130,8 +138,15 @@
         issues.textContent = preview + invalidPreview + (this.model.issues.join(' ') || 'Sin errores de fechas. Los borradores no se publican hasta completar y habilitar su promoción.');
       }
       const fragment = document.createDocumentFragment();
-      const mosaic = this.model.days.length === 15;
+      const mosaic = this.model.valid;
       this.grid.classList.toggle('advent__grid--mosaic', mosaic);
+      const wide = api.mosaicLayout(this.model.days.length, 5), small = api.mosaicLayout(this.model.days.length, 3);
+      const areas = layout => layout.rows.map(row => `"${row.join(' ')}"`).join(' ');
+      this.grid.style.setProperty('--advent-layout-wide', areas(wide));
+      this.grid.style.setProperty('--advent-layout-small', areas(small));
+      this.grid.style.setProperty('--advent-columns-wide', Math.min(5, this.model.days.length));
+      this.grid.style.setProperty('--advent-columns-small', Math.min(3, this.model.days.length));
+      const artUrl = api.safeUrl((this.getAttribute('data-advent-art') || '').replace(/^\/\//, 'https://'));
       for (const day of this.model.days) {
         const actionable = day.state === 'active' && typeof this.dialog.showModal === 'function';
         const door = document.createElement(actionable ? 'button' : 'div');
@@ -150,8 +165,9 @@
         if (day.date === this.today()) door.setAttribute('aria-current', 'date');
         const date = document.createElement('time'); date.dateTime = day.date; date.className = 'advent__door-date'; date.textContent = shortDateFormat.format(new Date(day.date + 'T12:00:00Z'));
         const number = document.createElement('span'); number.className = 'advent__door-number'; number.textContent = String(day.number); number.setAttribute('aria-hidden', 'true');
-        const state = document.createElement('span'); state.className = 'advent__door-state'; state.textContent = label;
+        const state = document.createElement('span'); state.className = 'advent__door-state'; state.textContent = actionable ? 'Abrir' : label;
         const mark = document.createElement('span'); mark.className = 'advent__door-mark'; mark.append(icon(actionable ? 'arrow' : day.state === 'expired' ? 'ended' : 'locked')); mark.setAttribute('aria-hidden', 'true');
+        if (artUrl) door.append(festiveArt(artUrl, day.number));
         if (day.presentation.cover) {
           const cover = document.createElement('img');
           cover.className = 'advent__door-cover'; cover.src = day.presentation.cover; cover.alt = '';
@@ -164,14 +180,17 @@
         door.append(date, number, state, mark); fragment.append(door);
       }
       if (mosaic) {
-        ['gift', 'star', 'gift', 'snow', 'snow', 'star', 'gift', 'star'].forEach((kind, index) => {
+        for (let index = 0; index < Math.max(wide.decorations.length, small.decorations.length); index++) {
+          const kind = index % 3 === 0 ? 'gift' : index % 3 === 1 ? 'star' : 'snow';
           const piece = document.createElement('div');
           piece.className = `advent__decoration advent__decoration--${kind}`;
           piece.style.gridArea = `deco${index + 1}`;
+          piece.style.setProperty('--advent-display-wide', index < wide.decorations.length ? 'grid' : 'none');
+          piece.style.setProperty('--advent-display-small', index < small.decorations.length ? 'grid' : 'none');
           piece.setAttribute('aria-hidden', 'true');
           if (kind !== 'gift') piece.append(icon(kind));
           fragment.append(piece);
-        });
+        }
       }
       this.grid.replaceChildren(fragment);
       this.grid.hidden = !this.model.valid;
@@ -198,7 +217,11 @@
       this.querySelector('[data-advent-offer-date]').textContent = `${formatDay(date)} · Solo por hoy`;
       this.querySelector('[data-advent-offer-title]').textContent = day.offer.title;
       this.querySelector('[data-advent-offer-discount]').textContent = day.offer.discount;
-      this.querySelector('[data-advent-offer-terms]').textContent = day.offer.terms;
+      const termsNode = this.querySelector('[data-advent-offer-terms]');
+      const terms = typeof day.offer.terms === 'string' ? day.offer.terms.trim() : '';
+      termsNode.textContent = terms; termsNode.hidden = !terms;
+      if (terms) this.dialog.setAttribute('aria-describedby', termsNode.id);
+      else this.dialog.removeAttribute('aria-describedby');
       const image = this.querySelector('[data-advent-offer-image]');
       const src = api.safeUrl((day.offer.image || '').replace(/^\/\//, 'https://'));
       image.hidden = !src;

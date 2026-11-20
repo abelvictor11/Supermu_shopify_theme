@@ -23,6 +23,50 @@
     try { return new URL(value).protocol === 'https:' ? value : ''; } catch (_) { return ''; }
   }
   const filled = value => typeof value === 'string' && value.trim().length > 0;
+  function missingFields(offer) {
+    return [[filled(offer.title), 'marca'], [filled(offer.discount), 'descuento'],
+      [!!safeUrl(offer.url), 'destino válido']]
+      .filter(([valid]) => !valid).map(([, label]) => label);
+  }
+  // Repeat the approved poster composition; pack a partial final panel in date order.
+  function mosaicLayout(count, requestedColumns) {
+    const columns = Math.min(count, requestedColumns);
+    const rows = [], decorations = [];
+    if (!Number.isInteger(count) || count < 1 || count > 31 || ![3, 5].includes(requestedColumns)) return {rows, decorations};
+    const poster = columns === 5 ? [
+      '1 x 2 3 x', 'x 4 5 x 6', '7 7 8 8 9', '10 x 11 12 13', '10 14 11 12 x', 'x 14 15 x x'
+    ] : ['1 x 2', '3 4 4', 'x 5 6', '7 7 x', '8 9 10', 'x 9 10', '11 12 13', '11 12 x', '14 14 15', 'x x x'];
+    let offset = 0;
+    while (count - offset >= 15) {
+      rows.push(...poster.map(row => row.split(' ').map(cell => cell === 'x' ? '' : `day${Number(cell) + offset}`)));
+      offset += 15;
+    }
+    const tail = [], occupied = (x, y) => tail[y]?.[x];
+    let cursor = 0;
+    for (let day = offset + 1; day <= count; day++) {
+      const wide = count - offset > 3 && day % 6 === 2 ? Math.min(2, columns) : 1;
+      const high = count - offset > 5 && day % 7 === 4 ? 2 : 1;
+      let x, y;
+      while (true) {
+        x = cursor % columns; y = Math.floor(cursor / columns);
+        if (x + wide <= columns && Array.from({length:high}, (_,dy) =>
+          Array.from({length:wide}, (_,dx) => !occupied(x+dx,y+dy)).every(Boolean)).every(Boolean)) break;
+        cursor++;
+      }
+      for (let dy=0;dy<high;dy++) for(let dx=0;dx<wide;dx++) {
+        if (!tail[y+dy]) tail[y+dy] = Array(columns).fill('');
+        tail[y+dy][x+dx] = `day${day}`;
+      }
+      cursor += wide;
+    }
+    rows.push(...tail);
+    while (rows.length && rows[rows.length-1].every(cell => !cell)) rows.pop();
+    // All unused cells become visible, non-interactive poster ornaments, never fake dates.
+    rows.forEach(row => row.forEach((cell, x) => {
+      if (!cell) { const name = `deco${decorations.length+1}`; row[x] = name; decorations.push(name); }
+    }));
+    return {rows, decorations};
+  }
   function buildCalendar({ start, end, today, offers = [] }) {
     const first = parseDay(start), last = parseDay(end), current = parseDay(today);
     const issues = [];
@@ -37,8 +81,9 @@
       const matches = byDate.get(offer.date) || [];
       matches.push(offer); byDate.set(offer.date, matches);
       if (matches.length === 2) issues.push(`Fecha duplicada: ${offer.date}. Deja solo una promoción por día.`);
-      if (offer.enabled === true && (!filled(offer.title) || !filled(offer.discount) || !safeUrl(offer.url) || !filled(offer.terms))) {
-        issues.push(`Completa marca, descuento, destino y condiciones: ${offer.title || offer.date}.`);
+      const missing = missingFields(offer);
+      if (offer.enabled === true && missing.length) {
+        issues.push(`Falta${missing.length > 1 ? 'n' : ''} ${missing.join(', ')}: ${offer.title || offer.date}.`);
       }
     }
     const days = [];
@@ -46,7 +91,7 @@
       const date = new Date(day * DAY).toISOString().slice(0, 10);
       const matches = byDate.get(date) || [];
       const item = matches.length === 1 ? matches[0] : null;
-      const ready = item && item.enabled === true && filled(item.title) && filled(item.discount) && filled(item.terms) && safeUrl(item.url);
+      const ready = item && item.enabled === true && missingFields(item).length === 0;
       const state = day < current ? 'expired' : day > current ? 'future' : ready ? 'active' : 'pending';
       const presentation = {
         cover: safeUrl(typeof item?.cover === 'string' ? item.cover.replace(/^\/\//, 'https://') : ''),
@@ -56,5 +101,5 @@
     }
     return { valid: true, phase: current < first ? 'before' : current > last ? 'ended' : 'active', days, issues };
   }
-  return { parseDay, colombiaDay, safeUrl, buildCalendar };
+  return { parseDay, colombiaDay, safeUrl, buildCalendar, mosaicLayout };
 });

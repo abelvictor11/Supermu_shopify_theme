@@ -35,39 +35,34 @@
   grid-template-columns: 1.15fr 1fr;
   align-items: center;
   background: var(--advent-red);
-  padding: 30px max(28px, calc((100vw - 1280px) / 2));
-  min-height: 650px;
+  padding: 20px max(28px, calc((100vw - 1100px) / 2));
+  min-height: 380px;
   overflow: hidden;
 }
-.advent__hero-copy { position: relative; z-index: 1; padding: 36px 0; }
-.advent .advent__hero h1 { font-size: clamp(44px, 5.2vw, 76px); line-height: 1.03; font-weight: 700; letter-spacing: -.04em; max-width: 10ch; text-wrap: balance; }
+.advent__hero-copy { position: relative; z-index: 1; padding: 20px 0; animation: advent-print-in 480ms var(--advent-ease-out) both; }
+.advent .advent__hero h1 { font-size: clamp(38px, 4.2vw, 60px); line-height: 1.08; font-weight: 700; letter-spacing: -.04em; max-width: 13ch; text-wrap: balance; }
 .advent__hero h1 span { font-family: "Advent Dry", "Work Sans", sans-serif; font-size: 1.35em; font-weight: 400; color: var(--advent-gold); display: block; margin-top: 14px; letter-spacing: 0; }
-.advent .advent__intro { max-width: 40ch; font-size: 18px; line-height: 1.65; margin-top: 30px; }
+.advent .advent__intro { max-width: 40ch; font-size: 16px; line-height: 1.55; margin-top: 22px; }
 .advent .advent__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; padding: 14px 24px; background: var(--advent-paper); color: var(--advent-ink); border: 0; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 650; cursor: pointer; transition: background-color .2s, color .2s; }
 .advent .advent__cta:hover { background: var(--advent-gold); color: var(--advent-ink); }
 .advent .advent__cta:active { background: #e8b971; }
 .advent__cta svg { flex-shrink: 0; }
 .advent__hero .advent__cta { margin-top: 30px; }
-.advent .advent__hero-note { margin-top: 18px; font-size: 13px; }
-.advent__hero-image { width: 100%; height: 590px; min-width: 0; }
+.advent .advent__hero-note { display: none; }
+.advent__hero-image { width: 100%; height: 350px; min-width: 0; animation: advent-print-in 600ms var(--advent-ease-out) both; }
 .advent__hero-image img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .advent__ribbon { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding: 20px max(28px, calc((100vw - 1280px) / 2)); background: var(--advent-paper); color: var(--advent-ink); font-size: 14px; }
 .advent__ribbon span:first-child { font-weight: 700; }
-.advent__calendar { padding: 72px max(28px, calc((100vw - 1280px) / 2)) 60px; scroll-margin-top: 100px; background: var(--advent-red); }
-.advent__calendar-head { display: flex; justify-content: space-between; align-items: end; gap: 28px; }
-.advent .advent__calendar h2 { font-size: clamp(32px, 3vw, 44px); max-width: 16ch; letter-spacing: -.03em; line-height: 1.14; font-weight: 650; text-wrap: balance; }
-.advent__calendar-head > p { color: var(--advent-paper); font-size: 15px; }
-.advent .advent__status { font-size: 15px; margin-top: 30px; color: var(--advent-paper); min-height: 2em; max-width: 70ch; }
-.advent__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: minmax(190px, auto); gap: 14px; margin-top: 28px; }
+.advent__calendar { padding: 40px max(28px, calc((100vw - 1100px) / 2)) 48px; scroll-margin-top: 100px; background: var(--advent-red); }
+.advent__calendar-head { display: block; }
+.advent .advent__calendar h2 { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: 1.14; font-weight: 650; text-wrap: balance; }
+.advent__calendar-head > p { color: var(--advent-paper); font-size: 14px; margin-top: 12px; }
+.advent .advent__status { font-size: 14px; margin-top: 16px; color: var(--advent-paper); min-height: 2em; max-width: 70ch; }
+.advent__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: minmax(160px, auto); gap: 8px; margin-top: 18px; }
 .advent__grid--mosaic {
-  grid-auto-rows: clamp(164px, 11.5vw, 184px);
-  grid-template-areas:
-    "day1 deco1 day2 day3 deco2"
-    "deco3 day4 day5 deco4 day6"
-    "day7 day7 day8 day8 day9"
-    "day10 deco5 day11 day12 day13"
-    "day10 day14 day11 day12 deco6"
-    "deco7 day14 day15 deco8 deco8";
+  grid-template-columns: repeat(var(--advent-columns-wide, 5), minmax(0, 1fr));
+  grid-auto-rows: clamp(144px, 12.8vw, 176px);
+  grid-template-areas: var(--advent-layout-wide);
 }
 .advent__door {
   position: relative;
@@ -81,7 +76,7 @@
   justify-content: space-between;
   text-align: left;
   border: 0;
-  border-radius: 12px;
+  border-radius: 5px;
   overflow: hidden;
   background: var(--advent-mint);
   color: var(--advent-ink);
@@ -93,6 +88,10 @@
 .advent__door:nth-child(4n+4) { background: var(--advent-gold); color: var(--advent-ink); }
 .advent__door-date { position: relative; z-index: 1; font-size: 11px; font-weight: 500; }
 .advent__door-number { position: relative; z-index: 1; align-self: end; margin-block: auto; font-size: clamp(40px, 5vw, 74px); font-weight: 650; line-height: 1.05; letter-spacing: -.04em; }
+.advent__door-art { position: absolute; left: 5%; top: 20%; width: clamp(74px, 9vw, 112px); aspect-ratio: 1; background-repeat: no-repeat; background-size: 500% 300%; clip-path: inset(6% 3% 3%); pointer-events: none; transform-origin: center bottom; }
+.advent__door--covered .advent__door-art { display: none; }
+.advent button.advent__door--active .advent__door-art { transition: transform 380ms var(--advent-ease-out); }
+.advent button.advent__door--active[aria-expanded="true"] .advent__door-art { transform: rotate(-8deg) scale(.96); }
 .advent__door-state { position: relative; z-index: 1; font-size: 11px; font-weight: 500; padding-right: 24px; }
 .advent__door-mark { position: absolute; z-index: 1; right: 14px; bottom: 12px; line-height: 1; }
 .advent button.advent__door--active { cursor: pointer; outline: 3px solid var(--advent-gold); outline-offset: 3px; transition: transform 280ms var(--advent-ease-out); }
@@ -103,6 +102,7 @@
   .advent button.advent__door--active:hover { transform: perspective(900px) rotateY(-2deg) translateY(-3px); }
   .advent button.advent__door--active:hover .advent__door-cover[data-fit="cover"] { transform: scale(1.025); }
   .advent button.advent__door--active:hover .advent__door-mark { transform: translate(2px, -2px); }
+  .advent button.advent__door--active:hover .advent__door-art { transform: rotate(-4deg) translateY(-2px); }
 }
 .advent .advent__door--expired { color: var(--advent-ink); background: #e2bcc1; }
 .advent .advent__door--pending { background: var(--advent-gold); color: var(--advent-ink); }
@@ -111,9 +111,9 @@
 .advent__door--covered .advent__door-state { padding-right: 28px; }
 .advent__door--covered .advent__door-number { padding: 2px 8px; background: var(--advent-paper); color: var(--advent-ink); border-radius: 6px; }
 .advent__door--covered .advent__door-mark { color: var(--advent-ink); right: 19px; bottom: 19px; }
-.advent__decoration { min-width: 0; min-height: 0; display: grid; place-items: center; color: var(--advent-gold); pointer-events: none; user-select: none; }
+.advent__decoration { min-width: 0; min-height: 0; display: var(--advent-display-wide, grid); place-items: center; color: var(--advent-gold); pointer-events: none; user-select: none; }
 .advent__decoration svg { width: 64px; height: 64px; stroke-width: 1; }
-.advent__decoration--gift { position: relative; background: var(--advent-pine); border-radius: 12px; overflow: hidden; }
+.advent__decoration--gift { position: relative; background: var(--advent-pine); border-radius: 5px; overflow: hidden; }
 .advent__decoration--gift::before, .advent__decoration--gift::after { content: ""; position: absolute; background: var(--advent-gold); }
 .advent__decoration--gift::before { width: 16%; height: 100%; left: 42%; }
 .advent__decoration--gift::after { width: 100%; height: 16%; top: 42%; }
@@ -152,25 +152,26 @@
 @keyframes advent-unseal { from { opacity: .6; transform: perspective(900px) rotateY(-12deg) scale(.975); } to { opacity: 1; transform: perspective(900px) rotateY(0) scale(1); } }
 @keyframes advent-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes advent-feedback { from { opacity: .8; } to { opacity: 1; } }
+@keyframes advent-print-in { from { opacity: .65; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 1050px) {
   .advent__grid:not(.advent__grid--mosaic) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .advent__hero { min-height: 560px; }
-  .advent__hero-image { height: 500px; }
+  .advent__hero { min-height: 360px; }
+  .advent__hero-image { height: 310px; }
 }
 @media (max-width: 799px) {
   .advent__hero { grid-template-columns: 1fr 1fr; padding: 16px 22px 28px; min-height: 0; column-gap: 8px; }
   .advent__hero-copy { padding: 24px 0; }
   .advent .advent__hero h1 { font-size: clamp(34px, 6.5vw, 52px); letter-spacing: -.03em; }
   .advent .advent__intro { font-size: 15px; margin-top: 24px; }
-  .advent__hero-image { height: 440px; }
+  .advent__hero-image { height: 300px; }
   .advent__hero .advent__cta { padding: 12px 16px; font-size: 14px; gap: 16px; }
   .advent .advent__hero-note { font-size: 11px; }
   .advent__ribbon { padding: 18px 22px; font-size: 12px; }
   .advent__ribbon span:last-child { display: none; }
-  .advent__calendar { padding: 52px 22px 40px; }
+  .advent__calendar { padding: 28px 16px 36px; }
   .advent__calendar-head { display: block; }
   .advent__calendar-head > p { margin-top: 18px; }
-  .advent__grid { gap: 10px; }
+  .advent__grid { gap: 7px; }
   .advent__grid:not(.advent__grid--mosaic) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .advent__door { padding: 12px; }
   .advent__door-number { font-size: 48px; }
@@ -181,33 +182,25 @@
 @media (max-width: 479px) {
   .advent__hero { position: relative; display: block; }
   .advent__hero-copy { max-width: 100%; padding-bottom: 0; }
-  .advent .advent__hero h1 { max-width: 9ch; font-size: 46px; }
+  .advent .advent__hero h1 { max-width: 13ch; font-size: 36px; }
   .advent .advent__intro { max-width: 30ch; }
-  .advent__hero-image { height: 290px; margin-top: 8px; }
-  .advent__hero .advent__cta { width: 100%; }
+  .advent__hero-image { display: none; }
+  .advent__hero .advent__cta { width: auto; margin-top: 20px; }
   .advent .advent__hero-note { text-align: center; }
   .advent__ribbon { justify-content: center; text-align: center; }
   .advent__door { padding: 10px; }
   .advent__door-number { font-size: 46px; }
   .advent__door-date, .advent__door-state { font-size: 10px; }
+  .advent__door-art { width: 64px; left: 4%; top: 24%; }
   .advent__dialog { padding: 52px 24px 28px; }
 }
 @media (max-width: 799px) {
   .advent__grid--mosaic {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-auto-rows: 160px;
-    grid-template-areas:
-      "day1 deco1 day2"
-      "day3 day4 day4"
-      "deco2 day5 day6"
-      "day7 day7 deco3"
-      "day8 day9 day10"
-      "deco4 day9 day10"
-      "day11 day12 day13"
-      "day11 day12 deco5"
-      "day14 day14 day15"
-      "deco6 deco7 deco8";
+    grid-template-columns: repeat(var(--advent-columns-small, 3), minmax(0, 1fr));
+    grid-auto-rows: 144px;
+    grid-template-areas: var(--advent-layout-small);
   }
+  .advent__decoration { display: var(--advent-display-small, grid); }
   .advent__door-mark { right: 8px; bottom: 8px; }
   .advent__door--covered .advent__door-mark { right: 14px; bottom: 14px; }
   .advent__door-state { padding-right: 16px; font-size: 10px; }
@@ -218,13 +211,21 @@
   .advent .advent__dialog[open] { animation: advent-feedback 80ms linear; }
   .advent .advent__dialog[open]::backdrop { animation: none; }
   .advent button.advent__door--active,
+  .advent button.advent__door--active .advent__door-art,
   .advent button.advent__door--active .advent__door-cover,
   .advent button.advent__door--active .advent__door-mark { transition: none; }
   .advent button.advent__door--active:is(:hover, :active),
+  .advent button.advent__door--active[aria-expanded="true"] .advent__door-art,
+  .advent button.advent__door--active:hover .advent__door-art,
   .advent button.advent__door--active:hover .advent__door-cover[data-fit="cover"],
   .advent button.advent__door--active:hover .advent__door-mark,
   .advent .advent__close:hover { transform: none; }
   .advent .advent__close { transition: background-color 80ms; }
+  .advent__hero-copy, .advent__hero-image { animation: advent-feedback 80ms linear; }
+}
+@media (max-width: 359px) {
+  .advent__door-art { width: 48px; top: 27%; }
+  .advent__door-number { font-size: 40px; }
 }
 @media (forced-colors: active) {
   .advent { scrollbar-color: auto; }

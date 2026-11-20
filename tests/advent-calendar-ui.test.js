@@ -175,6 +175,8 @@ test('real component renders 15 doors, opens only today, and restores focus on c
     assert.equal([...el.querySelectorAll('img')].filter(img=>!img.getAttribute('src')).length,0);
     assert.equal(el.querySelector('dialog').open,true);
     assert.equal(el.querySelector('[data-advent-offer-title]').textContent,'Ranchera');
+    assert.equal(el.querySelector('[data-advent-offer-terms]').hidden,false);
+    assert.equal(el.querySelector('dialog').getAttribute('aria-describedby'),el.querySelector('[data-advent-offer-terms]').id);
     assert.equal(el.querySelector('[data-advent-offer-link]').getAttribute('href'),'/collections/ranchera');
     el.querySelector('[data-advent-close]').click();
     assert.equal(el.querySelector('dialog').open,false);assert.equal(dom.window.document.activeElement,button);
@@ -257,6 +259,39 @@ test('mosaic has decorative non-actions and keeps future card covers non-interac
 });
 test('changing campaign length retains all dates without decorative placement holes',async()=>{
   const {dom,el}=await mounted({settings:{end_date:'2026-11-29'},offers:[readyOffer]});
-  try{assert.equal(el.querySelectorAll('[data-advent-day]').length,7);assert.equal(el.querySelectorAll('.advent__decoration').length,0);}
+  try{assert.equal(el.querySelectorAll('[data-advent-day]').length,7);assert.ok(el.querySelector('[data-advent-grid]').classList.contains('advent__grid--mosaic'));}
   finally{dom.window.close();}
+});
+
+test('19-day campaign receives responsive mosaic placement and public default illustrations',async()=>{
+  const {dom,el}=await mounted({settings:{start_date:'2026-11-19',end_date:'2026-12-07'},offers:[readyOffer]});
+  try{
+    const grid=el.querySelector('[data-advent-grid]');
+    assert.ok(grid.classList.contains('advent__grid--mosaic'));
+    assert.ok(grid.style.getPropertyValue('--advent-layout-wide').includes('day19'));
+    assert.ok(grid.style.getPropertyValue('--advent-layout-small').includes('day19'));
+    assert.equal(el.querySelectorAll('.advent__door-art').length,19);
+    assert.equal(el.querySelectorAll('button[data-advent-day]').length,1);
+  }finally{dom.window.close();}
+});
+
+test('editor explains exactly why an enabled offer for today remains blocked',async()=>{
+  const {dom,el}=await mounted({designMode:true,offers:[{...readyOffer,url:'',terms:''}]});
+  try{
+    assert.match(el.querySelector('[data-advent-issues]').textContent,/Falta destino válido: Ranchera/);
+    assert.doesNotMatch(el.querySelector('[data-advent-issues]').textContent,/Faltan[^.]*condiciones/);
+    assert.equal(el.querySelectorAll('button[data-advent-day]').length,0);
+    assert.equal(el.querySelector('dialog').open,false);
+  }finally{dom.window.close();}
+});
+
+test('today opens with optional terms empty and never exposes an empty description',async()=>{
+  const {dom,el}=await mounted({offers:[{...readyOffer,terms:''}]});
+  try{
+    el.querySelector('button[data-advent-day]')?.click();
+    assert.equal(el.querySelector('dialog').open,true);
+    assert.equal(el.querySelector('[data-advent-offer-terms]').hidden,true);
+    assert.equal(el.querySelector('dialog').hasAttribute('aria-describedby'),false);
+    assert.equal(el.querySelector('[data-advent-offer-link]').getAttribute('href'),'/collections/ranchera');
+  }finally{dom.window.close();}
 });

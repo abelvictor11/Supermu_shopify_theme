@@ -37,9 +37,16 @@ test('expired offers lose their destination and do not accumulate', () => {
   assert.equal(calendar({ today: '2026-12-08' }).phase, 'ended');
 });
 test('incomplete and disabled promotions never become purchasable', () => {
-  for (const args of [{enabled:false},{enabled:'true'},{title:''},{discount:''},{url:''},{terms:''},{url:'javascript:alert(1)'}]) {
+  for (const args of [{enabled:false},{enabled:'true'},{title:''},{discount:''},{url:''},{url:'javascript:alert(1)'}]) {
     const result = calendar({ offers: [{ ...offer, ...args }] });
     assert.equal(result.days[0].state, 'pending'); assert.equal(result.days[0].offer, null);
+  }
+});
+test('optional empty conditions do not block an otherwise complete enabled offer for today',()=>{
+  for(const terms of ['',undefined,'   ']){
+    const result=calendar({offers:[{...offer,terms}]});
+    assert.equal(result.days[0].state,'active');assert.equal(result.days[0].offer.url,offer.url);
+    assert.deepEqual(result.issues,[]);
   }
 });
 test('duplicates block ambiguous dates while invalid and outside dates are reported', () => {
