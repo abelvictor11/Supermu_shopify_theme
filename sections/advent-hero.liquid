@@ -1,0 +1,52 @@
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+  {% render 'advent-assets', force: true %}
+{% endunless %}
+{% if section.settings.show_title or section.settings.show_description or section.settings.show_image or section.settings.show_button %}
+<div class="advent">
+  <header class="advent__hero advent__hero--standalone{% unless section.settings.show_image %} advent__hero--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description or section.settings.show_button %} advent__hero--image-only{% endunless %}">
+    {% if section.settings.show_title or section.settings.show_description or section.settings.show_button %}
+      <div class="advent__hero-copy">
+        {% if section.settings.show_title %}
+          {% if section.settings.heading != blank or section.settings.heading_accent != blank %}
+            <h1>{{ section.settings.heading | escape }}{% if section.settings.heading_accent != blank %} <span>{{ section.settings.heading_accent | escape }}</span>{% endif %}</h1>
+          {% endif %}
+        {% endif %}
+        {% if section.settings.show_description and section.settings.intro != blank %}<p class="advent__intro">{{ section.settings.intro | escape }}</p>{% endif %}
+        {% if section.settings.show_button %}
+          <a class="advent__cta" data-advent-calendar-link data-calendar-target="{{ section.settings.calendar_anchor | escape }}" href="#{{ section.settings.calendar_anchor | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if section.settings.show_image %}
+      <div class="advent__hero-image">
+        {% if section.settings.hero_image != blank %}
+          {{ section.settings.hero_image | image_url: width: 1200 | image_tag: widths: '480, 720, 960, 1200', sizes: '(min-width: 800px) 45vw, 85vw', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt }}
+        {% else %}
+          <img src="{{ 'advent-christmas-tree.jpg' | asset_url }}" width="934" height="1400" alt="{{ section.settings.image_alt | escape }}" fetchpriority="high" loading="eager">
+        {% endif %}
+      </div>
+    {% endif %}
+  </header>
+</div>
+{% endif %}
+{% schema %}
+{
+  "name": "Adviento: banner superior",
+  "tag": "section",
+  "enabled_on": {"templates":["page"]},
+  "settings": [
+    {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
+    {"type":"text","id":"heading","label":"Título","default":"El sabor de la"},
+    {"type":"text","id":"heading_accent","label":"Palabra destacada","default":"Navidad"},
+    {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
+    {"type":"textarea","id":"intro","label":"Descripción","default":"Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad."},
+    {"type":"checkbox","id":"show_image","label":"Mostrar imagen","default":true},
+    {"type":"image_picker","id":"hero_image","label":"Imagen","info":"Vacío usa el árbol gastronómico incluido."},
+    {"type":"text","id":"image_alt","label":"Texto alternativo","default":"Árbol navideño hecho con alimentos para compartir"},
+    {"type":"checkbox","id":"show_button","label":"Mostrar botón al calendario","default":true},
+    {"type":"text","id":"button_label","label":"Texto del botón","default":"Descubrir el calendario"},
+    {"type":"text","id":"calendar_anchor","label":"ID del calendario de destino","default":"AdventCalendar","info":"Debe coincidir con el ID de ancla de la sección Calendario. El botón se oculta si ese calendario no está presente."}
+  ],
+  "presets": [{"name":"Adviento: banner superior"}]
+}
+{% endschema %}

@@ -12,6 +12,25 @@ Una plantilla `page.advent-calendar` y la sección **Calendario de Navidad**. No
 4. Verificar las fechas iniciales: **2026-11-23** y **2026-12-07**, ambos días incluidos. Se admiten entre 1 y 31 días.
 5. Completar las promociones y probar antes de añadir un enlace a la campaña en el menú o el homepage.
 
+## Control de módulos desde el editor
+
+La plantilla está dividida en cuatro secciones nativas:
+
+1. **Adviento: banner superior**: título principal, descripción, fotografía y botón. Cada elemento tiene su propio interruptor.
+2. **Adviento: título y texto**: título e introducción del calendario, editables y ocultables por separado. Si ocultas el título del banner, puedes elegir H1 aquí para conservar un título principal.
+3. **Adviento: calendario**: fechas, promociones, portadas, vigencia y tarjetas. La franja de fechas y la nota de vigencia también se pueden ocultar.
+4. **Adviento: banner inferior**: imagen, título y descripción antes del footer, con interruptores independientes.
+
+Usa el **icono del ojo** de cada sección para ocultarla o volver a mostrarla sin perder sus datos. Puedes arrastrarlas para cambiar el orden. Para una campaña que quieras recuperar después, ocultar es preferible a eliminar.
+
+El calendario funciona solo: no depende del título ni de las fotografías. Si lo ocultas, el botón «Descubrir el calendario» se oculta automáticamente; vuelve a aparecer al recuperar el calendario. Su campo **ID del calendario de destino** debe coincidir con **ID de ancla del calendario** si agregas nuevos módulos manualmente.
+
+La migración de staging conserva el ID `calendar`, sus diez bloques, fechas, activaciones, colecciones, portadas y fecha de prueba. Copia los textos/fotos existentes a los módulos nuevos; no restaura los borradores iniciales del repositorio. En modo independiente, los campos integrados antiguos no se muestran en el editor, pero conservan sus datos para compatibilidad.
+
+**Atención a la fecha de prueba:** el valor guardado en staging se conserva. Si el editor muestra un día distinto de hoy, vacía **Fecha de prueba (solo editor)** o elige el día que quieras revisar. No cambia el comportamiento de los visitantes.
+
+La plantilla JSON de este ajuste contiene la configuración leída de **staging**. No copiarla directamente a producción: una futura promoción a main debe partir de la configuración actual de esa tienda para no trasladar sus datos de prueba.
+
 ## Fechas editables
 
 - Usar siempre `AAAA-MM-DD` (por ejemplo, `2026-11-25`).

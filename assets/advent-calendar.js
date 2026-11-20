@@ -128,8 +128,9 @@
         active: active ? 'La puerta de hoy está lista. Ábrela y descubre tu oferta.' : 'Hoy no hay una oferta publicada. Vuelve a consultar el calendario en la próxima fecha.'
       };
       this.status.textContent = messages[this.model.phase];
-      if (this.model.valid) {
-        this.querySelector('[data-advent-range]').textContent = `${formatDay(this.config.start)} - ${formatDay(this.config.end)} de ${this.config.end.slice(0, 4)}`;
+      const range = this.querySelector('[data-advent-range]');
+      if (this.model.valid && range) {
+        range.textContent = `${formatDay(this.config.start)} - ${formatDay(this.config.end)} de ${this.config.end.slice(0, 4)}`;
       }
       const issues = this.querySelector('[data-advent-issues]');
       if (issues && this.config.designMode === true) {

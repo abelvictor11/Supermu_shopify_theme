@@ -6,8 +6,8 @@ const root = path.resolve(__dirname, '..');
 const { renderCalendar } = require('./helpers/advent-fixture');
 const { JSDOM } = require('jsdom');
 
-test('Shopify template starts with ten truthful disabled drafts, editable dates and no fake destinations', () => {
-  const template = JSON.parse(fs.readFileSync(path.join(root,'templates/page.advent-calendar.json'),'utf8'));
+test('initial campaign fixture preserves the ten supplied drafts without invented destinations', () => {
+  const template = JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/advent-calendar-initial.json'),'utf8'));
   const section = template.sections.calendar;
   assert.equal(section.settings.start_date,'2026-11-23');
   assert.equal(section.settings.end_date,'2026-12-07');
@@ -57,6 +57,15 @@ async function mounted(options={}) {
   return {dom,w,el:w.document.querySelector('advent-calendar'),intervals,timeouts,setTime:value=>{clock=value;}};
 }
 const readyOffer={date:'2026-11-25',title:'Ranchera',discount:'20%',enabled:true,url:'/collections/ranchera',terms:'Condiciones de prueba, no publicables.'};
+
+test('standalone calendar still opens offers with range and timezone note switched off',async()=>{
+  const {dom,el}=await mounted({settings:{separate_sections:true,show_range:false,show_timezone:false},offers:[readyOffer]});
+  try{
+    assert.equal(el.querySelector('[data-advent-range]'),null);
+    assert.equal(el.querySelector('.advent__hero,.advent__closing,.advent__calendar-head,.advent__timezone'),null);
+    el.querySelector('button[data-advent-day]').click();assert.equal(el.querySelector('dialog').open,true);
+  }finally{dom.window.close();}
+});
 
 function captureClosingAnimation(dialog) {
   const calls=[];

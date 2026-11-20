@@ -1,0 +1,28 @@
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+{{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
+{% endunless %}
+{% if section.settings.show_title or section.settings.show_description %}
+<div class="advent">
+  <div class="advent__standalone-heading advent__calendar-head">
+    {% if section.settings.show_title and section.settings.calendar_heading != blank %}
+      {% if section.settings.heading_tag == 'h1' %}<h1 class="advent__standalone-title">{{ section.settings.calendar_heading | escape }}</h1>{% else %}<h2 class="advent__standalone-title">{{ section.settings.calendar_heading | escape }}</h2>{% endif %}
+    {% endif %}
+    {% if section.settings.show_description and section.settings.description != blank %}<p>{{ section.settings.description | escape | newline_to_br }}</p>{% endif %}
+  </div>
+</div>
+{% endif %}
+{% schema %}
+{
+  "name":"Adviento: título y texto",
+  "tag":"section",
+  "enabled_on":{"templates":["page"]},
+  "settings":[
+    {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
+    {"type":"text","id":"calendar_heading","label":"Título","default":"Lo mejor está por abrirse."},
+    {"type":"select","id":"heading_tag","label":"Nivel del título","default":"h2","options":[{"value":"h1","label":"Principal (H1)"},{"value":"h2","label":"Secundario (H2)"}],"info":"Usa H1 si ocultas el título del banner superior y este será el título principal de la página."},
+    {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
+    {"type":"textarea","id":"description","label":"Descripción","default":"Cada puerta tiene su fecha.\nLas ofertas duran solo un día."}
+  ],
+  "presets":[{"name":"Adviento: título y texto"}]
+}
+{% endschema %}
