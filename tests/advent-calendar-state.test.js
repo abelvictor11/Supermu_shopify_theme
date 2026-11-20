@@ -54,3 +54,18 @@ test('safe navigation permits local and HTTPS destinations, rejects executable a
   assert.equal(safeUrl('/collections/ranchera'),'/collections/ranchera');
   assert.equal(safeUrl('https://supermu.com/collections/ranchera'),'https://supermu.com/collections/ranchera');
 });
+test('public card covers survive locked, draft and expired states without exposing the surprise', () => {
+  const item={...offer,enabled:false,cover:'https://cdn.shopify.com/cover.png',coverFit:'contain'};
+  for(const today of ['2026-11-22','2026-11-23','2026-11-24']){
+    const day=calendar({today,offers:[item]}).days[0];
+    assert.equal(day.offer,null);
+    assert.deepEqual(day.presentation,{cover:'https://cdn.shopify.com/cover.png',coverFit:'contain'});
+    assert.equal(day.presentation.url,undefined);assert.equal(day.presentation.discount,undefined);
+  }
+});
+test('ambiguous dates and unsafe card covers fall back safely', () => {
+  const a=calendar({offers:[{...offer,cover:'javascript:alert(1)',coverFit:'weird'}]}).days[0];
+  assert.deepEqual(a.presentation,{cover:'',coverFit:'cover'});
+  const b=calendar({offers:[offer,{...offer,cover:'/assets/test.jpg'}]}).days[0];
+  assert.deepEqual(b.presentation,{cover:'',coverFit:'cover'});
+});

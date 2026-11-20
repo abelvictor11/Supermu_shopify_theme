@@ -36,6 +36,22 @@ Cada bloque necesita:
 
 La imagen del bloque es opcional. Se admiten destinos locales (`/collections/...`) o HTTPS; no se permiten enlaces ejecutables.
 
+### Portadas y mosaico navideño
+
+Cada bloque dispone de **Portada de la tarjeta**, diferente de **Imagen dentro de la sorpresa**. La portada es arte público: se ve también en fechas futuras, vencidas y borradores. No poner ahí un descuento que quieras mantener oculto. El detalle de la oferta solo se abre cuando está vigente y completo.
+
+**Ajuste de portada** permite rellenar la tarjeta (recorta sus bordes) o mostrar la imagen completa. Los números, fechas y estados se dibujan por encima con fondo legible. Si la imagen falla, permanece la tarjeta de color y su número, sin icono de imagen rota.
+
+La campaña de 15 días utiliza un mosaico con tarjetas cuadradas, anchas y altas y ocho piezas decorativas sin número. Estas últimas no son promociones y nunca tienen hover ni clic. Solo la tarjeta de la oferta vigente tiene movimiento hover y abre la sorpresa; las demás fechas siguen bloqueadas.
+
+Para decorar un día pendiente, agrega un bloque con fecha y portada y déjalo desactivado; no hace falta inventar marca o descuento. Si cambias la duración a otro número de días, se usa una cuadrícula flexible sin espacios reservados para días inexistentes.
+
+### Animaciones y accesibilidad
+
+La oferta se abre con un giro suave tipo puerta (420ms) y se cierra en 140ms. El enlace se retira desde el inicio del cierre, y la caducidad no espera una animación para bloquearlo. Escape y el botón de cierre devuelven el foco a la tarjeta.
+
+Con **Reducir movimiento** activado en el sistema, la apertura usa solo una opacidad breve y el cierre es inmediato. No hay partículas, bucles ni librerías de animación adicionales. El hover solo se aplica a la puerta vigente con mouse; las portadas en modo imagen completa no se amplían ni se recortan.
+
 Si falta cualquiera de los campos obligatorios, el día actual aparece como **Sin oferta publicada**, sin botón de compra. No se sustituyen descuentos o condiciones con textos ficticios.
 
 | Fecha propuesta | Marca | Descuento recibido |
@@ -75,6 +91,8 @@ Para aguardiente, agregar únicamente las condiciones y restricciones aprobadas 
 Instalar dependencias de desarrollo con `npm ci` y ejecutar `npm test`. No se agregan dependencias de runtime al storefront.
 
 `npm run preview:advent` sirve una vista local en `http://127.0.0.1:4179`. La ruta `/?scenario=active` existe **solo en ese servidor local** y muestra una promoción sintética para probar el diálogo; no forma parte del tema desplegado.
+
+Para usar otro puerto sin interrumpir una vista previa existente: `ADVENT_PREVIEW_PORT=4182 npm run preview:advent`.
 
 Las pruebas de Liquidjs y DOM no sustituyen la prueba en Shopify: el helper simula filtros de imágenes y URLs de assets. La vista local tampoco carga el header y footer completos de Shella. Tras sincronizar staging, comprobar la plantilla en el editor y una vista previa real antes de publicar.
 

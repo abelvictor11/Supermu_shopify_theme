@@ -1,5 +1,18 @@
 # Verificación del calendario — 19 noviembre 2026
 
+## Refinamiento del 20 de noviembre: mosaico, portadas y movimiento
+
+- Suite completa: **102 pruebas aprobadas**, sin fallos ni omitidas; scripts de runtime y diff comprobados.
+- Theme Check sin incidencias en la sección/plantilla del calendario; no se declara limpio el resto del tema. Detector Impeccable sin hallazgos en los tres archivos de runtime revisados.
+- Mosaico de 15 puertas y ocho decoraciones; portadas públicas independientes de la oferta, ajuste cover/contain y fallback ante imagen rota. Otras duraciones usan cuadrícula sin reservas vacías.
+- Apertura de 420ms y salida de 140ms cancelable; pruebas de Escape, cierre repetido, reapertura rápida, rechazo/API ausente, caducidad durante salida y desmontaje. Movimiento reducido sin giro y con cierre inmediato.
+- Revisión independiente detectó contraste insuficiente de texto pequeño. Se corrigieron rojo y estado locales; ratio calculado 5.10:1, protegido por prueba. No se añadieron supresiones del detector.
+- Navegador local real: anchos 1440, 390 y 320px sin desbordamiento horizontal ni etiquetas recortadas; portadas cargadas, solo una puerta de prueba activa y futuros sin apertura. Diálogo nativo abierto en 320px, animación CSS comprobada, Escape cierra y restaura foco/aria-expanded.
+- Evidencia visual en el directorio temporal de la tarea: `desktop.jpg`, `mobile.jpg`, `offer.jpg`, `calendar-final.jpg`. Fecha, oferta y portadas de esta vista son datos sintéticos señalados explícitamente; no representan una promoción habilitada en Shopify.
+- Sin cambios en homepage, navegación, carrito, descuentos ni main. Sigue pendiente confirmar asignación de página y configuración comercial en Shopify: integrar código no crea una página ni activa promociones.
+
+Los apartados siguientes conservan el registro histórico de la primera entrega.
+
 ## Resultado
 
 - Suite completa: **64 pruebas aprobadas**, sin fallos ni pruebas omitidas.

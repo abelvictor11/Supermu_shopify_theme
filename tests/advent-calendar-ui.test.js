@@ -58,6 +58,114 @@ async function mounted(options={}) {
 }
 const readyOffer={date:'2026-11-25',title:'Ranchera',discount:'20%',enabled:true,url:'/collections/ranchera',terms:'Condiciones de prueba, no publicables.'};
 
+function captureClosingAnimation(dialog) {
+  const calls=[];
+  dialog.animate=(frames,options)=>{
+    let finish,reject;
+    const animation={finished:new Promise((resolve,fail)=>{finish=resolve;reject=fail;}),cancelled:false,cancel(){this.cancelled=true;}};
+    calls.push({animation,frames,options,finish,reject});return animation;
+  };
+  return calls;
+}
+
+test('closing revokes the link immediately and plays one bounded exit before restoring focus',async()=>{
+  const {dom,el}=await mounted({offers:[readyOffer]});
+  try {
+    const door=el.querySelector('button[data-advent-day]');door.click();
+    const dialog=el.querySelector('dialog'),calls=captureClosingAnimation(dialog);
+    assert.equal(door.getAttribute('aria-expanded'),'true');
+    el.querySelector('[data-advent-close]').click();el.querySelector('[data-advent-close]').click();
+    assert.equal(calls.length,1);assert.ok(calls[0].options.duration<=180);assert.equal(dialog.open,true);
+    assert.equal(el.querySelector('[data-advent-offer-link]').hasAttribute('href'),false);
+    calls[0].finish();await Promise.resolve();
+    assert.equal(dialog.open,false);assert.equal(door.getAttribute('aria-expanded'),'false');
+    assert.equal(dom.window.document.activeElement,door);assert.equal(calls[0].animation.cancelled,true);
+  } finally {dom.window.close();}
+});
+test('Escape uses the same close transition without losing native dialog focus protection',async()=>{
+  const {dom,w,el}=await mounted({offers:[readyOffer]});
+  try {
+    el.querySelector('button[data-advent-day]').click();const dialog=el.querySelector('dialog'),calls=captureClosingAnimation(dialog);
+    const cancel=new w.Event('cancel',{cancelable:true});dialog.dispatchEvent(cancel);
+    assert.equal(cancel.defaultPrevented,true);assert.equal(calls.length,1);assert.equal(dialog.open,true);
+    calls[0].finish();await Promise.resolve();assert.equal(dialog.open,false);
+  } finally {dom.window.close();}
+});
+test('reopen cancels an old exit; stale animation and close events cannot revoke the new offer',async()=>{
+  const {dom,w,el}=await mounted({offers:[readyOffer]});
+  try {
+    const door=el.querySelector('button[data-advent-day]');door.click();
+    const dialog=el.querySelector('dialog'),calls=captureClosingAnimation(dialog);
+    el.querySelector('[data-advent-close]').click();door.click();
+    assert.equal(calls[0].animation.cancelled,true);calls[0].finish();await Promise.resolve();
+    dialog.dispatchEvent(new w.Event('close'));
+    assert.equal(dialog.open,true);assert.equal(door.getAttribute('aria-expanded'),'true');
+    assert.equal(el.querySelector('[data-advent-offer-link]').getAttribute('href'),readyOffer.url);
+  } finally {dom.window.close();}
+});
+test('a rejected exit animation closes safely and leaves no purchasable link',async()=>{
+  const {dom,el}=await mounted({offers:[readyOffer]});
+  try {
+    el.querySelector('button[data-advent-day]').click();const dialog=el.querySelector('dialog'),calls=captureClosingAnimation(dialog);
+    el.querySelector('[data-advent-close]').click();calls[0].reject(new Error('cancelled'));await Promise.resolve();
+    assert.equal(dialog.open,false);assert.equal(el.querySelector('[data-advent-offer-link]').hasAttribute('href'),false);
+  } finally {dom.window.close();}
+});
+test('midnight and disconnect bypass any pending exit animation immediately',async()=>{
+  for(const reason of ['midnight','disconnect']) {
+    const {dom,el,setTime}=await mounted({offers:[readyOffer]});
+    try {
+      el.querySelector('button[data-advent-day]').click();const dialog=el.querySelector('dialog'),calls=captureClosingAnimation(dialog);
+      el.querySelector('[data-advent-close]').click();
+      if(reason==='midnight'){setTime('2026-11-26T05:00:00Z');el.refresh();}else el.remove();
+      assert.equal(dialog.open,false);assert.equal(calls[0].animation.cancelled,true);
+      calls[0].finish();await Promise.resolve();assert.equal(dialog.open,false);
+    } finally {dom.window.close();}
+  }
+});
+test('reduced motion skips spatial exit and retains immediate close feedback',async()=>{
+  const {dom,w,el}=await mounted({offers:[readyOffer]});
+  try {
+    w.matchMedia=()=>({matches:true});el.querySelector('button[data-advent-day]').click();
+    const dialog=el.querySelector('dialog'),calls=captureClosingAnimation(dialog);
+    el.querySelector('[data-advent-close]').click();assert.equal(calls.length,0);assert.equal(dialog.open,false);
+  } finally {dom.window.close();}
+});
+test('a failed animation API never leaves a dialog stuck open',async()=>{
+  const {dom,el}=await mounted({offers:[readyOffer]});
+  try {
+    el.querySelector('button[data-advent-day]').click();el.querySelector('dialog').animate=()=>{throw new Error('unsupported');};
+    el.querySelector('[data-advent-close]').click();assert.equal(el.querySelector('dialog').open,false);
+  } finally {dom.window.close();}
+});
+test('failed card covers fall back without unlocking the day',async()=>{
+  const {dom,w,el}=await mounted({offers:[{...readyOffer,date:'2026-11-26',enabled:false,cover_image:'/broken.jpg'}]});
+  try {
+    const card=el.querySelector('[data-advent-day="2026-11-26"]');card.querySelector('img').dispatchEvent(new w.Event('error'));
+    assert.equal(card.querySelector('img'),null);assert.equal(card.classList.contains('advent__door--covered'),false);
+    assert.equal(card.tagName,'DIV');assert.equal(el.querySelectorAll('button[data-advent-day]').length,0);
+  } finally {dom.window.close();}
+});
+
+test('motion stays scoped to actionable doors and has a non-spatial reduced-motion path',()=>{
+  const css=fs.readFileSync(path.join(root,'assets/advent-calendar.css'),'utf8');
+  assert.match(css,/@keyframes advent-unseal/);
+  assert.match(css,/@media\s*\(hover:\s*hover\)\s*and\s*\(pointer:\s*fine\)/);
+  assert.match(css,/button\.advent__door--active:hover[^}]*\}/);
+  assert.match(css,/@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*advent-feedback/);
+  assert.doesNotMatch(css,/animation:[^;]*infinite/);
+});
+
+test('calendar small text retains AA contrast against the campaign red',()=>{
+  const css=fs.readFileSync(path.join(root,'assets/advent-calendar.css'),'utf8');
+  const color=name=>css.match(new RegExp(`--advent-${name}: #([0-9a-f]{6})`))[1];
+  const luminance=hex=>hex.match(/../g).map(v=>parseInt(v,16)/255)
+    .map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4)
+    .reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+  assert.ok((luminance(color('paper'))+.05)/(luminance(color('red'))+.05)>=4.5);
+  assert.match(css,/\.advent \.advent__status\s*\{[^}]*color: var\(--advent-paper\)/);
+});
+
 test('real component renders 15 doors, opens only today, and restores focus on close',async()=>{
   const {dom,el}=await mounted({offers:[readyOffer]});
   try {
@@ -125,4 +233,30 @@ test('disconnect cleans clock and reconnect creates one clock and one set of doo
 test('unsupported dialogs and malformed campaign keep informative content, no broken purchase controls',async()=>{
   const {dom,el}=await mounted({settings:{start_date:'2026-02-30'},offers:[readyOffer]});
   try{assert.equal(el.querySelectorAll('button[data-advent-day]').length,0);assert.match(el.querySelector('[data-advent-status]').textContent,/preparando/);}finally{dom.window.close();}
+});
+test('Liquid sends card cover independently from surprise photo, including disabled drafts', async()=>{
+  const dom=new JSDOM(await renderCalendar({offers:[{...readyOffer,enabled:false,cover_image:'/assets/cover.jpg',image:'/assets/surprise.jpg',cover_fit:'contain'}]}));
+  try{
+    const config=JSON.parse(dom.window.document.querySelector('[data-advent-config]').getAttribute('data-advent-config'));
+    assert.equal(config.offers[0].cover,'/assets/cover.jpg');assert.equal(config.offers[0].image,'/assets/surprise.jpg');
+    assert.equal(config.offers[0].coverFit,'contain');
+  }finally{dom.window.close();}
+});
+test('mosaic has decorative non-actions and keeps future card covers non-interactive',async()=>{
+  const {dom,el}=await mounted({offers:[readyOffer,{...readyOffer,date:'2026-11-26',cover_image:'/assets/advent-bunuelos.jpg'}]});
+  try{
+    assert.equal(el.querySelectorAll('[data-advent-day]').length,15);
+    assert.equal(el.querySelectorAll('button[data-advent-day]').length,1);
+    const locked=el.querySelector('[data-advent-day="2026-11-26"]');
+    assert.equal(locked.tagName,'DIV');assert.equal(locked.querySelector('img').getAttribute('src'),'/assets/advent-bunuelos.jpg');
+    assert.ok(el.querySelectorAll('.advent__decoration').length>0);
+    for(const tile of el.querySelectorAll('.advent__decoration')){assert.equal(tile.tagName,'DIV');assert.equal(tile.getAttribute('aria-hidden'),'true');}
+    locked.click();assert.equal(el.querySelector('dialog').open,false);
+    el.querySelector('button[data-advent-day]').click();assert.equal(el.querySelector('dialog').open,true);
+  }finally{dom.window.close();}
+});
+test('changing campaign length retains all dates without decorative placement holes',async()=>{
+  const {dom,el}=await mounted({settings:{end_date:'2026-11-29'},offers:[readyOffer]});
+  try{assert.equal(el.querySelectorAll('[data-advent-day]').length,7);assert.equal(el.querySelectorAll('.advent__decoration').length,0);}
+  finally{dom.window.close();}
 });

@@ -48,7 +48,11 @@
       const item = matches.length === 1 ? matches[0] : null;
       const ready = item && item.enabled === true && filled(item.title) && filled(item.discount) && filled(item.terms) && safeUrl(item.url);
       const state = day < current ? 'expired' : day > current ? 'future' : ready ? 'active' : 'pending';
-      days.push({ date, number: day - first + 1, state, offer: state === 'active' ? { ...item, url: safeUrl(item.url) } : null });
+      const presentation = {
+        cover: safeUrl(typeof item?.cover === 'string' ? item.cover.replace(/^\/\//, 'https://') : ''),
+        coverFit: item?.coverFit === 'contain' ? 'contain' : 'cover'
+      };
+      days.push({ date, number: day - first + 1, state, presentation, offer: state === 'active' ? { ...item, url: safeUrl(item.url) } : null });
     }
     return { valid: true, phase: current < first ? 'before' : current > last ? 'ended' : 'active', days, issues };
   }

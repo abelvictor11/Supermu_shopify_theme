@@ -82,6 +82,8 @@
         {% assign offer_url = block.settings.url | default: block.settings.collection.url | default: '' %}
         {% assign offer_image = '' %}
         {% if block.settings.image != blank %}{% assign offer_image = block.settings.image | image_url: width: 900 %}{% endif %}
+        {% assign cover_image = '' %}
+        {% if block.settings.cover_image != blank %}{% assign cover_image = block.settings.cover_image | image_url: width: 900 %}{% endif %}
         {
           "id": {{ block.id | json }},
           "enabled": {{ block.settings.enabled | json }},
@@ -90,6 +92,8 @@
           "discount": {{ block.settings.discount | default: '' | json }},
           "url": {{ offer_url | json }},
           "image": {{ offer_image | json }},
+          "cover": {{ cover_image | json }},
+          "coverFit": {{ block.settings.cover_fit | default: 'cover' | json }},
           "terms": {{ block.settings.terms | default: '' | json }}
         }{% unless forloop.last %},{% endunless %}
       {% endfor %}
@@ -128,7 +132,9 @@
       { "type": "text", "id": "date", "label": "Día de la promoción", "info": "AAAA-MM-DD. Dura un solo día, hora de Colombia; no repetir fechas." },
       { "type": "text", "id": "title", "label": "Marca o título" },
       { "type": "text", "id": "discount", "label": "Descuento confirmado", "info": "Por ejemplo: 20%. Dejar vacío si está pendiente de aprobación." },
-      { "type": "image_picker", "id": "image", "label": "Imagen de la promoción" },
+      { "type": "image_picker", "id": "cover_image", "label": "Portada de la tarjeta", "info": "Arte público visible incluso cuando el día está bloqueado. No uses aquí la sorpresa si quieres mantenerla oculta." },
+      { "type": "select", "id": "cover_fit", "label": "Ajuste de portada", "default": "cover", "options": [{ "value": "cover", "label": "Rellenar tarjeta (recorta bordes)" }, { "value": "contain", "label": "Mostrar imagen completa" }] },
+      { "type": "image_picker", "id": "image", "label": "Imagen dentro de la sorpresa", "info": "Aparece en el detalle de la oferta vigente; es independiente de la portada." },
       { "type": "collection", "id": "collection", "label": "Colección de productos" },
       { "type": "url", "id": "url", "label": "Enlace alternativo", "info": "Si se completa, tiene prioridad sobre la colección." },
       { "type": "textarea", "id": "terms", "label": "Condiciones de la promoción", "info": "Referencias participantes, restricciones y condiciones aprobadas para ese día." }
