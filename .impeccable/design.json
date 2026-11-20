@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T00:00:00-05:00",
+  "title": "Design System: Supermú — campaña de Navidad",
+  "extensions": {
+    "typographyMeta": {
+      "display": { "displayName": "Titular de campaña", "purpose": "Hero de la landing; hereda Work Sans del tema." },
+      "accent": { "displayName": "Acento navideño", "purpose": "Palabra destacada con el recurso Dry existente." }
+    },
+    "shadows": [{ "name": "offer-dialog", "value": "0 24px 80px #24071366", "purpose": "Separación del detalle modal, no de las puertas." }],
+    "motion": [{ "name": "door-opening", "value": "300ms ease-out", "purpose": "Giro breve del detalle; eliminado con reduced-motion." }],
+    "breakpoints": [{ "name": "three-columns", "value": "1050px" }, { "name": "two-columns", "value": "799px" }, { "name": "stacked-hero", "value": "479px" }]
+  },
+  "components": [{
+    "name": "Acción de campaña",
+    "kind": "button",
+    "refersTo": "campaign-action",
+    "description": "Acción principal de la landing de Navidad.",
+    "html": "<button class=\"advent-sample-action\">Descubrir el calendario</button>",
+    "css": ".advent-sample-action{font:600 16px/1.5 sans-serif;min-height:54px;padding:14px 24px;border:0;border-radius:6px;background:#fff5ef;color:#451021;cursor:pointer}.advent-sample-action:hover{background:#f7cf90}.advent-sample-action:focus-visible{outline:3px solid #501526;outline-offset:4px}"
+  }],
+  "narrative": {
+    "northStar": "Una Navidad que se comparte en la mesa",
+    "overview": "Este registro describe exclusivamente la nueva landing del calendario. Hereda el nombre y la fotografía de campaña de Supermú; no autoriza aplicar sus estilos a páginas existentes ni cambiar header, footer o carrito.",
+    "keyCharacteristics": ["Fotografía real de alimentos compartidos.", "Rojo de campaña a escala de página y vino para el calendario.", "Fechas visibles y numeración de una secuencia real.", "Disponibilidad explícita, nunca comunicada solo por color."],
+    "rules": [{ "name": "The Scoped Tokens Rule", "body": "La fuente ejecutable es assets/advent-calendar.css, variables --advent-* bajo .advent; este documento refleja sus valores. No crear variables globales del tema para esta campaña.", "section": "colors" }],
+    "dos": ["Do conservar fotografías de campaña optimizadas y su procedencia.", "Do mostrar fecha, estado y condiciones en texto.", "Do mantener todos los estilos y listeners limitados a la landing."],
+    "donts": ["Don't publicar un borrador como oferta activa ni completar datos comerciales ficticios.", "Don't usar el bloqueo visual como sustituto de la programación de descuentos en Shopify."]
+  }
+}
