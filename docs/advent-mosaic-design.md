@@ -1,5 +1,7 @@
 # Refinamiento del calendario: mosaico y portadas
 
+Registro histórico del primer mosaico. La adaptación posterior a rangos distintos de 15 días y la decisión de condiciones opcionales se documentan en `advent-taste-refinement.md`.
+
 Referencia aprobada por petición explícita del usuario: mosaico navideño asimétrico con tarjetas numeradas, piezas decorativas y portadas editables. Se conservan fechas, vigencia diaria, cierre a medianoche y validación de ofertas completas.
 
 La composición de 15 días usa cinco columnas y seis filas, con fechas anchas/altas y ocho piezas decorativas. Bajo 799 px se reorganiza en tres columnas. El orden visual de fechas sigue el calendario; no se usa auto-flow dense que lo altere. Para campañas de otra duración se evita reservar huecos para días que no existen.

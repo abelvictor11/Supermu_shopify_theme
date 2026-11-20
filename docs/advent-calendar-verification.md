@@ -1,5 +1,13 @@
 # Verificación del calendario — 19 noviembre 2026
 
+## Seguimiento Taste: rango real de staging y condiciones opcionales
+
+Tras el PR #307 se comprobó la página real de staging: el rango guardado es de 19 días y hoy faltaban condiciones en La Constancia. La igualdad estricta a 15 días explicaba la pérdida del mosaico; la condición obligatoria explicaba la tarjeta bloqueada. El usuario confirmó hacer condiciones opcionales.
+
+Se añaden mosaicos para 1-31 días, ilustraciones incluidas, cabecera compacta y feedback de la ilustración activa. Fecha, activación, título, descuento, destino y caducidad siguen protegidos. 108 pruebas aprobadas; Theme Check sin incidencias en el calendario. Sin dependencias nuevas ni supresiones de reglas. Navegador local 1440/390/320px: sin overflow, diálogo de La Constancia abre con condiciones vacías, no describe texto vacío, Escape restaura el foco. El atlas generado se entrega optimizado como un WebP compartido de 401KiB.
+
+Lighthouse no instalado, métricas de rendimiento no medidas. No se alteraron las preferencias del sistema para verificar Reduce Motion; sus rutas están cubiertas por tests y CSS. No se alteraron datos del Admin ni se desplegó a main. Prueba posterior en Shopify pendiente del merge/sincronización del siguiente PR. Evidencia y decisiones en `advent-taste-refinement.md`.
+
 ## Refinamiento del 20 de noviembre: mosaico, portadas y movimiento
 
 - Suite completa: **102 pruebas aprobadas**, sin fallos ni omitidas; scripts de runtime y diff comprobados.

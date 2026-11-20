@@ -23,7 +23,7 @@ Una plantilla `page.advent-calendar` y la sección **Calendario de Navidad**. No
 
 ## Completar y publicar una promoción
 
-Los diez bloques precargados están **desactivados por seguridad editorial**: faltan destinos y condiciones aprobadas. El orden y fechas son una propuesta inicial editable, no un calendario comercial inalterable.
+Los diez bloques precargados están **desactivados por seguridad editorial**: faltan destinos y algunos descuentos aprobados. El orden y fechas son una propuesta inicial editable, no un calendario comercial inalterable.
 
 Cada bloque necesita:
 
@@ -31,8 +31,9 @@ Cada bloque necesita:
 2. Marca o título.
 3. Descuento confirmado.
 4. Colección o enlace alternativo. El enlace tiene prioridad si se completan ambos.
-5. Condiciones comerciales aprobadas.
-6. Casilla **Publicar promoción** activada.
+5. Casilla **Publicar promoción** activada.
+
+Las condiciones son **opcionales**, según la decisión confirmada el 20 de noviembre. Si se agregan, se muestran en el detalle; si están vacías, no bloquean la oferta ni dejan un espacio vacío. Esto no modifica las condiciones o la programación del descuento real en Shopify.
 
 La imagen del bloque es opcional. Se admiten destinos locales (`/collections/...`) o HTTPS; no se permiten enlaces ejecutables.
 
@@ -42,9 +43,11 @@ Cada bloque dispone de **Portada de la tarjeta**, diferente de **Imagen dentro d
 
 **Ajuste de portada** permite rellenar la tarjeta (recorta sus bordes) o mostrar la imagen completa. Los números, fechas y estados se dibujan por encima con fondo legible. Si la imagen falla, permanece la tarjeta de color y su número, sin icono de imagen rota.
 
-La campaña de 15 días utiliza un mosaico con tarjetas cuadradas, anchas y altas y ocho piezas decorativas sin número. Estas últimas no son promociones y nunca tienen hover ni clic. Solo la tarjeta de la oferta vigente tiene movimiento hover y abre la sorpresa; las demás fechas siguen bloqueadas.
+El mosaico utiliza tarjetas cuadradas, anchas y altas y piezas decorativas sin número. Estas últimas no son promociones y nunca tienen hover ni clic. Solo la tarjeta de la oferta vigente tiene movimiento hover y abre la sorpresa; las demás fechas siguen bloqueadas.
 
-Para decorar un día pendiente, agrega un bloque con fecha y portada y déjalo desactivado; no hace falta inventar marca o descuento. Si cambias la duración a otro número de días, se usa una cuadrícula flexible sin espacios reservados para días inexistentes.
+Para decorar un día pendiente, agrega un bloque con fecha y portada y déjalo desactivado; no hace falta inventar marca o descuento. Sin portada propia aparece una ilustración navideña de la colección incluida. Una portada propia tiene prioridad y, si falla, vuelve a la ilustración/número.
+
+El mosaico ahora se adapta a **cualquier rango de 1 a 31 días**. Cambiar de 15 a 19 días ya no lo convierte en una rejilla uniforme. Se conserva el orden de fechas y se añaden solo adornos no interactivos en espacios libres, sin inventar ofertas o días. Las fechas de los bloques no se desplazan automáticamente.
 
 ### Animaciones y accesibilidad
 
@@ -53,6 +56,8 @@ La oferta se abre con un giro suave tipo puerta (420ms) y se cierra en 140ms. El
 Con **Reducir movimiento** activado en el sistema, la apertura usa solo una opacidad breve y el cierre es inmediato. No hay partículas, bucles ni librerías de animación adicionales. El hover solo se aplica a la puerta vigente con mouse; las portadas en modo imagen completa no se amplían ni se recortan.
 
 Si falta cualquiera de los campos obligatorios, el día actual aparece como **Sin oferta publicada**, sin botón de compra. No se sustituyen descuentos o condiciones con textos ficticios.
+
+**Si activaste «Publicar promoción» y hoy no abre:** revisa la fecha del bloque, que esté dentro del rango y no esté duplicada; completa título, descuento y colección/enlace HTTPS válido. El diagnóstico del editor indica exactamente los campos faltantes. Tener condiciones vacías ya no bloquea la apertura. La fecha de prueba solo afecta al editor, no al enlace público.
 
 | Fecha propuesta | Marca | Descuento recibido |
 | --- | --- | --- |
