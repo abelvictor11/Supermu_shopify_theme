@@ -10,7 +10,7 @@ OWN-WORLD: Rojo vivo de la fotografía suministrada, vino oscuro para profundida
 
 STORY: Entender el intervalo, encontrar el día de hoy, abrir la oferta confirmada y visitar sus productos. Futuro cerrado, pasado vencido, borrador sin promesas.
 
-FIRST VIEWPORT: Escena roja dividida: titular blanco grande con una palabra expresiva en dorado y CTA a las puertas a la izquierda, árbol gastronómico de campaña a la derecha. Una tira inferior anuncia el rango real. Debajo, calendario sobre fondo vino, rejilla de cinco columnas en escritorio y dos en móvil; la puerta activa tiene su propio estado y acción explícita.
+FIRST VIEWPORT: Escena roja dividida: titular blanco grande con una palabra expresiva en dorado y CTA a las puertas a la izquierda, árbol gastronómico de campaña a la derecha. Una tira inferior anuncia el rango real. Según la referencia posterior del usuario, el calendario continúa el fondo rojo y forma un mosaico navideño asimétrico, con portadas editables por día. Cinco columnas en escritorio y tres en móvil, con piezas altas, anchas y decoraciones no interactivas; solo la oferta vigente tiene hover y abre detalle.
 
 FORM: Dirección fijada por la spec aprobada, no sorteo de conceptos; ejecución directa autorizada, fotografía proporcionada. Firma: giro breve de la puerta al abrir el detalle accesible; el modo de movimiento reducido conserva la interacción sin giro.
 
