@@ -1,0 +1,54 @@
+{% liquid
+  assign selected_source = source | default: 'inherit'
+  assign safe_url = font_url | default: '' | strip
+  assign font_path = safe_url | split: '?' | first | split: '#' | first
+  assign extension = font_path | split: '.' | last | downcase
+  assign url_prefix = safe_url | slice: 0, 8
+  assign custom_valid = false
+  if url_prefix == 'https://'
+    if extension == 'woff2' or extension == 'woff'
+      assign custom_valid = true
+    endif
+  endif
+  if safe_url contains '<' or safe_url contains '>' or safe_url contains '"' or safe_url contains "'" or safe_url contains ' ' or safe_url contains '(' or safe_url contains ')'
+    assign custom_valid = false
+  endif
+  assign family = family_prefix | append: '-' | append: section.id
+  assign weight = font_weight | default: '700' | plus: 0
+  assign render_font = false
+  if selected_source == 'custom' and custom_valid
+    assign render_font = true
+  elsif selected_source == 'shopify' and font.family != blank
+    assign render_font = true
+  endif
+%}
+{% if render_font %}
+  <style>
+    {% if selected_source == 'custom' %}
+      @font-face {
+        font-family: {{ family | json }};
+        src: url({{ safe_url | json }}) format({{ extension | json }});
+        font-weight: {{ weight }};
+        font-style: normal;
+        font-display: swap;
+      }
+    {% else %}
+      {% unless font.system %}{{ font | font_face: font_display: 'swap' }}{% endunless %}
+    {% endif %}
+    [data-advent-style="{{ section.id }}"] {
+      {% if selected_source == 'custom' %}
+        --advent-{{ target }}-font: {{ family | json }}, "Work Sans", sans-serif;
+        --advent-{{ target }}-weight: {{ weight }};
+        --advent-{{ target }}-style: normal;
+      {% else %}
+        --advent-{{ target }}-font: {{ font.family | json }}, {{ font.fallback_families }};
+        --advent-{{ target }}-weight: {{ font.weight }};
+        --advent-{{ target }}-style: {{ font.style }};
+      {% endif %}
+      {% if target == 'heading' %}
+        --advent-accent-font: var(--advent-heading-font);
+        --advent-accent-weight: var(--advent-heading-weight);
+      {% endif %}
+    }
+  </style>
+{% endif %}

@@ -1,21 +1,4 @@
 {% liquid
-  assign font_source = section.settings.heading_font_source | default: 'inherit'
-  assign custom_url = section.settings.custom_heading_font_url | default: '' | strip
-  assign custom_path = custom_url | split: '?' | first | split: '#' | first
-  assign extension = custom_path | split: '.' | last | downcase
-  assign prefix = custom_url | slice: 0, 8
-  assign custom_valid = false
-  if prefix == 'https://'
-    if extension == 'woff2' or extension == 'woff'
-      assign custom_valid = true
-    endif
-  endif
-  if custom_url contains '<' or custom_url contains '>' or custom_url contains '"' or custom_url contains "'" or custom_url contains ' ' or custom_url contains '(' or custom_url contains ')'
-    assign custom_valid = false
-  endif
-  assign family = 'AdventHeading-' | append: section.id
-  assign custom_weight = section.settings.custom_heading_font_weight | default: '700' | plus: 0
-  assign chosen_font = section.settings.heading_font
   assign title_gradient = section.settings.heading_gradient | default: '' | strip
   assign gradient_lowercase = title_gradient | downcase
   assign gradient_start = title_gradient | split: '(' | first | downcase
@@ -31,19 +14,12 @@
   endif
 %}
 <style>
-  {% if font_source == 'custom' and custom_valid %}
-    @font-face {
-      font-family: {{ family | json }};
-      src: url({{ custom_url | json }}) format({{ extension | json }});
-      font-weight: {{ custom_weight }};
-      font-style: normal;
-      font-display: swap;
-    }
-  {% elsif font_source == 'shopify' and chosen_font != blank %}
-    {% unless chosen_font.system %}{{ chosen_font | font_face: font_display: 'swap' }}{% endunless %}
-  {% endif %}
   [data-advent-style="{{ section.id }}"] {
-    {% if section.settings.heading_line_height_enabled %}--advent-heading-leading: {{ section.settings.heading_line_height | default: 110 | plus: 0 | at_least: 100 | at_most: 180 | divided_by: 100.0 }};{% endif %}
+    {% if section.settings.heading_line_height_enabled %}
+      --advent-heading-leading: {{ section.settings.heading_line_height | default: 110 | plus: 0 | at_least: 80 | at_most: 180 | divided_by: 100.0 }};
+      --advent-heading-leading-offset: {{ section.settings.heading_leading_offset | default: 0 | plus: 0 | at_least: -20 | at_most: 20 }}px;
+      --advent-heading-line-height: max(0.65em, calc(var(--advent-heading-leading) * 1em + var(--advent-heading-leading-offset)));
+    {% endif %}
     --advent-red: {{ section.settings.background_color | default: '#ff0303' | escape }};
     --advent-heading-color: {{ section.settings.heading_color | default: '#fff5ef' | escape }};
     --advent-text-color: {{ section.settings.text_color | default: '#19080d' | escape }};
@@ -51,26 +27,32 @@
     {% if section.settings.button_background != blank %}--advent-button-background: {{ section.settings.button_background | escape }};{% endif %}
     {% if section.settings.button_text_color != blank %}--advent-button-text: {{ section.settings.button_text_color | escape }};{% endif %}
     {% if section.settings.button_hover_background != blank %}--advent-button-hover: {{ section.settings.button_hover_background | escape }};{% endif %}
-    {% if font_source == 'custom' and custom_valid %}
-      --advent-heading-font: {{ family | json }}, "Work Sans", sans-serif;
-      --advent-accent-font: {{ family | json }}, "Work Sans", sans-serif;
-      --advent-heading-weight: {{ custom_weight }};
-      --advent-accent-weight: {{ custom_weight }};
-    {% elsif font_source == 'shopify' and chosen_font.family != blank %}
-      --advent-heading-font: {{ chosen_font.family | json }}, {{ chosen_font.fallback_families }};
-      --advent-accent-font: {{ chosen_font.family | json }}, {{ chosen_font.fallback_families }};
-      --advent-heading-weight: {{ chosen_font.weight }};
-      --advent-accent-weight: {{ chosen_font.weight }};
-      --advent-heading-style: {{ chosen_font.style }};
+    {% if section.settings.button_radius != blank %}--advent-button-radius: {{ section.settings.button_radius | plus: 0 | at_least: 0 | at_most: 60 }}px;{% endif %}
+    {% if section.settings.button_border_width != blank %}--advent-button-border-width: {{ section.settings.button_border_width | plus: 0 | at_least: 0 | at_most: 4 }}px;{% endif %}
+    {% if section.settings.button_border_color != blank %}--advent-button-border-color: {{ section.settings.button_border_color | escape }};{% endif %}
+    {% if section.settings.heading_accent_gap != blank %}--advent-accent-gap: {{ section.settings.heading_accent_gap | plus: 0 | at_least: -40 | at_most: 40 }}px;{% endif %}
+    {% if section.settings.card_custom_sizes %}
+      --advent-card-number-size: clamp(24px, 5vw, {{ section.settings.card_number_size | default: 64 | plus: 0 | at_least: 24 | at_most: 96 }}px);
+      --advent-card-label-size: {{ section.settings.card_label_size | default: 11 | plus: 0 | at_least: 10 | at_most: 16 }}px;
+    {% endif %}
+    {% if section.settings.card_custom_sizes or section.settings.card_font_source == 'custom' or section.settings.card_font_source == 'shopify' %}
+      --advent-card-row-size: minmax(clamp(144px, 12.8vw, 176px), auto);
     {% endif %}
   }
-  {% if section.settings.heading_line_height_enabled %}
     @media (max-width: 799px) {
       [data-advent-style="{{ section.id }}"] {
-        --advent-heading-leading: {{ section.settings.heading_line_height_mobile | default: 120 | plus: 0 | at_least: 100 | at_most: 180 | divided_by: 100.0 }};
+        {% if section.settings.heading_line_height_enabled %}
+          --advent-heading-leading: {{ section.settings.heading_line_height_mobile | default: 120 | plus: 0 | at_least: 80 | at_most: 180 | divided_by: 100.0 }};
+          --advent-heading-leading-offset: {{ section.settings.heading_leading_offset_mobile | default: 0 | plus: 0 | at_least: -20 | at_most: 20 }}px;
+        {% endif %}
+        {% if section.settings.heading_accent_gap_mobile != blank %}--advent-accent-gap: {{ section.settings.heading_accent_gap_mobile | plus: 0 | at_least: -40 | at_most: 40 }}px;{% endif %}
+        {% if section.settings.card_custom_sizes %}
+          --advent-card-number-size: clamp(24px, 12vw, {{ section.settings.card_number_size_mobile | default: 40 | plus: 0 | at_least: 24 | at_most: 72 }}px);
+          --advent-card-label-size: {{ section.settings.card_label_size_mobile | default: 10 | plus: 0 | at_least: 10 | at_most: 14 }}px;
+        {% endif %}
+        {% if section.settings.card_custom_sizes or section.settings.card_font_source == 'custom' or section.settings.card_font_source == 'shopify' %}--advent-card-row-size: minmax(144px, auto);{% endif %}
       }
     }
-  {% endif %}
   {% if section.settings.heading_gradient_enabled and gradient_valid %}
     @supports ((background-clip: text) or (-webkit-background-clip: text)) and (background-image: {{ title_gradient | escape }}) {
       .advent[data-advent-style="{{ section.id }}"] .advent__title-ink {
@@ -92,3 +74,7 @@
     }
   {% endif %}
 </style>
+{% render 'advent-font-styles', section: section, target: 'heading', source: section.settings.heading_font_source, font: section.settings.heading_font, font_url: section.settings.custom_heading_font_url, font_weight: section.settings.custom_heading_font_weight, family_prefix: 'AdventHeading' %}
+{% if section.settings.card_font_source != blank %}
+  {% render 'advent-font-styles', section: section, target: 'card', source: section.settings.card_font_source, font: section.settings.card_font, font_url: section.settings.custom_card_font_url, font_weight: section.settings.custom_card_font_weight, family_prefix: 'AdventCard' %}
+{% endif %}

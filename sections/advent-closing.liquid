@@ -47,11 +47,13 @@
     {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
     {"type":"header","content":"Interlineado del título"},
     {"type":"checkbox","id":"heading_line_height_enabled","label":"Personalizar interlineado","default":false,"info":"Desactivado conserva el interlineado actual de cada título."},
-    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":100,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
-    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":100,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":80,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":80,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
     {"type":"header","content":"Degradado del título"},
     {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
-    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"}
+    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"},
+    {"type":"range","id":"heading_leading_offset","label":"Ajuste del interlineado: escritorio","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}","info":"Admite negativos para acercar líneas. La altura final se mantiene positiva."},
+    {"type":"range","id":"heading_leading_offset_mobile","label":"Ajuste del interlineado: móvil","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}"}
   ],
   "presets":[{"name":"Adviento: banner inferior"}]
 }
