@@ -1,0 +1,76 @@
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+{{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
+{% endunless %}
+{% if section.settings.show_image or section.settings.show_title or section.settings.show_description %}
+{%- assign advent_layout = section.settings.layout | default: 'card' -%}
+<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if advent_layout == 'card' %} advent--panel{% endif %}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store' | escape }}">
+  {% render 'advent-section-styles', section: section %}
+  <section class="advent__closing{% if advent_layout == 'card' %} advent__closing--card{% if section.settings.image_breakout %} advent__closing--breakout{% endif %}{% endif %}{% unless section.settings.show_image %} advent__closing--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description %} advent__closing--image-only{% endunless %}" aria-label="Navidad para compartir">
+    {% if section.settings.show_image %}
+      <div class="advent__closing-image">
+        {% if advent_layout == 'card' and section.settings.show_pines %}{% render 'advent-pines', pine_id: section.id %}{% endif %}
+        {% if section.settings.closing_image != blank %}
+          {{ section.settings.closing_image | image_url: width: 1500 | image_tag: widths: '600, 960, 1500', sizes: '(min-width: 800px) 60vw, 100vw', loading: 'lazy', alt: section.settings.image_alt }}
+        {% else %}
+          <img src="{{ 'advent-bunuelos.jpg' | asset_url }}" width="1500" height="844" alt="{{ section.settings.image_alt | escape }}" loading="lazy">
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if section.settings.show_title or section.settings.show_description %}
+      <div class="advent__closing-copy">
+        {% if section.settings.show_title and section.settings.closing_heading != blank %}<h2><span class="advent__title-ink">{{ section.settings.closing_heading | escape }}</span></h2>{% endif %}
+        {% if section.settings.show_description and section.settings.closing_text != blank %}<p>{{ section.settings.closing_text | escape }}</p>{% endif %}
+        {% if section.settings.button_label != blank %}<a class="advent__cta" data-advent-calendar-link data-calendar-target="{{ section.settings.calendar_anchor | escape }}" href="#{{ section.settings.calendar_anchor | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endif %}
+{% schema %}
+{
+  "name":"Adviento: banner inferior",
+  "tag":"section",
+  "enabled_on":{"templates":["page"]},
+  "settings":[
+    {"type":"select","id":"layout","label":"Diseño","default":"card","options":[{"value":"card","label":"Tarjeta: imagen dentro de una tarjeta roja"},{"value":"split","label":"Banda roja: imagen y texto lado a lado"}]},
+    {"type":"color","id":"page_background","label":"Fondo de la sección","default":"#fff5ef","visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"color","id":"page_heading_color","label":"Color del título sobre fondo claro","default":"#501526","visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"checkbox","id":"show_pines","label":"Siluetas de pinos en la tarjeta","default":true,"visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"checkbox","id":"image_breakout","label":"La imagen sobresale de la tarjeta","default":false,"info":"Actívalo solo con un PNG sin fondo; con fotos de fondo sólido se vería un rectángulo.","visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"header","content":"Contenedor"},
+    {"type":"select","id":"container_width","label":"Ancho del contenedor","default":"page","options":[{"value":"page","label":"Página (1320 px)"},{"value":"full","label":"Ancho completo"},{"value":"custom","label":"Personalizado"}]},
+    {"type":"range","id":"container_custom_width","label":"Ancho personalizado","min":640,"max":1920,"step":20,"default":1320,"unit":"px","visible_if":"{{ section.settings.container_width == 'custom' }}"},
+    {"type":"checkbox","id":"show_image","label":"Mostrar imagen","default":true},
+    {"type":"image_picker","id":"closing_image","label":"Imagen","info":"Vacío usa la fotografía de buñuelos incluida."},
+    {"type":"text","id":"image_alt","label":"Texto alternativo","default":"Buñuelos navideños para compartir en familia"},
+    {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
+    {"type":"text","id":"closing_heading","label":"Título","default":"La mejor parte es compartir."},
+    {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
+    {"type":"textarea","id":"closing_text","label":"Descripción","default":"En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."},
+    {"type":"text","id":"button_label","label":"Texto del botón","default":"Volver al calendario","info":"Vacío oculta el botón."},
+    {"type":"text","id":"calendar_anchor","label":"ID del calendario de destino","default":"AdventCalendar-calendar","info":"Debe coincidir con el ID de ancla de la sección Calendario. El botón se oculta si ese calendario no está presente."},
+    {"type":"select","id":"button_style","label":"Estilo del botón","default":"store","options":[{"value":"store_shape","label":"A · Forma de la tienda, colores de la página"},{"value":"store","label":"B · Igual al botón de la tienda (rojo)"},{"value":"classic","label":"C · Forma actual de esta página"}],"info":"Sobre fondo claro usa B; A y C usan el color crema del botón."},
+    {"type":"header","content":"Colores de esta sección"},
+    {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},
+    {"type":"color","id":"heading_color","label":"Color de títulos","default":"#fff5ef","info":"Sobre el rojo de marca, los títulos claros deben mantenerse grandes."},
+    {"type":"color","id":"text_color","label":"Color de descripciones y textos","default":"#19080d","info":"El rojo #ff0303 necesita texto oscuro para que las letras pequeñas sean legibles."},
+    {"type":"header","content":"Fuente de los títulos"},
+    {"type":"select","id":"heading_font_source","label":"Origen de la fuente","default":"inherit","options":[{"value":"inherit","label":"Diseño actual"},{"value":"shopify","label":"Biblioteca de Shopify"},{"value":"custom","label":"Archivo propio WOFF/WOFF2"}]},
+    {"type":"font_picker","id":"heading_font","label":"Fuente de Shopify","default":"assistant_n4","visible_if":"{{ section.settings.heading_font_source == 'shopify' }}"},
+    {"type":"url","id":"custom_heading_font_url","label":"URL de la fuente propia","info":"Sube un WOFF2 o WOFF con licencia a Contenido → Archivos y pega su URL HTTPS. Si no carga, se usa una fuente de respaldo.","visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"header","content":"Interlineado del título"},
+    {"type":"checkbox","id":"heading_line_height_enabled","label":"Personalizar interlineado","default":false,"info":"Desactivado conserva el interlineado actual de cada título."},
+    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":80,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":80,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Degradado del título"},
+    {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
+    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"},
+    {"type":"range","id":"heading_leading_offset","label":"Ajuste del interlineado: escritorio","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}","info":"Admite negativos para acercar líneas. La altura final se mantiene positiva."},
+    {"type":"range","id":"heading_leading_offset_mobile","label":"Ajuste del interlineado: móvil","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Animaciones"},
+    {"type":"checkbox","id":"motion_enabled","label":"Animar al hacer scroll","default":true,"info":"Se desactivan solas si el visitante pidió reducir el movimiento en su dispositivo."}
+  ],
+  "presets":[{"name":"Adviento: banner inferior"}]
+}
+{% endschema %}

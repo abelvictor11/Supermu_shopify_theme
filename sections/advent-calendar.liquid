@@ -1,0 +1,210 @@
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+  {% render 'advent-assets', force: true %}
+{% endunless %}
+
+<advent-calendar class="advent{% if section.settings.separate_sections %} advent--separate{% endif %}{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if section.settings.separate_sections and section.settings.container_style != 'band' %} advent--boxed{% endif %}" id="Advent-{{ section.id }}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store_shape' | escape }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
+  {% render 'advent-section-styles', section: section %}
+  {% unless section.settings.separate_sections %}
+  <header class="advent__hero">
+    <div class="advent__hero-copy">
+      <h1><span class="advent__title-ink">{{ section.settings.heading | escape }}</span> <span class="advent__title-ink advent__title-accent">{{ section.settings.heading_accent | escape }}</span></h1>
+      <p class="advent__intro">{{ section.settings.intro | escape }}</p>
+      <a class="advent__cta" href="#AdventDoors-{{ section.id }}">Descubrir el calendario <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+      <p class="advent__hero-note">Una sorpresa cada día. Un motivo más para compartir.</p>
+    </div>
+    <div class="advent__hero-image">
+      {% if section.settings.hero_image != blank %}
+        {{ section.settings.hero_image | image_url: width: 1200 | image_tag: widths: '480, 720, 960, 1200', sizes: '(min-width: 800px) 45vw, 85vw', loading: 'eager', fetchpriority: 'high', alt: 'Árbol navideño hecho con alimentos para compartir' }}
+      {% else %}
+        <img src="{{ 'advent-christmas-tree.jpg' | asset_url }}" width="934" height="1400" alt="Árbol navideño hecho con alimentos para compartir" fetchpriority="high" loading="eager">
+      {% endif %}
+    </div>
+  </header>
+  {% endunless %}
+
+  <div class="advent__box">
+  {% if section.settings.show_range %}
+  <div class="advent__ribbon">
+    <span>Navidad para compartir</span>
+    <span data-advent-range>{{ section.settings.start_date | escape }} - {{ section.settings.end_date | escape }}</span>
+    <span>Hora de Colombia</span>
+  </div>
+  {% endif %}
+
+  <section class="advent__calendar" id="AdventDoors-{{ section.id }}" {% if section.settings.separate_sections %}aria-label="Ofertas del calendario"{% else %}aria-labelledby="AdventTitle-{{ section.id }}"{% endif %}>
+    <span id="{{ section.settings.anchor_id | default: 'AdventCalendar' | escape }}" class="advent__anchor" aria-hidden="true"></span>
+    {% unless section.settings.separate_sections %}
+    <div class="advent__calendar-head">
+      <h2 id="AdventTitle-{{ section.id }}"><span class="advent__title-ink">{{ section.settings.calendar_heading | escape }}</span></h2>
+      <p>Cada puerta tiene su fecha.<br>Las ofertas duran solo un día.</p>
+    </div>
+    {% endunless %}
+    <p class="advent__status" data-advent-status role="status">El calendario está disponible del {{ section.settings.start_date | escape }} al {{ section.settings.end_date | escape }}. Activa JavaScript para consultar las puertas de cada día.</p>
+    <div class="advent__grid" data-advent-grid hidden></div>
+    {% if request.design_mode %}
+      <aside class="advent__editor" data-advent-editor aria-label="Revisión de campaña">
+        <strong>Configuración de campaña</strong>
+        <p data-advent-issues></p>
+        {% for block in section.blocks %}
+          <div {{ block.shopify_attributes }}>{{ block.settings.date | escape }} · {{ block.settings.title | escape }}{% unless block.settings.enabled %} · Borrador{% endunless %}</div>
+        {% endfor %}
+      </aside>
+    {% endif %}
+    {% if section.settings.show_timezone %}<p class="advent__timezone">Las puertas se abren a las 00:00 y las ofertas vencen a las 23:59, hora de Colombia.</p>{% endif %}
+  </section>
+  </div>
+
+  {% unless section.settings.separate_sections %}
+  <section class="advent__closing" aria-labelledby="AdventClosing-{{ section.id }}">
+    <div class="advent__closing-image">
+      {% if section.settings.closing_image != blank %}
+        {{ section.settings.closing_image | image_url: width: 1500 | image_tag: widths: '600, 960, 1500', sizes: '(min-width: 800px) 60vw, 100vw', loading: 'lazy', alt: 'Buñuelos navideños para compartir en familia' }}
+      {% else %}
+        <img src="{{ 'advent-bunuelos.jpg' | asset_url }}" width="1500" height="844" alt="Buñuelos navideños para compartir en familia" loading="lazy">
+      {% endif %}
+    </div>
+    <div class="advent__closing-copy">
+      <h2 id="AdventClosing-{{ section.id }}"><span class="advent__title-ink">{{ section.settings.closing_heading | escape }}</span></h2>
+      <p>{{ section.settings.closing_text | escape }}</p>
+    </div>
+  </section>
+  {% endunless %}
+  {% if section.settings.campaign_terms != blank %}
+    <footer class="advent__terms"><h2>Condiciones de la campaña</h2><p>{{ section.settings.campaign_terms | escape | newline_to_br }}</p></footer>
+  {% endif %}
+
+  <dialog class="advent__dialog" id="AdventDialog-{{ section.id }}" aria-labelledby="AdventOffer-{{ section.id }}" aria-describedby="AdventTerms-{{ section.id }}" data-advent-dialog>
+    <button class="advent__close" type="button" data-advent-close aria-label="Cerrar oferta" autofocus><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+    <p class="advent__offer-date" data-advent-offer-date></p>
+    <div class="advent__offer-image" data-advent-offer-image hidden></div>
+    <h2 id="AdventOffer-{{ section.id }}"><span class="advent__title-ink" data-advent-offer-title></span></h2>
+    <p class="advent__discount" data-advent-offer-discount></p>
+    <p id="AdventTerms-{{ section.id }}" class="advent__offer-terms" data-advent-offer-terms></p>
+    <a class="advent__cta" data-advent-offer-link>Ver productos de la oferta <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+  </dialog>
+
+  {% capture advent_config %}
+  {
+    "start": {{ section.settings.start_date | json }},
+    "end": {{ section.settings.end_date | json }},
+    "designMode": {% if request.design_mode %}true{% else %}false{% endif %},
+    "previewDate": {% if request.design_mode %}{{ section.settings.preview_date | default: '' | json }}{% else %}""{% endif %},
+    "offers": [
+      {% for block in section.blocks %}
+        {% assign offer_url = block.settings.url | default: block.settings.collection.url | default: '' %}
+        {% assign offer_image = '' %}
+        {% if block.settings.image != blank %}{% assign offer_image = block.settings.image | image_url: width: 900 %}{% endif %}
+        {% assign cover_image = '' %}
+        {% if block.settings.cover_image != blank %}{% assign cover_image = block.settings.cover_image | image_url: width: 900 %}{% endif %}
+        {
+          "id": {{ block.id | json }},
+          "enabled": {{ block.settings.enabled | json }},
+          "date": {{ block.settings.date | default: '' | json }},
+          "title": {{ block.settings.title | default: '' | json }},
+          "discount": {{ block.settings.discount | default: '' | json }},
+          "url": {{ offer_url | json }},
+          "image": {{ offer_image | json }},
+          "cover": {{ cover_image | json }},
+          "coverFit": {{ block.settings.cover_fit | default: 'cover' | json }},
+          "terms": {{ block.settings.terms | default: '' | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  }
+  {% endcapture %}
+  <div hidden data-advent-config="{{ advent_config | escape }}"></div>
+</advent-calendar>
+
+{% schema %}
+{
+  "name": "Adviento: calendario",
+  "tag": "section",
+  "max_blocks": 31,
+  "enabled_on": { "templates": ["page"] },
+  "settings": [
+    { "type": "checkbox", "id": "separate_sections", "label": "Usar módulos independientes", "default": false, "info": "Activado: banner superior, título y banner inferior se editan en sus propias secciones. Se conservan los valores integrados para compatibilidad; no actives ambos diseños a la vez." },
+    { "type": "text", "id": "anchor_id", "label": "ID de ancla del calendario", "default": "AdventCalendar", "info": "Debe coincidir con el destino del botón del banner superior. Usa un ID único, sin espacios." },
+    { "type": "checkbox", "id": "show_range", "label": "Mostrar franja de fechas", "default": true },
+    { "type": "checkbox", "id": "show_timezone", "label": "Mostrar nota de vigencia", "default": true },
+    {"type":"header","content":"Contenedor"},
+    {"type":"select","id":"container_style","label":"Estilo","default":"card","options":[{"value":"card","label":"Tarjeta con esquinas redondeadas"},{"value":"band","label":"Banda roja de lado a lado"}],"info":"Si Título y Calendario van seguidos como tarjetas, se unen en una sola."},
+    {"type":"select","id":"container_width","label":"Ancho del contenedor","default":"page","options":[{"value":"page","label":"Página (1320 px)"},{"value":"full","label":"Ancho completo"},{"value":"custom","label":"Personalizado"}]},
+    {"type":"range","id":"container_custom_width","label":"Ancho personalizado","min":640,"max":1920,"step":20,"default":1320,"unit":"px","visible_if":"{{ section.settings.container_width == 'custom' }}"},
+    {"type":"range","id":"section_space","label":"Espacio superior","min":0,"max":80,"step":4,"default":24,"unit":"px","info":"Separa esta sección de la anterior."},
+    {"type":"range","id":"grid_gap","label":"Separación entre puertas","min":0,"max":32,"step":1,"default":8,"unit":"px"},
+    { "type": "header", "content": "Fechas de campaña" },
+    { "type": "text", "id": "start_date", "label": "Fecha de inicio", "default": "2026-11-23", "info": "AAAA-MM-DD. Hora de Colombia. Hasta 31 días, ambos extremos incluidos." },
+    { "type": "text", "id": "end_date", "label": "Fecha de fin", "default": "2026-12-07", "info": "AAAA-MM-DD. No cambia automáticamente las fechas de las promociones." },
+    { "type": "text", "id": "preview_date", "label": "Fecha de prueba (solo editor)", "info": "AAAA-MM-DD. Vacío usa la fecha actual. No afecta a los visitantes." },
+    { "type": "header", "content": "Contenido integrado anterior", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "El sabor de la", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "heading_accent", "label": "Palabra destacada", "default": "Navidad", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "textarea", "id": "intro", "label": "Introducción", "default": "Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "image_picker", "id": "hero_image", "label": "Fotografía principal", "info": "Vacío usa el árbol gastronómico de campaña incluido en el tema.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "calendar_heading", "label": "Título del calendario", "default": "Lo mejor está por abrirse.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "image_picker", "id": "closing_image", "label": "Fotografía de cierre", "info": "Vacío usa la fotografía de buñuelos incluida en el tema.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "text", "id": "closing_heading", "label": "Título de cierre", "default": "La mejor parte es compartir.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "textarea", "id": "closing_text", "label": "Texto de cierre", "default": "En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad.", "visible_if": "{{ section.settings.separate_sections == false }}" },
+    { "type": "textarea", "id": "campaign_terms", "label": "Condiciones aprobadas de campaña", "info": "Agrega las condiciones comerciales aprobadas. No se crean descuentos desde esta sección." },
+    {"type":"header","content":"Colores de esta sección"},
+    {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},
+    {"type":"color","id":"heading_color","label":"Color de títulos","default":"#451021","info":"Sobre el rojo de marca, los títulos claros deben mantenerse grandes."},
+    {"type":"color","id":"text_color","label":"Color de descripciones y textos","default":"#19080d","info":"El rojo #ff0303 necesita texto oscuro para que las letras pequeñas sean legibles."},
+    {"type":"header","content":"Fuente de los títulos"},
+    {"type":"select","id":"heading_font_source","label":"Origen de la fuente","default":"inherit","options":[{"value":"inherit","label":"Diseño actual"},{"value":"shopify","label":"Biblioteca de Shopify"},{"value":"custom","label":"Archivo propio WOFF/WOFF2"}]},
+    {"type":"font_picker","id":"heading_font","label":"Fuente de Shopify","default":"assistant_n4","visible_if":"{{ section.settings.heading_font_source == 'shopify' }}"},
+    {"type":"url","id":"custom_heading_font_url","label":"URL de la fuente propia","info":"Sube un WOFF2 o WOFF con licencia a Contenido → Archivos y pega su URL HTTPS. Si no carga, se usa una fuente de respaldo.","visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"header","content":"Estilo del botón de la oferta"},
+    {"type":"select","id":"button_style","label":"Estilo","default":"store_shape","options":[{"value":"store_shape","label":"A · Forma de la tienda, colores de la página"},{"value":"store","label":"B · Igual al botón de la tienda (rojo)"},{"value":"classic","label":"C · Forma actual de esta página"}],"info":"A y B usan la píldora de la tienda e ignoran el radio de esquinas. B ignora los colores del botón. C respeta todos los controles de abajo."},
+    {"type":"header","content":"Colores del botón"},
+    {"type":"color","id":"button_background","label":"Fondo del botón","default":"#501526"},
+    {"type":"color","id":"button_text_color","label":"Texto del botón","default":"#fff5ef"},
+    {"type":"color","id":"button_hover_background","label":"Fondo del botón al pasar el cursor","default":"#7c233b"},
+    {"type":"header","content":"Interlineado del título"},
+    {"type":"checkbox","id":"heading_line_height_enabled","label":"Personalizar interlineado","default":false,"info":"Desactivado conserva el interlineado actual de cada título."},
+    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":80,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":80,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Degradado del título"},
+    {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
+    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #451021 0%, #7c233b 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"},
+    {"type":"range","id":"heading_leading_offset","label":"Ajuste del interlineado: escritorio","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}","info":"Admite negativos para acercar líneas. La altura final se mantiene positiva."},
+    {"type":"range","id":"heading_leading_offset_mobile","label":"Ajuste del interlineado: móvil","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Separación de palabra destacada","visible_if":"{{ section.settings.separate_sections == false }}"},
+    {"type":"range","id":"heading_accent_gap","label":"Separación en escritorio","min":-40,"max":40,"step":1,"default":14,"unit":"px","visible_if":"{{ section.settings.separate_sections == false }}","info":"Distancia entre título y palabra destacada. Los negativos las acercan o superponen."},
+    {"type":"range","id":"heading_accent_gap_mobile","label":"Separación en móvil","min":-40,"max":40,"step":1,"default":14,"unit":"px","visible_if":"{{ section.settings.separate_sections == false }}"},
+    {"type":"header","content":"Forma y borde del botón"},
+    {"type":"range","id":"button_radius","label":"Radio de las esquinas","min":0,"max":60,"step":1,"default":6,"unit":"px","info":"0 = esquinas rectas; un valor alto produce un botón redondeado."},
+    {"type":"range","id":"button_border_width","label":"Grosor del borde","min":0,"max":4,"step":1,"default":0,"unit":"px"},
+    {"type":"color","id":"button_border_color","label":"Color del borde","default":"#451021"},
+    {"type":"header","content":"Tipografía de tarjetas"},
+    {"type":"select","id":"card_font_source","label":"Origen de la fuente de tarjetas","default":"inherit","options":[{"value":"inherit","label":"Diseño actual"},{"value":"shopify","label":"Biblioteca de Shopify"},{"value":"custom","label":"Archivo propio WOFF/WOFF2"}]},
+    {"type":"font_picker","id":"card_font","label":"Fuente de las tarjetas","default":"assistant_n4","visible_if":"{{ section.settings.card_font_source == 'shopify' }}"},
+    {"type":"url","id":"custom_card_font_url","label":"URL de la fuente de tarjetas","info":"Sube un WOFF/WOFF2 con licencia a Archivos y pega su URL HTTPS. Independiente de los títulos.","visible_if":"{{ section.settings.card_font_source == 'custom' }}"},
+    {"type":"select","id":"custom_card_font_weight","label":"Peso del archivo de tarjetas","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.card_font_source == 'custom' }}"},
+    {"type":"checkbox","id":"card_custom_sizes","label":"Personalizar tamaños de tarjetas","default":false,"info":"Desactivado conserva los tamaños actuales. Los números se adaptan al ancho y las filas crecen si hace falta."},
+    {"type":"range","id":"card_number_size","label":"Máximo del número: escritorio","min":24,"max":96,"step":1,"default":64,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
+    {"type":"range","id":"card_number_size_mobile","label":"Máximo del número: móvil","min":24,"max":72,"step":1,"default":40,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
+    {"type":"range","id":"card_label_size","label":"Fechas y estados: escritorio","min":10,"max":16,"step":1,"default":11,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
+    {"type":"range","id":"card_label_size_mobile","label":"Fechas y estados: móvil","min":10,"max":14,"step":1,"default":10,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
+    {"type":"header","content":"Animaciones"},
+    {"type":"checkbox","id":"motion_enabled","label":"Animar puertas al hacer scroll y resaltar la de hoy","default":true,"info":"Se desactivan solas si el visitante pidió reducir el movimiento en su dispositivo."}
+  ],
+  "blocks": [{
+    "type": "offer", "name": "Promoción diaria",
+    "settings": [
+      { "type": "checkbox", "id": "enabled", "label": "Publicar promoción", "default": false, "info": "Se abre solo en su fecha, con marca, descuento y destino completos. Condiciones opcionales. Revisa el diagnóstico debajo del calendario y programa el descuento real en Shopify." },
+      { "type": "text", "id": "date", "label": "Día de la promoción", "info": "AAAA-MM-DD. Dura un solo día, hora de Colombia; no repetir fechas." },
+      { "type": "text", "id": "title", "label": "Marca o título" },
+      { "type": "text", "id": "discount", "label": "Descuento confirmado", "info": "Por ejemplo: 20%. Dejar vacío si está pendiente de aprobación." },
+      { "type": "image_picker", "id": "cover_image", "label": "Portada de la tarjeta", "info": "Arte público visible incluso cuando el día está bloqueado. No uses aquí la sorpresa si quieres mantenerla oculta." },
+      { "type": "select", "id": "cover_fit", "label": "Ajuste de portada", "default": "cover", "options": [{ "value": "cover", "label": "Rellenar tarjeta (recorta bordes)" }, { "value": "contain", "label": "Mostrar imagen completa" }] },
+      { "type": "image_picker", "id": "image", "label": "Imagen dentro de la sorpresa", "info": "Aparece en el detalle de la oferta vigente; es independiente de la portada." },
+      { "type": "collection", "id": "collection", "label": "Colección de productos" },
+      { "type": "url", "id": "url", "label": "Enlace alternativo", "info": "Si se completa, tiene prioridad sobre la colección." },
+      { "type": "textarea", "id": "terms", "label": "Condiciones de la promoción (opcional)", "info": "Agrega referencias participantes y restricciones aprobadas si corresponde. Vacío no bloquea la apertura ni muestra un espacio vacío." }
+    ]
+  }],
+  "presets": [{ "name": "Adviento: calendario", "settings": { "separate_sections": true } }]
+}
+{% endschema %}
