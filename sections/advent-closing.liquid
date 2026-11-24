@@ -2,11 +2,13 @@
 {{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
 {% endunless %}
 {% if section.settings.show_image or section.settings.show_title or section.settings.show_description %}
-<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}" data-advent-style="{{ section.id }}">
+{%- assign advent_layout = section.settings.layout | default: 'card' -%}
+<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if advent_layout == 'card' %} advent--panel{% endif %}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store' | escape }}">
   {% render 'advent-section-styles', section: section %}
-  <section class="advent__closing{% unless section.settings.show_image %} advent__closing--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description %} advent__closing--image-only{% endunless %}" aria-label="Navidad para compartir">
+  <section class="advent__closing{% if advent_layout == 'card' %} advent__closing--card{% if section.settings.image_breakout %} advent__closing--breakout{% endif %}{% endif %}{% unless section.settings.show_image %} advent__closing--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description %} advent__closing--image-only{% endunless %}" aria-label="Navidad para compartir">
     {% if section.settings.show_image %}
       <div class="advent__closing-image">
+        {% if advent_layout == 'card' and section.settings.show_pines %}{% render 'advent-pines', pine_id: section.id %}{% endif %}
         {% if section.settings.closing_image != blank %}
           {{ section.settings.closing_image | image_url: width: 1500 | image_tag: widths: '600, 960, 1500', sizes: '(min-width: 800px) 60vw, 100vw', loading: 'lazy', alt: section.settings.image_alt }}
         {% else %}
@@ -18,6 +20,7 @@
       <div class="advent__closing-copy">
         {% if section.settings.show_title and section.settings.closing_heading != blank %}<h2><span class="advent__title-ink">{{ section.settings.closing_heading | escape }}</span></h2>{% endif %}
         {% if section.settings.show_description and section.settings.closing_text != blank %}<p>{{ section.settings.closing_text | escape }}</p>{% endif %}
+        {% if section.settings.button_label != blank %}<a class="advent__cta" data-advent-calendar-link data-calendar-target="{{ section.settings.calendar_anchor | escape }}" href="#{{ section.settings.calendar_anchor | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a>{% endif %}
       </div>
     {% endif %}
   </section>
@@ -29,6 +32,11 @@
   "tag":"section",
   "enabled_on":{"templates":["page"]},
   "settings":[
+    {"type":"select","id":"layout","label":"Diseño","default":"card","options":[{"value":"card","label":"Tarjeta: texto sobre fondo claro e imagen en tarjeta roja"},{"value":"split","label":"Banda roja: imagen a la izquierda, texto a la derecha"}]},
+    {"type":"color","id":"page_background","label":"Fondo de la sección","default":"#fff5ef","visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"color","id":"page_heading_color","label":"Color del título sobre fondo claro","default":"#501526","visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"checkbox","id":"show_pines","label":"Siluetas de pinos en la tarjeta","default":true,"visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"checkbox","id":"image_breakout","label":"La imagen sobresale de la tarjeta","default":false,"info":"Actívalo solo con un PNG sin fondo; con fotos de fondo sólido se vería un rectángulo.","visible_if":"{{ section.settings.layout != 'split' }}"},
     {"type":"checkbox","id":"show_image","label":"Mostrar imagen","default":true},
     {"type":"image_picker","id":"closing_image","label":"Imagen","info":"Vacío usa la fotografía de buñuelos incluida."},
     {"type":"text","id":"image_alt","label":"Texto alternativo","default":"Buñuelos navideños para compartir en familia"},
@@ -36,6 +44,9 @@
     {"type":"text","id":"closing_heading","label":"Título","default":"La mejor parte es compartir."},
     {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
     {"type":"textarea","id":"closing_text","label":"Descripción","default":"En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."},
+    {"type":"text","id":"button_label","label":"Texto del botón","default":"Volver al calendario","info":"Vacío oculta el botón."},
+    {"type":"text","id":"calendar_anchor","label":"ID del calendario de destino","default":"AdventCalendar-calendar","info":"Debe coincidir con el ID de ancla de la sección Calendario. El botón se oculta si ese calendario no está presente."},
+    {"type":"select","id":"button_style","label":"Estilo del botón","default":"store","options":[{"value":"store_shape","label":"A · Forma de la tienda, colores de la página"},{"value":"store","label":"B · Igual al botón de la tienda (rojo)"},{"value":"classic","label":"C · Forma actual de esta página"}],"info":"Sobre fondo claro usa B; A y C usan el color crema del botón."},
     {"type":"header","content":"Colores de esta sección"},
     {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},
     {"type":"color","id":"heading_color","label":"Color de títulos","default":"#fff5ef","info":"Sobre el rojo de marca, los títulos claros deben mantenerse grandes."},

@@ -261,7 +261,7 @@
 .advent .advent__cta:active { transform: translateY(0) scale(.98); box-shadow: none; }
 
 /* Título de landing: etiqueta, palabras y subrayado dorado. */
-.advent .advent__eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 6px 14px 6px 10px; border-radius: 999px; background: var(--advent-paper); color: var(--advent-ink); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; box-shadow: 0 8px 20px -10px #24071399; }
+.advent .advent__eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 6px 14px 6px 10px; border-radius: 999px; background: var(--advent-paper); color: var(--advent-ink); font-size: 14px; font-weight: 600; box-shadow: 0 8px 20px -10px #24071399; }
 .advent__eyebrow-dot { width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: var(--advent-red); }
 .advent__word { display: inline-block; }
 .advent .advent__hero h1 .advent__title-accent { position: relative; width: fit-content; }
@@ -309,3 +309,62 @@
 @keyframes advent-rise { from { opacity: 0; translate: 0 36px; scale: .96; } to { opacity: 1; translate: 0 0; scale: 1; } }
 @keyframes advent-parallax-hero { to { translate: 0 14%; } }
 @keyframes advent-parallax { from { translate: 0 -7%; } to { translate: 0 7%; } }
+
+/* Escenario: tarjeta roja enmarcada con la palabra gigante delante del árbol. */
+.advent.advent--stage { background: var(--advent-page-bg, var(--advent-paper)); padding: clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) 0; }
+.advent .advent__hero--stage {
+  display: grid;
+  position: relative;
+  isolation: isolate;
+  max-width: 1320px;
+  margin-inline: auto;
+  min-height: clamp(500px, 46vw, 660px);
+  padding: clamp(24px, 3.4vw, 52px);
+  border-radius: clamp(20px, 2.4vw, 32px);
+  background: var(--advent-red);
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "top top" "title title" "cta side";
+  align-items: start;
+}
+.advent__hero--stage .advent__hero-copy { display: contents; }
+.advent__hero--stage .advent__eyebrow { grid-area: top; justify-self: start; margin: 0; z-index: 2; }
+.advent .advent__hero--stage h1 { grid-area: title; z-index: 2; align-self: center; display: grid; max-width: none; margin-top: clamp(8px, 2vw, 24px); font-size: clamp(20px, 2.2vw, 32px); line-height: 1.1; letter-spacing: -.01em; font-weight: 500; text-align: center; }
+.advent__hero--stage h1 > .advent__title-ink:first-child { justify-self: start; margin-left: clamp(0px, 9vw, 150px); }
+.advent .advent__hero--stage h1 .advent__title-accent { justify-self: center; width: auto; margin-top: clamp(-12px, -.6vw, -4px); font-size: clamp(110px, 17vw, 260px); line-height: .9; overflow-wrap: normal; white-space: nowrap; text-shadow: 0 6px 30px #5a000a59; }
+.advent__hero--stage .advent__swash { display: none; }
+.advent__hero--stage .advent__intro { grid-area: side; z-index: 2; justify-self: end; align-self: end; max-width: 30ch; margin: 0; font-size: 15px; }
+.advent__hero--stage .advent__cta { grid-area: cta; z-index: 2; justify-self: start; align-self: end; margin: 0 !important; }
+.advent__hero--stage .advent__hero-image { grid-area: 1 / 1 / -1 / -1; z-index: 1; justify-self: center; align-self: end; width: auto; height: clamp(380px, 40vw, 580px); aspect-ratio: 934 / 1400; margin-bottom: calc(-1 * clamp(24px, 3.4vw, 52px)); animation: none; }
+.advent__hero--stage .advent__hero-image img { object-fit: contain; object-position: center bottom; -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent), linear-gradient(180deg, transparent, #000 14%); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent), linear-gradient(180deg, transparent, #000 14%); mask-composite: intersect; }
+.advent__pines { position: absolute; z-index: 0; inset: auto 0 0 0; width: 100%; height: 34%; fill: color-mix(in srgb, var(--advent-red) 82%, #5a000a); pointer-events: none; }
+
+/* Tarjeta inferior: texto sobre fondo claro e imagen dentro de una tarjeta roja. */
+.advent.advent--panel { background: var(--advent-page-bg, var(--advent-paper)); }
+.advent .advent__closing--card { max-width: 1320px; margin-inline: auto; padding: clamp(40px, 6vw, 96px) clamp(16px, 3vw, 48px); background: transparent; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-areas: "copy media"; gap: clamp(28px, 5vw, 80px); }
+.advent__closing--card .advent__closing-copy { grid-area: copy; padding: 0; }
+.advent.advent--panel .advent__closing--card h2 { color: var(--advent-page-heading, var(--advent-wine)); font-size: clamp(34px, 4.4vw, 60px); max-width: 14ch; }
+.advent__closing--card .advent__closing-copy p { font-size: 17px; max-width: 38ch; }
+.advent__closing--card .advent__cta { margin-top: 32px; }
+.advent__closing--card .advent__closing-image { grid-area: media; position: relative; isolation: isolate; background: var(--advent-red); border-radius: clamp(20px, 2.4vw, 32px); overflow: hidden; aspect-ratio: 5 / 4; display: grid; place-items: center; }
+.advent__closing--card .advent__closing-image img { position: relative; z-index: 1; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; }
+.advent__closing--breakout .advent__closing-image { overflow: visible; margin-top: 12%; }
+.advent__closing--breakout .advent__closing-image img { height: 118%; margin-top: -18%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 24px 30px #3a00084d); }
+
+@media (max-width: 799px) {
+  .advent .advent__hero--stage { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "top" "title" "image" "side" "cta"; row-gap: 16px; }
+  .advent .advent__hero--stage h1 { margin-top: 4px; }
+  .advent__hero--stage h1 > .advent__title-ink:first-child { margin-left: 0; }
+  .advent .advent__hero--stage h1 .advent__title-accent { font-size: clamp(56px, 19vw, 140px); }
+  .advent__hero--stage .advent__hero-image { display: block; grid-area: image; height: clamp(260px, 72vw, 380px); margin: -56px 0 0; }
+  .advent__hero--stage .advent__intro { justify-self: start; }
+  .advent .advent__closing--card { grid-template-columns: minmax(0, 1fr); grid-template-areas: "media" "copy"; }
+}
+@media (max-width: 479px) {
+  .advent__hero--stage .advent__hero-image { display: block; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .advent--motion .advent__hero--stage .advent__hero-image { animation: advent-tree-rise 900ms var(--advent-ease-out) 120ms both; }
+}
+@keyframes advent-tree-rise { from { opacity: 0; translate: 0 40px; } to { opacity: 1; translate: 0 0; } }
