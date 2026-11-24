@@ -2,7 +2,7 @@
   {% render 'advent-assets', force: true %}
 {% endunless %}
 
-<advent-calendar class="advent{% if section.settings.separate_sections %} advent--separate{% endif %}" id="Advent-{{ section.id }}" data-advent-style="{{ section.id }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
+<advent-calendar class="advent{% if section.settings.separate_sections %} advent--separate{% endif %}{% if section.settings.motion_enabled %} advent--motion{% endif %}" id="Advent-{{ section.id }}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store_shape' | escape }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
   {% render 'advent-section-styles', section: section %}
   {% unless section.settings.separate_sections %}
   <header class="advent__hero">
@@ -147,6 +147,8 @@
     {"type":"font_picker","id":"heading_font","label":"Fuente de Shopify","default":"assistant_n4","visible_if":"{{ section.settings.heading_font_source == 'shopify' }}"},
     {"type":"url","id":"custom_heading_font_url","label":"URL de la fuente propia","info":"Sube un WOFF2 o WOFF con licencia a Contenido → Archivos y pega su URL HTTPS. Si no carga, se usa una fuente de respaldo.","visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
     {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"header","content":"Estilo del botón de la oferta"},
+    {"type":"select","id":"button_style","label":"Estilo","default":"store_shape","options":[{"value":"store_shape","label":"A · Forma de la tienda, colores de la página"},{"value":"store","label":"B · Igual al botón de la tienda (rojo)"},{"value":"classic","label":"C · Forma actual de esta página"}],"info":"A y B usan la píldora de la tienda e ignoran el radio de esquinas. B ignora los colores del botón. C respeta todos los controles de abajo."},
     {"type":"header","content":"Colores del botón"},
     {"type":"color","id":"button_background","label":"Fondo del botón","default":"#501526"},
     {"type":"color","id":"button_text_color","label":"Texto del botón","default":"#fff5ef"},
@@ -176,7 +178,9 @@
     {"type":"range","id":"card_number_size","label":"Máximo del número: escritorio","min":24,"max":96,"step":1,"default":64,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
     {"type":"range","id":"card_number_size_mobile","label":"Máximo del número: móvil","min":24,"max":72,"step":1,"default":40,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
     {"type":"range","id":"card_label_size","label":"Fechas y estados: escritorio","min":10,"max":16,"step":1,"default":11,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
-    {"type":"range","id":"card_label_size_mobile","label":"Fechas y estados: móvil","min":10,"max":14,"step":1,"default":10,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"}
+    {"type":"range","id":"card_label_size_mobile","label":"Fechas y estados: móvil","min":10,"max":14,"step":1,"default":10,"unit":"px","visible_if":"{{ section.settings.card_custom_sizes }}"},
+    {"type":"header","content":"Animaciones"},
+    {"type":"checkbox","id":"motion_enabled","label":"Animar puertas al hacer scroll y resaltar la de hoy","default":true,"info":"Se desactivan solas si el visitante pidió reducir el movimiento en su dispositivo."}
   ],
   "blocks": [{
     "type": "offer", "name": "Promoción diaria",

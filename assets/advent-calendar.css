@@ -244,3 +244,68 @@
   .advent__door { border: 1px solid ButtonText; }
   .advent__door::before { display: none; }
 }
+
+/* Botones: A = píldora de la tienda con colores de la página, B = botón rojo de la tienda, C = forma original. */
+.advent .advent__cta { transition: background-color .2s, color .2s, border-color .2s, transform 240ms var(--advent-ease-out), box-shadow 240ms var(--advent-ease-out); }
+.advent .advent__cta svg { transition: transform 240ms var(--advent-ease-out); }
+.advent:is([data-advent-button="store_shape"], [data-advent-button="store"]) .advent__cta { border-radius: 999px; padding-inline: 28px; font-weight: 700; letter-spacing: .01em; }
+.advent[data-advent-button="store"] .advent__cta,
+.advent[data-advent-button="store"] .advent__dialog .advent__cta { background: #dd0a0a; color: #fff; border: 2px solid #fff; }
+.advent[data-advent-button="store"] .advent__dialog .advent__cta { border-color: #dd0a0a; }
+.advent[data-advent-button="store"] .advent__cta:hover,
+.advent[data-advent-button="store"] .advent__dialog .advent__cta:hover { background: #b80808; color: #fff; }
+@media (hover: hover) and (pointer: fine) {
+  .advent .advent__cta:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -12px #240713a6; }
+  .advent .advent__cta:hover svg { transform: translate(3px, -3px); }
+}
+.advent .advent__cta:active { transform: translateY(0) scale(.98); box-shadow: none; }
+
+/* Título de landing: etiqueta, palabras y subrayado dorado. */
+.advent .advent__eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 6px 14px 6px 10px; border-radius: 999px; background: var(--advent-paper); color: var(--advent-ink); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; box-shadow: 0 8px 20px -10px #24071399; }
+.advent__eyebrow-dot { width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: var(--advent-red); }
+.advent__word { display: inline-block; }
+.advent .advent__hero h1 .advent__title-accent { position: relative; width: fit-content; }
+.advent__swash { position: absolute; left: -2%; bottom: -.06em; width: 104%; height: .26em; overflow: visible; pointer-events: none; }
+.advent__swash path { fill: none; stroke: var(--advent-gold); stroke-width: 5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.advent__hero-image { position: relative; }
+.advent__sparkles { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.advent__sparkles i { position: absolute; width: 18px; aspect-ratio: 1; background: var(--advent-gold); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.advent__sparkles i:nth-child(1) { top: 6%; left: 16%; }
+.advent__sparkles i:nth-child(2) { top: 20%; right: 10%; width: 12px; }
+.advent__sparkles i:nth-child(3) { bottom: 24%; left: 6%; width: 14px; }
+.advent__sparkles i:nth-child(4) { bottom: 8%; right: 20%; width: 22px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .advent--motion .advent__eyebrow { animation: advent-word-in 600ms var(--advent-ease-out) both; }
+  .advent--motion .advent__eyebrow-dot { animation: advent-pulse 2s ease-out .8s 2; }
+  .advent--motion .advent__hero .advent__word { animation: advent-word-in 760ms var(--advent-ease-out) both; animation-delay: calc(140ms + var(--w, 0) * 90ms); }
+  .advent--motion .advent__hero .advent__title-accent { animation: advent-accent-in 900ms var(--advent-ease-out) both; animation-delay: calc(180ms + var(--w, 3) * 90ms); }
+  .advent--motion .advent__swash path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: advent-draw 900ms var(--advent-ease-out) both; animation-delay: calc(620ms + var(--w, 3) * 90ms); }
+  .advent--motion .advent__sparkles i { animation: advent-twinkle 1.6s ease-in-out 2 both; }
+  .advent--motion .advent__sparkles i:nth-child(2) { animation-delay: .35s; }
+  .advent--motion .advent__sparkles i:nth-child(3) { animation-delay: .7s; }
+  .advent--motion .advent__sparkles i:nth-child(4) { animation-delay: 1.05s; }
+  .advent--motion button.advent__door--active:not(:focus-visible) { animation: advent-door-call 2.2s ease-out .6s 2; }
+  .advent--motion :is(.advent__decoration--star, .advent__decoration--snow) svg { animation: advent-float 2.4s ease-in-out 2 alternate; }
+
+  @supports (animation-timeline: view()) {
+    .advent--motion :is(.advent__standalone-heading > *, .advent__calendar-head > *, .advent__status, .advent__closing-copy > *, .advent__door, .advent__decoration) {
+      animation: advent-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+    .advent--motion .advent__hero-image img { animation: advent-parallax-hero linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
+    .advent--motion .advent__closing-image { overflow: hidden; view-timeline: --advent-closing block; }
+    .advent--motion .advent__closing-image img { scale: 1.14; animation: advent-parallax linear both; animation-timeline: --advent-closing; animation-range: cover; }
+  }
+}
+@keyframes advent-word-in { from { opacity: 0; translate: 0 .45em; filter: blur(8px); } to { opacity: 1; translate: 0 0; filter: blur(0); } }
+@keyframes advent-accent-in { 0% { opacity: 0; scale: .7; rotate: -6deg; } 60% { opacity: 1; scale: 1.06; rotate: 1deg; } 100% { opacity: 1; scale: 1; rotate: 0deg; } }
+@keyframes advent-draw { to { stroke-dashoffset: 0; } }
+@keyframes advent-pulse { 0% { box-shadow: 0 0 0 0 #ff030399; } 70%, 100% { box-shadow: 0 0 0 9px #ff030300; } }
+@keyframes advent-twinkle { 0%, 100% { opacity: .55; scale: .7; rotate: 0deg; } 50% { opacity: 1; scale: 1; rotate: 45deg; } }
+@keyframes advent-door-call { 0% { outline-offset: 3px; outline-color: var(--advent-paper); } 70%, 100% { outline-offset: 12px; outline-color: transparent; } }
+@keyframes advent-float { from { translate: 0 -6px; rotate: -6deg; } to { translate: 0 6px; rotate: 6deg; } }
+@keyframes advent-rise { from { opacity: 0; translate: 0 36px; scale: .96; } to { opacity: 1; translate: 0 0; scale: 1; } }
+@keyframes advent-parallax-hero { to { translate: 0 14%; } }
+@keyframes advent-parallax { from { translate: 0 -7%; } to { translate: 0 7%; } }
