@@ -1,0 +1,53 @@
+{% liquid
+  assign font_source = section.settings.heading_font_source | default: 'inherit'
+  assign custom_url = section.settings.custom_heading_font_url | default: '' | strip
+  assign custom_path = custom_url | split: '?' | first | split: '#' | first
+  assign extension = custom_path | split: '.' | last | downcase
+  assign prefix = custom_url | slice: 0, 8
+  assign custom_valid = false
+  if prefix == 'https://'
+    if extension == 'woff2' or extension == 'woff'
+      assign custom_valid = true
+    endif
+  endif
+  if custom_url contains '<' or custom_url contains '>' or custom_url contains '"' or custom_url contains "'" or custom_url contains ' ' or custom_url contains '(' or custom_url contains ')'
+    assign custom_valid = false
+  endif
+  assign family = 'AdventHeading-' | append: section.id
+  assign custom_weight = section.settings.custom_heading_font_weight | default: '700' | plus: 0
+  assign chosen_font = section.settings.heading_font
+%}
+<style>
+  {% if font_source == 'custom' and custom_valid %}
+    @font-face {
+      font-family: {{ family | json }};
+      src: url({{ custom_url | json }}) format({{ extension | json }});
+      font-weight: {{ custom_weight }};
+      font-style: normal;
+      font-display: swap;
+    }
+  {% elsif font_source == 'shopify' and chosen_font != blank %}
+    {% unless chosen_font.system %}{{ chosen_font | font_face: font_display: 'swap' }}{% endunless %}
+  {% endif %}
+  [data-advent-style="{{ section.id }}"] {
+    --advent-red: {{ section.settings.background_color | default: '#ff0303' | escape }};
+    --advent-heading-color: {{ section.settings.heading_color | default: '#fff5ef' | escape }};
+    --advent-text-color: {{ section.settings.text_color | default: '#19080d' | escape }};
+    --advent-heading-accent: {{ section.settings.accent_color | default: section.settings.heading_color | default: '#fff5ef' | escape }};
+    {% if section.settings.button_background != blank %}--advent-button-background: {{ section.settings.button_background | escape }};{% endif %}
+    {% if section.settings.button_text_color != blank %}--advent-button-text: {{ section.settings.button_text_color | escape }};{% endif %}
+    {% if section.settings.button_hover_background != blank %}--advent-button-hover: {{ section.settings.button_hover_background | escape }};{% endif %}
+    {% if font_source == 'custom' and custom_valid %}
+      --advent-heading-font: {{ family | json }}, "Work Sans", sans-serif;
+      --advent-accent-font: {{ family | json }}, "Work Sans", sans-serif;
+      --advent-heading-weight: {{ custom_weight }};
+      --advent-accent-weight: {{ custom_weight }};
+    {% elsif font_source == 'shopify' and chosen_font.family != blank %}
+      --advent-heading-font: {{ chosen_font.family | json }}, {{ chosen_font.fallback_families }};
+      --advent-accent-font: {{ chosen_font.family | json }}, {{ chosen_font.fallback_families }};
+      --advent-heading-weight: {{ chosen_font.weight }};
+      --advent-accent-weight: {{ chosen_font.weight }};
+      --advent-heading-style: {{ chosen_font.style }};
+    {% endif %}
+  }
+</style>

@@ -12,6 +12,8 @@ function createEngine() {
     return `<img src="${url}" width="900" height="600" loading="${o.loading||'lazy'}" alt="">`;
   });
   engine.registerFilter('json', value=>JSON.stringify(value===undefined?null:value));
+  // Shopify owns font_face output; local fixtures exercise consumers with system fonts.
+  engine.registerFilter('font_face', ()=>'/* Shopify renders font_face on the platform. */');
   return engine;
 }
 function readSection(type) {
@@ -49,4 +51,4 @@ async function renderLanding({disabledSections=[],sectionSettings={},...calendar
   }
   return result.join('');
 }
-module.exports={renderCalendar,renderLanding,root};
+module.exports={renderCalendar,renderLanding,root,createEngine};

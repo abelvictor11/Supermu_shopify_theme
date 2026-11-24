@@ -22,7 +22,14 @@ http.createServer(async(req,res)=>{
       {enabled:false,date:'2026-11-26',title:'Portada de prueba',cover_image:'/assets/advent-bunuelos.jpg'},
       {enabled:false,date:'2026-11-27',title:'Portada de prueba',cover_image:'/assets/advent-christmas-tree.jpg',cover_fit:'contain'}
     ]}:{};
-    const body=await renderLanding({...options,disabledSections:(url.searchParams.get('hide')||'').split(',')});
-    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end(`<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vista previa local · Calendario Supermú</title><style>body{margin:0;font-family:Arial,sans-serif}body>p{margin:0;padding:12px 20px;background:#fff;color:#501526;font-size:13px}body>nav{display:flex;justify-content:space-between;padding:16px 28px;color:#ed080b;font-weight:bold;background:#fff}</style><body><p>VISTA PREVIA LOCAL · ${staging?'Escenario de prueba con condiciones vacías y fecha simulada.':active?'Promoción y fecha simuladas para probar interacción.':'Módulos independientes en una vista local de prueba.'} No es la tienda Shopify.</p><nav><span>supermú</span><span>Navidad para compartir</span></nav>${body}</body></html>`);
+    const custom=url.searchParams.get('style')==='custom';
+    const broken=url.searchParams.get('style')==='broken';
+    const sectionSettings=custom?{
+      calendar_hero:{heading_font_source:'custom',custom_heading_font_url:'https://lavaquita33.myshopify.com/cdn/shop/t/4/assets/Dry.woff',custom_heading_font_weight:'400'},
+      calendar_heading:{background_color:'#007b44',heading_color:'#fff5ef',text_color:'#fff5ef',heading_font_source:'shopify',heading_font:{family:'Georgia',fallback_families:'serif',system:true,weight:700,style:'italic'}},
+      calendar_closing:{background_color:'#007b44',heading_color:'#fff5ef',text_color:'#fff5ef'}
+    }:broken?{calendar_hero:{heading_font_source:'custom',custom_heading_font_url:'https://lavaquita33.myshopify.com/cdn/shop/t/4/assets/missing-preview-font.woff2'}}:{};
+    const body=await renderLanding({...options,sectionSettings,disabledSections:(url.searchParams.get('hide')||'').split(',')});
+    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end(`<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vista previa local · Calendario Supermú</title><style>body{margin:0;font-family:"Work Sans",sans-serif}body>p{margin:0;padding:12px 20px;background:#fff;color:#501526;font-size:13px}body>nav{display:flex;justify-content:space-between;padding:16px 28px;color:#ed080b;font-weight:bold;background:#fff}</style><body><p>VISTA PREVIA LOCAL · ${staging?'Escenario de prueba con condiciones vacías y fecha simulada.':active?'Promoción y fecha simuladas para probar interacción.':'Módulos independientes en una vista local de prueba.'} No es la tienda Shopify.</p><nav><span>supermú</span><span>Navidad para compartir</span></nav>${body}</body></html>`);
   } catch(error) {console.error(error.message);res.writeHead(500).end('No se pudo renderizar la vista previa.');}
 }).listen(port,'127.0.0.1',()=>console.log(`Advent fixture: http://127.0.0.1:${port} — synthetic active state: /?scenario=active`));

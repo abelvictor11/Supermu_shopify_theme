@@ -171,8 +171,10 @@ test('calendar small text retains AA contrast against the campaign red',()=>{
   const luminance=hex=>hex.match(/../g).map(v=>parseInt(v,16)/255)
     .map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4)
     .reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
-  assert.ok((luminance(color('paper'))+.05)/(luminance(color('red'))+.05)>=4.5);
-  assert.match(css,/\.advent \.advent__status\s*\{[^}]*color: var\(--advent-paper\)/);
+  const schema=JSON.parse(fs.readFileSync(path.join(root,'sections/advent-calendar.liquid'),'utf8').split('{% schema %}')[1].split('{% endschema %}')[0]);
+  const text=schema.settings.find(s=>s.id==='text_color').default.slice(1);
+  assert.ok((luminance(color('red'))+.05)/(luminance(text)+.05)>=4.5);
+  assert.match(css,/\.advent \.advent__status\s*\{[^}]*color: var\(--advent-text-color/);
 });
 
 test('real component renders 15 doors, opens only today, and restores focus on close',async()=>{
