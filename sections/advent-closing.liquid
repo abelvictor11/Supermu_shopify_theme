@@ -2,7 +2,7 @@
 {{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
 {% endunless %}
 {% if section.settings.show_image or section.settings.show_title or section.settings.show_description %}
-<div class="advent" data-advent-style="{{ section.id }}">
+<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}" data-advent-style="{{ section.id }}">
   {% render 'advent-section-styles', section: section %}
   <section class="advent__closing{% unless section.settings.show_image %} advent__closing--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description %} advent__closing--image-only{% endunless %}" aria-label="Navidad para compartir">
     {% if section.settings.show_image %}
@@ -53,7 +53,9 @@
     {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
     {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"},
     {"type":"range","id":"heading_leading_offset","label":"Ajuste del interlineado: escritorio","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}","info":"Admite negativos para acercar líneas. La altura final se mantiene positiva."},
-    {"type":"range","id":"heading_leading_offset_mobile","label":"Ajuste del interlineado: móvil","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}"}
+    {"type":"range","id":"heading_leading_offset_mobile","label":"Ajuste del interlineado: móvil","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Animaciones"},
+    {"type":"checkbox","id":"motion_enabled","label":"Animar al hacer scroll","default":true,"info":"Se desactivan solas si el visitante pidió reducir el movimiento en su dispositivo."}
   ],
   "presets":[{"name":"Adviento: banner inferior"}]
 }
