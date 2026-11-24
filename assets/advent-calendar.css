@@ -42,10 +42,10 @@
   overflow: hidden;
 }
 .advent__hero-copy { position: relative; z-index: 1; padding: 20px 0; animation: advent-print-in 480ms var(--advent-ease-out) both; }
-.advent .advent__hero h1 { font-size: clamp(38px, 4.2vw, 60px); line-height: var(--advent-heading-leading, 1.08); font-weight: var(--advent-heading-weight, 700); letter-spacing: -.04em; max-width: 13ch; text-wrap: balance; }
-.advent__hero h1 .advent__title-accent { font-family: var(--advent-accent-font, "Advent Dry", "Work Sans", sans-serif); font-size: 1.35em; font-weight: var(--advent-accent-weight, 400); color: var(--advent-heading-accent, var(--advent-paper)); display: block; margin-top: 14px; letter-spacing: 0; }
+.advent .advent__hero h1 { font-size: clamp(38px, 4.2vw, 60px); line-height: var(--advent-heading-line-height, var(--advent-heading-leading, 1.08)); font-weight: var(--advent-heading-weight, 700); letter-spacing: -.04em; max-width: 13ch; text-wrap: balance; }
+.advent__hero h1 .advent__title-accent { font-family: var(--advent-accent-font, "Advent Dry", "Work Sans", sans-serif); font-size: 1.35em; font-weight: var(--advent-accent-weight, 400); color: var(--advent-heading-accent, var(--advent-paper)); display: block; margin-top: var(--advent-accent-gap, 14px); line-height: var(--advent-heading-line-height, inherit); letter-spacing: 0; }
 .advent .advent__intro { max-width: 40ch; font-size: 16px; line-height: 1.55; margin-top: 22px; color: var(--advent-text-color, #19080d); }
-.advent .advent__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; padding: 14px 24px; background: var(--advent-button-background, var(--advent-paper)); color: var(--advent-button-text, var(--advent-ink)); border: 0; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 650; cursor: pointer; transition: background-color .2s, color .2s; }
+.advent .advent__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; padding: 14px 24px; background: var(--advent-button-background, var(--advent-paper)); color: var(--advent-button-text, var(--advent-ink)); border: var(--advent-button-border-width, 0px) solid var(--advent-button-border-color, currentColor); border-radius: var(--advent-button-radius, 6px); text-decoration: none; font-size: 16px; font-weight: 650; cursor: pointer; transition: background-color .2s, color .2s; }
 .advent .advent__cta:hover { background: var(--advent-button-hover, var(--advent-gold)); color: var(--advent-button-text, var(--advent-ink)); }
 .advent .advent__cta:active { background: var(--advent-button-hover, #e8b971); }
 .advent__cta svg { flex-shrink: 0; }
@@ -58,20 +58,21 @@
 .advent__calendar { padding: 40px max(28px, calc((100vw - 1100px) / 2)) 48px; scroll-margin-top: 100px; background: var(--advent-red); }
 .advent__calendar-head { display: block; }
 .advent__standalone-heading { padding: 40px max(28px, calc((100vw - 1100px) / 2)) 20px; background: var(--advent-red); }
-.advent .advent__standalone-title { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: var(--advent-heading-leading, 1.14); font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
+.advent .advent__standalone-title { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: var(--advent-heading-line-height, var(--advent-heading-leading, 1.14)); font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
 .advent--separate .advent__calendar { padding-top: 24px; }
 .advent__anchor { display: block; height: 0; scroll-margin-top: 110px; }
 .advent__hero--text-only, .advent__hero--image-only, .advent__closing--text-only, .advent__closing--image-only { grid-template-columns: minmax(0, 1fr); min-height: 0; }
 .advent__hero--image-only .advent__hero-image { max-width: 1100px; margin-inline: auto; }
-.advent .advent__calendar h2 { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: var(--advent-heading-leading, 1.14); font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
+.advent .advent__calendar h2 { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: var(--advent-heading-line-height, var(--advent-heading-leading, 1.14)); font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
 .advent__calendar-head > p { font-size: 14px; margin-top: 12px; color: var(--advent-text-color, #19080d); }
 .advent .advent__status { font-size: 14px; margin-top: 16px; min-height: 2em; max-width: 70ch; color: var(--advent-text-color, #19080d); }
 .advent__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: minmax(160px, auto); gap: 8px; margin-top: 18px; }
 .advent__grid--mosaic {
   grid-template-columns: repeat(var(--advent-columns-wide, 5), minmax(0, 1fr));
-  grid-auto-rows: clamp(144px, 12.8vw, 176px);
+  grid-auto-rows: var(--advent-card-row-size, clamp(144px, 12.8vw, 176px));
   grid-template-areas: var(--advent-layout-wide);
 }
+.advent .advent__door { font-family: var(--advent-card-font, inherit); font-style: var(--advent-card-style, normal); }
 .advent__door {
   position: relative;
   isolation: isolate;
@@ -94,13 +95,13 @@
 .advent__door:nth-child(4n+2) { background: var(--advent-paper); color: var(--advent-ink); }
 .advent__door:nth-child(4n+3) { background: var(--advent-pine); color: var(--advent-paper); }
 .advent__door:nth-child(4n+4) { background: var(--advent-gold); color: var(--advent-ink); }
-.advent__door-date { position: relative; z-index: 1; font-size: 11px; font-weight: 500; }
-.advent__door-number { position: relative; z-index: 1; align-self: end; margin-block: auto; font-size: clamp(40px, 5vw, 74px); font-weight: 650; line-height: 1.05; letter-spacing: -.04em; }
+.advent__door-date { position: relative; z-index: 1; font-size: var(--advent-card-label-size, 11px); font-weight: var(--advent-card-weight, 500); }
+.advent__door-number { position: relative; z-index: 1; align-self: end; margin-block: auto; font-size: var(--advent-card-number-size, clamp(40px, 5vw, 74px)); font-weight: var(--advent-card-weight, 650); line-height: 1.05; letter-spacing: -.04em; }
 .advent__door-art { position: absolute; left: 5%; top: 20%; width: clamp(74px, 9vw, 112px); aspect-ratio: 1; background-repeat: no-repeat; background-size: 500% 300%; clip-path: inset(6% 3% 3%); pointer-events: none; transform-origin: center bottom; }
 .advent__door--covered .advent__door-art { display: none; }
 .advent button.advent__door--active .advent__door-art { transition: transform 380ms var(--advent-ease-out); }
 .advent button.advent__door--active[aria-expanded="true"] .advent__door-art { transform: rotate(-8deg) scale(.96); }
-.advent__door-state { position: relative; z-index: 1; font-size: 11px; font-weight: 500; padding-right: 24px; }
+.advent__door-state { position: relative; z-index: 1; font-size: var(--advent-card-label-size, 11px); font-weight: var(--advent-card-weight, 500); padding-right: 24px; }
 .advent__door-mark { position: absolute; z-index: 1; right: 14px; bottom: 12px; line-height: 1; }
 .advent button.advent__door--active { cursor: pointer; outline: 3px solid var(--advent-paper); outline-offset: 3px; transition: transform 280ms var(--advent-ease-out); }
 .advent button.advent__door--active:active { transform: scale(.985); }
@@ -135,7 +136,7 @@
 .advent__closing-image { min-width: 0; }
 .advent__closing-image img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
 .advent__closing-copy { padding: 48px; }
-.advent .advent__closing h2 { font-size: clamp(28px, 3vw, 42px); line-height: var(--advent-heading-leading, 1.15); letter-spacing: -.03em; max-width: 13ch; font-weight: var(--advent-heading-weight, 650); }
+.advent .advent__closing h2 { font-size: clamp(28px, 3vw, 42px); line-height: var(--advent-heading-line-height, var(--advent-heading-leading, 1.15)); letter-spacing: -.03em; max-width: 13ch; font-weight: var(--advent-heading-weight, 650); }
 .advent__closing p { margin-top: 20px; max-width: 33ch; font-size: 16px; color: var(--advent-text-color, #19080d); }
 .advent__terms { padding: 40px max(28px, calc((100vw - 1280px) / 2)); font-size: 13px; color: var(--advent-text-color, #19080d); }
 .advent .advent__terms h2 { font-size: 18px; margin-bottom: 12px; color: var(--advent-text-color, #19080d); font-weight: var(--advent-heading-weight, 650); }
@@ -150,7 +151,7 @@
 .advent .advent__close:hover { background: #efd1c2; transform: rotate(90deg); }
 .advent .advent__dialog :is(button, a):focus-visible { outline-color: var(--advent-wine); }
 .advent .advent__offer-date { font-size: 14px; margin-bottom: 20px; }
-.advent .advent__dialog h2 { font-size: 32px; line-height: var(--advent-heading-leading, 1.15); letter-spacing: -.03em; }
+.advent .advent__dialog h2 { font-size: 32px; line-height: var(--advent-heading-line-height, var(--advent-heading-leading, 1.15)); letter-spacing: -.03em; }
 .advent .advent__discount { font-size: 72px; line-height: 1.2; color: #a51d30; font-weight: 700; margin: 12px 0; }
 .advent__offer-terms { white-space: pre-line; font-size: 15px; margin-bottom: 28px !important; }
 .advent__offer-image { margin-bottom: 20px; }
@@ -184,7 +185,7 @@
   .advent__grid { gap: 7px; }
   .advent__grid:not(.advent__grid--mosaic) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .advent__door { padding: 12px; }
-  .advent__door-number { font-size: 48px; }
+  .advent__door-number { font-size: var(--advent-card-number-size, 48px); }
   .advent__closing { grid-template-columns: 1fr; }
   .advent__closing-copy { padding: 10px 28px 42px; }
   .advent .advent__closing h2 { max-width: 18ch; font-size: 34px; }
@@ -200,23 +201,23 @@
   .advent .advent__hero-note { text-align: center; }
   .advent__ribbon { justify-content: center; text-align: center; }
   .advent__door { padding: 10px; }
-  .advent__door-number { font-size: 46px; }
-  .advent__door-date, .advent__door-state { font-size: 10px; }
+  .advent__door-number { font-size: var(--advent-card-number-size, 46px); }
+  .advent__door-date, .advent__door-state { font-size: var(--advent-card-label-size, 10px); }
   .advent__door-art { width: 64px; left: 4%; top: 24%; }
   .advent__dialog { padding: 52px 24px 28px; }
 }
 @media (max-width: 799px) {
   .advent__grid--mosaic {
     grid-template-columns: repeat(var(--advent-columns-small, 3), minmax(0, 1fr));
-    grid-auto-rows: 144px;
+    grid-auto-rows: var(--advent-card-row-size, 144px);
     grid-template-areas: var(--advent-layout-small);
   }
   .advent__decoration { display: var(--advent-display-small, grid); }
   .advent__door-mark { right: 8px; bottom: 8px; }
   .advent__door--covered .advent__door-mark { right: 14px; bottom: 14px; }
-  .advent__door-state { padding-right: 16px; font-size: 10px; }
+  .advent__door-state { padding-right: 16px; font-size: var(--advent-card-label-size, 10px); }
   .advent__door-mark svg { width: 14px; height: 14px; }
-  .advent__door--covered .advent__door-number { font-size: 38px; }
+  .advent__door--covered .advent__door-number { font-size: var(--advent-card-number-size, 38px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .advent .advent__dialog[open] { animation: advent-feedback 80ms linear; }
@@ -236,7 +237,7 @@
 }
 @media (max-width: 359px) {
   .advent__door-art { width: 48px; top: 27%; }
-  .advent__door-number { font-size: 40px; }
+  .advent__door-number { font-size: var(--advent-card-number-size, 40px); }
 }
 @media (forced-colors: active) {
   .advent { scrollbar-color: auto; }

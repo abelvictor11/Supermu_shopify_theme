@@ -12,7 +12,7 @@ test('all four sections expose optional leading and gradient controls without ch
     const settings=schema(type).settings,find=id=>settings.find(s=>s.id===id);
     assert.equal(find('heading_line_height_enabled')?.default,false,type);
     for(const id of ['heading_line_height','heading_line_height_mobile']){
-      assert.equal(find(id)?.type,'range');assert.equal(find(id)?.min,100);assert.equal(find(id)?.max,180);
+      assert.equal(find(id)?.type,'range');assert.equal(find(id)?.min,80);assert.equal(find(id)?.max,180);
     }
     assert.equal(find('heading_gradient_enabled')?.default,false);
     assert.equal(find('heading_gradient')?.type,'color_background');
