@@ -16,6 +16,19 @@
   assign family = 'AdventHeading-' | append: section.id
   assign custom_weight = section.settings.custom_heading_font_weight | default: '700' | plus: 0
   assign chosen_font = section.settings.heading_font
+  assign title_gradient = section.settings.heading_gradient | default: '' | strip
+  assign gradient_lowercase = title_gradient | downcase
+  assign gradient_start = title_gradient | split: '(' | first | downcase
+  assign gradient_end = title_gradient | slice: -1
+  assign gradient_valid = false
+  if gradient_start == 'linear-gradient' or gradient_start == 'radial-gradient' or gradient_start == 'conic-gradient'
+    if gradient_end == ')'
+      assign gradient_valid = true
+    endif
+  endif
+  if title_gradient contains ';' or title_gradient contains '{' or title_gradient contains '}' or title_gradient contains '<' or title_gradient contains '>' or gradient_lowercase contains 'url('
+    assign gradient_valid = false
+  endif
 %}
 <style>
   {% if font_source == 'custom' and custom_valid %}
@@ -30,6 +43,7 @@
     {% unless chosen_font.system %}{{ chosen_font | font_face: font_display: 'swap' }}{% endunless %}
   {% endif %}
   [data-advent-style="{{ section.id }}"] {
+    {% if section.settings.heading_line_height_enabled %}--advent-heading-leading: {{ section.settings.heading_line_height | default: 110 | plus: 0 | at_least: 100 | at_most: 180 | divided_by: 100.0 }};{% endif %}
     --advent-red: {{ section.settings.background_color | default: '#ff0303' | escape }};
     --advent-heading-color: {{ section.settings.heading_color | default: '#fff5ef' | escape }};
     --advent-text-color: {{ section.settings.text_color | default: '#19080d' | escape }};
@@ -50,4 +64,31 @@
       --advent-heading-style: {{ chosen_font.style }};
     {% endif %}
   }
+  {% if section.settings.heading_line_height_enabled %}
+    @media (max-width: 799px) {
+      [data-advent-style="{{ section.id }}"] {
+        --advent-heading-leading: {{ section.settings.heading_line_height_mobile | default: 120 | plus: 0 | at_least: 100 | at_most: 180 | divided_by: 100.0 }};
+      }
+    }
+  {% endif %}
+  {% if section.settings.heading_gradient_enabled and gradient_valid %}
+    @supports ((background-clip: text) or (-webkit-background-clip: text)) and (background-image: {{ title_gradient | escape }}) {
+      .advent[data-advent-style="{{ section.id }}"] .advent__title-ink {
+        background-image: {{ title_gradient | escape }};
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        padding-block: .08em;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+      }
+    }
+    @media (forced-colors: active) {
+      .advent[data-advent-style="{{ section.id }}"] .advent__title-ink { background-image: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+    }
+    @media print {
+      .advent[data-advent-style="{{ section.id }}"] .advent__title-ink { background-image: none; color: #19080d; -webkit-text-fill-color: #19080d; }
+    }
+  {% endif %}
 </style>

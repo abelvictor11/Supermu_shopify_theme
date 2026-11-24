@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "snippets/advent-section-styles.liquid"
+        ],
+        "createdAt": "2026-11-24T15:25:42.007Z",
+        "reason": "User confirmed: explicitly requested optional title gradients in the Advent landing on 2026-11-24; disabled by default with solid-color fallbacks."
+      }
+    ]
+  }
+}

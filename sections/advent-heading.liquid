@@ -6,7 +6,7 @@
   {% render 'advent-section-styles', section: section %}
   <div class="advent__standalone-heading advent__calendar-head">
     {% if section.settings.show_title and section.settings.calendar_heading != blank %}
-      {% if section.settings.heading_tag == 'h1' %}<h1 class="advent__standalone-title">{{ section.settings.calendar_heading | escape }}</h1>{% else %}<h2 class="advent__standalone-title">{{ section.settings.calendar_heading | escape }}</h2>{% endif %}
+      {% if section.settings.heading_tag == 'h1' %}<h1 class="advent__standalone-title"><span class="advent__title-ink">{{ section.settings.calendar_heading | escape }}</span></h1>{% else %}<h2 class="advent__standalone-title"><span class="advent__title-ink">{{ section.settings.calendar_heading | escape }}</span></h2>{% endif %}
     {% endif %}
     {% if section.settings.show_description and section.settings.description != blank %}<p>{{ section.settings.description | escape | newline_to_br }}</p>{% endif %}
   </div>
@@ -31,7 +31,14 @@
     {"type":"select","id":"heading_font_source","label":"Origen de la fuente","default":"inherit","options":[{"value":"inherit","label":"Diseño actual"},{"value":"shopify","label":"Biblioteca de Shopify"},{"value":"custom","label":"Archivo propio WOFF/WOFF2"}]},
     {"type":"font_picker","id":"heading_font","label":"Fuente de Shopify","default":"assistant_n4","visible_if":"{{ section.settings.heading_font_source == 'shopify' }}"},
     {"type":"url","id":"custom_heading_font_url","label":"URL de la fuente propia","info":"Sube un WOFF2 o WOFF con licencia a Contenido → Archivos y pega su URL HTTPS. Si no carga, se usa una fuente de respaldo.","visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
-    {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"}
+    {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"header","content":"Interlineado del título"},
+    {"type":"checkbox","id":"heading_line_height_enabled","label":"Personalizar interlineado","default":false,"info":"Desactivado conserva el interlineado actual de cada título."},
+    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":100,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":100,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Degradado del título"},
+    {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
+    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"}
   ],
   "presets":[{"name":"Adviento: título y texto"}]
 }

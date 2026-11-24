@@ -42,8 +42,8 @@
   overflow: hidden;
 }
 .advent__hero-copy { position: relative; z-index: 1; padding: 20px 0; animation: advent-print-in 480ms var(--advent-ease-out) both; }
-.advent .advent__hero h1 { font-size: clamp(38px, 4.2vw, 60px); line-height: 1.08; font-weight: var(--advent-heading-weight, 700); letter-spacing: -.04em; max-width: 13ch; text-wrap: balance; }
-.advent__hero h1 span { font-family: var(--advent-accent-font, "Advent Dry", "Work Sans", sans-serif); font-size: 1.35em; font-weight: var(--advent-accent-weight, 400); color: var(--advent-heading-accent, var(--advent-paper)); display: block; margin-top: 14px; letter-spacing: 0; }
+.advent .advent__hero h1 { font-size: clamp(38px, 4.2vw, 60px); line-height: var(--advent-heading-leading, 1.08); font-weight: var(--advent-heading-weight, 700); letter-spacing: -.04em; max-width: 13ch; text-wrap: balance; }
+.advent__hero h1 .advent__title-accent { font-family: var(--advent-accent-font, "Advent Dry", "Work Sans", sans-serif); font-size: 1.35em; font-weight: var(--advent-accent-weight, 400); color: var(--advent-heading-accent, var(--advent-paper)); display: block; margin-top: 14px; letter-spacing: 0; }
 .advent .advent__intro { max-width: 40ch; font-size: 16px; line-height: 1.55; margin-top: 22px; color: var(--advent-text-color, #19080d); }
 .advent .advent__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; padding: 14px 24px; background: var(--advent-button-background, var(--advent-paper)); color: var(--advent-button-text, var(--advent-ink)); border: 0; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 650; cursor: pointer; transition: background-color .2s, color .2s; }
 .advent .advent__cta:hover { background: var(--advent-button-hover, var(--advent-gold)); color: var(--advent-button-text, var(--advent-ink)); }
@@ -58,12 +58,12 @@
 .advent__calendar { padding: 40px max(28px, calc((100vw - 1100px) / 2)) 48px; scroll-margin-top: 100px; background: var(--advent-red); }
 .advent__calendar-head { display: block; }
 .advent__standalone-heading { padding: 40px max(28px, calc((100vw - 1100px) / 2)) 20px; background: var(--advent-red); }
-.advent .advent__standalone-title { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: 1.14; font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
+.advent .advent__standalone-title { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: var(--advent-heading-leading, 1.14); font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
 .advent--separate .advent__calendar { padding-top: 24px; }
 .advent__anchor { display: block; height: 0; scroll-margin-top: 110px; }
 .advent__hero--text-only, .advent__hero--image-only, .advent__closing--text-only, .advent__closing--image-only { grid-template-columns: minmax(0, 1fr); min-height: 0; }
 .advent__hero--image-only .advent__hero-image { max-width: 1100px; margin-inline: auto; }
-.advent .advent__calendar h2 { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: 1.14; font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
+.advent .advent__calendar h2 { font-size: clamp(28px, 3vw, 38px); max-width: 24ch; letter-spacing: -.03em; line-height: var(--advent-heading-leading, 1.14); font-weight: var(--advent-heading-weight, 650); text-wrap: balance; }
 .advent__calendar-head > p { font-size: 14px; margin-top: 12px; color: var(--advent-text-color, #19080d); }
 .advent .advent__status { font-size: 14px; margin-top: 16px; min-height: 2em; max-width: 70ch; color: var(--advent-text-color, #19080d); }
 .advent__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: minmax(160px, auto); gap: 8px; margin-top: 18px; }
@@ -135,7 +135,7 @@
 .advent__closing-image { min-width: 0; }
 .advent__closing-image img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
 .advent__closing-copy { padding: 48px; }
-.advent .advent__closing h2 { font-size: clamp(28px, 3vw, 42px); line-height: 1.15; letter-spacing: -.03em; max-width: 13ch; font-weight: var(--advent-heading-weight, 650); }
+.advent .advent__closing h2 { font-size: clamp(28px, 3vw, 42px); line-height: var(--advent-heading-leading, 1.15); letter-spacing: -.03em; max-width: 13ch; font-weight: var(--advent-heading-weight, 650); }
 .advent__closing p { margin-top: 20px; max-width: 33ch; font-size: 16px; color: var(--advent-text-color, #19080d); }
 .advent__terms { padding: 40px max(28px, calc((100vw - 1280px) / 2)); font-size: 13px; color: var(--advent-text-color, #19080d); }
 .advent .advent__terms h2 { font-size: 18px; margin-bottom: 12px; color: var(--advent-text-color, #19080d); font-weight: var(--advent-heading-weight, 650); }
@@ -150,7 +150,7 @@
 .advent .advent__close:hover { background: #efd1c2; transform: rotate(90deg); }
 .advent .advent__dialog :is(button, a):focus-visible { outline-color: var(--advent-wine); }
 .advent .advent__offer-date { font-size: 14px; margin-bottom: 20px; }
-.advent .advent__dialog h2 { font-size: 32px; line-height: 1.15; letter-spacing: -.03em; }
+.advent .advent__dialog h2 { font-size: 32px; line-height: var(--advent-heading-leading, 1.15); letter-spacing: -.03em; }
 .advent .advent__discount { font-size: 72px; line-height: 1.2; color: #a51d30; font-weight: 700; margin: 12px 0; }
 .advent__offer-terms { white-space: pre-line; font-size: 15px; margin-bottom: 28px !important; }
 .advent__offer-image { margin-bottom: 20px; }
