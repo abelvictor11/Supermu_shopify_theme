@@ -2,7 +2,7 @@
   {% render 'advent-assets', force: true %}
 {% endunless %}
 
-<advent-calendar class="advent{% if section.settings.separate_sections %} advent--separate{% endif %}{% if section.settings.motion_enabled %} advent--motion{% endif %}" id="Advent-{{ section.id }}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store_shape' | escape }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
+<advent-calendar class="advent{% if section.settings.separate_sections %} advent--separate{% endif %}{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if section.settings.separate_sections and section.settings.container_style != 'band' %} advent--boxed{% endif %}" id="Advent-{{ section.id }}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store_shape' | escape }}" data-advent-art="{{ 'advent-festive-atlas.webp' | asset_url | escape }}">
   {% render 'advent-section-styles', section: section %}
   {% unless section.settings.separate_sections %}
   <header class="advent__hero">
@@ -22,6 +22,7 @@
   </header>
   {% endunless %}
 
+  <div class="advent__box">
   {% if section.settings.show_range %}
   <div class="advent__ribbon">
     <span>Navidad para compartir</span>
@@ -51,6 +52,7 @@
     {% endif %}
     {% if section.settings.show_timezone %}<p class="advent__timezone">Las puertas se abren a las 00:00 y las ofertas vencen a las 23:59, hora de Colombia.</p>{% endif %}
   </section>
+  </div>
 
   {% unless section.settings.separate_sections %}
   <section class="advent__closing" aria-labelledby="AdventClosing-{{ section.id }}">
@@ -124,6 +126,12 @@
     { "type": "text", "id": "anchor_id", "label": "ID de ancla del calendario", "default": "AdventCalendar", "info": "Debe coincidir con el destino del botón del banner superior. Usa un ID único, sin espacios." },
     { "type": "checkbox", "id": "show_range", "label": "Mostrar franja de fechas", "default": true },
     { "type": "checkbox", "id": "show_timezone", "label": "Mostrar nota de vigencia", "default": true },
+    {"type":"header","content":"Contenedor"},
+    {"type":"select","id":"container_style","label":"Estilo","default":"card","options":[{"value":"card","label":"Tarjeta con esquinas redondeadas"},{"value":"band","label":"Banda roja de lado a lado"}],"info":"Si Título y Calendario van seguidos como tarjetas, se unen en una sola."},
+    {"type":"select","id":"container_width","label":"Ancho del contenedor","default":"page","options":[{"value":"page","label":"Página (1320 px)"},{"value":"full","label":"Ancho completo"},{"value":"custom","label":"Personalizado"}]},
+    {"type":"range","id":"container_custom_width","label":"Ancho personalizado","min":640,"max":1920,"step":20,"default":1320,"unit":"px","visible_if":"{{ section.settings.container_width == 'custom' }}"},
+    {"type":"range","id":"section_space","label":"Espacio superior","min":0,"max":80,"step":4,"default":24,"unit":"px","info":"Separa esta sección de la anterior."},
+    {"type":"range","id":"grid_gap","label":"Separación entre puertas","min":0,"max":32,"step":1,"default":8,"unit":"px"},
     { "type": "header", "content": "Fechas de campaña" },
     { "type": "text", "id": "start_date", "label": "Fecha de inicio", "default": "2026-11-23", "info": "AAAA-MM-DD. Hora de Colombia. Hasta 31 días, ambos extremos incluidos." },
     { "type": "text", "id": "end_date", "label": "Fecha de fin", "default": "2026-12-07", "info": "AAAA-MM-DD. No cambia automáticamente las fechas de las promociones." },
