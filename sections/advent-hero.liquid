@@ -1,0 +1,110 @@
+{% unless template.name == 'page' and template.suffix == 'advent-calendar' %}
+  {% render 'advent-assets', force: true %}
+{% endunless %}
+{% if section.settings.show_title or section.settings.show_description or section.settings.show_image or section.settings.show_button %}
+{%- assign advent_layout = section.settings.layout | default: 'stage' -%}
+<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if advent_layout == 'stage' %} advent--stage{% endif %}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store_shape' | escape }}">
+  {% render 'advent-section-styles', section: section %}
+  {% render 'advent-accent-font', section: section %}
+  <header class="advent__hero advent__hero--standalone{% if advent_layout == 'stage' %} advent__hero--stage{% endif %}{% unless section.settings.show_image %} advent__hero--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description or section.settings.show_button %} advent__hero--image-only{% endunless %}">
+    {% if section.settings.show_title or section.settings.show_description or section.settings.show_button %}
+      <div class="advent__hero-copy">
+        {% if section.settings.show_title %}
+          {% if section.settings.eyebrow != blank %}<p class="advent__eyebrow"><span class="advent__eyebrow-dot" aria-hidden="true"></span>{{ section.settings.eyebrow | escape }}</p>{% endif %}
+          {% if section.settings.heading != blank or section.settings.heading_accent != blank %}
+            <h1>
+              {%- if section.settings.heading_gradient_enabled -%}
+                <span class="advent__title-ink">{{ section.settings.heading | escape }}</span>
+              {%- else -%}
+                <span class="advent__title-ink">{% assign advent_words = section.settings.heading | split: ' ' %}{% for word in advent_words %}<span class="advent__word" style="--w: {{ forloop.index0 }}">{{ word | escape }}</span>{% unless forloop.last %} {% endunless %}{% endfor %}</span>
+              {%- endif -%}
+              {%- if section.settings.heading_accent != blank %} <span class="advent__title-ink advent__title-accent" style="--w: {{ advent_words.size | default: 3 }}">{{ section.settings.heading_accent | escape }}{% if section.settings.show_swash %}<svg class="advent__swash" aria-hidden="true" viewBox="0 0 300 24" preserveAspectRatio="none" focusable="false"><path d="M4 17C62 6 150 2 296 11" pathLength="1"/></svg>{% endif %}</span>{% endif -%}
+            </h1>
+          {% endif %}
+        {% endif %}
+        {% if section.settings.show_description and section.settings.intro != blank %}<p class="advent__intro">{{ section.settings.intro | escape }}</p>{% endif %}
+        {% if section.settings.show_button %}
+          <a class="advent__cta" data-advent-calendar-link data-calendar-target="{{ section.settings.calendar_anchor | escape }}" href="#{{ section.settings.calendar_anchor | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if advent_layout == 'stage' and section.settings.show_pines %}{% render 'advent-pines', pine_id: section.id %}{% endif %}
+    {% if section.settings.show_image %}
+      <div class="advent__hero-image">
+        {% if section.settings.show_sparkles %}<span class="advent__sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i></span>{% endif %}
+        {% if section.settings.hero_image != blank %}
+          {{ section.settings.hero_image | image_url: width: 1200 | image_tag: widths: '480, 720, 960, 1200', sizes: '(min-width: 800px) 45vw, 85vw', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt }}
+        {% else %}
+          <img src="{{ 'advent-christmas-tree.jpg' | asset_url }}" width="934" height="1400" alt="{{ section.settings.image_alt | escape }}" fetchpriority="high" loading="eager">
+        {% endif %}
+      </div>
+    {% endif %}
+  </header>
+</div>
+{% endif %}
+{% schema %}
+{
+  "name": "Adviento: banner superior",
+  "tag": "section",
+  "enabled_on": {"templates":["page"]},
+  "settings": [
+    {"type":"select","id":"layout","label":"Diseño","default":"stage","options":[{"value":"stage","label":"Escenario: tarjeta roja con la palabra gigante"},{"value":"split","label":"Dividido: texto a un lado, imagen al otro"}],"info":"Escenario funciona mejor con fotos de fondo rojo o PNG sin fondo."},
+    {"type":"color","id":"page_background","label":"Fondo alrededor de la tarjeta","default":"#fff5ef","visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"checkbox","id":"show_pines","label":"Siluetas de pinos","default":true,"visible_if":"{{ section.settings.layout != 'split' }}"},
+    {"type":"header","content":"Contenedor"},
+    {"type":"select","id":"container_width","label":"Ancho del contenedor","default":"page","options":[{"value":"page","label":"Página (1320 px)"},{"value":"full","label":"Ancho completo"},{"value":"custom","label":"Personalizado"}]},
+    {"type":"range","id":"container_custom_width","label":"Ancho personalizado","min":640,"max":1920,"step":20,"default":1320,"unit":"px","visible_if":"{{ section.settings.container_width == 'custom' }}"},
+    {"type":"range","id":"section_space","label":"Espacio superior","min":0,"max":80,"step":4,"default":24,"unit":"px","info":"Separa esta sección de la anterior."},
+    {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
+    {"type":"text","id":"eyebrow","label":"Etiqueta sobre el título","default":"Calendario de Adviento","info":"Texto corto en una píldora sobre el título. Vacío la oculta."},
+    {"type":"text","id":"heading","label":"Título","default":"El sabor de la"},
+    {"type":"text","id":"heading_accent","label":"Palabra destacada","default":"Navidad"},
+    {"type":"select","id":"accent_font","label":"Fuente de la palabra destacada","default":"kaushan","options":[{"value":"kaushan","label":"Script pincel (Kaushan Script)"},{"value":"pacifico","label":"Script redonda (Pacifico)"},{"value":"dancing","label":"Script caligráfica (Dancing Script)"},{"value":"dry","label":"Fuente anterior de la campaña"},{"value":"heading","label":"Igual que el título"}],"info":"Las fuentes script se cargan desde Google Fonts solo con las letras de esta palabra."},
+    {"type":"checkbox","id":"show_swash","label":"Subrayado dorado en la palabra destacada","default":true},
+    {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
+    {"type":"textarea","id":"intro","label":"Descripción","default":"Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad."},
+    {"type":"checkbox","id":"show_image","label":"Mostrar imagen","default":true},
+    {"type":"image_picker","id":"hero_image","label":"Imagen","info":"Vacío usa el árbol gastronómico incluido."},
+    {"type":"text","id":"image_alt","label":"Texto alternativo","default":"Árbol navideño hecho con alimentos para compartir"},
+    {"type":"checkbox","id":"show_sparkles","label":"Destellos sobre la imagen","default":true},
+    {"type":"checkbox","id":"show_button","label":"Mostrar botón al calendario","default":true},
+    {"type":"text","id":"button_label","label":"Texto del botón","default":"Descubrir el calendario"},
+    {"type":"text","id":"calendar_anchor","label":"ID del calendario de destino","default":"AdventCalendar","info":"Debe coincidir con el ID de ancla de la sección Calendario. El botón se oculta si ese calendario no está presente."},
+    {"type":"header","content":"Colores de esta sección"},
+    {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},
+    {"type":"color","id":"heading_color","label":"Color de títulos","default":"#fff5ef","info":"Sobre el rojo de marca, los títulos claros deben mantenerse grandes."},
+    {"type":"color","id":"text_color","label":"Color de descripciones y textos","default":"#19080d","info":"El rojo #ff0303 necesita texto oscuro para que las letras pequeñas sean legibles."},
+    {"type":"header","content":"Fuente de los títulos"},
+    {"type":"select","id":"heading_font_source","label":"Origen de la fuente","default":"inherit","options":[{"value":"inherit","label":"Diseño actual"},{"value":"shopify","label":"Biblioteca de Shopify"},{"value":"custom","label":"Archivo propio WOFF/WOFF2"}]},
+    {"type":"font_picker","id":"heading_font","label":"Fuente de Shopify","default":"assistant_n4","visible_if":"{{ section.settings.heading_font_source == 'shopify' }}"},
+    {"type":"url","id":"custom_heading_font_url","label":"URL de la fuente propia","info":"Sube un WOFF2 o WOFF con licencia a Contenido → Archivos y pega su URL HTTPS. Si no carga, se usa una fuente de respaldo.","visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"color","id":"accent_color","label":"Color de la palabra destacada","default":"#fff5ef"},
+    {"type":"header","content":"Estilo del botón"},
+    {"type":"select","id":"button_style","label":"Estilo","default":"store_shape","options":[{"value":"store_shape","label":"A · Forma de la tienda, colores de la página"},{"value":"store","label":"B · Igual al botón de la tienda (rojo)"},{"value":"classic","label":"C · Forma actual de esta página"}],"info":"A y B usan la píldora de la tienda e ignoran el radio de esquinas. B ignora los colores del botón. C respeta todos los controles de abajo."},
+    {"type":"header","content":"Colores del botón"},
+    {"type":"color","id":"button_background","label":"Fondo del botón","default":"#fff5ef"},
+    {"type":"color","id":"button_text_color","label":"Texto del botón","default":"#451021"},
+    {"type":"color","id":"button_hover_background","label":"Fondo del botón al pasar el cursor","default":"#f7cf90"},
+    {"type":"header","content":"Interlineado del título"},
+    {"type":"checkbox","id":"heading_line_height_enabled","label":"Personalizar interlineado","default":false,"info":"Desactivado conserva el interlineado actual de cada título."},
+    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":80,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":80,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Degradado del título"},
+    {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
+    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"},
+    {"type":"range","id":"heading_leading_offset","label":"Ajuste del interlineado: escritorio","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}","info":"Admite negativos para acercar líneas. La altura final se mantiene positiva."},
+    {"type":"range","id":"heading_leading_offset_mobile","label":"Ajuste del interlineado: móvil","min":-20,"max":20,"step":1,"default":0,"unit":"px","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Separación de palabra destacada"},
+    {"type":"range","id":"heading_accent_gap","label":"Separación en escritorio","min":-40,"max":40,"step":1,"default":14,"unit":"px","info":"Distancia entre título y palabra destacada. Los negativos las acercan o superponen."},
+    {"type":"range","id":"heading_accent_gap_mobile","label":"Separación en móvil","min":-40,"max":40,"step":1,"default":14,"unit":"px"},
+    {"type":"header","content":"Forma y borde del botón"},
+    {"type":"range","id":"button_radius","label":"Radio de las esquinas","min":0,"max":60,"step":1,"default":6,"unit":"px","info":"0 = esquinas rectas; un valor alto produce un botón redondeado."},
+    {"type":"range","id":"button_border_width","label":"Grosor del borde","min":0,"max":4,"step":1,"default":0,"unit":"px"},
+    {"type":"color","id":"button_border_color","label":"Color del borde","default":"#451021"},
+    {"type":"header","content":"Animaciones"},
+    {"type":"checkbox","id":"motion_enabled","label":"Animar entrada y parallax","default":true,"info":"Se desactivan solas si el visitante pidió reducir el movimiento en su dispositivo."}
+  ],
+  "presets": [{"name":"Adviento: banner superior"}]
+}
+{% endschema %}

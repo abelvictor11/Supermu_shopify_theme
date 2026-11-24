@@ -1,0 +1,28 @@
+{%- liquid
+  assign accent_choice = section.settings.accent_font | default: 'kaushan'
+  assign accent_family = ''
+  assign accent_query = ''
+  assign accent_weight = 400
+  case accent_choice
+    when 'kaushan'
+      assign accent_family = 'Kaushan Script'
+      assign accent_query = 'Kaushan+Script'
+    when 'pacifico'
+      assign accent_family = 'Pacifico'
+      assign accent_query = 'Pacifico'
+    when 'dancing'
+      assign accent_family = 'Dancing Script'
+      assign accent_query = 'Dancing+Script:wght@700'
+      assign accent_weight = 700
+  endcase
+  assign accent_text = section.settings.heading_accent | default: 'Navidad'
+-%}
+{%- if accent_family != '' -%}
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={{ accent_query }}&display=swap&text={{ accent_text | url_encode }}">
+  <style>[data-advent-style="{{ section.id }}"] { --advent-accent-font: "{{ accent_family }}", "Advent Dry", cursive; --advent-accent-weight: {{ accent_weight }}; }</style>
+{%- elsif accent_choice == 'heading' -%}
+  <style>[data-advent-style="{{ section.id }}"] { --advent-accent-font: var(--advent-heading-font, inherit); --advent-accent-weight: var(--advent-heading-weight, 700); }</style>
+{%- elsif accent_choice == 'dry' -%}
+  <style>[data-advent-style="{{ section.id }}"] { --advent-accent-font: "Advent Dry", "Work Sans", sans-serif; --advent-accent-weight: 400; }</style>
+{%- endif -%}

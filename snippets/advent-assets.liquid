@@ -1,0 +1,6 @@
+{% if force or template.name == 'page' and template.suffix == 'advent-calendar' %}
+  {{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'advent-calendar-state.js' | asset_url }}" defer></script>
+  <script src="{{ 'advent-calendar.js' | asset_url }}" defer></script>
+  <script src="{{ 'advent-sections.js' | asset_url }}" defer></script>
+{% endif %}
