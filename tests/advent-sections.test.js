@@ -2,9 +2,8 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {Liquid}=require('liquidjs');
 const {JSDOM}=require('jsdom');
-const {renderCalendar,renderLanding,root}=require('./helpers/advent-fixture');
+const {renderCalendar,renderLanding,root,createEngine}=require('./helpers/advent-fixture');
 const initial=require('./fixtures/advent-calendar-initial.json');
 const migrationPath=path.join(root,'scripts/split-advent-sections.js');
 const moduleTypes=['advent-hero','advent-heading','advent-closing'];
@@ -13,11 +12,7 @@ async function renderModule(type,settings={}){
   const source=fs.readFileSync(path.join(root,`sections/${type}.liquid`),'utf8');
   const schema=JSON.parse(source.split('{% schema %}')[1].split('{% endschema %}')[0]);
   const defaults=Object.fromEntries(schema.settings.filter(s=>s.id).map(s=>[s.id,s.default??'']));
-  const engine=new Liquid({strictFilters:true,root:path.join(root,'snippets'),extname:'.liquid'});
-  engine.registerFilter('asset_url',name=>'/assets/'+name);
-  engine.registerFilter('stylesheet_tag',url=>`<link rel="stylesheet" href="${url}">`);
-  engine.registerFilter('image_url',image=>image);
-  engine.registerFilter('image_tag',url=>`<img src="${url}" alt="">`);
+  const engine=createEngine();
   return engine.parseAndRender(source.split('{% schema %}')[0],{section:{id:type,settings:{...defaults,...settings}}});
 }
 
@@ -123,9 +118,7 @@ test('all 16 independent section visibility combinations render without duplicat
 
 test('landing assets bootstrap even when all modules start hidden, but never load on homepage',async()=>{
   const file=path.join(root,'snippets/advent-assets.liquid');assert.ok(fs.existsSync(file));
-  const engine=new Liquid({strictFilters:true});
-  engine.registerFilter('asset_url',name=>'/assets/'+name);
-  engine.registerFilter('stylesheet_tag',url=>`<link rel="stylesheet" href="${url}">`);
+  const engine=createEngine();
   const source=fs.readFileSync(file,'utf8');
   const absent=await engine.parseAndRender(source,{template:{name:'index'}});
   assert.equal(absent.trim(),'');

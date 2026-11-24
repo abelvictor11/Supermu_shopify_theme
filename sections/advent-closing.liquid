@@ -2,7 +2,8 @@
 {{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
 {% endunless %}
 {% if section.settings.show_image or section.settings.show_title or section.settings.show_description %}
-<div class="advent">
+<div class="advent" data-advent-style="{{ section.id }}">
+  {% render 'advent-section-styles', section: section %}
   <section class="advent__closing{% unless section.settings.show_image %} advent__closing--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description %} advent__closing--image-only{% endunless %}" aria-label="Navidad para compartir">
     {% if section.settings.show_image %}
       <div class="advent__closing-image">
@@ -34,7 +35,16 @@
     {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
     {"type":"text","id":"closing_heading","label":"Título","default":"La mejor parte es compartir."},
     {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
-    {"type":"textarea","id":"closing_text","label":"Descripción","default":"En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."}
+    {"type":"textarea","id":"closing_text","label":"Descripción","default":"En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."},
+    {"type":"header","content":"Colores de esta sección"},
+    {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},
+    {"type":"color","id":"heading_color","label":"Color de títulos","default":"#fff5ef","info":"Sobre el rojo de marca, los títulos claros deben mantenerse grandes."},
+    {"type":"color","id":"text_color","label":"Color de descripciones y textos","default":"#19080d","info":"El rojo #ff0303 necesita texto oscuro para que las letras pequeñas sean legibles."},
+    {"type":"header","content":"Fuente de los títulos"},
+    {"type":"select","id":"heading_font_source","label":"Origen de la fuente","default":"inherit","options":[{"value":"inherit","label":"Diseño actual"},{"value":"shopify","label":"Biblioteca de Shopify"},{"value":"custom","label":"Archivo propio WOFF/WOFF2"}]},
+    {"type":"font_picker","id":"heading_font","label":"Fuente de Shopify","default":"assistant_n4","visible_if":"{{ section.settings.heading_font_source == 'shopify' }}"},
+    {"type":"url","id":"custom_heading_font_url","label":"URL de la fuente propia","info":"Sube un WOFF2 o WOFF con licencia a Contenido → Archivos y pega su URL HTTPS. Si no carga, se usa una fuente de respaldo.","visible_if":"{{ section.settings.heading_font_source == 'custom' }}"},
+    {"type":"select","id":"custom_heading_font_weight","label":"Peso del archivo propio","default":"700","options":[{"value":"400","label":"400"},{"value":"500","label":"500"},{"value":"600","label":"600"},{"value":"700","label":"700"},{"value":"800","label":"800"}],"visible_if":"{{ section.settings.heading_font_source == 'custom' }}"}
   ],
   "presets":[{"name":"Adviento: banner inferior"}]
 }
