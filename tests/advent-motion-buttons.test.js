@@ -108,3 +108,27 @@ test('page colors are scoped to the section and image breakout is opt-in', async
   assert.ok(closing.querySelector('.advent__closing--breakout'));
   assert.equal(new JSDOM(await renderLanding()).window.document.querySelector('.advent__closing--breakout'),null);
 });
+
+test('every select option label fits Shopify\'s 50-character limit', () => {
+  for (const file of fs.readdirSync(path.join(root,'sections')).filter(f=>/^advent-.*\.liquid$/.test(f))) {
+    const json=schema(file.replace('.liquid',''));
+    const all=[...json.settings,...(json.blocks||[]).flatMap(b=>b.settings||[])];
+    for (const s of all) for (const o of s.options||[]) assert.ok(o.label.length<=50,`${file} ${s.id}: "${o.label}" (${o.label.length})`);
+  }
+});
+
+test('accent word loads only the chosen script font, subset to its letters, and wins over the heading font', async () => {
+  assert.equal(setting('advent-hero','accent_font')?.default,'kaushan');
+  const doc=new JSDOM(await renderLanding({sectionSettings:{calendar_hero:{heading_accent:'Navidad',heading_font_source:'shopify',heading_font:{family:'Georgia',fallback_families:'serif',weight:700,style:'normal'}}}})).window.document;
+  const hero=doc.querySelector('[data-advent-style="calendar_hero"]');
+  const link=hero.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"]');
+  assert.match(link.getAttribute('href'),/family=Kaushan\+Script&display=swap&text=Navidad$/);
+  const styles=[...hero.querySelectorAll('style')].map(s=>s.textContent);
+  const headingIndex=styles.findIndex(t=>/--advent-accent-font: var\(--advent-heading-font\)/.test(t));
+  const scriptIndex=styles.findIndex(t=>/--advent-accent-font: "Kaushan Script"/.test(t));
+  assert.ok(headingIndex>=0 && scriptIndex>headingIndex,'script font must be declared after the heading font');
+  for (const choice of ['dry','heading']) {
+    const other=new JSDOM(await renderLanding({sectionSettings:{calendar_hero:{accent_font:choice}}})).window.document;
+    assert.equal(other.querySelector('link[href*="fonts.googleapis.com"]'),null);
+  }
+});

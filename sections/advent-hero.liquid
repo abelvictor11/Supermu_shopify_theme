@@ -5,6 +5,7 @@
 {%- assign advent_layout = section.settings.layout | default: 'stage' -%}
 <div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if advent_layout == 'stage' %} advent--stage{% endif %}" data-advent-style="{{ section.id }}" data-advent-button="{{ section.settings.button_style | default: 'store_shape' | escape }}">
   {% render 'advent-section-styles', section: section %}
+  {% render 'advent-accent-font', section: section %}
   <header class="advent__hero advent__hero--standalone{% if advent_layout == 'stage' %} advent__hero--stage{% endif %}{% unless section.settings.show_image %} advent__hero--text-only{% endunless %}{% unless section.settings.show_title or section.settings.show_description or section.settings.show_button %} advent__hero--image-only{% endunless %}">
     {% if section.settings.show_title or section.settings.show_description or section.settings.show_button %}
       <div class="advent__hero-copy">
@@ -47,13 +48,14 @@
   "tag": "section",
   "enabled_on": {"templates":["page"]},
   "settings": [
-    {"type":"select","id":"layout","label":"Diseño","default":"stage","options":[{"value":"stage","label":"Escenario: tarjeta roja con la palabra gigante"},{"value":"split","label":"Dividido: texto a la izquierda, imagen a la derecha"}],"info":"Escenario funciona mejor con fotos de fondo rojo o PNG sin fondo."},
+    {"type":"select","id":"layout","label":"Diseño","default":"stage","options":[{"value":"stage","label":"Escenario: tarjeta roja con la palabra gigante"},{"value":"split","label":"Dividido: texto a un lado, imagen al otro"}],"info":"Escenario funciona mejor con fotos de fondo rojo o PNG sin fondo."},
     {"type":"color","id":"page_background","label":"Fondo alrededor de la tarjeta","default":"#fff5ef","visible_if":"{{ section.settings.layout != 'split' }}"},
     {"type":"checkbox","id":"show_pines","label":"Siluetas de pinos","default":true,"visible_if":"{{ section.settings.layout != 'split' }}"},
     {"type":"checkbox","id":"show_title","label":"Mostrar título","default":true},
     {"type":"text","id":"eyebrow","label":"Etiqueta sobre el título","default":"Calendario de Adviento","info":"Texto corto en una píldora sobre el título. Vacío la oculta."},
     {"type":"text","id":"heading","label":"Título","default":"El sabor de la"},
     {"type":"text","id":"heading_accent","label":"Palabra destacada","default":"Navidad"},
+    {"type":"select","id":"accent_font","label":"Fuente de la palabra destacada","default":"kaushan","options":[{"value":"kaushan","label":"Script pincel (Kaushan Script)"},{"value":"pacifico","label":"Script redonda (Pacifico)"},{"value":"dancing","label":"Script caligráfica (Dancing Script)"},{"value":"dry","label":"Fuente anterior de la campaña"},{"value":"heading","label":"Igual que el título"}],"info":"Las fuentes script se cargan desde Google Fonts solo con las letras de esta palabra."},
     {"type":"checkbox","id":"show_swash","label":"Subrayado dorado en la palabra destacada","default":true},
     {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
     {"type":"textarea","id":"intro","label":"Descripción","default":"Abre una nueva puerta cada día y descubre las ofertas que preparamos para compartir esta Navidad."},

@@ -32,7 +32,7 @@
   "tag":"section",
   "enabled_on":{"templates":["page"]},
   "settings":[
-    {"type":"select","id":"layout","label":"Diseño","default":"card","options":[{"value":"card","label":"Tarjeta: texto sobre fondo claro e imagen en tarjeta roja"},{"value":"split","label":"Banda roja: imagen a la izquierda, texto a la derecha"}]},
+    {"type":"select","id":"layout","label":"Diseño","default":"card","options":[{"value":"card","label":"Tarjeta: imagen dentro de una tarjeta roja"},{"value":"split","label":"Banda roja: imagen y texto lado a lado"}]},
     {"type":"color","id":"page_background","label":"Fondo de la sección","default":"#fff5ef","visible_if":"{{ section.settings.layout != 'split' }}"},
     {"type":"color","id":"page_heading_color","label":"Color del título sobre fondo claro","default":"#501526","visible_if":"{{ section.settings.layout != 'split' }}"},
     {"type":"checkbox","id":"show_pines","label":"Siluetas de pinos en la tarjeta","default":true,"visible_if":"{{ section.settings.layout != 'split' }}"},
