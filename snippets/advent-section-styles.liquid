@@ -21,6 +21,8 @@
       --advent-heading-line-height: max(0.65em, calc(var(--advent-heading-leading) * 1em + var(--advent-heading-leading-offset)));
     {% endif %}
     --advent-red: {{ section.settings.background_color | default: '#ff0303' | escape }};
+    {% if section.settings.page_background != blank %}--advent-page-bg: {{ section.settings.page_background | escape }};{% endif %}
+    {% if section.settings.page_heading_color != blank %}--advent-page-heading: {{ section.settings.page_heading_color | escape }};{% endif %}
     --advent-heading-color: {{ section.settings.heading_color | default: '#fff5ef' | escape }};
     --advent-text-color: {{ section.settings.text_color | default: '#19080d' | escape }};
     --advent-heading-accent: {{ section.settings.accent_color | default: section.settings.heading_color | default: '#fff5ef' | escape }};

@@ -14,7 +14,8 @@ test('hero and calendar offer the three button styles, defaulting to the store p
     assert.equal(style?.default,'store_shape');
     assert.deepEqual(style.options.map(o=>o.value),['store_shape','store','classic']);
   }
-  for (const type of ['advent-heading','advent-closing']) assert.equal(setting(type,'button_style'),undefined);
+  assert.equal(setting('advent-closing','button_style')?.default,'store');
+  assert.equal(setting('advent-heading','button_style'),undefined);
 });
 
 test('button style reaches the markup and keeps the existing radius variable intact', async () => {
@@ -72,4 +73,38 @@ test('motion is opt-in per section, respects reduced motion and degrades without
   assert.match(block,/@supports \(animation-timeline: view\(\)\)[\s\S]*animation-timeline: view\(\)/);
   assert.match(block,/\.advent--motion/);
   assert.doesNotMatch(source,/@keyframes advent-rise[^}]*transform/);
+});
+
+test('hero defaults to the stage card and closing to the light card, both reversible', async () => {
+  assert.equal(setting('advent-hero','layout')?.default,'stage');
+  assert.equal(setting('advent-closing','layout')?.default,'card');
+  const doc=new JSDOM(await renderLanding()).window.document;
+  assert.ok(doc.querySelector('.advent--stage .advent__hero.advent__hero--stage'));
+  assert.ok(doc.querySelector('.advent--panel .advent__closing.advent__closing--card'));
+  assert.equal(doc.querySelectorAll('.advent__pines').length,2);
+  const ids=[...doc.querySelectorAll('.advent__pines path[id]')].map(p=>p.id);
+  assert.equal(new Set(ids).size,ids.length);
+  const split=new JSDOM(await renderLanding({sectionSettings:{calendar_hero:{layout:'split'},calendar_closing:{layout:'split'}}})).window.document;
+  assert.equal(split.querySelector('.advent__hero--stage, .advent__closing--card, .advent__pines, .advent--stage, .advent--panel'),null);
+  assert.ok(split.querySelector('.advent__hero') && split.querySelector('.advent__closing'));
+});
+
+test('closing button points at the calendar anchor and can be removed', async () => {
+  const doc=new JSDOM(await renderLanding()).window.document;
+  const cta=doc.querySelector('.advent__closing .advent__cta');
+  assert.equal(cta.getAttribute('href'),'#AdventCalendar-calendar');
+  assert.equal(cta.dataset.calendarTarget,'AdventCalendar-calendar');
+  assert.equal(doc.querySelector('[data-advent-style="calendar_closing"]').dataset.adventButton,'store');
+  const none=new JSDOM(await renderLanding({sectionSettings:{calendar_closing:{button_label:''}}})).window.document;
+  assert.equal(none.querySelector('.advent__closing .advent__cta'),null);
+});
+
+test('page colors are scoped to the section and image breakout is opt-in', async () => {
+  const dom=new JSDOM(await renderLanding({sectionSettings:{calendar_closing:{page_background:'#ffffff',page_heading_color:'#112233',image_breakout:true}}}));
+  const closing=dom.window.document.querySelector('[data-advent-style="calendar_closing"]');
+  const css=(el,key)=>dom.window.getComputedStyle(el).getPropertyValue(key).trim();
+  assert.equal(css(closing,'--advent-page-bg'),'#ffffff');
+  assert.equal(css(closing,'--advent-page-heading'),'#112233');
+  assert.ok(closing.querySelector('.advent__closing--breakout'));
+  assert.equal(new JSDOM(await renderLanding()).window.document.querySelector('.advent__closing--breakout'),null);
 });
