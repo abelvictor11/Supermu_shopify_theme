@@ -21,6 +21,9 @@
       --advent-heading-line-height: max(0.65em, calc(var(--advent-heading-leading) * 1em + var(--advent-heading-leading-offset)));
     {% endif %}
     --advent-red: {{ section.settings.background_color | default: '#ff0303' | escape }};
+    {% case section.settings.container_width %}{% when 'full' %}--advent-container-max: 100%;{% when 'custom' %}--advent-container-max: {{ section.settings.container_custom_width | default: 1320 | plus: 0 | at_least: 640 | at_most: 1920 }}px;{% when 'page' %}--advent-container-max: 1320px;{% endcase %}
+    {% if section.settings.section_space != blank %}--advent-section-space: {{ section.settings.section_space | plus: 0 | at_least: 0 | at_most: 80 }}px;{% endif %}
+    {% if section.settings.grid_gap != blank %}--advent-grid-gap: {{ section.settings.grid_gap | plus: 0 | at_least: 0 | at_most: 32 }}px;{% endif %}
     {% if section.settings.page_background != blank %}--advent-page-bg: {{ section.settings.page_background | escape }};{% endif %}
     {% if section.settings.page_heading_color != blank %}--advent-page-heading: {{ section.settings.page_heading_color | escape }};{% endif %}
     --advent-heading-color: {{ section.settings.heading_color | default: '#fff5ef' | escape }};

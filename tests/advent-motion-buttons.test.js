@@ -132,3 +132,29 @@ test('accent word loads only the chosen script font, subset to its letters, and 
     assert.equal(other.querySelector('link[href*="fonts.googleapis.com"]'),null);
   }
 });
+
+test('title and calendar sit in a card by default and can return to the full red band', async () => {
+  for (const type of ['advent-heading','advent-calendar']) assert.equal(setting(type,'container_style')?.default,'card');
+  const doc=new JSDOM(await renderLanding()).window.document;
+  assert.ok(doc.querySelector('[data-advent-style="calendar_heading"].advent--boxed > .advent__standalone-heading'));
+  assert.ok(doc.querySelector('advent-calendar.advent--boxed > .advent__box > .advent__calendar'));
+  const band=new JSDOM(await renderLanding({sectionSettings:{calendar_heading:{container_style:'band'},calendar:{container_style:'band'}}})).window.document;
+  assert.equal(band.querySelector('.advent--boxed'),null);
+});
+
+test('container width, top spacing and door gap become scoped CSS variables', async () => {
+  const dom=new JSDOM(await renderLanding({sectionSettings:{
+    calendar_hero:{container_width:'full'},
+    calendar_heading:{container_width:'custom',container_custom_width:960,section_space:40},
+    calendar:{grid_gap:16,container_width:'page'},
+    calendar_closing:{container_width:'custom',container_custom_width:99999}
+  }}));
+  const v=(id,key)=>dom.window.getComputedStyle(dom.window.document.querySelector(id==='calendar'?'advent-calendar':`[data-advent-style="${id}"]`)).getPropertyValue(key).trim();
+  assert.equal(v('calendar_hero','--advent-container-max'),'100%');
+  assert.equal(v('calendar_heading','--advent-container-max'),'960px');
+  assert.equal(v('calendar_heading','--advent-section-space'),'40px');
+  assert.equal(v('calendar','--advent-container-max'),'1320px');
+  assert.equal(v('calendar','--advent-grid-gap'),'16px');
+  assert.equal(v('calendar_closing','--advent-container-max'),'1920px');
+  assert.equal(setting('advent-calendar','grid_gap')?.default,8);
+});

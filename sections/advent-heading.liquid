@@ -2,7 +2,7 @@
 {{ 'advent-calendar.css' | asset_url | stylesheet_tag }}
 {% endunless %}
 {% if section.settings.show_title or section.settings.show_description %}
-<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}" data-advent-style="{{ section.id }}">
+<div class="advent{% if section.settings.motion_enabled %} advent--motion{% endif %}{% if section.settings.container_style != 'band' %} advent--boxed{% endif %}" data-advent-style="{{ section.id }}">
   {% render 'advent-section-styles', section: section %}
   <div class="advent__standalone-heading advent__calendar-head">
     {% if section.settings.show_title and section.settings.calendar_heading != blank %}
@@ -23,6 +23,11 @@
     {"type":"select","id":"heading_tag","label":"Nivel del título","default":"h2","options":[{"value":"h1","label":"Principal (H1)"},{"value":"h2","label":"Secundario (H2)"}],"info":"Usa H1 si ocultas el título del banner superior y este será el título principal de la página."},
     {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
     {"type":"textarea","id":"description","label":"Descripción","default":"Cada puerta tiene su fecha.\nLas ofertas duran solo un día."},
+    {"type":"header","content":"Contenedor"},
+    {"type":"select","id":"container_style","label":"Estilo","default":"card","options":[{"value":"card","label":"Tarjeta con esquinas redondeadas"},{"value":"band","label":"Banda roja de lado a lado"}],"info":"Si Título y Calendario van seguidos como tarjetas, se unen en una sola."},
+    {"type":"select","id":"container_width","label":"Ancho del contenedor","default":"page","options":[{"value":"page","label":"Página (1320 px)"},{"value":"full","label":"Ancho completo"},{"value":"custom","label":"Personalizado"}]},
+    {"type":"range","id":"container_custom_width","label":"Ancho personalizado","min":640,"max":1920,"step":20,"default":1320,"unit":"px","visible_if":"{{ section.settings.container_width == 'custom' }}"},
+    {"type":"range","id":"section_space","label":"Espacio superior","min":0,"max":80,"step":4,"default":24,"unit":"px","info":"Separa esta sección de la anterior."},
     {"type":"header","content":"Colores de esta sección"},
     {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},
     {"type":"color","id":"heading_color","label":"Color de títulos","default":"#fff5ef","info":"Sobre el rojo de marca, los títulos claros deben mantenerse grandes."},
