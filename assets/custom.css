@@ -1678,7 +1678,7 @@ media="(min-width: 1025px)" {
   white-space: nowrap;
 }
 
-/* Type 6 only: keep the configured account/cart actions above a full-width search. */
+/* Type 6 only: configured registration, wishlist, account and cart above full-width search. */
 @media (max-width: 1024px) {
   .header__line-top .header__mobile-two-row {
     flex-wrap: wrap;
@@ -1688,8 +1688,9 @@ media="(min-width: 1025px)" {
   }
   .header__mobile-two-row > .header__logo {
     flex: 0 1 auto;
-    max-width: calc(100% - 160px);
+    max-width: calc(100% - 248px);
     min-width: 0;
+    margin-right: 0 !important;
   }
   .header__mobile-two-row > .header__btn-menu {
     flex: 0 0 44px;
@@ -1705,12 +1706,13 @@ media="(min-width: 1025px)" {
     gap: 4px;
   }
   .header__mobile-actions > .ml-25 { margin: 0 !important; }
-  .header__mobile-actions :is(.header__btn-user, .header__btn-cart) {
+  .header__mobile-actions :is(.header__btn-registro, .header__btn-wishlist, .header__btn-user, .header__btn-cart) {
     min-width: 44px;
     min-height: 44px;
     justify-content: center;
   }
-  .header__mobile-actions :is(.header__btn-user, .header__btn-cart):focus-visible {
+  .header__mobile-actions .header__btn-registro { padding: 4px !important; }
+  .header__mobile-actions :is(.header__btn-registro, .header__btn-wishlist, .header__btn-user, .header__btn-cart):focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
     border-radius: 4px;

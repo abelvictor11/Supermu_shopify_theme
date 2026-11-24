@@ -25,7 +25,7 @@ test('mobile account and cart respect their existing visibility and URL defaults
     try{
       const actions=dom.window.document.querySelector('.header__mobile-actions');assert.ok(actions);
       assert.equal(actions.querySelectorAll('.header__btn-user').length,enabled?1:0);
-      if(enabled)assert.equal(actions.querySelector('a').getAttribute('href'),'/account');
+      if(enabled)assert.equal(actions.querySelector('.header__btn-user').getAttribute('href'),'/account');
       assert.equal(actions.querySelector('.header__btn-cart'),null);
     }finally{dom.window.close();}
   }
@@ -43,4 +43,26 @@ test('one native search keeps its action, query, prefix and predictive mode in e
       assert.equal(d.querySelectorAll('search-form').length,predictive?0:1);
     }finally{dom.window.close();}
   }
+});
+
+test('mobile actions follow the reference order: registration, wishlist, account, cart',async()=>{
+  const dom=new JSDOM(await renderHeader({user:{registro_url:'/pages/programa',registro_tooltip:'Nuestro programa',registro_open_new_tab:true}}));
+  try{
+    const actions=dom.window.document.querySelector('.header__mobile-actions');
+    assert.deepEqual([...actions.querySelectorAll('a')].map(a=>a.className.match(/header__btn-[\w-]+/)[0]),['header__btn-registro','header__btn-wishlist','header__btn-user','header__btn-cart']);
+    const registro=actions.querySelector('.header__btn-registro');
+    assert.equal(registro.getAttribute('href'),'/pages/programa');
+    assert.equal(registro.getAttribute('title'),'Nuestro programa');
+    assert.equal(registro.getAttribute('target'),'_blank');assert.equal(registro.getAttribute('rel'),'noopener');
+    assert.equal(actions.querySelector('.header__btn-wishlist').dataset.jsPopupButton,'wishlist');
+  }finally{dom.window.close();}
+});
+
+test('the reference does not force disabled registration or wishlist controls back on',async()=>{
+  const dom=new JSDOM(await renderHeader({user:{show_registro_link:false},wishlist:'none'}));
+  try{
+    const actions=dom.window.document.querySelector('.header__mobile-actions');
+    assert.equal(actions.querySelector('.header__btn-registro'),null);assert.equal(actions.querySelector('.header__btn-wishlist'),null);
+    assert.ok(actions.querySelector('.header__btn-user'));assert.ok(actions.querySelector('.header__btn-cart'));
+  }finally{dom.window.close();}
 });
