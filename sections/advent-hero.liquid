@@ -9,7 +9,7 @@
       <div class="advent__hero-copy">
         {% if section.settings.show_title %}
           {% if section.settings.heading != blank or section.settings.heading_accent != blank %}
-            <h1>{{ section.settings.heading | escape }}{% if section.settings.heading_accent != blank %} <span>{{ section.settings.heading_accent | escape }}</span>{% endif %}</h1>
+            <h1><span class="advent__title-ink">{{ section.settings.heading | escape }}</span>{% if section.settings.heading_accent != blank %} <span class="advent__title-ink advent__title-accent">{{ section.settings.heading_accent | escape }}</span>{% endif %}</h1>
           {% endif %}
         {% endif %}
         {% if section.settings.show_description and section.settings.intro != blank %}<p class="advent__intro">{{ section.settings.intro | escape }}</p>{% endif %}
@@ -60,7 +60,14 @@
     {"type":"header","content":"Colores del botón"},
     {"type":"color","id":"button_background","label":"Fondo del botón","default":"#fff5ef"},
     {"type":"color","id":"button_text_color","label":"Texto del botón","default":"#451021"},
-    {"type":"color","id":"button_hover_background","label":"Fondo del botón al pasar el cursor","default":"#f7cf90"}
+    {"type":"color","id":"button_hover_background","label":"Fondo del botón al pasar el cursor","default":"#f7cf90"},
+    {"type":"header","content":"Interlineado del título"},
+    {"type":"checkbox","id":"heading_line_height_enabled","label":"Personalizar interlineado","default":false,"info":"Desactivado conserva el interlineado actual de cada título."},
+    {"type":"range","id":"heading_line_height","label":"Interlineado en escritorio","unit":"%","min":100,"max":180,"step":1,"default":110,"info":"110% equivale a line-height 1.10. No cambia el tamaño de letra.","visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"range","id":"heading_line_height_mobile","label":"Interlineado en móvil","unit":"%","min":100,"max":180,"step":1,"default":120,"visible_if":"{{ section.settings.heading_line_height_enabled }}"},
+    {"type":"header","content":"Degradado del título"},
+    {"type":"checkbox","id":"heading_gradient_enabled","label":"Usar degradado en el título","default":false,"info":"Desactivado utiliza los colores sólidos actuales. No afecta descripciones ni botones."},
+    {"type":"color_background","id":"heading_gradient","label":"Colores y dirección del degradado","default":"linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)","info":"Elige un degradado y mantén todos sus colores legibles sobre el fondo. Vacío conserva el color sólido.","visible_if":"{{ section.settings.heading_gradient_enabled }}"}
   ],
   "presets": [{"name":"Adviento: banner superior"}]
 }

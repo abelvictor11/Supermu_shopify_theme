@@ -24,7 +24,13 @@ http.createServer(async(req,res)=>{
     ]}:{};
     const custom=url.searchParams.get('style')==='custom';
     const broken=url.searchParams.get('style')==='broken';
-    const sectionSettings=custom?{
+    const typography=url.searchParams.get('style')==='typography';
+    const sectionSettings=typography?{
+      calendar_hero:{heading_line_height_enabled:true,heading_line_height:115,heading_line_height_mobile:140,heading_gradient_enabled:true,heading_gradient:'linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)',heading_font_source:'shopify',heading_font:{family:'Georgia',fallback_families:'serif',system:true,weight:700,style:'normal'}},
+      calendar_heading:{heading_line_height_enabled:true,heading_line_height:125,heading_line_height_mobile:150,heading_gradient_enabled:true,heading_gradient:'linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)'},
+      calendar:{heading_line_height_enabled:true,heading_line_height:130,heading_line_height_mobile:150,heading_gradient_enabled:true,heading_gradient:'linear-gradient(90deg, #451021 0%, #7c233b 100%)'},
+      calendar_closing:{heading_line_height_enabled:true,heading_line_height:130,heading_line_height_mobile:150,heading_gradient_enabled:true,heading_gradient:'linear-gradient(90deg, #ffffff 0%, #fff0b5 100%)'}
+    }:custom?{
       calendar_hero:{heading_font_source:'custom',custom_heading_font_url:'https://lavaquita33.myshopify.com/cdn/shop/t/4/assets/Dry.woff',custom_heading_font_weight:'400'},
       calendar_heading:{background_color:'#007b44',heading_color:'#fff5ef',text_color:'#fff5ef',heading_font_source:'shopify',heading_font:{family:'Georgia',fallback_families:'serif',system:true,weight:700,style:'italic'}},
       calendar_closing:{background_color:'#007b44',heading_color:'#fff5ef',text_color:'#fff5ef'}
