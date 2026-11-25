@@ -1884,6 +1884,11 @@
                                     </search-form>
                                 {%- endif -%}
                             </div>
+                            {%- if section.settings.show_store_selector_mobile -%}
+                            <div class="header__store-selector-mobile d-lg-none">
+                                {% include 'store-selector-button', variant: 'mobile' %}
+                            </div>
+                            {%- endif -%}
                             <div class="header__sidebar d-none d-lg-flex align-items-center ml-auto">
 
 
@@ -2247,6 +2252,13 @@
             "label": "Mostrar selector de tienda",
             "info": "Muestra el botón de selección de tienda junto al logo",
             "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_store_selector_mobile",
+            "label": "Mostrar selector de tienda en móvil",
+            "info": "Franja bajo el buscador en móvil (header tipo 6). Independiente del selector de escritorio.",
+            "default": false
         },
         {
             "type": "range",

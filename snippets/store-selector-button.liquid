@@ -1,9 +1,10 @@
 {% comment %}
   Botón Walmart para cambiar tienda/método de entrega
-  Se incluye en el header
+  Se incluye en el header. variant: 'mobile' para la franja bajo el buscador (sin IDs fijos).
 {% endcomment %}
+{%- assign _ssb_mobile = false -%}{%- if variant == 'mobile' -%}{%- assign _ssb_mobile = true -%}{%- endif -%}
 
-<button type="button" class="walmart-store-btn" id="walmart-store-trigger" aria-label="Seleccionar tienda">
+<button type="button" class="walmart-store-btn{% if _ssb_mobile %} walmart-store-btn--mobile{% endif %}"{% unless _ssb_mobile %} id="walmart-store-trigger"{% endunless %} data-store-selector-trigger aria-haspopup="dialog" aria-expanded="false" aria-controls="store-selector-dropdown" aria-label="Seleccionar tienda">
   <div class="walmart-store-btn-icon">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -12,7 +13,7 @@
   </div>
   <div class="walmart-store-btn-content">
     <span class="walmart-store-btn-label">¿Retiro o entrega?</span>
-    <span class="walmart-store-btn-text" id="walmart-header-store-text">
+    <span class="walmart-store-btn-text"{% unless _ssb_mobile %} id="walmart-header-store-text"{% endunless %} data-store-selector-text>
       Selecciona una tienda
     </span>
   </div>
