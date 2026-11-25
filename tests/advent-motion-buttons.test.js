@@ -158,3 +158,17 @@ test('container width, top spacing and door gap become scoped CSS variables', as
   assert.equal(v('calendar_closing','--advent-container-max'),'1920px');
   assert.equal(setting('advent-calendar','grid_gap')?.default,8);
 });
+
+test('closing button can link to a collection or page instead of the calendar anchor', async () => {
+  assert.equal(setting('advent-closing','button_link')?.type,'url');
+  const doc=new JSDOM(await renderLanding({sectionSettings:{calendar_closing:{button_link:'/collections/navidad',button_label:'Ver la colección'}}})).window.document;
+  const cta=doc.querySelector('.advent__closing .advent__cta');
+  assert.equal(cta.getAttribute('href'),'/collections/navidad');
+  assert.equal(cta.hasAttribute('data-advent-calendar-link'),false);
+  assert.equal(cta.textContent.trim(),'Ver la colección');
+  const page=new JSDOM(await renderLanding({sectionSettings:{calendar_closing:{button_link:'/pages/tiendas'}}})).window.document;
+  assert.equal(page.querySelector('.advent__closing .advent__cta').getAttribute('href'),'/pages/tiendas');
+  const anchor=new JSDOM(await renderLanding({sectionSettings:{calendar_closing:{button_link:''}}})).window.document.querySelector('.advent__closing .advent__cta');
+  assert.equal(anchor.getAttribute('href'),'#AdventCalendar-calendar');
+  assert.ok(anchor.hasAttribute('data-advent-calendar-link'));
+});

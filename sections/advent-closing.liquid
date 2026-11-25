@@ -20,7 +20,13 @@
       <div class="advent__closing-copy">
         {% if section.settings.show_title and section.settings.closing_heading != blank %}<h2><span class="advent__title-ink">{{ section.settings.closing_heading | escape }}</span></h2>{% endif %}
         {% if section.settings.show_description and section.settings.closing_text != blank %}<p>{{ section.settings.closing_text | escape }}</p>{% endif %}
-        {% if section.settings.button_label != blank %}<a class="advent__cta" data-advent-calendar-link data-calendar-target="{{ section.settings.calendar_anchor | escape }}" href="#{{ section.settings.calendar_anchor | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a>{% endif %}
+        {%- if section.settings.button_label != blank -%}
+          {%- if section.settings.button_link != blank -%}
+            <a class="advent__cta" href="{{ section.settings.button_link | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+          {%- else -%}
+            <a class="advent__cta" data-advent-calendar-link data-calendar-target="{{ section.settings.calendar_anchor | escape }}" href="#{{ section.settings.calendar_anchor | escape }}">{{ section.settings.button_label | escape }} <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a>
+          {%- endif -%}
+        {%- endif %}
       </div>
     {% endif %}
   </section>
@@ -48,7 +54,8 @@
     {"type":"checkbox","id":"show_description","label":"Mostrar descripción","default":true},
     {"type":"textarea","id":"closing_text","label":"Descripción","default":"En la mesa, en familia y en esos pequeños momentos que hacen grande la Navidad."},
     {"type":"text","id":"button_label","label":"Texto del botón","default":"Volver al calendario","info":"Vacío oculta el botón."},
-    {"type":"text","id":"calendar_anchor","label":"ID del calendario de destino","default":"AdventCalendar-calendar","info":"Debe coincidir con el ID de ancla de la sección Calendario. El botón se oculta si ese calendario no está presente."},
+    {"type":"url","id":"button_link","label":"Enlace del botón","info":"Colección, página, producto o URL. Vacío lleva al calendario usando el ID de abajo."},
+    {"type":"text","id":"calendar_anchor","label":"ID del calendario de destino","default":"AdventCalendar-calendar","info":"Se usa si el enlace está vacío. Debe coincidir con el ID de ancla de la sección Calendario; el botón se oculta si ese calendario no está presente."},
     {"type":"select","id":"button_style","label":"Estilo del botón","default":"store","options":[{"value":"store_shape","label":"A · Forma de la tienda, colores de la página"},{"value":"store","label":"B · Igual al botón de la tienda (rojo)"},{"value":"classic","label":"C · Forma actual de esta página"}],"info":"Sobre fondo claro usa B; A y C usan el color crema del botón."},
     {"type":"header","content":"Colores de esta sección"},
     {"type":"color","id":"background_color","label":"Fondo","default":"#ff0303"},

@@ -85,7 +85,7 @@
   justify-content: space-between;
   text-align: left;
   border: 0;
-  border-radius: 5px;
+  border-radius: 20px;
   overflow: hidden;
   background: var(--advent-mint);
   color: var(--advent-ink);
