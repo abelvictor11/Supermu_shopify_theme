@@ -1677,3 +1677,70 @@ media="(min-width: 1025px)" {
   line-height: 1.4;
   white-space: nowrap;
 }
+
+/* Type 6 only: configured registration, wishlist, account and cart above full-width search. */
+@media (max-width: 1024px) {
+  .header__line-top .header__mobile-two-row {
+    flex-wrap: wrap;
+    gap: 10px 8px;
+    padding-inline: 0;
+    min-width: 0;
+  }
+  .header__mobile-two-row > .header__logo {
+    flex: 0 1 auto;
+    max-width: calc(100% - 248px);
+    min-width: 0;
+    margin-right: 0 !important;
+  }
+  .header__mobile-two-row > .header__btn-menu {
+    flex: 0 0 44px;
+    min-height: 44px;
+    justify-content: center;
+    margin-right: 0 !important;
+  }
+  /* This desktop-only trigger otherwise reserves an empty mobile flex cell. */
+  .header__mobile-two-row > .header__sidebar-menu-btn { display: none !important; }
+  .header__mobile-two-row > .header__mobile-actions {
+    flex: 0 0 auto;
+    margin-left: auto;
+    gap: 4px;
+  }
+  .header__mobile-actions > .ml-25 { margin: 0 !important; }
+  .header__mobile-actions :is(.header__btn-registro, .header__btn-wishlist, .header__btn-user, .header__btn-cart) {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .header__mobile-actions .header__btn-registro { padding: 4px !important; }
+  .header__mobile-actions :is(.header__btn-registro, .header__btn-wishlist, .header__btn-user, .header__btn-cart):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .header__mobile-two-row > .header__search-form {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    position: relative;
+    inset: auto;
+    transform: none;
+    margin: 0;
+    padding: 0;
+  }
+  .header__mobile-two-row .search-modal__form { display: block; width: 100%; }
+  .header__mobile-two-row .header__search-form form > .d-flex > label { margin-right: 0; }
+  .header__mobile-two-row .header__search-form input[type="search"] {
+    width: 100%;
+    padding-right: 64px;
+    min-height: 52px;
+    font-size: 16px;
+  }
+  .header__mobile-two-row .header__search-form form .btn:not(.btn--size-large) {
+    top: 3px;
+    right: 4px;
+    width: 46px;
+    height: 46px;
+    max-height: 46px;
+  }
+}
