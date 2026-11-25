@@ -5,8 +5,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# staging is protected (pull requests only, no force-push), so this workflow
+# never pushes to it: it opens or reuses a main -> staging pull request.
 permissions:
-  contents: write
+  contents: read
+  pull-requests: write
 
 concurrency:
   group: sync-staging
@@ -14,7 +17,7 @@ concurrency:
 
 jobs:
   sync:
-    name: Fast-forward staging to main
+    name: Open sync pull request main -> staging
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,14 +25,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure git
+      - name: Open or reuse the sync pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Push main -> staging (fast-forward)
-        run: |
-          git fetch origin
-          # Mirror main to staging. Use --force-with-lease to keep staging strictly synced while avoiding clobbering
-          # unexpected remote updates.
-          git push --force-with-lease origin HEAD:refs/heads/staging
+          git fetch origin main staging
+          if git merge-base --is-ancestor origin/main origin/staging; then
+            echo "staging ya contiene main; no hay nada que sincronizar." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          existing=$(gh pr list --repo "$REPO" --base staging --head main --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Ya hay un PR de sincronización abierto: #$existing (se actualiza solo con cada push a main)." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          body="Abierto automáticamente tras un push a main. Lleva a staging los cambios de main sin sobrescribir lo que solo existe en staging. Si hay conflictos, resuélvelos en este PR."
+          if gh pr create --repo "$REPO" --base staging --head main --title "chore: sincronizar staging con main" --body "$body"; then
+            echo "PR de sincronización creado." | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "No se pudo crear el PR automáticamente."
+              echo "Activa *Settings → Actions → General → Allow GitHub Actions to create and approve pull requests*,"
+              echo "o ábrelo a mano: https://github.com/$REPO/compare/staging...main?expand=1"
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "::warning::No se pudo abrir el PR main -> staging; ver el resumen del job."
+          fi
