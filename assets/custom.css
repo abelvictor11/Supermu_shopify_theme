@@ -1744,3 +1744,22 @@ media="(min-width: 1025px)" {
     max-height: 46px;
   }
 }
+
+/* Type 6 mobile: optional store selector strip under the full-width search. */
+@media (max-width: 1024px) {
+  .header__mobile-two-row > .header__store-selector-mobile { flex: 0 0 100%; width: 100%; min-width: 0; }
+  .header__store-selector-mobile .walmart-store-btn--mobile {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: 44px;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 12px;
+  }
+  .header__store-selector-mobile .walmart-store-btn-content { flex: 1 1 auto; min-width: 0; flex-direction: row; align-items: baseline; gap: 6px; }
+  .header__store-selector-mobile .walmart-store-btn-label { flex-shrink: 0; }
+  .header__store-selector-mobile .walmart-store-btn-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .header__store-selector-mobile .walmart-store-btn-arrow { margin-left: auto; flex-shrink: 0; }
+}

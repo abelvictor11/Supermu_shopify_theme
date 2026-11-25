@@ -13,7 +13,8 @@ class WalmartStoreSelector {
     this.COOKIE_EXPIRY_DAYS = 30; // Cookie expira en 30 días
     
     // Elementos del DOM
-    this.headerBtn = document.getElementById('walmart-store-trigger');
+    this.headerBtns = Array.from(document.querySelectorAll('[data-store-selector-trigger]'));
+    this.headerBtn = document.getElementById('walmart-store-trigger') || this.headerBtns[0] || null;
     this.dropdown = document.getElementById('store-selector-dropdown');
     this.modal = document.getElementById('store-selector-modal');
     this.modalOverlay = document.querySelector('.walmart-modal-overlay');
@@ -163,9 +164,9 @@ class WalmartStoreSelector {
 
   attachEventListeners() {
     // Botón del header
-    if (this.headerBtn) {
-      this.headerBtn.addEventListener('click', () => this.toggleDropdown());
-    }
+    this.headerBtns.forEach(btn => {
+      btn.addEventListener('click', () => this.toggleDropdown(btn));
+    });
 
     // Búsqueda de barrio
     const barrioInput = document.getElementById('walmart-barrio-input');
@@ -183,7 +184,7 @@ class WalmartStoreSelector {
     // Click fuera del dropdown
     document.addEventListener('click', (e) => {
       if (this.dropdown && this.dropdown.style.display !== 'none') {
-        if (!this.dropdown.contains(e.target) && !this.headerBtn.contains(e.target)) {
+        if (!this.dropdown.contains(e.target) && !this.headerBtns.some(btn => btn.contains(e.target))) {
           this.hideDropdown(true);
         }
       }
@@ -233,9 +234,16 @@ class WalmartStoreSelector {
     }
   }
 
-  showDropdown() {
+  showDropdown(trigger = null) {
     if (this.dropdown) {
       this.dropdown.style.display = 'block';
+      // En móvil la franja va bajo el buscador: abrir justo debajo de ella.
+      if (trigger && trigger.classList.contains('walmart-store-btn--mobile')) {
+        this.dropdown.style.top = Math.round(trigger.getBoundingClientRect().bottom + 8) + 'px';
+      } else {
+        this.dropdown.style.top = '';
+      }
+      this.setTriggersExpanded(true);
       
       // Limpiar cookie de cierre cuando el usuario abre manualmente
       this.deleteCookie(this.DROPDOWN_CLOSED_KEY);
@@ -250,6 +258,7 @@ class WalmartStoreSelector {
   hideDropdown(closedByUser = false) {
     if (this.dropdown) {
       this.dropdown.style.display = 'none';
+      this.setTriggersExpanded(false);
       
       // Si fue cerrado por el usuario (click en X o fuera del dropdown), guardar en cookie
       if (closedByUser) {
@@ -258,9 +267,13 @@ class WalmartStoreSelector {
     }
   }
 
-  toggleDropdown() {
+  setTriggersExpanded(expanded) {
+    (this.headerBtns || []).forEach(btn => btn.setAttribute('aria-expanded', expanded ? 'true' : 'false'));
+  }
+
+  toggleDropdown(trigger = null) {
     if (this.dropdown.style.display === 'none' || !this.dropdown.style.display) {
-      this.showDropdown();
+      this.showDropdown(trigger);
     } else {
       this.hideDropdown();
     }
@@ -376,17 +389,17 @@ class WalmartStoreSelector {
   }
 
   updateHeaderButton() {
-    const textEl = document.getElementById('walmart-header-store-text');
-    if (textEl) {
+    const textEls = document.querySelectorAll('[data-store-selector-text], #walmart-header-store-text');
+    if (textEls.length) {
       const zone = this.getCoverageZone();
+      let label = 'Selecciona una tienda';
       if (this.selectedBarrio && this.selectedStore) {
-        textEl.textContent = `${this.selectedBarrio} • ${this.selectedStore.name}`;
+        label = `${this.selectedBarrio} • ${this.selectedStore.name}`;
       } else if (this.selectedStore) {
         const suffix = zone || this.selectedStore.zone || '';
-        textEl.textContent = suffix ? `${this.selectedStore.name} • ${suffix}` : this.selectedStore.name;
-      } else {
-        textEl.textContent = 'Selecciona una tienda';
+        label = suffix ? `${this.selectedStore.name} • ${suffix}` : this.selectedStore.name;
       }
+      textEls.forEach(el => { el.textContent = label; });
     }
     this.updateSelectedLocationDisplay();
   }
