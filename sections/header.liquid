@@ -1814,7 +1814,7 @@
 
                 <div data-js-mobile-sticky>
                     <div class="header__line-top header__line--colorize-1 position-relative d-flex px-10 px-lg-0 py-lg-2">
-                        <div class="container d-flex align-items-center position-lg-relative">
+                        <div class="container header__mobile-two-row d-flex align-items-center position-lg-relative">
                             {{ btn_menu_html }}
                             {{ logo_html }}
                             <!-- Store Selector Walmart -->
@@ -1829,6 +1829,12 @@
                                     {% render 'sidebar-menu' %}
                                 </div>
                             {%- endif -%}
+                            <div class="header__sidebar header__mobile-actions d-flex d-lg-none align-items-center">
+                                {{ btn_registro_html }}
+                                {{ btn_wishlist_html }}
+                                {{ btn_user_html }}
+                                {{ btn_cart_html }}
+                            </div>
                             <div class="header__search-form search-ajax d-lg-block position-lg-absolute" data-js-max-products="5">
                                 {%- if settings.search_predictive_enabled -%}
                                     <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
@@ -1894,11 +1900,6 @@
                                 {{ btn_compare_html }}
                                 {{ btn_cart_html }}
                             </div>
-          <div class="header__sidebar d-flex d-lg-none align-items-center">
-                                {{ btn_cart_html }}
-                            </div>
-
-          
                         </div>
                     </div>
                 </div>
